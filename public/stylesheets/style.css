@@ -1,0 +1,20 @@
+.product-info{
+    margin-bottom: 5px;
+    padding: 0;
+    height: 210px;
+    font-size: 12px;
+
+    background: #F0F0F0;
+    
+}
+
+.product-description{
+    background-color: #D0D0D0;
+    margin-bottom: 20px;
+    height: 100px;
+    font-size: 14px;
+    float: center;
+    overflow: auto;
+    
+}
+
