@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>重庆滋味</title>
+	<link rel='stylesheet' href='/stylesheets/jquery-ui.min.css' />
+	<link rel='stylesheet' href='/stylesheets/jquery.mobile-1.4.5.min.css' />
+	<link rel='stylesheet' href='/stylesheets/jquery.mobile.external-png-1.4.5.min.css' />
+	<link rel='stylesheet' href='/stylesheets/jquery.mobile.icons-1.4.5.min.css' />
+	<link rel='stylesheet' href='/stylesheets/jquery.mobile.inline-png-1.4.5.min.css' />
+	<link rel='stylesheet' href='/stylesheets/jquery.mobile.inline-svg-1.4.5.min.css' />
+	<link rel='stylesheet' href='/stylesheets/jquery.mobile.structure-1.4.5.min.css' />
+	<link rel='stylesheet' href='/stylesheets/jquery.mobile.theme-1.4.5.min.css' />
+	<link rel='stylesheet' href='/stylesheets/style.css' />
+	<script src="/javascripts/jquery-2.1.3.min.js"></script>
+	<script src="/javascripts/jquery-ui.min.js"></script>
+	<script src="/javascripts/jquery.mobile-1.4.5.min.js"></script>
+	<script src="/javascripts/main.js"></script>
+</head>
+<body>
+	<div data-role="page">
+		<div data-role="header" style="overflow:hidden;">
+			<h1>Übersicht und Kontakt</h1>
+			<a data-rel="back" data-transition="slide" class="ui-btn ui-icon-carat-l ui-btn-icon-notext ui-btn-inline ui-nodisc-icon ui-alt-icon"></a>
+			<a href="#setting_panel" class="ui-btn ui-btn-right ui-icon-bars ui-btn-icon-notext ui-btn-inline ui-nodisc-icon ui-alt-icon"></a>
+		</div><!-- /header -->
+		<div role="main" class="ui-content" style="background-color: #d7b56d; text-shadow: none;" >
+			<img src="/images/CQF-Banner.png" style="width:100%">
+			<h4>KONTAKT:</h4>
+			<p>Tel.: 0175 6287 807</p>
+			<p>Tel.: +49 (0)711 479 1300</p>
+			<p>Email: info@cqflavour.de</p>
+			<p>Adresse: Kirchheimer Str. 126</p>
+			<p>70619, Stuttgart</p>
+			<br/>
+			<h4>ÖFFNUNGSZEITEN</h4>
+			<p>Mo. - Sa.: 11:30 bis 15:00</p>
+			<p>17:30 bis 22:30</p>
+			<p>So. und Feiertags: 11:30 bis 22:00</p>
+			<p>( Warmküche bis 30 Min. vor Schließzeit )</p>
+			<br/>
+			<h4>IMPRESSUM</h4>
+			<p>China Restaurant CQ Flavour</p>
+			<p>Inhaber Pei Wu</p>
+			<p>Kirchheimerstr. 126</p>
+			<p>70619 Stuttgart</p>
+			<br/>
+			<p>T: +49 (0) 711 479 1300</p>
+			<p>F: +49 (0) 711 479 1301</p>
+			<p>M: +49 (0) 175 6287 807</p>
+			<br/>
+			<p>E: info@cqflavour.de</p>
+			<p>Bankverbindung:</p>
+			<p>IBAN: DE94 60050101 000 7761177</p>
+			<p>BIC/SWIFT: SOLADEST</p>
+			<p>USt-IdNr.: DE 292894892</p>
+		</div>
+		<div data-role="panel" id="setting_panel" data-position="right" data-theme="b" data-display="overlay" data-position-fixed="true">
+			<ul data-role="listview">
+				<li data-icon="delete"><a href="#" data-rel="close">Schließen</a></li>
+				<li><a href="/my_orders" data-transition="slide" data-ajax='false'>Meine Bestellung</a></li>
+				<li><a href="/about" data-transition="slide">About & Contact</a></li>
+			</ul>
+		</div><!-- /panel -->
+	</div>
+</body>
+</html>

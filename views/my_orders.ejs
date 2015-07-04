@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>重庆滋味</title>
+	<link rel='stylesheet' href='/stylesheets/jquery-ui.min.css' />
+	<link rel='stylesheet' href='/stylesheets/jquery.mobile-1.4.5.min.css' />
+	<link rel='stylesheet' href='/stylesheets/jquery.mobile.external-png-1.4.5.min.css' />
+	<link rel='stylesheet' href='/stylesheets/jquery.mobile.icons-1.4.5.min.css' />
+	<link rel='stylesheet' href='/stylesheets/jquery.mobile.inline-png-1.4.5.min.css' />
+	<link rel='stylesheet' href='/stylesheets/jquery.mobile.inline-svg-1.4.5.min.css' />
+	<link rel='stylesheet' href='/stylesheets/jquery.mobile.structure-1.4.5.min.css' />
+	<link rel='stylesheet' href='/stylesheets/jquery.mobile.theme-1.4.5.min.css' />
+	<link rel='stylesheet' href='/stylesheets/style.css' />
+	<script src="/javascripts/jquery-2.1.3.min.js"></script>
+	<script src="/javascripts/jquery-ui.min.js"></script>
+	<script src="/javascripts/jquery.mobile-1.4.5.min.js"></script>
+	<script src="/javascripts/main.js"></script>
+</head>
+<body>
+	<div data-role="page" id="my_orders_page">
+		<div data-role="header" style="overflow:hidden;">
+			<h1>Meine Bestellung</h1>
+			<a data-rel="back" data-transition="slide" class="ui-btn ui-icon-carat-l ui-btn-icon-notext ui-btn-inline ui-nodisc-icon ui-alt-icon"></a>
+			<a href="#setting_panel" class="ui-btn ui-btn-right ui-icon-bars ui-btn-icon-notext ui-btn-inline ui-nodisc-icon ui-alt-icon"></a>
+		</div><!-- /header -->
+		<div role="main" class="ui-content">
+			<ul id="orders_list" data-role="listview" data-filter="true" data-filter-placeholder="Suchen Bestellung..." data-inset="false">
+			</ul>
+		</div>
+		<div data-role="panel" id="setting_panel" data-position="right" data-theme="b" data-display="overlay" data-position-fixed="true">
+			<ul data-role="listview">
+				<li data-icon="delete"><a href="#" data-rel="close">Schließen</a></li>
+				<li><a href="/my_orders" data-transition="slide" data-ajax='false'>Meine Bestellung</a></li>
+				<li><a href="/about" data-transition="slide">About & Contact</a></li>
+			</ul>
+		</div><!-- /panel -->
+	</div>
+	<script>
+		$(document).on("pageinit","#my_orders_page", function( event ) {
+			if(localStorage.foods) {
+				var foods = JSON.parse(localStorage.foods);
+				$.each(foods, function( index, food ) {
+					console.log(foods);
+					$('ul#orders_list').append(
+						"<li data-icon='false'>"+
+						"<a href='#'>"+
+						"<img src='"+ food.image +"'>"+
+						"<h2>"+ food.name +"</h2>"+
+						"<p>"+ food.details +" - Abholung Datum: "+ food.pickup_date +"</p>"+
+						"<p>Bestellungnumber: "+ food.order_no +" - Menge: "+food.amount+"<em style='float:right; margin-right:20px'>" + food.price*food.amount +" €</em></p>"+
+						"</a>"+
+						"</li>"
+					);
+				});
+				$('ul#orders_list').listview('refresh');
+			}
+		});
+	</script>
+</body>
+</html>

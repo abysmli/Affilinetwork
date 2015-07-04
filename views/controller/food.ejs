@@ -1,0 +1,30 @@
+<div class="page-header">
+	<h1>菜品管理 <small><a id="remove_all" href="/controller/food/remove_all/" class="btn btn-danger btn-sm pull-right">清空</a><a class="btn btn-primary" href="/controller/food/add/" style="margin-left: 20px">添加新菜</a></small></h1>
+</div>
+<div class="row">
+	<% foods.forEach(function(food, index) { %>
+	<div id="food_block" <% if (food.suspend_status) { %> style="opacity:0.5;" <% } %> class="col-sm-6 col-md-3">
+		<div class="thumbnail">
+			<img data-original="<%= food.image %>" class="img-responsive">
+			<div class="caption">
+				<h3 style="text-align: center"><small style="margin-right: 10px;"><%= food.number %></small><%= food.name %></h3>
+				<p style="text-align: center"><%= food.details %></p>
+				<p style="text-align: center"><%= food.price %> €</p>
+				<p style="text-align: center"><a href="/controller/food/edit?food_id=<%= food._id %>" class="btn btn-primary" role="button">编辑</a></p>
+				<% if (food.suspend_status) { %><span class="label label-danger pull-right">已挂起</span><% } %>
+			</div>
+		</div>
+	</div>
+	<% }) %>
+</div>
+<script>
+	$(document).ready(function(){
+		$('.img-responsive').lazyload({});
+		$( "#remove_all" ).click(function( event ) {
+			if (!confirm('确认清空所有菜品记录？ 请谨慎选择！')) {
+				event.preventDefault();
+			}
+		});
+	});
+
+</script>

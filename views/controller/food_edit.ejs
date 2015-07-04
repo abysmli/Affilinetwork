@@ -1,0 +1,72 @@
+<div class="page-header">
+	<h1>编辑菜品</h1>
+</div>
+<div class="row">
+	<div class="col-sm-12 col-md-6">
+		<form id="new_food" method="post">
+			<div class="form-group">
+				<label for="number">菜品编号</label>
+				<input type="text" name="number" class="form-control" id="number" placeholder="菜品编号" value="<%= food.number %>">
+			</div>
+			<div class="form-group">
+				<label for="name">菜品名字</label>
+				<input type="text" name="name" class="form-control" id="name" placeholder="菜品名字" value="<%= food.name %>">
+			</div>
+			<div class="form-group">
+				<label for="details">详细说明</label>
+				<textarea name="details" class="form-control" id="details" placeholder="详细说明"><%= food.details %></textarea>
+			</div>
+			<div class="form-group">
+				<label for="price">价格 (欧元)</label>
+				<input type="number" step="any" name="price" class="form-control" id="price" placeholder="价格" value="<%= food.price %>">
+			</div>
+			<div class="form-group">
+				<label for="food_image">菜品照片</label>
+				<input type="file" onchange="previewMultiFile('#food_image')" name="_image" id="food_image">
+				<p class="help-block">添加菜品的照片</p>
+			</div>
+			<button type="submit" class="btn btn-default">发送</button>
+			<% if (food.suspend_status) { %>
+			<a class="btn btn-primary" href="/controller/food/suspend?food_id=<%= food._id %>&suspend=false">解除挂起</a>
+			<% } else { %>
+			<a class="btn btn-warning" href="/controller/food/suspend?food_id=<%= food._id %>&suspend=true">挂起</a>
+			<% } %>
+			<a class="btn btn-danger pull-right" href="/controller/food/remove?food_id=<%= food._id %>">删除</a>
+		</form>
+	</div>
+	<div class="col-sm-12 col-md-6">
+		<label for="image_preview">照片预览</label>
+		<div id="image_preview" class="thumbnail">
+			<img src="<%= food.image %>">
+		</div>
+	</div>
+</div>
+
+
+<script>
+	var _image;
+	$(document).ready(function(){
+		$("#new_food").submit( function(eventObj) {
+			$('<input />').attr('type', 'hidden')
+			.attr('name', "image")
+			.attr('value', _image)
+			.appendTo('#new_food');
+			return true;
+		});
+	});
+
+	function previewMultiFile(input_id) {
+		var reader  = new FileReader();
+		var file = document.querySelector(input_id).files[0];
+
+		reader.onloadend = function (e) {
+			$('div#image_preview img').attr('src', e.target.result);
+			_image = e.target.result;
+		}
+
+		if (file) {
+			reader.readAsDataURL(file);
+		}
+	}
+</script>
+
