@@ -5,7 +5,7 @@ var Food = require('../models/food.js');
 //var sss = require('../models/program.js');
 var auth = require('../models/auth.js');
 
-var Affilinet = require('affilinet');
+var Affilinet = require('../utils/affilinetapis.js');
 	
 var affilinet = new Affilinet({
 	publisherId: '512499',
