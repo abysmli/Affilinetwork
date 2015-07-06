@@ -94,6 +94,13 @@ router.get('/programs/remove_all', function(req, res, next) {
 	});
 });
 
+router.get('/product_edit', function(req, res, next) {
+    res.render('controller/Products_Edit', {
+        title: 'Product Edit',
+        layout: 'controller/layout'
+    });
+});
+
 /*
 router.get('/food', auth, function(req, res, next) {
 	Food.find({},null,{sort: {updated_at: -1}}, function (err, foods) {
