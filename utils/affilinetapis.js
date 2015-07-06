@@ -63,22 +63,28 @@ module.exports = (function () {
         }));
     };
     
-    _Class.prototype.getCategorys = function (cb) {
+    _Class.prototype.getCategoryList = function (cb) {
         var args;
         args = [this.options.publisherId, this.options.productWebservicePassword];
-        return this._exec('get-category-list', args, lift(cb, function (results) {
+        return this._exec('getCategoryList', args, lift(cb, function (results) {
             var _ref;
-            return results != null ? (_ref = results.Categories) != null ? _ref.Category : void 0 : void 0;
+            return results != null ? (_ref = results.CategoryResult) != null ? (_ref = _ref.Categories) != null ? _ref.Category : void 0 : void 0 : void 0;
         }));
     };
     
-    _Class.prototype.getProducts = function (cb) {
+    _Class.prototype.getProductListbyShop = function (shopid, cb) {
         var args;
-        args = [this.options.publisherId, this.options.productWebservicePassword];
-        return this._exec('get-products', args, lift(cb, function (results) {
-            var _ref;
-            console.log(JSON.stringify(results));
-            return results != null ? (_ref = results.Products) != null ? _ref.product : void 0 : void 0;
+        args = [this.options.publisherId, this.options.productWebservicePassword, shopid];
+        return this._exec('getProductbyShop', args, lift(cb, function (results) {
+            return results;
+        }));
+    };
+    
+    _Class.prototype.getProductListbyCategory = function (categoryid, cb) {
+        var args;
+        args = [this.options.publisherId, this.options.productWebservicePassword, categoryid];
+        return this._exec('getProductbyCategory', args, lift(cb, function (results) {
+            return results;
         }));
     };
     

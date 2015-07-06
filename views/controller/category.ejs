@@ -1,0 +1,51 @@
+<div class="page-header">
+    <h1>Categorys Manage</h1>
+</div>
+<table id="category_table" class="display compact cell-border hover" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Category ID</th>
+            <th>Parent Category ID</th>
+            <th>Title</th>
+            <th>Category Path</th>
+            <th>Product Count</th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <th>Category ID</th>
+            <th>Parent Category ID</th>
+            <th>Title</th>
+            <th>Category Path</th>
+            <th>Product Count</th>
+        </tr>
+    </tfoot>
+
+    <tbody>
+        <% categorylist.forEach(function(category, index) { %>
+            <tr>
+                <td>
+                    <%= category.CategoryId %>
+                </td>
+                <td>
+                    <%= category.ParentCategoryId %>
+                </td>
+                <td>
+                    <%= category.Title %>
+                </td>
+                <td>
+                    <%= category.CategoryPath %>
+                </td>
+                <td>
+                    <a href="/controller/product?categoryid=<%= category.CategoryId %>&type=category"><%= category.Products %></a>
+                </td>
+            </tr>
+            <% }) %>
+    </tbody>
+</table>
+
+<script>
+    $(document).ready(function() {
+        var dt = $('#category_table').DataTable();
+    });
+</script>
