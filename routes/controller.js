@@ -27,6 +27,13 @@ router.get('/', auth, function(req, res, next) {
 	});
 });
 
+router.get('/product_edit', function(req, res, next) {
+    res.render('controller/Products_Edit', {
+        title: 'Product Edit',
+        layout: 'controller/layout'
+    });
+});
+
 router.get('/programs/update', function (req, res, next) {
     var displayOptions = {
         CurrentPage: 1,
