@@ -8,8 +8,18 @@ var affilinet = new Affilinet({
     publisherWebservicePassword: 'lZONYNI32ieYq8kMPqKS'
 });
 
-router.get('/getShops', function (req, res, next) {
-    affilinet.getShops(function (err, shops) {
+router.get('/getIndentifierExpiration', function (req, res, next) {
+    affilinet.getIndentifierExpiration(function (err, result) {
+        if (err != null) {
+            throw err;
+        }
+
+        res.json(result);
+    });
+});
+
+router.get('/getShopList', function (req, res, next) {
+    affilinet.getShopList(function (err, shops) {
         if (err != null) {
             throw err;
         }
@@ -78,10 +88,6 @@ router.get('/searchCreatives', function (req, res, next) {
         }
         res.json(creatives);
     });
-});
-
-router.get('/test', function (req, res, next) {
-
 });
 
 module.exports = router;

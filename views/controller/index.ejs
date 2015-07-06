@@ -1,48 +1,56 @@
 <div class="page-header">
-	<h1>Shops Manage</h1>
+    <h1>Shops Manage</h1>
 </div>
 <table id="order_table" class="display compact cell-border hover" cellspacing="0" width="100%">
-	<thead>
-		<tr>
-			<th>Logo</th>
-			<th>Product Count</th>
-			<th>Shop ID</th>
-			<th>Shop Link</th>
-			<th>Shop Title</th>
-			<th>Program ID</th>
-			<th>Last Update</th>
-		</tr>
-	</thead>
-	<tfoot>
-		<tr>
-			<th>Logo</th>
-			<th>Product Count</th>
-			<th>Shop ID</th>
-			<th>Shop Link</th>
-			<th>Shop Title</th>
-			<th>Program ID</th>
-			<th>Last Update</th>
-		</tr>
-	</tfoot>
+    <thead>
+        <tr>
+            <th>Logo</th>
+            <th>Product Count</th>
+            <th>Shop ID</th>
+            <th>Shop Title</th>
+            <th>Program ID</th>
+            <th>Last Update</th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <th>Logo</th>
+            <th>Product Count</th>
+            <th>Shop ID</th>
+            <th>Shop Title</th>
+            <th>Program ID</th>
+            <th>Last Update</th>
+        </tr>
+    </tfoot>
 
-	<tbody>
-		<% shops.forEach(function(shop, index) { %>
-			<tr>
-				<td><img src="<%= shop.Logo.URL %>"></img></td>
-				<td><%= shop.ProductCount %></td>
-				<td><%= shop.ShopId %></td>
-				<td><a href="<%= shop.ShopLink %>">Shop Link</a></td>
-				<td><%= shop.ShopTitle %></td>
-				<td><%= shop.ProgramId %></td>
-				<td><%= shop.LastUpdate %></td>
-			</tr>
-		<% }) %>
-	</tbody>
+    <tbody>
+        <% shops.forEach(function(shop, index) { %>
+            <tr>
+                <td>
+                    <img src="<%= shop.LogoUrl %>">
+                </td>
+                <td>
+                    <%= shop.Products %>
+                </td>
+                <td>
+                    <%= shop.ShopId %>
+                </td>
+                <td>
+                    <%= shop.Title %>
+                </td>
+                <td>
+                    <%= shop.ProgramId %>
+                </td>
+                <td>
+                    <%= shop.LastUpdate %>
+                </td>
+            </tr>
+            <% }) %>
+    </tbody>
 </table>
 
 <script>
-
-$(document).ready(function() {
-    var dt = $('#order_table').DataTable();
-});
+    $(document).ready(function() {
+        var dt = $('#order_table').DataTable();
+    });
 </script>

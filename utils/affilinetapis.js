@@ -25,6 +25,17 @@ module.exports = (function () {
             return cb(null, JSON.parse(stdout));
         });
     };
+    
+    _Class.prototype.getIndentifierExpiration = function (cb) {
+        var args;
+        args = [this.options.publisherId, this.options.publisherWebservicePassword];
+        return this._exec('get-indentifier-expiration', args, lift(cb, function (results) {
+            var _ref;
+            console.log(JSON.stringify(results));
+            return (results != null ? (_ref = results.CreativeCollection) != null ? _ref.Creative : void 0 : void 0) || [];
+        }));
+    };
+    
     _Class.prototype.searchCreatives = function (displayOptions, query, cb) {
         var args;
         args = [this.options.publisherId, this.options.publisherWebservicePassword, JSON.stringify(displayOptions), JSON.stringify(query)];
@@ -33,6 +44,7 @@ module.exports = (function () {
             return (results != null ? (_ref = results.CreativeCollection) != null ? _ref.Creative : void 0 : void 0) || [];
         }));
     };
+    
     _Class.prototype.getPrograms = function (displayOptions, query, cb) {
         var args;
         args = [this.options.publisherId, this.options.publisherWebservicePassword, JSON.stringify(displayOptions), JSON.stringify(query)];
@@ -41,14 +53,16 @@ module.exports = (function () {
             return (results != null ? (_ref = results.ProgramCollection) != null ? _ref.Program : void 0 : void 0) || [];
         }));
     };
-    _Class.prototype.getShops = function (cb) {
+    
+    _Class.prototype.getShopList = function (cb) {
         var args;
         args = [this.options.publisherId, this.options.productWebservicePassword];
-        return this._exec('get-shop-list-v3', args, lift(cb, function (results) {
+        return this._exec('getShopList', args, lift(cb, function (results) {
             var _ref;
             return results != null ? (_ref = results.Shops) != null ? _ref.Shop : void 0 : void 0;
         }));
     };
+    
     _Class.prototype.getCategorys = function (cb) {
         var args;
         args = [this.options.publisherId, this.options.productWebservicePassword];
@@ -57,6 +71,7 @@ module.exports = (function () {
             return results != null ? (_ref = results.Categories) != null ? _ref.Category : void 0 : void 0;
         }));
     };
+    
     _Class.prototype.getProducts = function (cb) {
         var args;
         args = [this.options.publisherId, this.options.productWebservicePassword];
@@ -66,6 +81,7 @@ module.exports = (function () {
             return results != null ? (_ref = results.Products) != null ? _ref.product : void 0 : void 0;
         }));
     };
+    
     _Class.prototype.getSalesLeadsBySubIdPerDay = function (startDate, endDate, cb) {
         var args;
         args = [this.options.publisherId, this.options.publisherWebservicePassword, Math.floor(startDate.getTime() / 1000), Math.floor(endDate.getTime() / 1000)];
@@ -74,5 +90,6 @@ module.exports = (function () {
             return results != null ? (_ref = results.ArrayOfSalesLeadsBySubIdRecords) != null ? (_ref2 = _ref.SalesLeadsBySubIdRecords) != null ? _ref2.SalesLeadsBySubIdRecord : void 0 : void 0 : void 0;
         }));
     };
+    
     return _Class;
 })();
