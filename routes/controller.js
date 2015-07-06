@@ -15,7 +15,7 @@ var affilinet = new Affilinet({
 
 /* GET users listing. */
 router.get('/', auth, function(req, res, next) {
-	affilinet.getShops(function(err, shops) {
+	affilinet.getShopList(function(err, shops) {
 		if (err != null) 
 			res.render('error');
 		else
