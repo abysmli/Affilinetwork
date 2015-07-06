@@ -14,7 +14,6 @@ var affilinet = new Affilinet({
 });
 
 /* GET users listing. */
-<<<<<<< HEAD
 router.get('/', auth, function(req, res, next) {
 	affilinet.getShopList(function(err, shops) {
 		if (err != null) 
@@ -27,108 +26,6 @@ router.get('/', auth, function(req, res, next) {
 			});
 	});
 });
-
-
-router.get('/programs/update', function(req, res, next) {
-	var displayOptions = {
-		CurrentPage: 1,
-		PageSize: 10,
-	};
-	var query = {
-		// "Active", "Paused", "Waiting", "Refused", "NoPartnership", "Cancelled"
-		PartnershipStatus: ["Active"],
-	};
-	affilinet.getPrograms(displayOptions, query, function(err, programs) {
-
-		if (err != null) 
-			res.render('error');
-		else
-		programs.forEach(function(program){
-
-			var data = {
-					ProgramId: program.ProgramId,
-					ProgramTitle: program.ProgramTitle,
-					ProgramDescription: program.ProgramDescription,
-					PartnershipStatus: program.PartnershipStatus,
-					ProgramClassificationEnum: program.ProgramClassificationEnum,
-					LimitationsComment: program.LimitationsComment,
-					LaunchDate: program.LaunchDate,
-					ProgramURL: program.ProgramURL,
-					LogoURL: program.LogoURL,
-					TrackingMethod: program.TrackingMethod,
-					CookieLifetime: program.CookieLifetime,
-					SEMPolicyEnum: program.SEMPolicyEnum,
-					ProgramStatusEnum: program.ProgramStatusEnum,
-					ScreenshotURL: program.ScreenshotURL,
-				};
-
-				Food.create(data, function(err, food){
-				    if(err) 
-				    	res.render('error');
-				    else 
-				    	res.redirect('/controller/food');
-				});
-			});
-		res.redirect('/controller/programs');
-	});
-});
-
-router.get('/programs', function(req, res, next) {
-	Food.find({},null,{sort: {updated_at: -1}}, function (err, foods) {
-		if (err) 
-			res.render('error');
-		else
-			res.render('controller/programs', {
-				title: 'Programs Manage',
-				programs: foods,
-				layout:'controller/layout'
-			});		
-	});
-});
-
-router.get('/programs/remove_all', function(req, res, next) {
-	Food.remove(function (err) {
-		if (err) 
-			res.render('error');
-		else
-			res.redirect('/controller/programs');
-	});
-});
-
-router.get('/product_edit', function(req, res, next) {
-    res.render('controller/Products_Edit', {
-        title: 'Product Edit',
-        layout: 'controller/layout'
-    });
-});
-
-/*
-router.get('/food', auth, function(req, res, next) {
-	Food.find({},null,{sort: {updated_at: -1}}, function (err, foods) {
-		if (err) 
-			res.render('error');
-		else
-			res.render('controller/food', {
-				title: '菜品管理',
-				foods: foods,
-				layout:'controller/layout'
-			});
-	});
-=======
-router.get('/', auth, function (req, res, next) {
-    affilinet.getShopList(function (err, shops) {
-        if (err != null)
-            res.render('error');
-        else
-            res.render('controller/index', {
-                title: 'Shops Manage',
-                shops: shops,
-                layout: 'controller/layout'
-            });
-    });
->>>>>>> origin/master
-});
-
 
 router.get('/programs/update', function (req, res, next) {
     var displayOptions = {
