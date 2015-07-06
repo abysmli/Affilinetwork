@@ -30,7 +30,7 @@
                     <img src="<%= shop.LogoUrl %>">
                 </td>
                 <td>
-                    <%= shop.Products %>
+                    <a href="/controller/product?shopid=<%= shop.ShopId %>&type=shop"><%= shop.Products %></a>
                 </td>
                 <td>
                     <%= shop.ShopId %>

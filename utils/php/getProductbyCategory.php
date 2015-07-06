@@ -1,16 +1,16 @@
+#!/usr/bin/env php
 <?php
 
 include_once("ProductService.Affilinet.php");
 
 $Username = $argv[1]; // the publisher ID
 $Password = $argv[2]; // the product data web services password
+$CategoryID = $argv[3];
 
 $ps= new ProductService();
-$ps->Affilinet("512499","FaI69alVX0eZ4i28TnIq",'Product');
+$ps->Affilinet($Username, $Password, 'Product');
 
-//$result = $ps->GetCategoryList(0);
-$result = $ps->SearchProducts(array(0));
+$result = $ps->SearchProductsInCategories(array(0, 10), array($CategoryID), true);
 echo json_encode($result);
 
 ?>
-

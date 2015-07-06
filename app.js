@@ -10,7 +10,6 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var foods = require('./routes/foods');
 var orders = require('./routes/orders');
-var affilinetapi = require('./routes/affilinetapi');
 var controller = require('./routes/controller');
 var basicAuth = require('basic-auth');
 
@@ -33,7 +32,6 @@ app.use('/users', users);
 app.use('/foods', foods);
 app.use('/orders', orders);
 app.use('/controller', controller);
-app.use('/affilinetapi', affilinetapi);
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {
