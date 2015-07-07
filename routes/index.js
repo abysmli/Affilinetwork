@@ -23,8 +23,11 @@ router.get('/about', function(req, res, next) {
     res.render('about');
 });
 
-router.get('/user_layout', function(req, res, next){
-    res.render('');
+router.get('/home', function(req, res, next){
+    res.render('home', {
+        title: 'Home Page',
+        layout: '/user_layout'
+    });
 });
 
 module.exports = router;
