@@ -1,32 +1,110 @@
 <div class="page-header">
-    <h1>Product Manage <small><a id="remove_all" href="/controller/products/remove_all/" class="btn btn-danger btn-sm pull-right">Remove all</a><a class="btn btn-primary" href="/controller/products/update/" style="margin-left: 20px">Synchronize</a></small></h1>
+    <h1>Product Manage 
+        <small>
+        <a id="remove_all" href="/controller/product/remove_all/" class="btn btn-danger btn-sm pull-right">Remove all</a>
+            <% if(url != '') { %>
+                <a id="sync_button" class="btn btn-primary" href="/controller/product/update<%= url %>" style="margin-left: 20px">Synchronize</a>
+            <% } %>
+        </small>
+    </h1>
 </div>
-<div class="row">
-    <% products.forEach(function(product, index) { %>
-        <div class="col-sm-6 col-md-3">
-            <div class="thumbnail">
-                <img data-original = "<%= product.Image.ImageUrl %>" class = "img-responsive">
-                <div class="caption">
-                    <h4 style="text-align: center"><%= product.Title %></h4>
-                    <p><b>Description:</b> <%= product.DescriptionShort %></p>
-                    <p><b>Producer:</b> <%= product.ShopInformation.ShopName %></p>
-                    <p><b>Preis:</b> <%= product.DisplayPrice %></p>
-                    <p><b>Shipping Preis:</b> <%= product.DisplayShipping %></p>
-                    <a href="<%= product.DeepLink1 %>">Product Link</a>
-                    <p style="text-align: center"><a href="/controller/products/edit?product_id=<%= product.Id %>" class="btn btn-primary" role="button">EDIT</a></p>
-                    <span class="label label-primary pull-left">Translated</span>
-                </div>
-            </div>
-        </div>
-    <% }) %>
-</div>
+
+<table id="product_table" class="display compact cell-border hover" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>ID</th>
+            <th>Article Num.</th>
+            <th>EAN</th>
+            <th>Brand</th>
+            <th>Title</th>
+            <th>Shop Name</th>
+            <th>Price</th>
+            <th>Shipping Price</th>
+            <th>Link</th>
+            <th>Category Path</th>
+            <th>Translated</th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <th>Image</th>
+            <th>ID</th>
+            <th>Article Num.</th>
+            <th>EAN</th>
+            <th>Brand</th>
+            <th>Title</th>
+            <th>Shop Name</th>
+            <th>Price</th>
+            <th>Shipping Price</th>
+            <th>Link</th>
+            <th>Category Path</th>
+            <th>Translated</th>
+        </tr>
+    </tfoot>
+
+    <tbody>
+        <% products.forEach(function(product, index) { %>
+            
+            <tr class='clickable-row' data-href='/controller/product/edit?product_id=<%= product.product_id %>'>
+                <td>
+                    <img src="<%= product.image90 %>">
+                </td>
+                <td>
+                    <%= product.product_id %>
+                </td>
+                <td>
+                    <%= product.article_num %>
+                </td>
+                <td>
+                    <%= product.ean %>
+                </td>
+                <td>
+                    <%= product.brand %>
+                </td>
+                <td>
+                    <%= product.title %>
+                </td>
+                <td>
+                    <%= product.shop_name %>
+                </td>
+                <td>
+                    <%= product.price %>
+                </td>
+                <td>
+                    <%= product.shipping %>
+                </td>
+                <td>
+                    <a href="<%= product.link %>">Product Link</a>
+                </td>
+                <td>
+                    <%= product.category_path %>
+                </td>
+                <td>
+                    <% if (product.tranlated) { %>
+                    <span class="label label-primary">Translated</span>
+                    <% } else { %>
+                    <span class="label label-warning">Not Translated</span>
+                    <% } %>
+                </td>
+            </tr>
+            <% }) %>
+    </tbody>
+</table>
+
 <script>
     $(document).ready(function() {
-        $('.img-responsive').lazyload({});
+        var dt = $('#product_table').DataTable();
+        //$('.img-responsive').lazyload({});
         $("#remove_all").click(function(event) {
             if (!confirm('Remove All products?！')) {
                 event.preventDefault();
             }
+        });
+        $(".clickable-row").click(function(){
+            <% if(url == '') { %>
+                window.location.href = $(this).data('href');
+            <% } %>
         });
     });
 </script>

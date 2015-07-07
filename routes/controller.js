@@ -1,11 +1,9 @@
 var express = require('express');
 var router = express.Router();
-//var Order = require('../models/order.js');
-var Food = require('../models/food.js');
-//var sss = require('../models/program.js');
 var auth = require('../models/auth.js');
-
 var Affilinet = require('../utils/affilinetapis.js');
+var Sync = require('../utils/synchronization.js');
+var Product = require('../models/product.js');
 
 var affilinet = new Affilinet({
     publisherId: '512499',
@@ -14,30 +12,21 @@ var affilinet = new Affilinet({
 });
 
 /* GET users listing. */
-router.get('/', auth, function(req, res, next) {
-	affilinet.getShopList(function(err, shops) {
-		if (err != null) 
-			res.render('error');
-		else
-			res.render('controller/index', {
-				title: 'Shops Manage',
-				shops: shops,
-				layout:'controller/layout'
-			});
-	});
-});
-
-router.get('/product_edit', function(req, res, next) {
-    res.render('controller/Products_Edit', {
-        title: 'Product Edit',
-        layout: 'controller/layout'
+router.get('/', auth, function (req, res, next) {
+    affilinet.getShopList(function (err, shops) {
+        if (err != null)
+            res.render('error');
+        else
+            res.render('controller/index', {
+                title: 'Shops Manage',
+                shops: shops,
+                layout: 'controller/layout'
+            });
     });
 });
 
-
-
 router.get('/programs/update', function (req, res, next) {
-    var displayOptions = {
+    /*var displayOptions = {
         CurrentPage: 1,
         PageSize: 10,
     };
@@ -77,11 +66,11 @@ router.get('/programs/update', function (req, res, next) {
                 });
             });
         res.redirect('/controller/programs');
-    });
+    });*/
 });
 
 router.get('/programs', function (req, res, next) {
-    Food.find({}, null, {
+    /*Food.find({}, null, {
         sort: {
             updated_at: -1
         }
@@ -94,15 +83,32 @@ router.get('/programs', function (req, res, next) {
                 programs: foods,
                 layout: 'controller/layout'
             });
-    });
+    });*/
+    res.json({});
 });
 
 router.get('/programs/remove_all', function (req, res, next) {
-    Food.remove(function (err) {
+    /*Food.remove(function (err) {
         if (err)
             res.render('error');
         else
             res.redirect('/controller/programs');
+    });*/
+});
+
+router.get('/product/remove_all', function (req, res, next) {
+    Product.remove(function (err) {
+        if (err)
+            res.render('error');
+        else
+            res.redirect('/controller/product');
+    });
+});
+
+router.get('/product/update', function (req, res, next) {
+    var sync = new Sync(Product, req.query.type, req.query.id);
+    res.json({
+        status: "Processing..."
     });
 });
 
@@ -115,7 +121,8 @@ router.get('/product', function (req, res, next) {
                 var products = results != null ? (_ref = results.Products) != null ? _ref.Product : void 0 : void 0;
                 res.render('controller/products', {
                     title: 'Products Manage',
-                    products: products,
+                    url: '?id=' + req.query.shopid + '&type=shop',
+                    products: productConvert(products),
                     layout: 'controller/layout'
                 });
             }
@@ -123,20 +130,38 @@ router.get('/product', function (req, res, next) {
         });
     } else if (req.query.type == "category") {
         affilinet.getProductListbyCategory(req.query.categoryid, req.query.currentpage, req.query.pagesize, function (err, results) {
+
             if (err != null)
                 res.render('error');
             else {
-                var products = results != null ? (_ref = results.ProductSearchResult) != null ? (_ref = _ref.Products) != null ? _ref.Product : void 0 : void 0 : void 0
+                var products = results != null ? (_ref = results.ProductSearchResult) != null ? (_ref = _ref.Products) != null ? _ref.Product : void 0 : void 0 : void 0;
                 res.render('controller/products', {
                     title: 'Products Manage',
-                    products: products,
+                    url: '?id=' + req.query.categoryid + '&type=category',
+                    products: productConvert(products),
                     layout: 'controller/layout'
                 });
             }
 
         });
     } else {
-        res.json({});
+        Product.find({}, null, {
+            limit: 500,
+            sort: {
+                updated_at: -1
+            }
+        }, function (err, products) {
+            if (err)
+                res.render('error');
+            else
+                res.render('controller/products', {
+                    title: 'Products Manage',
+                    url: '',
+                    products: products,
+                    layout: 'controller/layout'
+                });
+        });
+
     }
 });
 
@@ -154,5 +179,48 @@ router.get('/category', function (req, res, next) {
 
     });
 });
+
+router.get('/product/edit', function (req, res, next) {
+    Product.findOne({ product_id: req.query.product_id }, function (err, product) {
+        if (err != null) res.render('error');
+        else {
+            res.render('controller/products_edit', {
+                title: 'Edit Product',
+                product: product,
+                layout: 'controller/layout'
+            });
+        }
+    });
+});
+
+router.post('/product/edit', function (req, res, next) {
+    Product.update({ product_id: req.query.product_id }, {desc_cn: req.body.translate, tranlated: true}, function (err, product) {
+        if (err != null) res.render('error');
+        else {
+            res.redirect('/controller/product');
+        }
+    });
+});
+
+function productConvert(products) {
+    var _products = [];
+    products.forEach(function (product, index) {
+        var _product = {
+            product_id: product.Id,
+            article_num: product.ArticleNumber,
+            ean: product.EAN,
+            title: product.Title,
+            brand: product.Brand,
+            shop_name: product.ShopInformation.ShopName,
+            price: product.Price,
+            shipping: product.Shipping,
+            link: product.DeepLink1,
+            category_path: product.CategoryPath,
+            image90: product.Image60.ImageUrl
+        }
+        _products.push(_product);
+    });
+    return _products;
+}
 
 module.exports = router;

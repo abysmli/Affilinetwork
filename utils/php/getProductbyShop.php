@@ -12,7 +12,7 @@ $Pagesize = $argv[5];
 $ps= new ProductService();
 $ps->Affilinet($Username, $Password, 'Product');
 
-$result = $ps->SearchProducts(array($ShopID));
+$result = $ps->SearchProducts(array($ShopID), '', false, true, 'AllImages', $CurrentPage, $Pagesize);
 echo json_encode($result);
 
 ?>

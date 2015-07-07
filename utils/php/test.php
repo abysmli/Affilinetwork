@@ -9,7 +9,7 @@ $ps= new ProductService();
 $ps->Affilinet("512499","FaI69alVX0eZ4i28TnIq",'Product');
 
 //$result = $ps->GetCategoryList(0);
-$result = $ps->SearchProducts(array(0, 10), '', false, true, 'AllImages', 1, 10, '0', '0', 'Rank', 'Descending');
+$result = $ps->SearchProducts(array(0, 10), '', false, true, 'AllImages', 1, 30);
 echo json_encode($result);
 
 ?>

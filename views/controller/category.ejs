@@ -37,7 +37,7 @@
                     <%= category.CategoryPath %>
                 </td>
                 <td>
-                    <a href="/controller/product?categoryid=<%= category.CategoryId %>&type=category"><%= category.Products %></a>
+                    <a href="/controller/product?categoryid=<%= category.CategoryId %>&type=category&currentpage=1&pagesize=100"><%= category.Products %></a>
                 </td>
             </tr>
             <% }) %>
