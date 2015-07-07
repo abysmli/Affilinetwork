@@ -72,17 +72,17 @@ module.exports = (function () {
         }));
     };
     
-    _Class.prototype.getProductListbyShop = function (shopid, cb) {
+    _Class.prototype.getProductListbyShop = function (shopid, currentpage, pagesize, cb) {
         var args;
-        args = [this.options.publisherId, this.options.productWebservicePassword, shopid];
+        args = [this.options.publisherId, this.options.productWebservicePassword, shopid, currentpage, pagesize];
         return this._exec('getProductbyShop', args, lift(cb, function (results) {
             return results;
         }));
     };
 
-    _Class.prototype.getProductListbyCategory = function (categoryid, cb) {
+    _Class.prototype.getProductListbyCategory = function (categoryid, currentpage, pagesize, cb) {
         var args;
-        args = [this.options.publisherId, this.options.productWebservicePassword, categoryid];
+        args = [this.options.publisherId, this.options.productWebservicePassword, categoryid, currentpage, pagesize];
         return this._exec('getProductbyCategory', args, lift(cb, function (results) {
             return results;
         }));

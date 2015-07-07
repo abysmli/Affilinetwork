@@ -108,7 +108,7 @@ router.get('/programs/remove_all', function (req, res, next) {
 
 router.get('/product', function (req, res, next) {
     if (req.query.type == "shop") {
-        affilinet.getProductListbyShop(parseInt(req.query.shopid), function (err, results) {
+        affilinet.getProductListbyShop(req.query.shopid, req.query.currentpage, req.query.pagesize, function (err, results) {
             if (err != null)
                 res.render('error');
             else {
@@ -122,7 +122,7 @@ router.get('/product', function (req, res, next) {
 
         });
     } else if (req.query.type == "category") {
-        affilinet.getProductListbyCategory(parseInt(req.query.categoryid), function (err, results) {
+        affilinet.getProductListbyCategory(req.query.categoryid, req.query.currentpage, req.query.pagesize, function (err, results) {
             if (err != null)
                 res.render('error');
             else {
