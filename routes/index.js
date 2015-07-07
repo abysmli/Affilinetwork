@@ -23,4 +23,8 @@ router.get('/about', function(req, res, next) {
     res.render('about');
 });
 
+router.get('/user_layout', function(req, res, next){
+    res.render('');
+});
+
 module.exports = router;
