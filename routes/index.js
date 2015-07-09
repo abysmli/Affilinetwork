@@ -6,7 +6,7 @@ var Affilinet = require('../utils/affilinetapis.js');
 /* GET home page. */
 router.get('/', function (req, res, next) {
     Product.find({}, null, {
-            limit: 100,
+            limit: 30,
             sort: {
                 updated_at: -1
             }
