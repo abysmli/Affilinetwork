@@ -39,12 +39,12 @@
                 <!-- shop items start -->
                 <div id="container" class="row">
                     <% products.forEach(function(product, index) { %>
-                        <div class="element col-lg-3 col-sm-5 masonry-grid-item">
+                        <div class="element col-lg-4 col-sm-6 masonry-grid-item">
                             <div class="listing-item">
                                 <div class="overlay-container">
                                     <img src="<%= product.image %>" alt="">
                                     <a href="#" class="overlay small">
-                                        <i class="fa fa-plus"></i>
+                                        <i class="fa fa-eye"></i>
                                         <span>查看详细介绍</span>
                                     </a>
 
@@ -85,8 +85,8 @@
             <!-- main end -->
 
             <aside class="col-md-3">
-                <div class="sidebar">
-                    <div class="block clearfix">
+                <div class="siderbar">
+                    <div class="body clearfixed">
                         <h3>筛选</h3>
 
                         <div class="sorting-filters">
@@ -122,7 +122,7 @@
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <a href="#" class="btn btn-default">Submit</a>
+                                    <a href="#" class="btn btn-default">确认</a>
                                 </div>
                             </form>
                         </div>
@@ -166,17 +166,22 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-
         var $container = $('#container');
         $container.imagesLoaded(function() {
-            $container.isotope({
+           $container.isotope({
                 masonry: {
                     columnWidth: ('.masonry-grid-item')
                 }
 
             });
-
         });
+
+
+        $('.siderbar').sticky({
+            topSpacing: 20
+        });
+
+
 
 
         /*  $container.infinitescroll({
@@ -194,4 +199,5 @@
           }*/
 
     });
+
 </script>
