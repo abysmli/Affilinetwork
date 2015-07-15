@@ -2,13 +2,13 @@ var express = require('express');
 var router = express.Router();
 var auth = require('../models/auth.js');
 var Affilinet = require('../utils/affilinetapis.js');
-var Sync = require('../utils/synchronization.js');
 var Product = require('../models/product.js');
+var setting = require('../setting.js');
 
 var affilinet = new Affilinet({
-    publisherId: '512499',
-    productWebservicePassword: 'FaI69alVX0eZ4i28TnIq',
-    publisherWebservicePassword: 'lZONYNI32ieYq8kMPqKS'
+    publisherId: setting.affilinet_setting.publisherId,
+    productWebservicePassword: setting.affilinet_setting.productWebservicePassword,
+    publisherWebservicePassword: setting.affilinet_setting.publisherWebservicePassword
 });
 
 /* GET users listing. */
@@ -105,23 +105,19 @@ router.get('/product/remove_all', function (req, res, next) {
     });
 });
 
-router.get('/product/update', function (req, res, next) {
-    var sync = new Sync(Product, req.query.type, req.query.id);
-    res.json({
-        status: "Processing..."
-    });
-});
-
 router.get('/product', function (req, res, next) {
     if (req.query.type == "shop") {
         affilinet.getProductListbyShop(req.query.shopid, req.query.currentpage, req.query.pagesize, function (err, results) {
             if (err != null)
                 res.render('error');
             else {
+                var counter = results.TotalRecords;
                 var products = results != null ? (_ref = results.Products) != null ? _ref.Product : void 0 : void 0;
                 res.render('controller/products', {
                     title: 'Products Manage',
-                    url: '?id=' + req.query.shopid + '&type=shop',
+                    id: req.query.shopid,
+                    type: 'shop',
+                    counter: counter,
                     products: productConvert(products),
                     layout: 'controller/layout'
                 });
@@ -134,10 +130,13 @@ router.get('/product', function (req, res, next) {
             if (err != null)
                 res.render('error');
             else {
+                var counter = results.ProductSearchResult.TotalRecords;
                 var products = results != null ? (_ref = results.ProductSearchResult) != null ? (_ref = _ref.Products) != null ? _ref.Product : void 0 : void 0 : void 0;
                 res.render('controller/products', {
                     title: 'Products Manage',
-                    url: '?id=' + req.query.categoryid + '&type=category',
+                    id: req.query.categoryid,
+                    type: 'category',
+                    counter: counter,
                     products: productConvert(products),
                     layout: 'controller/layout'
                 });
@@ -145,23 +144,26 @@ router.get('/product', function (req, res, next) {
 
         });
     } else {
-        Product.find({}, null, {
-            limit: 500,
-            sort: {
-                updated_at: -1
-            }
-        }, function (err, products) {
-            if (err)
-                res.render('error');
-            else
-                res.render('controller/products', {
-                    title: 'Products Manage',
-                    url: '',
-                    products: products,
-                    layout: 'controller/layout'
-                });
+        Product.count({}, function (err, count) {
+            Product.find({}, null, {
+                limit: 500,
+                sort: {
+                    updated_at: -1
+                }
+            }, function (err, products) {
+                if (err)
+                    res.render('error');
+                else
+                    res.render('controller/products', {
+                        title: 'Products Manage',
+                        id: -1,
+                        type: 'database',
+                        counter: count,
+                        products: products,
+                        layout: 'controller/layout'
+                    });
+            });
         });
-
     }
 });
 
@@ -181,7 +183,9 @@ router.get('/category', function (req, res, next) {
 });
 
 router.get('/product/edit', function (req, res, next) {
-    Product.findOne({ product_id: req.query.product_id }, function (err, product) {
+    Product.findOne({
+        product_id: req.query.product_id
+    }, function (err, product) {
         if (err != null) res.render('error');
         else {
             res.render('controller/products_edit', {
@@ -194,7 +198,12 @@ router.get('/product/edit', function (req, res, next) {
 });
 
 router.post('/product/edit', function (req, res, next) {
-    Product.update({ product_id: req.query.product_id }, {desc_cn: req.body.translate, tranlated: true}, function (err, product) {
+    Product.update({
+        product_id: req.query.product_id
+    }, {
+        desc_cn: req.body.translate,
+        tranlated: true
+    }, function (err, product) {
         if (err != null) res.render('error');
         else {
             res.redirect('/controller/product');
