@@ -5,7 +5,6 @@ var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
 var routes = require('./routes/index');
 var controller = require('./routes/controller');
 var basicAuth = require('basic-auth');

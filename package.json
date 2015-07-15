@@ -16,6 +16,7 @@
     "express-partials": "*",
     "mongoose": "*",
     "mongoose-auto-increment": "*",
-    "basic-auth": "*"
+    "basic-auth": "*",
+    "socket.io": "*"
   }
 }
