@@ -54,7 +54,7 @@
                                     <p>
                                         <%= product.desc_cn %>
                                     </p>
-                                    <span class="price"><%= product.price %></span>
+                                    <span class="price"><%= product.price + ' Euro'%></span>
                                     <div class="elements-list pull-right">
                                         <a href="#" class="wishlist" title="wishlist"><i class="fa fa-heart-o"></i></a>
                                         <a href="#"><i class="fa fa-shopping-cart pr-10"></i>添加至购物车</a>
@@ -71,18 +71,20 @@
 
                 <!-- pagination start -->
                 <ul class="pagination">
-                    <li><a href="#">«</a></li>
-                    <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
-                    <li><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#">4</a></li>
-                    <li><a href="#">5</a></li>
-                    <li><a href="#">»</a></li>
+                    <!--<li><a href="/">«</a></li>-->
+
+
+
+                            <!--<li class="active"><a href="/?page=1">1 <span class="sr-only"></span></a></li>-->
+                            <!--<li><a href="/?page=<%= parseInt(currentPage) +1 %>">next page</a></li>
+                            <li><a href="#">»</a></li>-->
                 </ul>
                 <!-- pagination end -->
 
             </div>
+
             <!-- main end -->
+
 
             <aside class="col-md-3">
                 <div class="siderbar">
@@ -163,12 +165,20 @@
 <!-- section start -->
 <!-- ================ -->
 
+<script>
+    function test(pageNumber) {
 
+        var page = "#page-" + pageNumber;
+        $('.selection').hide()
+        $(page).show()
+
+    }
+</script>
 <script type="text/javascript">
     $(document).ready(function() {
         var $container = $('#container');
         $container.imagesLoaded(function() {
-           $container.isotope({
+            $container.isotope({
                 masonry: {
                     columnWidth: ('.masonry-grid-item')
                 }
@@ -179,6 +189,14 @@
 
         $('.siderbar').sticky({
             topSpacing: 20
+        });
+
+        $('.pagination').pagination({
+            items: <%= count %>,
+            itemsOnPage: 30,
+            cssStyle: 'light-theme',
+            //onPageClick: function(pageNumber)
+
         });
 
 
@@ -199,5 +217,4 @@
           }*/
 
     });
-
 </script>
