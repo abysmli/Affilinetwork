@@ -39,9 +39,9 @@ module.exports = (function () {
                 currentpage: _this.params.currentPage,
                 totalpage: _this.params.totalPages
             });
-            
+
             writeIntoDatabase(_products);
-            
+
             if (_this.params.currentPage < _this.params.totalPages) {
                 _this.sync(_this.params.currentPage + 1);
             }
@@ -80,6 +80,11 @@ module.exports = (function () {
                     });
                 }
             });
+            if ((_this.params.currentPage === _this.params.totalPages) && (products.length === index + 1)) {
+                _this.socket.emit("sync_finished", {
+                    count: _this.params.count
+                });
+            }
         });
         return 0;
     }

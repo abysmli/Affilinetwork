@@ -17,6 +17,7 @@
     "mongoose": "*",
     "mongoose-auto-increment": "*",
     "basic-auth": "*",
-    "socket.io": "*"
+    "socket.io": "*",
+    "request": "*"
   }
 }

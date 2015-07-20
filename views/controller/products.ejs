@@ -93,6 +93,27 @@
     </tbody>
 </table>
 
+<div class="modal fade" id="processing_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Synchronizing</h4>
+            </div>
+            <div class="modal-body">
+                <div class="progress">
+                    <div id="progress_bar" class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" style="width: 0%">
+                        0%
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="done_button" type="button" class="btn btn-default" data-dismiss="modal">Done</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script>
     $(document).ready(function() {
         var socket = io.connect('http://localhost:3000/sync');
@@ -100,7 +121,7 @@
         socket.on('sync_process', function(data) {
             console.log(data);
         });
-        
+
         var dt = $('#product_table').DataTable({
             stateSave: true,
             lengthMenu: [
@@ -111,7 +132,7 @@
                 [1, "asc"]
             ]
         });
-        
+
         $("#remove_all").click(function(event) {
             if (!confirm('Remove All products?！')) {
                 event.preventDefault();
@@ -119,9 +140,21 @@
         });
 
         $('#sync_button').click(function(event) {
+            $('#done_button').hide();
+            $('#processing_modal').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
             socket.emit('sync', {
                 id: "<%= id %>",
                 type: "<%= type %>"
+            });
+            socket.on('sync_process', function(data){
+                setProgressBar(data.currentpage / data.totalpage);             
+            });
+            socket.on('sync_finished', function(data){
+                $("#progress_bar").html("Synchronizing finished! More than "+data.count+" Products added in Database.");
+                $('#done_button').fadeIn();
             });
         });
 
@@ -131,6 +164,12 @@
             window.location.href = $(this).data('href');
         });
         <% } %>
+            
+        function setProgressBar(value) {
+            var _value = (value * 100).toFixed(2)+"%";
+            $("#progress_bar").width(_value);
+            $("#progress_bar").html(_value);
+        }
     });
 
 </script>

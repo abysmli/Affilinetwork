@@ -213,22 +213,24 @@ router.post('/product/edit', function (req, res, next) {
 
 function productConvert(products) {
     var _products = [];
-    products.forEach(function (product, index) {
-        var _product = {
-            product_id: product.Id,
-            article_num: product.ArticleNumber,
-            ean: product.EAN,
-            title: product.Title,
-            brand: product.Brand,
-            shop_name: product.ShopInformation.ShopName,
-            price: product.Price,
-            shipping: product.Shipping,
-            link: product.DeepLink1,
-            category_path: product.CategoryPath,
-            image90: product.Image60.ImageUrl
-        }
-        _products.push(_product);
-    });
+    if (products !== undefined) {
+        products.forEach(function (product, index) {
+            var _product = {
+                product_id: product.Id,
+                article_num: product.ArticleNumber,
+                ean: product.EAN,
+                title: product.Title,
+                brand: product.Brand,
+                shop_name: product.ShopInformation.ShopName,
+                price: product.Price,
+                shipping: product.Shipping,
+                link: product.DeepLink1,
+                category_path: product.CategoryPath,
+                image90: product.Image60.ImageUrl
+            }
+            _products.push(_product);
+        });
+    }
     return _products;
 }
 

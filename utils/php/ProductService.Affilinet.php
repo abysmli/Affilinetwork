@@ -31,13 +31,13 @@ class ProductService extends Affilinet
 	public function GetCategoryList($shopId)
 	{
 		$params = array(
-		'ShopId' => $shopId
+            'ShopId' => $shopId
 		);
 
 		$this->soap_request = new SoapClient(WSDL_PS_WS);
 		$req = $this->soap_request->GetCategoryList(array(
-		'CredentialToken' => parent::getToken(),
-		'GetCategoryListRequestMessage' => $params
+            'CredentialToken' => parent::getToken(),
+            'GetCategoryListRequestMessage' => $params
 		));
 		return $req;
 	}
@@ -52,14 +52,14 @@ class ProductService extends Affilinet
 	public function GetCategoryPath($shopId,$categoryId)
 	{
 		$params = array(
-		'ShopId' => $shopId,
-		"CategoryId" => $categoryId
+            'ShopId' => $shopId,
+            "CategoryId" => $categoryId
 		);
 
 		$this->soap_request = new SoapClient(WSDL_PS_WS);
 		$req = $this->soap_request->GetCategoryPath(array(
-		'CredentialToken' => parent::getToken(),
-		'GetCategoryPathRequestMessage' => $params
+            'CredentialToken' => parent::getToken(),
+            'GetCategoryPathRequestMessage' => $params
 		));
 		return $req;
 	}
@@ -73,13 +73,13 @@ class ProductService extends Affilinet
 	public function GetProductDetail($productId)
 	{
 		$params = array(
-		'ProductId' => $productId
+            'ProductId' => $productId
 		);
 
 		$this->soap_request = new SoapClient(WSDL_PS_WS);
 		$req = $this->soap_request->GetProductDetail(array(
-		'CredentialToken' => parent::getToken(),
-		'GetProductDetailRequestMessage' => $params
+            'CredentialToken' => parent::getToken(),
+            'GetProductDetailRequestMessage' => $params
 		));
 		return $req;
 	}
@@ -149,24 +149,24 @@ class ProductService extends Affilinet
 	public function SearchProducts($shopIds=array(),$query='',$withImageOnly=false,$details=true,$imageSize='AllImages',$currentPage=1,$pageSize=10,$minPrice='0',$maxPrice='0',$sortBy='Rank',$sortOrder='Descending')
 	{
 		$params = array(
-		'ShopIds' => $shopIds,
-		'Query' => $query,
-		'WithImageOnly' => $withImageOnly,
-		'Details' => $details,
-		'ImageSize' => $imageSize,
-		'CurrentPage' => $currentPage,
-		'PageSize' => $pageSize,
-		'MinimumPrice' => $minPrice,
-		'MaximumPrice' => $maxPrice,
-		'SortBy' => $sortBy,
-		'SortOrder' => $sortOrder
+            'ShopIds' => $shopIds,
+            'Query' => $query,
+            'WithImageOnly' => $withImageOnly,
+            'Details' => $details,
+            'ImageSize' => $imageSize,
+            'CurrentPage' => $currentPage,
+            'PageSize' => $pageSize,
+            'MinimumPrice' => $minPrice,
+            'MaximumPrice' => $maxPrice,
+            'SortBy' => $sortBy,
+            'SortOrder' => $sortOrder
 		);
 
 		$this->soap_request = new SoapClient(WSDL_PS_WS);
 		
 		$req = $this->soap_request->SearchProducts(array(
-		'CredentialToken' => parent::getToken(),
-		'SearchProductsRequestMessage' => $params
+            'CredentialToken' => parent::getToken(),
+            'SearchProductsRequestMessage' => $params
 		));
 		
 		return $req;
@@ -193,26 +193,26 @@ class ProductService extends Affilinet
 	public function SearchProductsInCategories($shopIds=array(),$categoriesIds=array(),$useAffilinetCategories=false,$query='',$withImageOnly=false,$details=true,$imageSize='AllImages',$currentPage=1,$pageSize=10,$minPrice='0',$maxPrice='0',$sortBy='Rank',$sortOrder='Descending')
 	{
 		$params = array(
-		'ShopIds' => $shopIds,
-		'CategoryIds' => $categoriesIds,
-		'UseAffilinetCategories' => $useAffilinetCategories,
-		'Query' => $query,
-		'WithImageOnly' => $withImageOnly,
-		'Details' => $details,
-		'ImageSize' => $imageSize,
-		'CurrentPage' => $currentPage,
-		'PageSize' => $pageSize,
-		'MinimumPrice' => $minPrice,
-		'MaximumPrice' => $maxPrice,
-		'SortBy' => $sortBy,
-		'SortOrder' => $sortOrder
+            'ShopIds' => $shopIds,
+            'CategoryIds' => $categoriesIds,
+            'UseAffilinetCategories' => $useAffilinetCategories,
+            'Query' => $query,
+            'WithImageOnly' => $withImageOnly,
+            'Details' => $details,
+            'ImageSize' => $imageSize,
+            'CurrentPage' => $currentPage,
+            'PageSize' => $pageSize,
+            'MinimumPrice' => $minPrice,
+            'MaximumPrice' => $maxPrice,
+            'SortBy' => $sortBy,
+            'SortOrder' => $sortOrder
 		);
 
 
 		$this->soap_request = new SoapClient(WSDL_PS_WS);
 		$req = $this->soap_request->SearchProductsInCategories(array(
-		'CredentialToken' => parent::getToken(),
-		'SearchProductsInCategoriesRequestMessage' => $params
+            'CredentialToken' => parent::getToken(),
+            'SearchProductsInCategoriesRequestMessage' => $params
 		));
 		return $req;
 	}
@@ -239,27 +239,27 @@ class ProductService extends Affilinet
 	public function SearchProductsInCategory($shopId='',$categoryId='',$includeChildNodes=false,$useAffilinetCategories=false,$query='',$withImageOnly=false,$details=true,$imageSize='AllImages',$currentPage=1,$pageSize=10,$minPrice='0',$maxPrice='0',$sortBy='Rank',$sortOrder='Descending')
 	{
 		$params = array(
-		'ShopId' => $shopId,
-		'CategoryIds' => $categoryId,
-		'IncludeChildNodes' => $includeChildNodes,
-		'UseAffilinetCategories' => $useAffilinetCategories,
-		'Query' => $query,
-		'WithImageOnly' => $withImageOnly,
-		'Details' => $details,
-		'ImageSize' => $imageSize,
-		'CurrentPage' => $currentPage,
-		'PageSize' => $pageSize,
-		'MinimumPrice' => $minPrice,
-		'MaximumPrice' => $maxPrice,
-		'SortBy' => $sortBy,
-		'SortOrder' => $sortOrder
+            'ShopId' => $shopId,
+            'CategoryIds' => $categoryId,
+            'IncludeChildNodes' => $includeChildNodes,
+            'UseAffilinetCategories' => $useAffilinetCategories,
+            'Query' => $query,
+            'WithImageOnly' => $withImageOnly,
+            'Details' => $details,
+            'ImageSize' => $imageSize,
+            'CurrentPage' => $currentPage,
+            'PageSize' => $pageSize,
+            'MinimumPrice' => $minPrice,
+            'MaximumPrice' => $maxPrice,
+            'SortBy' => $sortBy,
+            'SortOrder' => $sortOrder
 		);
 
 
 		$this->soap_request = new SoapClient(WSDL_PS_WS);
 		$req = $this->soap_request->SearchProductsInCategory(array(
-		'CredentialToken' => parent::getToken(),
-		'SearchProductsInCategoryRequestMessage' => $params
+            'CredentialToken' => parent::getToken(),
+            'SearchProductsInCategoryRequestMessage' => $params
 		));
 		return $req;
 	}
