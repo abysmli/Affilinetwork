@@ -2,10 +2,10 @@
     <h1>Product Manage <small>Total Products: <%= counter %></small></h1>
     <% if(type == 'remote') { %>
         <a id="sync_button" class="btn btn-primary btn-sm" href="#">Synchronize</a>
-    <% } else { %>
-        <a id="update_button" class="btn btn-success btn-sm" href="#">Update</a>
-    <% } %>
-    <a id="remove_all" href="/controller/product/remove_all/" class="btn btn-danger btn-sm pull-right">Remove all</a>
+        <% } else { %>
+            <a id="update_button" class="btn btn-success btn-sm" href="#">Update</a>
+            <% } %>
+                <a id="remove_all" href="/controller/product/remove_all/" class="btn btn-danger btn-sm pull-right">Remove all</a>
 </div>
 
 <table id="product_table" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
@@ -22,8 +22,8 @@
             <th>Link</th>
             <th>Category</th>
             <% if(type != 'remote') { %>
-            <th>Translated</th>
-            <% } %>
+                <th>Translated</th>
+                <% } %>
         </tr>
     </thead>
     <tfoot>
@@ -39,8 +39,8 @@
             <th>Link</th>
             <th>Category</th>
             <% if(type != 'remote') { %>
-            <th>Translated</th>
-            <% } %>
+                <th>Translated</th>
+                <% } %>
         </tr>
     </tfoot>
 
@@ -49,10 +49,10 @@
             <tr>
                 <td>
                     <% if (type == 'remote') { %>
-                    <img src="<%= product.Images[0][1].URL %>">
-                    <% } else { %>
-                    <a href="/controller/product/edit?product_id=<%= product.ProductId %>"><img src="<%= product.Images[0][1].URL %>"></a>
-                    <% } %>
+                        <img src="<%= product.Images[0][1].URL %>">
+                        <% } else { %>
+                            <a href="/controller/product/edit?product_id=<%= product.ProductId %>"><img src="<%= product.Images[0][1].URL %>"></a>
+                            <% } %>
                 </td>
                 <td>
                     <%= product.ProductId %>
@@ -79,17 +79,18 @@
                     <a href="<%= product.Deeplink1 %>">Link</a>
                 </td>
                 <td>
-                    <%= product.AffilinetCategoryId %> | <%= product.ShopCategoryId %>
+                    <%= product.AffilinetCategoryId %> |
+                        <%= product.ShopCategoryId %>
                 </td>
                 <% if(type != 'remote') { %>
-                <td>
-                    <% if (product.Tranlated) { %>
-                    <span class="label label-primary">Translated</span>
-                    <% } else { %>
-                    <span class="label label-warning">Not Translated</span>
+                    <td>
+                        <% if (product.Tranlated) { %>
+                            <span class="label label-primary">Translated</span>
+                            <% } else { %>
+                                <span class="label label-warning">Not Translated</span>
+                                <% } %>
+                    </td>
                     <% } %>
-                </td>
-                <% } %>
             </tr>
             <% }) %>
     </tbody>
@@ -118,11 +119,7 @@
 
 <script>
     $(document).ready(function() {
-        var socket = io.connect('http://localhost:3000/sync');
-
-        socket.on('sync_process', function(data) {
-            console.log(data);
-        });
+        var socket = io.connect('http://localhost:3000/product');
 
         var dt = $('#product_table').DataTable({
             stateSave: true,
@@ -143,6 +140,7 @@
 
         $('#sync_button').click(function(event) {
             $('#done_button').hide();
+            $('#myModalLabel').text('Synchronizing');
             $('#processing_modal').modal({
                 backdrop: 'static',
                 keyboard: false
@@ -157,6 +155,23 @@
             });
             socket.on('sync_finished', function(data) {
                 $("#progress_bar").html("Synchronizing finished! More than " + data.count + " Products added in Database.");
+                $('#done_button').fadeIn();
+            });
+        });
+
+        $('#update_button').click(function(event) {
+            $('#done_button').hide();
+            $('#myModalLabel').text('Updating');
+            $('#processing_modal').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+            socket.emit('update', {});
+            socket.on('update_process', function(data) {
+                setProgressBar(data.segment_count / data.segment_length);
+            });
+            socket.on('update_finished', function(data) {
+                $("#progress_bar").html("Updating finished! " + data.count + " Products updated in Database.");
                 $('#done_button').fadeIn();
             });
         });

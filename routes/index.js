@@ -33,26 +33,33 @@ router.get('/', function (req, res, next) {
                     pageColum: pageColum,
                     currentPage: page,
                     products: products,
-                    layout: '/user_layout'
+                    layout: '/layout'
                 });
             }
         });
     });
 });
 
-router.get('/product_des', function (req, res, next) {
-    res.render('product_des', {
-        title: '德国打折商品, 产品描述',
-        layout: '/user_layout'
-
+router.get('/product', function (req, res, next) {
+    var query = Product.where({
+        ProductId: req.query.product_id
     });
-
+    query.findOne(function (err, product) {
+        res.render('product_details', {
+            title: '德国打折商品, 产品描述',
+            product: product,
+            layout: '/layout'
+        });
+    });
 });
 
 router.get('/test', function (req, res, next) {
 
-    Affilinet.searchProducts({ShopIds: 0, CategoryIds: 14}, function (error, response, body) {
-        res.json(body); 
+    Affilinet.searchProducts({
+        ShopIds: 0,
+        CategoryIds: 14
+    }, function (error, response, body) {
+        res.json(body);
     });
 });
 

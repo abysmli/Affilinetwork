@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-md-12">
                 <ol class="breadcrumb">
-                    <li><i class="fa fa-home pr-10"></i><a href="index.html">主页</a></li>
+                    <li><i class="fa fa-home pr-10"></i><a href="/">主页</a></li>
                     <li class="active">产品介绍</li>
                 </ol>
             </div>
@@ -25,7 +25,7 @@
 
                 <!-- page-title start -->
                 <!-- ================ -->
-                <h1 class="page-title margin-top-clear">松下剃须刀</h1>
+                <h1 class="page-title margin-top-clear"><%= product.ProductName %></h1>
                 <!-- page-title end -->
 
                 <div class="row">
@@ -36,25 +36,25 @@
                             <div class="tab-pane active" id="product-images">
                                 <div class="owl-carousel content-slider-with-controls-bottom">
                                     <div class="overlay-container outside">
-                                        <img src="/stylesheets/images/rasur/1.jpg" alt="">
-                                        <a href="/stylesheets/images/rasur/1.jpg" class="popup-img overlay" title="image title"><i class="fa fa-search-plus"></i></a>
+                                        <img src="<%= product.Images[0][0].URL %>" alt="">
+                                        <a href="<%= product.Images[0][0].URL %>" class="popup-img overlay" title="image title"><i class="fa fa-search-plus"></i></a>
                                     </div>
                                     <div class="overlay-container outside">
-                                        <img src="/stylesheets/images/rasur/2.jpg" alt="">
-                                        <a href="/stylesheets/images/rasur/2.jpg" class="popup-img overlay" title="image title"><i class="fa fa-search-plus"></i></a>
+                                        <img src="<%= product.Images[0][0].URL %>" alt="">
+                                        <a href="<%= product.Images[0][0].URL %>" class="popup-img overlay" title="image title"><i class="fa fa-search-plus"></i></a>
                                     </div>
                                     <div class="overlay-container outside">
-                                        <img src="/stylesheets/images/rasur/3.jpg" alt="">
-                                        <a href="/stylesheets/images/rasur/3.jpg" class="popup-img overlay" title="image title"><i class="fa fa-search-plus"></i></a>
+                                        <img src="<%= product.Images[0][0].URL %>" alt="">
+                                        <a href="<%= product.Images[0][0].URL %>" class="popup-img overlay" title="image title"><i class="fa fa-search-plus"></i></a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <!-- Tab panes end-->
                         <hr>
-                        <span class="price"><del>$159.00</del> $99.00</span>
+                        <span class="price"><%= product.PriceInformation.DisplayPrice %></span>
                         <div class="elements-list pull-right clearfix">
-                            <span>Go Shop</span>
+                            <a href="<%= product.Deeplink1 %>"><span>去买</span></a>
                             <span><i class="fa fa-star text-default"></i><i class="fa fa-star text-default"></i><i class="fa fa-star text-default"></i><i class="fa fa-star text-default"></i><i class="fa fa-star"></i></span>
                         </div>
                         <div class="clearfix"></div>
@@ -80,15 +80,15 @@
                                     <!-- Tab panes -->
                                     <div class="tab-content padding-top-clear padding-bottom-clear">
                                         <div class="tab-pane fade in active" id="h2tab1">
-                                            <h4 class="title">大大的标题</h4>
-                                            <p>产品描述信息填写在这里</p>
+                                            <h4 class="title"><%= product.ProductName %></h4>
+                                            <p><%= product.Description %></p>
                                         </div>
                                         <div class="tab-pane fade" id="h2tab2">
                                             <h4 class="space-top">规格参数</h4>
                                             <hr>
                                             <dl class="dl-horizontal">
                                                 <dt></dt>
-                                                    <dd>此处填入各项参数</dd>
+                                                <dd>此处填入各项参数</dd>
                                             </dl>
                                             <hr>
                                         </div>
@@ -98,7 +98,7 @@
                                                 <!-- comment start -->
                                                 <div class="comment clearfix">
                                                     <div class="comment-avatar">
-                                                        <img src="images/avatar.jpg" alt="avatar">
+                                                        <img src="images/avatar.png" alt="avatar">
                                                     </div>
                                                     <div class="comment-content">
                                                         <h3>太棒拉!</h3>
@@ -114,7 +114,7 @@
                                                 <!-- comment start -->
                                                 <div class="comment clearfix">
                                                     <div class="comment-avatar">
-                                                        <img src="images/avatar.jpg" alt="avatar">
+                                                        <img src="images/avatar.png" alt="avatar">
                                                     </div>
                                                     <div class="comment-content clearfix">
                                                         <h3>好厉害!</h3>
@@ -129,7 +129,7 @@
                                                 <!-- comment start -->
                                                 <div class="comment clearfix">
                                                     <div class="comment-avatar">
-                                                        <img src="images/avatar.jpg" alt="avatar">
+                                                        <img src="images/avatar.png" alt="avatar">
                                                     </div>
                                                     <div class="comment-content clearfix">
                                                         <h3>值得购买</h3>
