@@ -10,6 +10,20 @@
         </div>
     </div>
 </div>
+<div class="page-intro">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <ol class="breadcrumb">
+                    <li><i class="fa fa-th-large pr-10"></i>产品分类: </li>
+                    <li class="active">化妆品类</li>
+                    <li class="active">特价手机合同</li>
+                    <li class="active">酒类</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- banner end -->
 
 <!-- page-intro start-->
@@ -42,7 +56,7 @@
                         <div class="element col-lg-3 col-sm-6 masonry-grid-item">
                             <div class="listing-item">
                                 <div class="overlay-container">
-                                    <img src="<%= product.image %>" alt="">
+                                    <img src="<%= product.image %>" onerror="this.src= '/stylesheets/images/no-image.jpg';" />
                                     <a href="#" class="overlay small">
                                         <i class="fa fa-eye"></i>
                                         <span>查看详细介绍</span>
@@ -57,7 +71,7 @@
                                     <span class="price"><%= product.price + ' Euro'%></span>
                                     <div class="elements-list pull-right">
                                         <a href="#" class="wishlist" title="wishlist"><i class="fa fa-heart-o"></i></a>
-                                        <a href="#"><i class="fa fa-shopping-cart pr-10"></i>添加至购物车</a>
+                                        <a href="#"><i class="fa fa-gift pr-10"></i>点击查看</a>
                                     </div>
 
                                 </div>
@@ -195,6 +209,7 @@
             items: <%= count %>,
             itemsOnPage: 30,
             cssStyle: 'light-theme',
+            currentPage: <%= currentPage %>
             //onPageClick: function(pageNumber)
 
         });

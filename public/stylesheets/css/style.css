@@ -3263,6 +3263,7 @@ ul.pagination li > a:focus {
 	position: relative;
 	display: block;
 	overflow: hidden;
+    max-height: 250px;
 }
 .overlay {
 	position: absolute;
