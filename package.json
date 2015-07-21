@@ -18,6 +18,7 @@
     "mongoose-auto-increment": "*",
     "basic-auth": "*",
     "socket.io": "*",
-    "request": "*"
+    "request": "*",
+    "xml2js": "*"
   }
 }

@@ -9,6 +9,7 @@
             <th>Shop ID</th>
             <th>Shop Title</th>
             <th>Program ID</th>
+            <th>Shop Link</th>
             <th>Last Update</th>
         </tr>
     </thead>
@@ -19,6 +20,7 @@
             <th>Shop ID</th>
             <th>Shop Title</th>
             <th>Program ID</th>
+            <th>Shop Link</th>
             <th>Last Update</th>
         </tr>
     </tfoot>
@@ -27,22 +29,25 @@
         <% shops.forEach(function(shop, index) { %>
             <tr>
                 <td>
-                    <img src="<%= shop.LogoUrl %>">
+                    <a href="/controller/category?shopid=<%= shop.ShopId %>&shoptitle=<%= shop.ShopTitle %>"><img src="<%= shop.Logo.URL %>"></a>
                 </td>
                 <td>
-                    <a href="/controller/product?shopid=<%= shop.ShopId %>&type=shop&currentpage=1&pagesize=100"><%= shop.Products %></a>
+                    <%= shop.ProductCount %>
                 </td>
                 <td>
                     <%= shop.ShopId %>
                 </td>
                 <td>
-                    <%= shop.Title %>
+                    <%= shop.ShopTitle %>
                 </td>
                 <td>
                     <%= shop.ProgramId %>
                 </td>
                 <td>
-                    <%= shop.LastUpdate %>
+                    <a href="<%= shop.ShopLink %>">Shop Link</a>
+                </td>
+                <td>
+                    <%= (new Date(parseInt(shop.LastUpdate.substr(6)))).toISOString() %>
                 </td>
             </tr>
             <% }) %>
@@ -52,8 +57,12 @@
 <script>
     $(document).ready(function() {
         var dt = $('#order_table').DataTable({
-            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            lengthMenu: [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
             stateSave: true,
         });
     });
+
 </script>

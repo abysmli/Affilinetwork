@@ -1,0 +1,118 @@
+<div class="page-header">
+    <h1>Product Editor</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="row">
+            <div class="thumbnail">
+                <img data-original="<%= product.Images[0][0].URL %>" class="img-responsive">
+                <div class="caption">
+                    <h4><b>Product Name: </b><%= product.ProductName %></h4>
+                    <h4><b>Product Name(Chinese): </b><%= product.ProductName_cn %></h4>
+                    <p><b>Product ID:</b>
+                        <%= product.ProductId %>
+                    </p>
+                    <p><b>Score:</b>
+                        <%= product.Score %>
+                    </p>
+                    <p><b>Article Number:</b>
+                        <%= product.ArticleNumber %>
+                    </p>
+                    <p><b>EAN:</b>
+                        <%= product.EAN %>
+                    </p>
+                    <p><b>Brand:</b>
+                        <%= product.Brand %>
+                    </p>
+                    <p><b>Manufacturer:</b>
+                        <%= product.Manufacturer %>
+                    </p>
+                    <p><b>Distributor:</b>
+                        <%= product.Distributor %>
+                    </p>
+                    <p><b>Shop ID:</b>
+                        <%= product.ShopId %>
+                    </p>
+                    <p><b>Shop Name:</b>
+                        <%= product.ShopTitle %>
+                    </p>
+                    <p><b>Affilinet Category:</b>
+                        <%= product.AffilinetCategoryPath %>
+                    </p>
+                    <p><b>Shop Category:</b>
+                        <%= product.ShopCategoryPath %>
+                    </p>
+                    <div class="comment"><b>Description Short:</b>
+                        <%= product.DescriptionShort %>
+                    </div>
+                    <br/>
+                    <div class="comment"><b>Description:</b>
+                        <%= product.Description %>
+                    </div>
+                    <br/>
+                    <div class="comment"><b>Description Chinese Short:</b>
+                        <%= product.DescriptionShort_cn %>
+                    </div>
+                    <br/>
+                    <div class="comment"><b>Description Chinese:</b>
+                        <%= product.Description_cn %>
+                    </div>
+                    <br/>
+                    <p><b>Translated:</b>
+                        <%= product.Tranlated %>
+                    </p>
+                    <p><b>Price:</b>
+                        <%= product.PriceInformation.DisplayPrice %>
+                    </p>
+                    <p><b>Shipping Price:</b>
+                        <%= product.PriceInformation.DisplayShipping %>
+                    </p>
+                    <p><b>Key Words:</b>
+                        <%= product.Keywords %>
+                    </p>
+                    <p><b>Last Shop Update:</b>
+                        <%= (new Date(parseInt(product.LastShopUpdate.substr(6)))).toISOString() %>
+                    </p>
+                    <p><b>Last Product Change:</b>
+                        <%= (new Date(parseInt(product.LastProductChange.substr(6)))).toISOString() %>
+                    </p>
+                    <p><b>Update at:</b>
+                        <%= product.updated_at.toISOString() %>
+                    </p>
+                    <div><%= JSON.stringify(product.Properties) %></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <form method="post">
+            <div class="form-group">
+                <label for="product_name">中文名称</label>
+                <input type="text" name="product_name" class="form-control" placeholder="中文名称" id="product_name">
+            </div>
+            <div class="form-group">
+                <label for="product_desc_short">中文详细摘要</label>
+                <textarea class="form-control" rows="17" name="product_desc_short" placeholder="中文详细摘要" id="product_desc_short"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="product_desc">中文详细</label>
+                <textarea class="form-control" rows="17" name="product_desc" placeholder="中文详细" id="product_desc"></textarea>
+            </div>
+            <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-share-alt"></span> 翻译</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('.img-responsive').lazyload({});
+        $(".comment").shorten({
+            "showChars": 1000,
+            "moreText": "mehr",
+            "lessText": "zu",
+        });
+    });
+
+</script>

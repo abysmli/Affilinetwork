@@ -1,9 +1,9 @@
 var Product = require('../models/product.js');
-var Affilinet = require('../utils/affilinetapis.js');
+var affilinet = require('../utils/affilinetapis/affilinetapi.js');
 var Sync = require('../utils/synchronization.js');
 var setting = require('../setting.js');
 
-var affilinet = new Affilinet({
+var Affilinet = new affilinet({
     publisherId: setting.affilinet_setting.publisherId,
     productWebservicePassword: setting.affilinet_setting.productWebservicePassword,
     publisherWebservicePassword: setting.affilinet_setting.publisherWebservicePassword
@@ -12,7 +12,7 @@ var affilinet = new Affilinet({
 module.exports = function (io) {
     io.of('/sync').on("connection", function (socket) {
         socket.on('sync', function (data) {
-            var sync = new Sync(Product, affilinet, { type: data.type, id: data.id}, socket);
+            var sync = new Sync(Product, Affilinet, { type: data.type, shopid: data.shopid, categoryid: data.categoryid}, socket);
             sync.sync();
         });
     });

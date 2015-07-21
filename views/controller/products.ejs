@@ -1,14 +1,11 @@
 <div class="page-header">
-    <h1>Product Manage</h1>
-    <p>Total Products:
-        <%= counter %>
-    </p>
-    <% if(type != 'database') { %>
+    <h1>Product Manage <small>Total Products: <%= counter %></small></h1>
+    <% if(type == 'remote') { %>
         <a id="sync_button" class="btn btn-primary btn-sm" href="#">Synchronize</a>
-        <% } else { %>
-            <a id="update_button" class="btn btn-success btn-sm" href="#">Update</a>
-            <% } %>
-                <a id="remove_all" href="/controller/product/remove_all/" class="btn btn-danger btn-sm pull-right">Remove all</a>
+    <% } else { %>
+        <a id="update_button" class="btn btn-success btn-sm" href="#">Update</a>
+    <% } %>
+    <a id="remove_all" href="/controller/product/remove_all/" class="btn btn-danger btn-sm pull-right">Remove all</a>
 </div>
 
 <table id="product_table" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
@@ -22,10 +19,11 @@
             <th>Title</th>
             <th>Shop</th>
             <th>Price</th>
-            <th>Ship</th>
             <th>Link</th>
             <th>Category</th>
+            <% if(type != 'remote') { %>
             <th>Translated</th>
+            <% } %>
         </tr>
     </thead>
     <tfoot>
@@ -38,56 +36,60 @@
             <th>Title</th>
             <th>Shop</th>
             <th>Price</th>
-            <th>Ship</th>
             <th>Link</th>
             <th>Category</th>
+            <% if(type != 'remote') { %>
             <th>Translated</th>
+            <% } %>
         </tr>
     </tfoot>
 
     <tbody>
         <% products.forEach(function(product, index) { %>
-            <tr class='clickable-row' data-href='/controller/product/edit?product_id=<%= product.product_id %>'>
+            <tr>
                 <td>
-                    <img src="<%= product.image90 %>">
+                    <% if (type == 'remote') { %>
+                    <img src="<%= product.Images[0][1].URL %>">
+                    <% } else { %>
+                    <a href="/controller/product/edit?product_id=<%= product.ProductId %>"><img src="<%= product.Images[0][1].URL %>"></a>
+                    <% } %>
                 </td>
                 <td>
-                    <%= product.product_id %>
+                    <%= product.ProductId %>
                 </td>
                 <td>
-                    <%= product.article_num %>
+                    <%= product.ArticleNumber %>
                 </td>
                 <td>
-                    <%= product.ean %>
+                    <%= product.EAN %>
                 </td>
                 <td>
-                    <%= product.brand %>
+                    <%= product.Brand %>
                 </td>
                 <td>
-                    <%= product.title %>
+                    <%= product.ProductName %>
                 </td>
                 <td>
-                    <%= product.shop_name %>
+                    <%= product.ShopTitle %>
                 </td>
                 <td>
-                    <%= product.price %>
+                    <%= product.PriceInformation.DisplayPrice %>
                 </td>
                 <td>
-                    <%= product.shipping %>
+                    <a href="<%= product.Deeplink1 %>">Link</a>
                 </td>
                 <td>
-                    <a href="<%= product.link %>">Product Link</a>
+                    <%= product.AffilinetCategoryId %> | <%= product.ShopCategoryId %>
                 </td>
+                <% if(type != 'remote') { %>
                 <td>
-                    <%= product.category_path %>
+                    <% if (product.Tranlated) { %>
+                    <span class="label label-primary">Translated</span>
+                    <% } else { %>
+                    <span class="label label-warning">Not Translated</span>
+                    <% } %>
                 </td>
-                <td>
-                    <% if (product.tranlated) { %>
-                        <span class="label label-primary">Translated</span>
-                        <% } else { %>
-                            <span class="label label-warning">Not Translated</span>
-                            <% } %>
-                </td>
+                <% } %>
             </tr>
             <% }) %>
     </tbody>
@@ -146,27 +148,21 @@
                 keyboard: false
             });
             socket.emit('sync', {
-                id: "<%= id %>",
+                shopid: "<%= shopid %>",
+                categoryid: "<%= categoryid %>",
                 type: "<%= type %>"
             });
-            socket.on('sync_process', function(data){
-                setProgressBar(data.currentpage / data.totalpage);             
+            socket.on('sync_process', function(data) {
+                setProgressBar(data.currentpage / data.totalpage);
             });
-            socket.on('sync_finished', function(data){
-                $("#progress_bar").html("Synchronizing finished! More than "+data.count+" Products added in Database.");
+            socket.on('sync_finished', function(data) {
+                $("#progress_bar").html("Synchronizing finished! More than " + data.count + " Products added in Database.");
                 $('#done_button').fadeIn();
             });
         });
 
-        <% if(type == 'database') { %>
-        $('#product_table').on('click', 'tr', function() {
-            var url = $(this).data('href');
-            window.location.href = $(this).data('href');
-        });
-        <% } %>
-            
         function setProgressBar(value) {
-            var _value = (value * 100).toFixed(2)+"%";
+            var _value = (value * 100).toFixed(2) + "%";
             $("#progress_bar").width(_value);
             $("#progress_bar").html(_value);
         }

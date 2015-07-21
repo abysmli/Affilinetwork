@@ -51,7 +51,7 @@
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
-                        <li id="order_page"><a href="/controller/">Shops Manage<span class="sr-only">(current)</span></a></li>
+                        <li id="shop_page"><a href="/controller/">Shops Manage<span class="sr-only">(current)</span></a></li>
                         <li id="program_page"><a href="/controller/programs">Programs Manage</a></li>
                         <li id="category_page"><a href="/controller/category">Categories Manage</a></li>
                         <li id="product_page"><a href="/controller/product">Products Manage</a></li>
@@ -68,23 +68,23 @@
             var page_name = '<%= title %>';
             $(document).ready(function() {
                 if (page_name == 'Shops Manage') {
-                    $('li#order_page').addClass('active');
+                    $('li#shop_page').addClass('active');
                     $('li#program_page').removeClass('active');
                     $('li#product_page').removeClass('active');
                     $('li#category_page').removeClass('active');
                 } else if (page_name == 'Programs Manage'){
                     $('li#program_page').addClass('active');
-                    $('li#order_page').removeClass('active');
+                    $('li#shop_page').removeClass('active');
                     $('li#product_page').removeClass('active');
                     $('li#category_page').removeClass('active');
                 } else if (page_name == 'Catagory Manage') {
                     $('li#program_page').removeClass('active');
-                    $('li#order_page').removeClass('active');
+                    $('li#shop_page').removeClass('active');
                     $('li#product_page').removeClass('active');
                     $('li#category_page').addClass('active');
                 } else if (page_name == 'Programs Manage') {
                     $('li#program_page').removeClass('active');
-                    $('li#order_page').removeClass('active');
+                    $('li#shop_page').removeClass('active');
                     $('li#product_page').addClass('active');
                     $('li#category_page').removeClass('active');
                 }
