@@ -92,8 +92,9 @@ body {
     Height: 50px;
 }
 .outside {
-    width: 400px;
-    height: 300px;
+
+    max-height: 600px;
+    max-width: 600px;
     text-align: center;
     display: block;
     overflow: hidden;
