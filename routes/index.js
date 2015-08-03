@@ -28,7 +28,7 @@ router.get('/', function (req, res, next) {
             if (err != null) res.render('error');
             else {
                 res.render('index', {
-                    title: 'Home Page',
+                    title: '',
                     count: count,
                     pageColum: pageColum,
                     currentPage: page,
