@@ -5,6 +5,9 @@
         <% } else { %>
             <a id="update_button" class="btn btn-success btn-sm" href="#">Update</a>
             <% } %>
+                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#search_modal">
+                    Search
+                </button>
                 <a id="remove_all" href="/controller/product/remove_all/" class="btn btn-danger btn-sm pull-right">Remove all</a>
 </div>
 
@@ -49,9 +52,9 @@
             <tr>
                 <td>
                     <% if (type == 'remote') { %>
-                        <img src="<%= product.Images[0][1].URL %>">
+                        <img src="<%= (product.Images[0][1] !== undefined) ? product.Images[0][1].URL : null %>">
                         <% } else { %>
-                            <a href="/controller/product/edit?product_id=<%= product.ProductId %>"><img src="<%= product.Images[0][1].URL %>"></a>
+                            <a href="/controller/product/edit?product_id=<%= product.ProductId %>"><img src="<%= (product.Images[0][1] !== undefined) ? product.Images[0][1].URL : null %>"></a>
                             <% } %>
                 </td>
                 <td>
@@ -116,6 +119,36 @@
     </div>
 </div>
 
+<div class="modal fade" id="search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search Product</h4>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">EAN <span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">EAN</a></li>
+                            <li><a href="#">Brand</a></li>
+                            <li><a href="#">Manufacturer</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="#">Query</a></li>
+                        </ul>
+                    </div>
+                    <!-- /btn-group -->
+                    <input type="text" class="form-control" aria-label="...">
+                </div>
+                <!-- /input-group -->
+            </div>
+            <div class="modal-footer">
+                <button id="cancel_button" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button id="search_button" type="button" class="btn btn-primary">Search Product</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     $(document).ready(function() {
