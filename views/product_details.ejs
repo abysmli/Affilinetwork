@@ -35,18 +35,14 @@
                         <div class="tab-content clear-style">
                             <div class="tab-pane active" id="product-images">
                                 <div class="owl-carousel content-slider-with-controls-bottom">
-                                    <div class="overlay-container outside">
-                                        <img src="<%= product.Images[0][0].URL %>" alt="">
-                                        <a href="<%= product.Images[0][0].URL %>" class="popup-img overlay" title="image title"><i class="fa fa-search-plus"></i></a>
-                                    </div>
-                                    <div class="overlay-container outside">
-                                        <img src="<%= product.Images[0][0].URL %>" alt="">
-                                        <a href="<%= product.Images[0][0].URL %>" class="popup-img overlay" title="image title"><i class="fa fa-search-plus"></i></a>
-                                    </div>
-                                    <div class="overlay-container outside">
-                                        <img src="<%= product.Images[0][0].URL %>" alt="">
-                                        <a href="<%= product.Images[0][0].URL %>" class="popup-img overlay" title="image title"><i class="fa fa-search-plus"></i></a>
-                                    </div>
+                                    <% for (var i=0; i<product.Images.length; i++){ %>
+                                        <div class="overlay-container outside">
+                                            <img src="<%= product.Images[0][0].URL %>" alt="">
+                                            <a href="<%= product.Images[0][0].URL %>" class="popup-img overlay" title="image title"><i class="fa fa-search-plus"></i></a>
+                                        </div>
+
+                                        <% } %>
+
                                 </div>
                             </div>
                         </div>
@@ -57,7 +53,30 @@
                             <a href="<%= product.Deeplink1 %>"><span>去买</span></a>
                             <span><i class="fa fa-star text-default"></i><i class="fa fa-star text-default"></i><i class="fa fa-star text-default"></i><i class="fa fa-star text-default"></i><i class="fa fa-star"></i></span>
                         </div>
-                        <div class="clearfix"></div>
+                        <div class="clearfix">
+                            <table class="table table-striped">
+                                <tr>
+                                    <td>价格</td>
+                                    <td>商家</td>
+                                    <td>点击购买</td>
+                                </tr>
+                                <tr>
+                                    <td>166 Euro</td>
+                                    <td>Zalando</td>
+                                    <td><a href="http:\\www.zalando.de.com">入店购买</a></td>
+                                </tr>
+                                <tr>
+                                    <td>177 Euro</td>
+                                    <td>Footlocker</td>
+                                    <td><a href="http:\\www.zalando.de.com">入店购买</a></td>
+                                </tr>
+                                <tr>
+                                    <td>178 Euro</td>
+                                    <td>Snipes</td>
+                                    <td><a href="http:\\www.zalando.de.com">入店购买</a></td>
+                                </tr>
+                            </table>
+                        </div>
                         <hr>
                         <div class="row">
                             <form role="form">
@@ -81,7 +100,9 @@
                                     <div class="tab-content padding-top-clear padding-bottom-clear">
                                         <div class="tab-pane fade in active" id="h2tab1">
                                             <h4 class="title"><%= product.ProductName %></h4>
-                                            <p><%= product.Description %></p>
+                                            <p>
+                                                <%= product.Description %>
+                                            </p>
                                         </div>
                                         <div class="tab-pane fade" id="h2tab2">
                                             <h4 class="space-top">规格参数</h4>
