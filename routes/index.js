@@ -56,10 +56,12 @@ router.get('/product', function (req, res, next) {
 router.get('/test', function (req, res, next) {
     var query = {
         ShopIds: 0,
-        Query: "tft",
+        CategoryIds: 0,
+        Query: "",
         //FQ: "Title:Schule",
         FQ: "Brand:Sony",
-        FQ: "EAN:04901780681921"
+        CurrentPage: 1,
+        PageSize: 500,
     };
     Affilinet.searchProducts(query, function (error, response, results) {
         if (!error && response.statusCode == 200) {
