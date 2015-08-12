@@ -96,37 +96,51 @@
                             <div class="header-top-dropdown">
 
                                 <div class="btn-group dropdown">
-                                    <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> 登录</button>
-                                    <ul class="dropdown-menu dropdown-menu-right dropdown-animation">
-                                        <li>
-                                            <form class="login-form">
-                                                <div class="form-group has-feedback">
-                                                    <label class="control-label">用户名</label>
-                                                    <input type="text" class="form-control" placeholder="">
-                                                    <i class="fa fa-user form-control-feedback"></i>
-                                                </div>
-                                                <div class="form-group has-feedback">
-                                                    <label class="control-label">密码</label>
-                                                    <input type="password" class="form-control" placeholder="">
-                                                    <i class="fa fa-lock form-control-feedback"></i>
-                                                </div>
-                                                <button type="submit" class="btn btn-group btn-dark btn-sm">登入</button>
-                                                <span>or</span>
-                                                <button type="submit" class="btn btn-group btn-default btn-sm">点这里注册</button>
+                                    <% if(typeof user == 'undefined' ) { %>
+                                        <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i>登录</button>
+                                        <ul class="dropdown-menu dropdown-menu-right dropdown-animation">
+                                            <li>
+                                                <form class="login-form" action="/" method="post">
+                                                    <div class="form-group has-feedback">
+                                                        <label class="control-label">用户名</label>
+                                                        <input name="username" type="text" class="form-control" placeholder="">
+                                                        <i class="fa fa-user form-control-feedback"></i>
+                                                    </div>
+                                                    <div class="form-group has-feedback">
+                                                        <label class="control-label">密码</label>
+                                                        <input name="password" type="password" class="form-control" placeholder="">
+                                                        <i class="fa fa-lock form-control-feedback"></i>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-group btn-dark btn-sm">登入</button>
+                                                    <span>or</span>
+                                                    <a href="/sinup" role="button" class="btn btn-group btn-default btn-sm">点这里注册</a>
+                                                    <ul>
+                                                        <li><a href="#">忘记密码?</a></li>
+                                                    </ul>
+                                                    <div class="divider"></div>
+                                                    <span class="text-center">通过以下方式登录</span>
+                                                    <ul class="social-links clearfix">
+                                                        <li class="facebook"><a target="_blank" href="http://www.facebook.com"><i class="fa fa-facebook"></i></a></li>
+                                                        <li class="qq"><a target="_blank" href="http://plus.google.com"><i class="fa fa fa-qq"></i></a></li>
+                                                        <li class="wechat"><a target="_blank" href="http://plus.google.com"><i class="fa fa fa-weixin"></i></a></li>
+                                                    </ul>
+                                                </form>
+                                            </li>
+                                            <% } else { %>
 
-                                                <ul>
-                                                    <li><a href="#">忘记密码?</a></li>
+
+                                                <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i>
+                                                    <%= user.username %>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-left dropdown-animation">
+
+                                                    <button class="btn btn-group btn-dark btn-sm">查看购物券</button>
+                                                    <span>
+                                                    <p style="font-size: small"><a href="/logout">退出登录</a></p>
+                                                </span>
+
                                                 </ul>
-                                                <div class="divider"></div>
-                                                <span class="text-center">通过以下方式登录</span>
-                                                <ul class="social-links clearfix">
-                                                    <li class="facebook"><a target="_blank" href="http://www.facebook.com"><i class="fa fa-facebook"></i></a></li>
-                                                    <li class="qq"><a target="_blank" href="http://plus.google.com"><i class="fa fa fa-qq"></i></a></li>
-                                                    <li class="wechat"><a target="_blank" href="http://plus.google.com"><i class="fa fa fa-weixin"></i></a></li>
-                                                </ul>
-                                            </form>
-                                        </li>
-                                    </ul>
+                                                <% } %>
                                 </div>
                             </div>
                             <!--  header top dropdowns end -->

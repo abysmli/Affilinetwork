@@ -1,15 +1,25 @@
 var express = require('express');
 var partials = require('express-partials');
 var path = require('path');
+var mongoose = require('mongoose');
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
 var favicon = require('static-favicon');
+var flash = require('connect-flash');
 var logger = require('morgan');
+var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var controller = require('./routes/controller');
+var userlogin = require('./routes/userlogin');
 var basicAuth = require('basic-auth');
+var Account = require('./models/account.js');
 
 var app = express();
+
+//connect to our data-base
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -19,12 +29,26 @@ app.use(favicon());
 app.use(logger('dev'));
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ extended: false , limit: '50mb'}));
-app.use(cookieParser());
+app.use(cookieParser('your secret here'));
+app.use(session());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(partials());
 
+
+app.use(passport.initialize());
+app.use(passport.session()); // persistent login sessions
+
+
+passport.use(new LocalStrategy(Account.authenticate()));
+passport.serializeUser(Account.serializeUser());
+passport.deserializeUser(Account.deserializeUser());
+
+
+
+
 app.use('/', routes);
 app.use('/controller', controller);
+app.use('/sinup', userlogin);
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {
