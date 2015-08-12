@@ -6,7 +6,7 @@
     <div class="col-md-8">
         <div class="row">
             <div class="thumbnail">
-                <img data-original="<%= product.Images[0][0].URL %>" class="img-responsive">
+                <img data-original="<%= (product.Images[0][1] !== undefined) ? product.Images[0][1].URL : null %>" class="img-responsive">
                 <div class="caption">
                     <h4><b>Product Name: </b><%= product.ProductName %></h4>
                     <h4><b>Product Name(Chinese): </b><%= product.ProductName_cn %></h4>

@@ -16,7 +16,9 @@ module.exports = function (io) {
             var sync = new Sync(Product, Affilinet, {
                 type: data.type,
                 shopid: data.shopid,
-                categoryid: data.categoryid
+                categoryid: data.categoryid,
+                query: data.query || "",
+                fq: data.fq || "",
             }, socket);
             sync.sync();
         });

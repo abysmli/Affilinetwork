@@ -1,10 +1,13 @@
 <div class="page-header">
     <h1>Product Manage <small>Total Products: <%= counter %></small></h1>
-    <% if(type == 'remote') { %>
+    <% if(type != 'local') { %>
         <a id="sync_button" class="btn btn-primary btn-sm" href="#">Synchronize</a>
         <% } else { %>
             <a id="update_button" class="btn btn-success btn-sm" href="#">Update</a>
             <% } %>
+                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#search_modal">
+                    Search
+                </button>
                 <a id="remove_all" href="/controller/product/remove_all/" class="btn btn-danger btn-sm pull-right">Remove all</a>
 </div>
 
@@ -21,7 +24,7 @@
             <th>Price</th>
             <th>Link</th>
             <th>Category</th>
-            <% if(type != 'remote') { %>
+            <% if(type == 'local') { %>
                 <th>Translated</th>
                 <% } %>
         </tr>
@@ -38,7 +41,7 @@
             <th>Price</th>
             <th>Link</th>
             <th>Category</th>
-            <% if(type != 'remote') { %>
+            <% if(type == 'local') { %>
                 <th>Translated</th>
                 <% } %>
         </tr>
@@ -48,10 +51,10 @@
         <% products.forEach(function(product, index) { %>
             <tr>
                 <td>
-                    <% if (type == 'remote') { %>
-                        <img src="<%= product.Images[0][1].URL %>">
+                    <% if (type != "local") { %>
+                        <img src="<%= (product.Images[0][1] !== undefined) ? product.Images[0][1].URL : null %>">
                         <% } else { %>
-                            <a href="/controller/product/edit?product_id=<%= product.ProductId %>"><img src="<%= product.Images[0][1].URL %>"></a>
+                            <a href="/controller/product/edit?product_id=<%= product.ProductId %>"><img src="<%= (product.Images[0][1] !== undefined) ? product.Images[0][1].URL : null %>"></a>
                             <% } %>
                 </td>
                 <td>
@@ -82,7 +85,7 @@
                     <%= product.AffilinetCategoryId %> |
                         <%= product.ShopCategoryId %>
                 </td>
-                <% if(type != 'remote') { %>
+                <% if(type == 'local') { %>
                     <td>
                         <% if (product.Tranlated) { %>
                             <span class="label label-primary">Translated</span>
@@ -116,9 +119,41 @@
     </div>
 </div>
 
+<div class="modal fade" id="search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search Product</h4>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <div class="input-group-btn">
+                        <button type="button" id="search_selector" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">EAN <span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                            <li><a id="ean_se" href="#">EAN</a></li>
+                            <li><a id="brand_se" href="#">Brand</a></li>
+                            <li><a id="manu_se" href="#">Manufacturer</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a id="query_se" href="#">Query</a></li>
+                        </ul>
+                    </div>
+                    <!-- /btn-group -->
+                    <input type="text" class="form-control" aria-label="..." id="search_input">
+                </div>
+                <!-- /input-group -->
+            </div>
+            <div class="modal-footer">
+                <button id="cancel_button" type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button id="search_button" type="button" class="btn btn-primary">Search Product</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     $(document).ready(function() {
+        var search_selector = "EAN";
+
         var socket = io.connect('http://localhost:3000/product');
 
         var dt = $('#product_table').DataTable({
@@ -148,7 +183,11 @@
             socket.emit('sync', {
                 shopid: "<%= shopid %>",
                 categoryid: "<%= categoryid %>",
-                type: "<%= type %>"
+                type: "<%= type %>",
+                <% if (type == "search") { %>
+                query: "<%= query %>",
+                fq: "<%= fq %>",
+                <% } %>
             });
             socket.on('sync_process', function(data) {
                 setProgressBar(data.currentpage / data.totalpage);
@@ -180,6 +219,54 @@
             var _value = (value * 100).toFixed(2) + "%";
             $("#progress_bar").width(_value);
             $("#progress_bar").html(_value);
+        }
+        $("#search_button").click(function() {
+            var value = $("#search_input").val();
+            var data = {
+                search_type: search_selector,
+                search_value: value
+            }
+            post("/controller/product", data);
+        });
+
+        $("#ean_se").click(function() {
+            $("#search_selector").html("EAN <span class='caret'></span>");
+            search_selector = "EAN";
+        });
+        $("#brand_se").click(function() {
+            $("#search_selector").html("Brand <span class='caret'></span>");
+            search_selector = "Brand";
+        });
+        $("#manu_se").click(function() {
+            $("#search_selector").html("Manufacturer <span class='caret'></span>");
+            search_selector = "Manufacturer";
+        });
+        $("#query_se").click(function() {
+            $("#search_selector").html("Query <span class='caret'></span>");
+            search_selector = "Query";
+        });
+
+        function post(path, params, method) {
+            method = method || "post"; // Set method to post by default if not specified.
+
+            // The rest of this code assumes you are not using a library.
+            // It can be made less wordy if you use one.
+            var form = document.createElement("form");
+            form.setAttribute("method", method);
+            form.setAttribute("action", path);
+
+            for (var key in params) {
+                if (params.hasOwnProperty(key)) {
+                    var hiddenField = document.createElement("input");
+                    hiddenField.setAttribute("type", "hidden");
+                    hiddenField.setAttribute("name", key);
+                    hiddenField.setAttribute("value", params[key]);
+
+                    form.appendChild(hiddenField);
+                }
+            }
+            document.body.appendChild(form);
+            form.submit();
         }
     });
 

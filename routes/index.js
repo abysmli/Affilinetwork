@@ -104,12 +104,32 @@ router.get('/product', function (req, res, next) {
 });
 
 router.get('/test', function (req, res, next) {
-
-    Affilinet.searchProducts({
+    var query = {
         ShopIds: 0,
-        CategoryIds: 14
-    }, function (error, response, body) {
-        res.json(body);
+        CategoryIds: 0,
+        Query: "",
+        //FQ: "Title:Schule",
+        FQ: "Brand:Sony",
+        CurrentPage: 1,
+        PageSize: 500,
+    };
+    Affilinet.searchProducts(query, function (error, response, results) {
+        if (!error && response.statusCode == 200) {
+            var counter = results.ProductsSummary.TotalRecords;
+            var products = results.Products;
+            res.render('controller/products', {
+                title: 'Products Manage',
+                shopid: 0,
+                categoryid: 0,
+                type: 'remote',
+                counter: counter,
+                products: products,
+                layout: 'controller/layout'
+            });
+        } else {
+            console.log(JSON.stringify(response));
+            res.render('error');
+        }
     });
 });
 

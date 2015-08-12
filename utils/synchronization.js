@@ -11,8 +11,10 @@ module.exports = (function () {
         this.options = _options;
         this.socket = _socket;
         this.options.query = {
-            ShopIds: _options.shopid,
-            CategoryIds: _options.categoryid,
+            ShopIds: _options.shopid == "0" ? 0 : _options.shopid ,
+            CategoryIds: _options.categoryid == "0" ? 0 : _options.categoryid ,
+            Query: _options.query,
+            FQ: _options.fq,
             CurrentPage: 1,
             PageSize: 500
         }

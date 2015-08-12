@@ -114,6 +114,34 @@ router.get('/product', function (req, res, next) {
     }
 });
 
+router.post('/product', function (req, res, next) {
+    var query = {};
+    if (req.body.search_type == "Query") {
+        query.Query = req.body.search_value;
+    } else {
+        query.FQ = req.body.search_type+":"+req.body.search_value;
+    }
+    Affilinet.searchProducts(query, function (error, response, results) {
+        if (!error && response.statusCode == 200) {
+            var counter = results.ProductsSummary.TotalRecords;
+            var products = results.Products;
+            res.render('controller/products', {
+                title: 'Products Manage',
+                shopid: 0,
+                categoryid: 0,
+                query: query.Query || "",
+                fq: query.FQ || "",
+                type: 'search',
+                counter: counter,
+                products: products,
+                layout: 'controller/layout'
+            });
+        } else {
+            res.render('error');
+        }
+    });
+});
+
 router.get('/product/edit', function (req, res, next) {
     Product.findOne({
         ProductId: req.query.product_id
