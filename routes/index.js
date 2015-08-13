@@ -3,6 +3,10 @@ var router = express.Router();
 var Product = require('../models/product.js');
 var affilinet = require('../utils/affilinetapis/affilinetapi.js');
 var request = require("request");
+var Account = require("../models/account.js");
+var passport = require('passport'),
+    LocalStrategy = require('passport-local').Strategy;
+
 var setting = require('../setting.js');
 var parseString = require('xml2js').parseString;
 
@@ -11,6 +15,25 @@ var Affilinet = new affilinet({
     productWebservicePassword: setting.affilinet_setting.productWebservicePassword,
     publisherWebservicePassword: setting.affilinet_setting.publisherWebservicePassword
 });
+
+passport.use(new LocalStrategy(
+    function (username, password, done) {
+        User.findOne({
+            username: username
+        }, function (err, user) {
+            if (err) {
+                return done(err);
+            }
+            if (!user) {
+                return done(null, false);
+            }
+            if (!user.verifyPassword(password)) {
+                return done(null, false);
+            }
+            return done(null, user);
+        });
+    }
+));
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -33,12 +56,39 @@ router.get('/', function (req, res, next) {
                     pageColum: pageColum,
                     currentPage: page,
                     products: products,
-                    layout: '/layout'
+                    user: req.user,
+                    layout: 'layout'
+
                 });
             }
         });
     });
 });
+
+
+//login
+router.post('/', passport.authenticate('local', {failureRedirect: '/login', layout: 'layout', title: '错误登录信息'}), function (req, res) {
+    res.redirect('/');
+
+});
+
+router.get('/login', function (req, res){
+    res.render('userlogin/login', {
+        title: '登录',
+        layout: 'layout',
+        info: '用户名或密码错误, 请重新填写',
+        user: req.user
+
+    });
+
+});
+
+//logout
+router.get('/logout', function(req, res){
+    req.logout();
+    res.redirect('/');
+});
+
 
 router.get('/product', function (req, res, next) {
     var query = Product.where({
@@ -81,5 +131,9 @@ router.get('/test', function (req, res, next) {
         res.json(_products);
     });
 });
+
+
+
+
 
 module.exports = router;

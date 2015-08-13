@@ -1,6 +1,5 @@
 var mongoose = require('mongoose');
 var setting = require('../setting.js');
-
 mongoose.connect('mongodb://localhost/'+setting.database);
 
 var ProductSchema = new mongoose.Schema({
@@ -61,5 +60,6 @@ var ProductSchema = new mongoose.Schema({
 	Tranlated: { type: Boolean, default: false },
 	updated_at: { type: Date, default: Date.now }
 });
+
 
 module.exports = mongoose.model('Product', ProductSchema);
