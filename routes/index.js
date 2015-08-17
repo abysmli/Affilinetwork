@@ -40,8 +40,9 @@ router.get('/', function (req, res, next) {
     var page = req.query.page;
     var pageColum;
     Product.count({}, function (err, count) {
+
         pageColum = count / 30;
-        Product.find({}, null, {
+        Product.find({},null, {
             limit: 30,
             skip: (page - 1) * 30,
             sort: {
@@ -70,6 +71,16 @@ router.get('/', function (req, res, next) {
 router.post('/', passport.authenticate('local', {failureRedirect: '/login', layout: 'layout', title: '错误登录信息'}), function (req, res) {
     res.redirect('/');
 
+});
+
+router.post('/filter', function(req, res, next){
+    if(req.body.maxprice === '' || req.body.minprice === '')
+        res.redirect('/');
+    else{
+        Product.findOne({PriceInformation: {Currency: "Euro"}}).count(function(err, count){
+            console.log(count);
+        });
+    }
 });
 
 router.get('/login', function (req, res){

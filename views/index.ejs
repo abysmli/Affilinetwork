@@ -88,8 +88,8 @@
 
 
 
-                            <!--<li class="active"><a href="/?page=1">1 <span class="sr-only"></span></a></li>-->
-                            <!--<li><a href="/?page=<%= parseInt(currentPage) +1 %>">next page</a></li>
+                    <!--<li class="active"><a href="/?page=1">1 <span class="sr-only"></span></a></li>-->
+                    <!--<li><a href="/?page=<%= parseInt(currentPage) +1 %>">next page</a></li>
                             <li><a href="#">»</a></li>-->
                 </ul>
                 <!-- pagination end -->
@@ -97,78 +97,78 @@
             </div>
 
             <!-- main end -->
-
-
             <aside class="col-md-3">
-                <div class="siderbar">
-                    <div class="body clearfixed">
-                        <h3>筛选</h3>
-
-                        <div class="sorting-filters">
-                            <form>
-                                <div class="form-group">
-                                    <label>种类</label>
-                                    <select class="form-control">
-                                        <option selected="selected">保健品</option>
-                                        <option>婴儿食品</option>
-                                        <option>服装</option>
-                                        <option>男士用品</option>
-                                        <option>女性商品</option>
-                                        <option>电子产品</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>价格区间</label>
-                                    <div class="row grid-space-10">
-                                        <div class="col-sm-6">
-                                            <input type="text" class="form-control" value='最低价格'>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <input type="text" class="form-control col-xs-6" value='最高价格'>
+                <form role="form" action="/filter" method="post">
+                    <div class="siderbar">
+                        <div class="body clearfixed">
+                            <h3>筛选</h3>
+                            <div class="sorting-filters">
+                                <form>
+                                    <div class="form-group">
+                                        <label>种类</label>
+                                        <select class="form-control">
+                                            <option selected="selected">保健品</option>
+                                            <option>婴儿食品</option>
+                                            <option>服装</option>
+                                            <option>男士用品</option>
+                                            <option>女性商品</option>
+                                            <option>电子产品</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>价格区间</label>
+                                        <div class="row grid-space-10">
+                                            <div class="col-sm-6">
+                                                <input type="text" name="minprice" class="form-control" placeholder='最低价格'>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <input type="text" name="maxprice" class="form-control col-xs-6" placeholder='最高价格'>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>排序</label>
-                                    <select class="form-control">
-                                        <option selected="selected">按日期</option>
-                                        <option>按价格</option>
-                                        <option>按评价</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <a href="#" class="btn btn-default">确认</a>
-                                </div>
-                            </form>
+                                    <div class="form-group">
+                                        <label>排序</label>
+                                        <select class="form-control">
+                                            <option selected="selected">按日期</option>
+                                            <option>按价格</option>
+                                            <option>按评价</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-default">确认</a>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
-                    </div>
-                    <div class="block clearfix">
-                        <h3>品牌</h3>
-                        <form role="form" class="form-list">
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" value=""> Sony 摄像机<small>(16)</small>
-                                </label>
-                            </div>
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" value=""> Hugo Boss西服<small>(78)</small>
-                                </label>
-                            </div>
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" value=""> LV 系列奢侈品 <small>(47)</small>
-                                </label>
-                            </div>
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox" value=""> 德国双心保养品<small>(12)</small>
-                                </label>
-                            </div>
-                        </form>
-                    </div>
+                </form>
+                <div class="block clearfix">
+                    <h3>品牌</h3>
+                    <form role="form" class="form-list">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" value=""> Sony 摄像机<small>(16)</small>
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" value=""> Hugo Boss西服<small>(78)</small>
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" value=""> LV 系列奢侈品 <small>(47)</small>
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" value=""> 德国双心保养品<small>(12)</small>
+                            </label>
+                        </div>
+                    </form>
+                </div>
                 </div>
             </aside>
+
 
         </div>
     </div>
@@ -209,7 +209,7 @@
             itemsOnPage: 30,
             cssStyle: 'light-theme',
             currentPage: <%= currentPage %>
-            //onPageClick: function(pageNumber)
+                //onPageClick: function(pageNumber)
 
         });
 
