@@ -74,11 +74,15 @@ router.post('/', passport.authenticate('local', {failureRedirect: '/login', layo
 });
 
 router.post('/filter', function(req, res, next){
+    var productcount = 0
     if(req.body.maxprice === '' || req.body.minprice === '')
         res.redirect('/');
     else{
-        Product.findOne({PriceInformation: {Currency: "Euro"}}).count(function(err, count){
-            console.log(count);
+        Product.find({}, null, function(err, products){
+            if(err != null) res.render('error')
+            else{
+
+            }
         });
     }
 });
