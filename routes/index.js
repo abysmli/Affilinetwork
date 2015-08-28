@@ -110,7 +110,21 @@ router.post('/', passport.authenticate('local', {
     res.redirect('/');
 });
 
-router.get('/login', function (req, res) {
+router.post('/filter', function(req, res, next){
+    var productcount = 0
+    if(req.body.maxprice === '' || req.body.minprice === '')
+        res.redirect('/');
+    else{
+        Product.find({}, null, function(err, products){
+            if(err != null) res.render('error')
+            else{
+
+            }
+        });
+    }
+});
+
+router.get('/login', function (req, res){
     res.render('userlogin/login', {
         title: '登录',
         layout: 'layout',
