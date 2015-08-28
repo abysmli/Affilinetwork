@@ -25,7 +25,7 @@
 
                 <!-- page-title start -->
                 <!-- ================ -->
-                <h1 class="page-title margin-top-clear"><%= product.ProductName %></h1>
+                <h1 class="page-title margin-top-clear"><%= product.ProductName_cn %></h1>
                 <!-- page-title end -->
 
                 <div class="row">
@@ -60,21 +60,17 @@
                                     <td>商家</td>
                                     <td>点击购买</td>
                                 </tr>
-                                <tr>
-                                    <td>166 Euro</td>
-                                    <td>Zalando</td>
-                                    <td><a href="http:\\www.zalando.de.com">入店购买</a></td>
-                                </tr>
-                                <tr>
-                                    <td>177 Euro</td>
-                                    <td>Footlocker</td>
-                                    <td><a href="http:\\www.zalando.de.com">入店购买</a></td>
-                                </tr>
-                                <tr>
-                                    <td>178 Euro</td>
-                                    <td>Snipes</td>
-                                    <td><a href="http:\\www.zalando.de.com">入店购买</a></td>
-                                </tr>
+                                <% products.forEach(function(product, index) { %>
+                                    <tr>
+                                        <td>
+                                            <%= product.PriceInformation.PriceDetails.Price %>
+                                        </td>
+                                        <td>
+                                            <%= product.ShopTitle %>
+                                        </td>
+                                        <td><a href="<%= product.Deeplink1 %>">入店购买</a></td>
+                                    </tr>
+                                    <% }) %>
                             </table>
                         </div>
                         <hr>
@@ -99,9 +95,9 @@
                                     <!-- Tab panes -->
                                     <div class="tab-content padding-top-clear padding-bottom-clear">
                                         <div class="tab-pane fade in active" id="h2tab1">
-                                            <h4 class="title"><%= product.ProductName %></h4>
+                                            <h4 class="title"><%= product.ProductName_cn %></h4>
                                             <p>
-                                                <%= product.Description %>
+                                                <%= product.Description_cn %>
                                             </p>
                                         </div>
                                         <div class="tab-pane fade" id="h2tab2">
