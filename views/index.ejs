@@ -63,15 +63,16 @@
 
                                 </div>
                                 <div class="listing-item-body clearfix">
-                                    <h3 class="title"><a href="/product?product_id=<%= product.ProductId %>"><%= product.ProductName %></a></h3>
-                                    <p>
-                                        <%= product.Description_cn %>
-                                    </p>
-                                    <span class="price"><%= product.PriceInformation.DisplayPrice %></span>
-                                    <div class="elements-list pull-right">
-                                        <a href="#" class="wishlist" title="wishlist"><i class="fa fa-heart-o"></i></a>
-                                        <a href="/product?product_id=<%= product.ProductId %>"><i class="fa fa-gift pr-10"></i>点击查看</a>
-                                    </div>
+                                    <h3 class="title"><a href="/product?product_id=<%= product.ProductId %>"><%= product.ProductName_cn %></a></h3>
+                                    <% if (product.Price.length == 1 || Math.min.apply(null, product.Price) == Math.max.apply(null, product.Price)) { %>
+                                        <span class="price" style="font-size: 20px"><%= product.Price[0] %> €</span>
+                                        <% } else { %>
+                                            <span class="price" style="font-size: 20px"><%= Math.min.apply(null,product.Price) %> - <%= Math.max.apply(null,product.Price) %> €</span>
+                                            <% } %>
+                                                <div class="elements-list pull-right">
+                                                    <a href="#" class="wishlist" title="wishlist"><i class="fa fa-heart-o"></i></a>
+                                                    <a href="/product?product_id=<%= product.ProductId %>"><i class="fa fa-gift pr-10"></i>点击查看</a>
+                                                </div>
 
                                 </div>
                             </div>
@@ -186,6 +187,7 @@
         $(page).show()
 
     }
+
 </script>
 <script type="text/javascript">
     $(document).ready(function() {
@@ -231,4 +233,5 @@
           }*/
 
     });
+
 </script>

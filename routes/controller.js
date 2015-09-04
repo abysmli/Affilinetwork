@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var auth = require('../models/auth.js');
-var affilinet = require('../utils/affilinetapis/affilinetapi.js');
+var affilinet = require('../utils/affilinetapi.js');
 var Product = require('../models/product.js');
 var setting = require('../setting.js');
 

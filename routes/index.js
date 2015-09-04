@@ -1,7 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var Product = require('../models/product.js');
-var affilinet = require('../utils/affilinetapis/affilinetapi.js');
+var affilinet = require('../utils/affilinetapi.js');
+var utils = require('../utils/utils.js');
 var request = require("request");
 var Account = require("../models/account.js");
 var passport = require('passport'),
@@ -37,40 +38,76 @@ passport.use(new LocalStrategy(
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-    var page = req.query.page;
-    var pageColum;
+    var Utils = new utils();
+    var page = req.query.page || 1;
     Product.count({}, function (err, count) {
-
-        pageColum = count / 30;
-        Product.find({},null, {
-            limit: 30,
-            skip: (page - 1) * 30,
-            sort: {
-                updated_at: -1
-            }
-        }, function (err, products) {
-            if (err != null) res.render('error');
-            else {
-                res.render('index', {
-                    title: '',
-                    count: count,
-                    pageColum: pageColum,
-                    currentPage: page,
-                    products: products,
-                    user: req.user,
-                    layout: 'layout'
-
-                });
-            }
-        });
+        var pageColum = count / 50;
+        Product.aggregate(
+            [
+                {
+                    "$match": {
+                        //Tranlated: true,
+                        EAN: {
+                            $ne: null
+                        }
+                    },
+                },
+                {
+                    "$group": {
+                        _id: "$EAN",
+                        ProductId: {
+                            $first: "$ProductId"
+                        },
+                        Images: {
+                            $first: "$Images"
+                        },
+                        ProductName_cn: {
+                            $first: "$ProductName_cn"
+                        },
+                        Price: {
+                            $push: "$PriceInformation.PriceDetails.Price"
+                        },
+                    }
+                },
+                {
+                    "$skip": (page - 1) * 50,
+                },
+                {
+                    "$limit": 50
+                },
+                {
+                    "$sort": {
+                        updated_at: -1
+                    }
+                }
+            ],
+            function (err, products) {
+                if (err != null) {
+                    console.log(JSON.stringify(err));
+                    res.render('error');
+                } else {
+                    res.render('index', {
+                        title: '',
+                        count: count,
+                        pageColum: pageColum,
+                        currentPage: page,
+                        products: products,
+                        user: req.user,
+                        layout: 'layout'
+                    });
+                }
+            });
     });
 });
 
 
 //login
-router.post('/', passport.authenticate('local', {failureRedirect: '/login', layout: 'layout', title: '错误登录信息'}), function (req, res) {
+router.post('/', passport.authenticate('local', {
+    failureRedirect: '/login',
+    layout: 'layout',
+    title: '错误登录信息'
+}), function (req, res) {
     res.redirect('/');
-
 });
 
 router.post('/filter', function(req, res, next){
@@ -94,7 +131,7 @@ router.get('/login', function (req, res){
 });
 
 //logout
-router.get('/logout', function(req, res){
+router.get('/logout', function (req, res) {
     req.logout();
     res.redirect('/');
 });
@@ -102,48 +139,37 @@ router.get('/logout', function(req, res){
 
 router.get('/product', function (req, res, next) {
     var query = Product.where({
-        ProductId: req.query.product_id
+        ProductId: req.query.product_id,
     });
-    query.findOne(function (err, product) {
-        res.render('product_details', {
-            title: '德国打折商品, 产品描述',
-            product: product,
-            layout: '/layout'
+    query.findOne(function (err, _product) {
+        Product.find({
+            EAN: _product.EAN
+        }, null, function (err, _products) {
+            console.log(_products);
+            if (err != null) res.render('error');
+            else {
+                res.render('product_details', {
+                    title: '德国打折商品, 产品描述',
+                    product: _product,
+                    products: _products,
+                    layout: '/layout'
+                });
+            }
         });
+
     });
 });
 
 router.get('/test', function (req, res, next) {
-    /*Affilinet.getTransactions({StartDate: new Date("2000-01-01"), EndDate: new Date()}, function (error, response, results) {
+    Affilinet.getAllPrograms({Query:"Phone"}, function (error, response, results) {
         if (!error && response.statusCode == 200) {
-            parseString(results, {ignoreAttrs: true, mergeAttrs: true}, function (err, result) {
+            parseString(results, {ignoreAttrs: true, mergeAttrs: true, explicitArray: false}, function (err, result) {
                 res.json(result);
             });
         } else {
             res.json(response);
         }
-    });*/
-    Product.find({
-        EAN: {
-            $ne: null
-        }
-    }, null, function (err, products) {
-        var _products = [];
-        products.forEach(function (product, index) {
-            _products.push({
-                ProductId: product.ProductId,
-                Image: product.Images[0][0].URL,
-                ProductName_cn: product.ProductName_cn,
-                DisplayPrice: [product.PriceInformation.DisplayPrice],
-                EAN: product.EAN
-            });
-        });
-        res.json(_products);
     });
 });
-
-
-
-
 
 module.exports = router;
