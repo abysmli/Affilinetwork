@@ -74,17 +74,12 @@ router.post('/', passport.authenticate('local', {failureRedirect: '/login', layo
 });
 
 router.post('/filter', function(req, res, next){
-    var productcount = 0
-    if(req.body.maxprice === '' || req.body.minprice === '')
-        res.redirect('/');
-    else{
-        Product.find({}, null, function(err, products){
-            if(err != null) res.render('error')
-            else{
-
-            }
-        });
-    }
+    Product.aggregate([
+    {
+        $match: {$ne: null}
+    }], function(err, result){
+        console.log(result);
+    });
 });
 
 router.get('/login', function (req, res){
