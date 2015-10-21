@@ -111,12 +111,15 @@ router.post('/', passport.authenticate('local', {
 });
 
 router.post('/filter', function(req, res, next){
-    Product.aggregate([
-    {
-        $match: {$ne: null}
-    }], function(err, result){
-        console.log(result);
+    var category = req.body.category;
+    var minprice = req.body.minprice;
+    var maxprice = req.body.maxprice;
+    var page = req.query.page || 1;
+    Product.count({}, function(err, count){
+
+
     });
+
 });
 
 router.get('/login', function (req, res){
