@@ -86,6 +86,7 @@ router.get('/', function (req, res, next) {
                     console.log(JSON.stringify(err));
                     res.render('error');
                 } else {
+                    console.log(JSON.stringify(products));
                     res.render('index', {
                         title: '',
                         count: count,
