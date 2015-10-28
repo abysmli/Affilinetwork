@@ -110,99 +110,12 @@
                                             <hr>
                                         </div>
                                         <div class="tab-pane fade" id="h2tab3">
-                                            <!-- UY BEGIN -->
-                                            <div id="uyan_frame" style="margin-top:100px"></div>
-                                            <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2054563"></script>
-                                            <!-- UY END -->
+                                            <!-- 多说评论框 start -->
+                                            <div class="ds-thread" data-thread-key="<% product._id %>" data-title="<% product.ProductName %>" data-url="<% product_link %>"></div>
+                                            <!-- 多说评论框 end -->
 
                                         </div>
 
-                                        <div class="tab-pane fade" id="h2tab4">
-                                            <!-- comments start -->
-                                            <div class="comments margin-clear space-top">
-                                                <!-- comment start -->
-                                                <div class="comment clearfix">
-                                                    <div class="comment-avatar">
-                                                        <img src="images/avatar.png" alt="avatar">
-                                                    </div>
-                                                    <div class="comment-content">
-                                                        <h3>太棒拉!</h3>
-                                                        <div class="comment-meta"> <i class="fa fa-star text-default"></i> <i class="fa fa-star text-default"></i> <i class="fa fa-star text-default"></i> <i class="fa fa-star text-default"></i> <i class="fa fa-star"></i> | Today, 12:31</div>
-                                                        <div class="comment-body clearfix">
-                                                            <a href="blog-post.html" class="btn btn-gray more pull-right"><i class="fa fa-reply"></i> Reply</a>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                                <!-- comment end -->
-
-                                                <!-- comment start -->
-                                                <div class="comment clearfix">
-                                                    <div class="comment-avatar">
-                                                        <img src="images/avatar.png" alt="avatar">
-                                                    </div>
-                                                    <div class="comment-content clearfix">
-                                                        <h3>好厉害!</h3>
-                                                        <div class="comment-meta"> <i class="fa fa-star text-default"></i> <i class="fa fa-star text-default"></i> <i class="fa fa-star text-default"></i> <i class="fa fa-star text-default"></i> <i class="fa fa-star text-default"></i> | Oct 15</div>
-                                                        <div class="comment-body">
-                                                            <a href="blog-post.html" class="btn btn-gray more pull-right"><i class="fa fa-reply"></i> Reply</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!-- comment end -->
-
-                                                <!-- comment start -->
-                                                <div class="comment clearfix">
-                                                    <div class="comment-avatar">
-                                                        <img src="images/avatar.png" alt="avatar">
-                                                    </div>
-                                                    <div class="comment-content clearfix">
-                                                        <h3>值得购买</h3>
-                                                        <div class="comment-meta"> <i class="fa fa-star text-default"></i> <i class="fa fa-star text-default"></i> <i class="fa fa-star text-default"></i> <i class="fa fa-star"></i> <i class="fa fa-star"></i> | Sep 25</div>
-                                                        <div class="comment-body">
-                                                            <a href="blog-post.html" class="btn btn-gray more pull-right"><i class="fa fa-reply"></i> Reply</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!-- comment end -->
-
-                                            </div>
-                                            <!-- comments end -->
-
-                                            <!-- comments form start -->
-                                            <div class="comments-form">
-                                                <h2 class="title">添加您的反馈</h2>
-                                                <form role="form" id="comment-form">
-                                                    <div class="form-group has-feedback">
-                                                        <label for="name4">昵称</label>
-                                                        <input type="text" class="form-control" id="name4" placeholder="" name="name4" required>
-                                                        <i class="fa fa-user form-control-feedback"></i>
-                                                    </div>
-                                                    <div class="form-group has-feedback">
-                                                        <label for="subject4">标题</label>
-                                                        <input type="text" class="form-control" id="subject4" placeholder="" name="subject4" required>
-                                                        <i class="fa fa-pencil form-control-feedback"></i>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label>评分</label>
-                                                        <select class="form-control" id="review">
-                                                            <option value="five">5</option>
-                                                            <option value="four">4</option>
-                                                            <option value="three">3</option>
-                                                            <option value="two">2</option>
-                                                            <option value="one">1</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="form-group has-feedback">
-                                                        <label for="message4">信息</label>
-                                                        <textarea class="form-control" rows="8" id="message4" placeholder="" name="message4" required></textarea>
-                                                        <i class="fa fa-envelope-o form-control-feedback"></i>
-                                                    </div>
-                                                    <input type="submit" value="Submit" class="btn btn-default">
-                                                </form>
-                                            </div>
-                                            <!-- comments form end -->
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -217,19 +130,24 @@
         </div>
     </div>
 </section>
-<!-- main-container end -->
 
-<!-- section start -->
-<!-- ================ -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    var duoshuoQuery = {
+        short_name: "icedeer",
+        sso: {
+            login: "http://www.icedeer.net:8818/login",
+            logout: "http://www.icedeer.net:8818/logout"
+        }
 
-<!-- section end -->
-
-<!-- section start -->
-<!-- ================ -->
-
-<!-- section end -->
-
-<!-- section start -->
-<!-- ================ -->
-
-<!-- section end -->
+    };
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';
+        ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end -->

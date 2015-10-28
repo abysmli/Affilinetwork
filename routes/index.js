@@ -7,6 +7,7 @@ var request = require("request");
 var Account = require("../models/account.js");
 var passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy;
+var Duoshuo = require('duoshuo')
 
 var setting = require('../setting.js');
 var parseString = require('xml2js').parseString;
@@ -35,6 +36,10 @@ passport.use(new LocalStrategy(
         });
     }
 ));
+
+
+
+
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -86,7 +91,7 @@ router.get('/', function (req, res, next) {
                     console.log(JSON.stringify(err));
                     res.render('error');
                 } else {
-                    console.log(JSON.stringify(products));
+                    //console.log(JSON.stringify(products));
                     res.render('index', {
                         title: '',
                         count: count,
@@ -109,21 +114,24 @@ router.post('/', passport.authenticate('local', {
     title: '错误登录信息'
 }), function (req, res) {
     res.redirect('/');
+
 });
 
-router.post('/filter', function(req, res, next){
+
+
+router.post('/filter', function (req, res, next) {
     var category = req.body.category;
     var minprice = req.body.minprice;
     var maxprice = req.body.maxprice;
     var page = req.query.page || 1;
-    Product.count({}, function(err, count){
+    Product.count({}, function (err, count) {
 
 
     });
 
 });
 
-router.get('/login', function (req, res){
+router.get('/login', function (req, res) {
     res.render('userlogin/login', {
         title: '登录',
         layout: 'layout',
@@ -131,7 +139,6 @@ router.get('/login', function (req, res){
         user: req.user
 
     });
-
 });
 
 //logout
@@ -149,14 +156,16 @@ router.get('/product', function (req, res, next) {
         Product.find({
             EAN: _product.EAN
         }, null, function (err, _products) {
-            console.log(_products);
+            console.log(req.user);
             if (err != null) res.render('error');
             else {
                 res.render('product_details', {
                     title: '德国打折商品, 产品描述',
                     product: _product,
+                    product_link: req.url,
                     products: _products,
-                    layout: '/layout'
+                    layout: '/layout',
+                    user: req.user
                 });
             }
         });
@@ -165,9 +174,15 @@ router.get('/product', function (req, res, next) {
 });
 
 router.get('/test', function (req, res, next) {
-    Affilinet.getAllPrograms({Query:"Phone"}, function (error, response, results) {
+    Affilinet.getAllPrograms({
+        Query: "Phone"
+    }, function (error, response, results) {
         if (!error && response.statusCode == 200) {
-            parseString(results, {ignoreAttrs: true, mergeAttrs: true, explicitArray: false}, function (err, result) {
+            parseString(results, {
+                ignoreAttrs: true,
+                mergeAttrs: true,
+                explicitArray: false
+            }, function (err, result) {
                 res.json(result);
             });
         } else {
@@ -175,5 +190,12 @@ router.get('/test', function (req, res, next) {
         }
     });
 });
+
+function isLogggedIn(req, res, next){
+    if(req.isAuthenticated())
+        return next();
+    res.redirect('/');
+}
+
 
 module.exports = router;
