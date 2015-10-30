@@ -98,7 +98,7 @@
                                 <div class="btn-group dropdown">
                                     <% if(typeof user == 'undefined' ) { %>
                                         <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i>登录</button>
-                                        <ul class="dropdown-menu dropdown-menu-right dropdown-animation ds-login">
+                                        <ul class="dropdown-menu dropdown-menu-right dropdown-animation">
                                             <li>
                                                 <form class="login-form" action="/" method="post">
                                                     <div class="form-group has-feedback ">
@@ -124,6 +124,9 @@
                                                         <li class="qq"><a target="_blank" href="http://plus.google.com"><i class="fa fa fa-qq"></i></a></li>
                                                         <li class="wechat"><a target="_blank" href="http://plus.google.com"><i class="fa fa fa-weixin"></i></a></li>
                                                     </ul>
+                                                    <div class="divider"></div>
+                                                    <div class="ds-login"></div>
+
                                                 </form>
                                             </li>
                                             <% } else { %>
