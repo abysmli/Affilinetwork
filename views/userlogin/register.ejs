@@ -8,6 +8,9 @@
         <div class="form-group">
             <input type="password" name="password" placeholder="登录密码" class="form-control" id="password_input" />
         </div>
+        <div class="form-group">
+            <input type="email" name="emailadress" placeholder="邮箱地址" class="form-control" id="email_input" />
+        </div>
         <div class = "form-group">
             <button type="submit" class="btn btn-success" id="submit_button">注册</button>
             <a href="/">
@@ -29,6 +32,10 @@
             }
             if ($("#password_input").val() == "") {
                 alert("请正确输入密码");
+                e.preventDefault();
+            }
+            if ($("#email_input").val() == "") {
+                alert("请输入邮箱");
                 e.preventDefault();
             }
         });

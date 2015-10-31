@@ -7,7 +7,7 @@ var request = require("request");
 var Account = require("../models/account.js");
 var passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy;
-var Duoshuo = require('duoshuo')
+var Duoshuo = require('duoshuo');
 
 var setting = require('../setting.js');
 var parseString = require('xml2js').parseString;

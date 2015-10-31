@@ -6,6 +6,7 @@ var connection = mongoose.createConnection('mongodb://localhost/affilinet');
 
 var Account = new mongoose.Schema({
     username: String,
+    usermail: String,
     password: String
 });
 

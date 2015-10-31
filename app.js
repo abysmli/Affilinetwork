@@ -13,6 +13,7 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var controller = require('./routes/controller');
 var userlogin = require('./routes/userlogin');
+var passwordreset = require('./routes/passwordreset');
 var basicAuth = require('basic-auth');
 var Account = require('./models/account.js');
 
@@ -38,7 +39,6 @@ app.use(partials());
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 
-
 passport.use(new LocalStrategy(Account.authenticate()));
 passport.serializeUser(Account.serializeUser());
 passport.deserializeUser(Account.deserializeUser());
@@ -49,6 +49,7 @@ passport.deserializeUser(Account.deserializeUser());
 app.use('/', routes);
 app.use('/controller', controller);
 app.use('/sinup', userlogin);
+app.use('/password_reset', passwordreset);
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {

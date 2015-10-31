@@ -1,0 +1,30 @@
+<div class="container">
+    <h3> <%= info %> </h3>
+    <br/>
+    <form role="form" action="/password_reset" method="post" style="max-width: 300px;">
+        <div class="form-group">
+            <input type="email" name="emailadress" placeholder="邮箱地址" class="form-control" id="email_input"/>
+        </div>
+
+        <button type="submit" class="btn btn-success">找回密码</button>
+        <a href="/">
+            <button type="button" class="btn btn-primary">取消</button>
+        </a>
+    </form>
+    <br/>
+    <h4></h4>
+</div>
+
+<script>
+    $(document).ready(function() {
+
+        $("#email_input").submit(function(e) {
+
+            if ($("#email_input").val() == "") {
+                alert("请输入正确的邮箱地址");
+                e.preventDefault();
+            }
+            }
+        });
+    });
+</script>
