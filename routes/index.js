@@ -8,6 +8,7 @@ var Account = require("../models/account.js");
 var passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy;
 var Duoshuo = require('duoshuo');
+var stormpath = require('stormpath')
 
 var setting = require('../setting.js');
 var parseString = require('xml2js').parseString;
@@ -108,7 +109,16 @@ router.get('/', function (req, res, next) {
 
 
 //login
-router.post('/', passport.authenticate('local', {
+/*router.post('/', passport.authenticate('local', {
+    failureRedirect: '/login',
+    layout: 'layout',
+    title: '错误登录信息'
+}), function (req, res) {
+    res.redirect('/');
+
+});*/
+
+router.post('/', passport.authenticate('stormpath', {
     failureRedirect: '/login',
     layout: 'layout',
     title: '错误登录信息'
@@ -190,12 +200,6 @@ router.get('/test', function (req, res, next) {
         }
     });
 });
-
-function isLogggedIn(req, res, next){
-    if(req.isAuthenticated())
-        return next();
-    res.redirect('/');
-}
 
 
 module.exports = router;

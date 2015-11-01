@@ -1,5 +1,6 @@
 var express = require('express');
 var fs = require('fs');
+
 var router = express.Router();
 
 var forgot = require('password-reset')({
@@ -21,19 +22,12 @@ router.get("/", function(req, res){
     });
 });
 
-router.post("/", function(req, res){
+/*router.post("/", function(req, res){
     var email = req.body.emailadress;
 
-    var reset = forgot(email, function(err){
-        if(err) res.end('Error sending Message:' +err);
-        else res.end('Check your inbox')
-    });
 
-    reset.on('request', function(req_, res_){
-        req_.session.reset = {email: email, id: reset.id};
-        fs.createReadStream(__dirname + '/forgot.html').pipe(res_);
-    });
-});
+
+});*/
 
 
 
