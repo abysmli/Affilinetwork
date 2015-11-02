@@ -6,25 +6,27 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
-    "express": "*",
-    "static-favicon": "~1.0.0",
-    "morgan": "~1.0.0",
-    "cookie-parser": "~1.0.1",
+    "basic-auth": "*",
     "body-parser": "~1.0.0",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "~1.0.1",
     "debug": "~0.7.4",
     "ejs": "~0.8.5",
+    "express": "*",
     "express-partials": "*",
+    "express-session": "^1.0.4",
     "mongoose": "*",
     "mongoose-auto-increment": "*",
-    "passport": "~0.1.17",
+    "morgan": "~1.0.0",
+    "passport": "^0.1.18",
     "passport-local": "~0.1.6",
     "passport-local-mongoose": "*",
-    "basic-auth": "*",
-    "connect-flash": "~0.1.1",
-    "socket.io": "*",
+    "passport-stormpath": "^0.2.4",
     "request": "*",
-    "xml2js": "*",
-    "express-session": "~1.0.0",
-    "aws-lib": "*"
+    "aws-lib": "*",
+    "socket.io": "*",
+    "static-favicon": "~1.0.0",
+    "stormpath": "^0.13.4",
+    "xml2js": "*"
   }
 }

@@ -6,8 +6,9 @@ var utils = require('../utils/utils.js');
 var request = require("request");
 var Account = require("../models/account.js");
 var passport = require('passport'),
-LocalStrategy = require('passport-local').Strategy;
-
+    LocalStrategy = require('passport-local').Strategy;
+var Duoshuo = require('duoshuo');
+var stormpath = require('stormpath');
 var setting = require('../setting.js');
 var parseString = require('xml2js').parseString;
 
@@ -38,6 +39,10 @@ passport.use(new LocalStrategy(
         });
     }
     ));
+
+
+
+
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -83,50 +88,62 @@ router.get('/', function (req, res, next) {
                         updated_at: -1
                     }
                 }
-                ],
-                function (err, products) {
-                    if (err != null) {
-                        console.log(JSON.stringify(err));
-                        res.render('error');
-                    } else {
-                        console.log(JSON.stringify(products));
-                        res.render('index', {
-                            title: '',
-                            count: count,
-                            pageColum: pageColum,
-                            currentPage: page,
-                            products: products,
-                            user: req.user,
-                            layout: 'layout'
-                        });
-                    }
-                });
-});
+            ],
+            function (err, products) {
+                if (err != null) {
+                    console.log(JSON.stringify(err));
+                    res.render('error');
+                } else {
+                    //console.log(JSON.stringify(products));
+                    res.render('index', {
+                        title: '',
+                        count: count,
+                        pageColum: pageColum,
+                        currentPage: page,
+                        products: products,
+                        user: req.user,
+                        layout: 'layout'
+                    });
+                }
+            });
+    });
 });
 
 
 //login
-router.post('/', passport.authenticate('local', {
+/*router.post('/', passport.authenticate('local', {
     failureRedirect: '/login',
     layout: 'layout',
     title: '错误登录信息'
 }), function (req, res) {
     res.redirect('/');
+
+});*/
+
+router.post('/', passport.authenticate('stormpath', {
+    failureRedirect: '/login',
+    layout: 'layout',
+    title: '错误登录信息'
+}), function (req, res) {
+    res.redirect('/');
+
 });
 
-router.post('/filter', function(req, res, next){
+
+
+router.post('/filter', function (req, res, next) {
     var category = req.body.category;
     var minprice = req.body.minprice;
     var maxprice = req.body.maxprice;
     var page = req.query.page || 1;
-    Product.count({}, function(err, count){
+    Product.count({}, function (err, count) {
 
 
     });
 
 });
 
-router.get('/login', function (req, res){
+router.get('/login', function (req, res) {
     res.render('userlogin/login', {
         title: '登录',
         layout: 'layout',
@@ -134,7 +151,6 @@ router.get('/login', function (req, res){
         user: req.user
 
     });
-
 });
 
 //logout
@@ -152,14 +168,16 @@ router.get('/product', function (req, res, next) {
         Product.find({
             EAN: _product.EAN
         }, null, function (err, _products) {
-            console.log(_products);
+            console.log(req.user);
             if (err != null) res.render('error');
             else {
                 res.render('product_details', {
                     title: '德国打折商品, 产品描述',
                     product: _product,
+                    product_link: req.url,
                     products: _products,
-                    layout: '/layout'
+                    layout: '/layout',
+                    user: req.user
                 });
             }
         });
@@ -168,11 +186,9 @@ router.get('/product', function (req, res, next) {
 });
 
 router.get('/test', function (req, res, next) {
-    
     prodAdv.call("ItemLookup", {ItemId: "B00W8W5DJQ", ResponseGroup: "Offers"}, function(err, result) {
         res.json(result);
-    });
-/*
+    /*
     var query = {};
     query.FQ = "Brand:Sony";
 
@@ -180,5 +196,6 @@ router.get('/test', function (req, res, next) {
         res.json(results);
     });*/
 });
+
 
 module.exports = router;

@@ -1271,6 +1271,7 @@ tbody {
 .blogpost.full .overlay-container {
 	margin-bottom: 20px;
 
+
 }
 
 /* Small devices (tablets, phones less than 767px) */
@@ -1773,6 +1774,7 @@ tbody {
 	border: 1px solid #f1f1f1;
 	position: relative;
 	overflow: hidden;
+    text-align: center;
 }
 .listing-item-body {
 	padding: 20px 15px 15px;
@@ -3261,9 +3263,11 @@ ul.pagination li > a:focus {
 }
 .overlay-container {
 	position: relative;
-	display: block;
-	overflow: hidden;
-    max-height: 500px;
+    display: inline-block;
+	text-align: center;
+
+    height: 300px;
+    width: 300px;
 }
 .overlay {
 	position: absolute;

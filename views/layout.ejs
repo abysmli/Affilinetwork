@@ -101,7 +101,7 @@
                                         <ul class="dropdown-menu dropdown-menu-right dropdown-animation">
                                             <li>
                                                 <form class="login-form" action="/" method="post">
-                                                    <div class="form-group has-feedback">
+                                                    <div class="form-group has-feedback ">
                                                         <label class="control-label">用户名</label>
                                                         <input name="username" type="text" class="form-control" placeholder="">
                                                         <i class="fa fa-user form-control-feedback"></i>
@@ -113,9 +113,9 @@
                                                     </div>
                                                     <button type="submit" class="btn btn-group btn-dark btn-sm">登入</button>
                                                     <span>or</span>
-                                                    <a href="/sinup" role="button" class="btn btn-group btn-default btn-sm">点这里注册</a>
+                                                    <a href="/register" role="button" class="btn btn-group btn-default btn-sm">点这里注册</a>
                                                     <ul>
-                                                        <li><a href="#">忘记密码?</a></li>
+                                                        <li><a href="/password_reset">忘记密码?</a></li>
                                                     </ul>
                                                     <div class="divider"></div>
                                                     <span class="text-center">通过以下方式登录</span>
@@ -124,6 +124,9 @@
                                                         <li class="qq"><a target="_blank" href="http://plus.google.com"><i class="fa fa fa-qq"></i></a></li>
                                                         <li class="wechat"><a target="_blank" href="http://plus.google.com"><i class="fa fa fa-weixin"></i></a></li>
                                                     </ul>
+                                                    <div class="divider"></div>
+                                                    <div class="ds-login"></div>
+
                                                 </form>
                                             </li>
                                             <% } else { %>
