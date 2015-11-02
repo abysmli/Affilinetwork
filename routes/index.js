@@ -6,10 +6,13 @@ var utils = require('../utils/utils.js');
 var request = require("request");
 var Account = require("../models/account.js");
 var passport = require('passport'),
-    LocalStrategy = require('passport-local').Strategy;
+LocalStrategy = require('passport-local').Strategy;
 
 var setting = require('../setting.js');
 var parseString = require('xml2js').parseString;
+
+var aws = require('aws-lib');
+var prodAdv = aws.createProdAdvClient('AKIAIXMHRQX5VHGPA2AQ', 'l4QqJxXYbyiiAFnTXnFkJy87zT2l2mhOBFoDRQfu', 'ba0f6-21');
 
 var Affilinet = new affilinet({
     publisherId: setting.affilinet_setting.publisherId,
@@ -34,7 +37,7 @@ passport.use(new LocalStrategy(
             return done(null, user);
         });
     }
-));
+    ));
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -44,8 +47,8 @@ router.get('/', function (req, res, next) {
         var pageColum = count / 50;
         Product.aggregate(
             [
-                {
-                    "$match": {
+            {
+                "$match": {
                         //Tranlated: true,
                         EAN: {
                             $ne: null
@@ -80,25 +83,25 @@ router.get('/', function (req, res, next) {
                         updated_at: -1
                     }
                 }
-            ],
-            function (err, products) {
-                if (err != null) {
-                    console.log(JSON.stringify(err));
-                    res.render('error');
-                } else {
-                    console.log(JSON.stringify(products));
-                    res.render('index', {
-                        title: '',
-                        count: count,
-                        pageColum: pageColum,
-                        currentPage: page,
-                        products: products,
-                        user: req.user,
-                        layout: 'layout'
-                    });
-                }
-            });
-    });
+                ],
+                function (err, products) {
+                    if (err != null) {
+                        console.log(JSON.stringify(err));
+                        res.render('error');
+                    } else {
+                        console.log(JSON.stringify(products));
+                        res.render('index', {
+                            title: '',
+                            count: count,
+                            pageColum: pageColum,
+                            currentPage: page,
+                            products: products,
+                            user: req.user,
+                            layout: 'layout'
+                        });
+                    }
+                });
+});
 });
 
 
@@ -165,15 +168,17 @@ router.get('/product', function (req, res, next) {
 });
 
 router.get('/test', function (req, res, next) {
-    Affilinet.getAllPrograms({Query:"Phone"}, function (error, response, results) {
-        if (!error && response.statusCode == 200) {
-            parseString(results, {ignoreAttrs: true, mergeAttrs: true, explicitArray: false}, function (err, result) {
-                res.json(result);
-            });
-        } else {
-            res.json(response);
-        }
+    
+    prodAdv.call("ItemLookup", {ItemId: "B00W8W5DJQ", ResponseGroup: "Offers"}, function(err, result) {
+        res.json(result);
     });
+/*
+    var query = {};
+    query.FQ = "Brand:Sony";
+
+    Affilinet.searchProducts(query, function (error, response, results) {
+        res.json(results);
+    });*/
 });
 
 module.exports = router;

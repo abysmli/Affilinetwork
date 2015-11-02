@@ -15,15 +15,14 @@
     <thead>
         <tr>
             <th>Image</th>
-            <th>ID</th>
-            <th>Num.</th>
-            <th>EAN</th>
-            <th>Brand</th>
             <th>Title</th>
-            <th>Shop</th>
+            <th>Brand</th>
             <th>Price</th>
-            <th>Link</th>
-            <th>Category</th>
+            <th>URL</th>
+            <th>EAN</th>
+            <th>ASIN</th>
+            <th>Keywords</th>
+            <th>Source</th>
             <% if(type == 'local') { %>
                 <th>Translated</th>
                 <% } %>
@@ -32,15 +31,14 @@
     <tfoot>
         <tr>
             <th>Image</th>
-            <th>ID</th>
-            <th>Num.</th>
-            <th>EAN</th>
-            <th>Brand</th>
             <th>Title</th>
-            <th>Shop</th>
+            <th>Brand</th>
             <th>Price</th>
-            <th>Link</th>
-            <th>Category</th>
+            <th>URL</th>
+            <th>EAN</th>
+            <th>ASIN</th>
+            <th>Keywords</th>
+            <th>Source</th>
             <% if(type == 'local') { %>
                 <th>Translated</th>
                 <% } %>
@@ -52,38 +50,34 @@
             <tr>
                 <td>
                     <% if (type != "local") { %>
-                        <img src="<%= (product.Images[0][1] !== undefined) ? product.Images[0][1].URL : null %>">
+                        <img src="<%= product.ProductImage %>" style="max-width: 100px; max-height: 100px">
                         <% } else { %>
-                            <a href="/controller/product/edit?product_id=<%= product.ProductId %>"><img src="<%= (product.Images[0][1] !== undefined) ? product.Images[0][1].URL : null %>"></a>
+                            <a href="/controller/product/edit?product_id=<%= product.ProductId %>"><img src="<%= product.ProductImage %>"></a>
                             <% } %>
                 </td>
                 <td>
-                    <%= product.ProductId %>
-                </td>
-                <td>
-                    <%= product.ArticleNumber %>
-                </td>
-                <td>
-                    <%= product.EAN %>
+                    <%= product.Title %>
                 </td>
                 <td>
                     <%= product.Brand %>
                 </td>
                 <td>
-                    <%= product.ProductName %>
+                    <%= product.Price %>
                 </td>
                 <td>
-                    <%= product.ShopTitle %>
+                    <a href="<%= product.URL %>">Link</a>
                 </td>
                 <td>
-                    <%= product.PriceInformation.DisplayPrice %>
+                    <%= product.EAN %>
                 </td>
                 <td>
-                    <a href="<%= product.Deeplink1 %>">Link</a>
+                    <%= product.ASIN %>
                 </td>
                 <td>
-                    <%= product.AffilinetCategoryId %> |
-                        <%= product.ShopCategoryId %>
+                    <%= product.Keywords %>
+                </td>
+                <td>
+                    <%= product.Source %>
                 </td>
                 <% if(type == 'local') { %>
                     <td>
@@ -131,8 +125,7 @@
                         <button type="button" id="search_selector" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">EAN <span class="caret"></span></button>
                         <ul class="dropdown-menu">
                             <li><a id="ean_se" href="#">EAN</a></li>
-                            <li><a id="brand_se" href="#">Brand</a></li>
-                            <li><a id="manu_se" href="#">Manufacturer</a></li>
+                            <li><a id="asin_se" href="#">ASIN</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a id="query_se" href="#">Query</a></li>
                         </ul>
@@ -234,13 +227,9 @@
             $("#search_selector").html("EAN <span class='caret'></span>");
             search_selector = "EAN";
         });
-        $("#brand_se").click(function() {
-            $("#search_selector").html("Brand <span class='caret'></span>");
-            search_selector = "Brand";
-        });
-        $("#manu_se").click(function() {
-            $("#search_selector").html("Manufacturer <span class='caret'></span>");
-            search_selector = "Manufacturer";
+        $("#asin_se").click(function() {
+            $("#search_selector").html("ASIN <span class='caret'></span>");
+            search_selector = "ASIN";
         });
         $("#query_se").click(function() {
             $("#search_selector").html("Query <span class='caret'></span>");

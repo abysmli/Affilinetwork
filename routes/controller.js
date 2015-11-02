@@ -4,12 +4,15 @@ var auth = require('../models/auth.js');
 var affilinet = require('../utils/affilinetapi.js');
 var Product = require('../models/product.js');
 var setting = require('../setting.js');
-
+var utils = require('../utils/utils.js');
+var Utils = new utils();
 var Affilinet = new affilinet({
     publisherId: setting.affilinet_setting.publisherId,
     productWebservicePassword: setting.affilinet_setting.productWebservicePassword,
     publisherWebservicePassword: setting.affilinet_setting.publisherWebservicePassword
 });
+var aws = require('aws-lib');
+var prodAdv = aws.createProdAdvClient('AKIAIXMHRQX5VHGPA2AQ', 'l4QqJxXYbyiiAFnTXnFkJy87zT2l2mhOBFoDRQfu', 'ba0f6-21');
 
 /* GET users listing. */
 router.get('/', auth, function (req, res, next) {
@@ -75,7 +78,8 @@ router.get('/product', function (req, res, next) {
         Affilinet.searchProducts(query, function (error, response, results) {
             if (!error && response.statusCode == 200) {
                 var counter = results.ProductsSummary.TotalRecords;
-                var products = results.Products;
+                var products = Utils.fromAffilinetToLocalProducts(results.Products);
+
                 res.render('controller/products', {
                     title: 'Products Manage',
                     shopid: req.query.shopid,
@@ -115,31 +119,69 @@ router.get('/product', function (req, res, next) {
 });
 
 router.post('/product', function (req, res, next) {
+    var affilinetFlag = false, amazonFlag = false;
     var query = {};
     if (req.body.search_type == "Query") {
+        affilinetFlag = true;
+        amazonFlag = true;
         query.Query = req.body.search_value;
-    } else {
+    } else if (req.body.search_type == "ASIN") {
+        amazonFlag = true;
+    } else if (req.body.search_type == "EAN") {
+        affilinetFlag = true;
         query.FQ = req.body.search_type+":"+req.body.search_value;
     }
-    Affilinet.searchProducts(query, function (error, response, results) {
-        if (!error && response.statusCode == 200) {
-            var counter = results.ProductsSummary.TotalRecords;
-            var products = results.Products;
-            res.render('controller/products', {
-                title: 'Products Manage',
-                shopid: 0,
-                categoryid: 0,
-                query: query.Query || "",
-                fq: query.FQ || "",
-                type: 'search',
-                counter: counter,
-                products: products,
-                layout: 'controller/layout'
-            });
-        } else {
-            res.render('error');
-        }
-    });
+    if (affilinetFlag) {
+        Affilinet.searchProducts(query, function (error, response, results) {
+            if (!error && response.statusCode == 200) {
+                var counter = results.ProductsSummary.TotalRecords;
+                var products = Utils.fromAffilinetToLocalProducts(results.Products);
+                if (amazonFlag) {
+                    prodAdv.call("ItemSearch", {SearchIndex: "All", Keywords: req.body.search_value, ResponseGroup: "Medium"}, function(error, results) {
+                        if (!error) {
+                            counter = parseInt(counter) + parseInt(results.Items.TotalResults);
+                            var _products = Utils.fromAmazonToLocalProducts(results.Items.Item);
+                            res.render('controller/products', {
+                                title: 'Products Manage',
+                                shopid: 0,
+                                categoryid: 0,
+                                query: query.Query || "",
+                                fq: query.FQ || "",
+                                type: 'search',
+                                counter: counter,
+                                products: products.concat(_products),
+                                layout: 'controller/layout'
+                            });
+                        } else {
+                            res.render('error');
+                        }
+                    });
+                }
+            } else {
+                res.render('error');
+            }
+        });
+    } else {
+        prodAdv.call("ItemSearch", {SearchIndex: "All", ASIN: req.body.search_value, ResponseGroup: "Medium"}, function(error, results) {
+            if (!error) {
+                var counter = results.Items.TotalResults;
+                var products = Utils.fromAmazonToLocalProducts(results.Items.Item);
+                res.render('controller/products', {
+                    title: 'Products Manage',
+                    shopid: 0,
+                    categoryid: 0,
+                    query: query.Query || "",
+                    fq: query.FQ || "",
+                    type: 'search',
+                    counter: counter,
+                    products: products,
+                    layout: 'controller/layout'
+                });
+            } else {
+                res.render('error');
+            }
+        });
+    }
 });
 
 router.get('/product/edit', function (req, res, next) {
