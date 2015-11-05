@@ -66,13 +66,13 @@ router.get('/', function(req, res, next) {
                         $first: "$ProductId"
                     },
                     Images: {
-                        $first: "$Images"
+                        $first: "$ProductImageSet"
                     },
-                    ProductName_cn: {
-                        $first: "$ProductName_cn"
+                    ProductName: {
+                        $first: "$TitleCN"
                     },
                     Price: {
-                        $push: "$PriceInformation.PriceDetails.Price"
+                        $push: "$Price"
                     },
                 }
             }, {
@@ -89,7 +89,7 @@ router.get('/', function(req, res, next) {
                     console.log(JSON.stringify(err));
                     res.render('error');
                 } else {
-                    //console.log(JSON.stringify(products));
+                    console.log(JSON.stringify(products));
                     res.render('index', {
                         title: '',
                         count: count,
@@ -131,10 +131,7 @@ router.post('/filter', function(req, res, next) {
     var minprice = req.body.minprice;
     var maxprice = req.body.maxprice;
     var page = req.query.page || 1;
-    Product.count({}, function(err, count) {
-
-
-    });
+    console.log(category);
 
 });
 

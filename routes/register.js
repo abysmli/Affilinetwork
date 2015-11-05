@@ -41,7 +41,7 @@ router.post('/', function(req, res){
     var lastname = req.body.lastname;
     var firstname = req.body.firstname;
     console.log(JSON.stringify(process.env['STORMPATH_API_KEY_ID']));
-    var apiKey = new stormpath.ApiKey("397LI2GNKPM6SZP2VG0G3UY8P", "OYgqGmS3an41E0dBZNV9d6ftKs9ybs1F36KiallaXms");
+    var apiKey = new stormpath.ApiKey(process.env['STORMPATH_API_KEY_ID'], process.env['STORMPATH_API_KEY_SECRET']);
     var spClient = new stormpath.Client({apiKey: apiKey});
 
     var app = spClient.getApplication(process.env['STORMPATH_APP_HREF'], function(err, app){

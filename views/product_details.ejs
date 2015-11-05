@@ -25,7 +25,7 @@
 
                 <!-- page-title start -->
                 <!-- ================ -->
-                <h1 class="page-title margin-top-clear"><%= product.ProductName_cn %></h1>
+                <h1 class="page-title margin-top-clear"><%= product.TitleCN %></h1>
                 <!-- page-title end -->
 
                 <div class="row">
@@ -35,10 +35,10 @@
                         <div class="tab-content clear-style">
                             <div class="tab-pane active" id="product-images">
                                 <div class="owl-carousel content-slider-with-controls-bottom">
-                                    <% for (var i=0; i<product.Images.length; i++){ %>
+                                    <% for (var i=0; i<product.ProductImageSet.length; i++){ %>
                                         <div class="overlay-container outside">
-                                            <img src="<%= product.Images[0][0].URL %>" alt="">
-                                            <a href="<%= product.Images[0][0].URL %>" class="popup-img overlay" title="image title"><i class="fa fa-search-plus"></i></a>
+                                            <img src="<%= product.ProductImageSet[i] %>" alt="">
+                                            <a href="<%= product.ProductImageSet[i] %>" class="popup-img overlay" title="image title"><i class="fa fa-search-plus"></i></a>
                                         </div>
 
                                         <% } %>
@@ -48,9 +48,9 @@
                         </div>
                         <!-- Tab panes end-->
                         <hr>
-                        <span class="price"><%= product.PriceInformation.DisplayPrice %></span>
+                        <span class="price"><%= product.Price %>€</span>
                         <div class="elements-list pull-right clearfix">
-                            <a href="<%= product.Deeplink1 %>"><span>去买</span></a>
+                            <a href="<%= product.URL %>"><span>去买</span></a>
                             <span><i class="fa fa-star text-default"></i><i class="fa fa-star text-default"></i><i class="fa fa-star text-default"></i><i class="fa fa-star text-default"></i><i class="fa fa-star"></i></span>
                         </div>
                         <div class="clearfix">
@@ -63,12 +63,12 @@
                                 <% products.forEach(function(product, index) { %>
                                     <tr>
                                         <td>
-                                            <%= product.PriceInformation.PriceDetails.Price %>
+                                            <%= product.Price %>
                                         </td>
                                         <td>
-                                            <%= product.ShopTitle %>
+                                            <%= product.SalesRank %>
                                         </td>
-                                        <td><a href="<%= product.Deeplink1 %>">入店购买</a></td>
+                                        <td><a href="<%= product.URL %>">入店购买</a></td>
                                     </tr>
                                     <% }) %>
                             </table>
@@ -89,29 +89,19 @@
                                     <!-- Nav tabs -->
                                     <ul class="nav nav-tabs" role="tablist">
                                         <li class="active"><a href="#h2tab1" role="tab" data-toggle="tab"><i class="fa fa-file-text-o pr-5"></i>产品介绍</a></li>
-                                        <li><a href="#h2tab2" role="tab" data-toggle="tab"><i class="fa fa-files-o pr-5"></i>产品规格</a></li>
                                         <li><a href="#h2tab3" role="tab" data-toggle="tab"><i class="fa fa-star pr-5"></i>用户反馈</a></li>
                                     </ul>
                                     <!-- Tab panes -->
                                     <div class="tab-content padding-top-clear padding-bottom-clear">
                                         <div class="tab-pane fade in active" id="h2tab1">
-                                            <h4 class="title"><%= product.ProductName_cn %></h4>
+                                            <h4 class="title"><%= product.TitleCN %></h4>
                                             <p>
-                                                <%= product.Description_cn %>
+                                                <%= product.DescriptionCN%>
                                             </p>
-                                        </div>
-                                        <div class="tab-pane fade" id="h2tab2">
-                                            <h4 class="space-top">规格参数</h4>
-                                            <hr>
-                                            <dl class="dl-horizontal">
-                                                <dt></dt>
-                                                <dd>此处填入各项参数</dd>
-                                            </dl>
-                                            <hr>
                                         </div>
                                         <div class="tab-pane fade" id="h2tab3">
                                             <!-- 多说评论框 start -->
-                                            <div class="ds-thread" data-thread-key="<% product._id %>" data-title="<% product.ProductName %>" data-url="<% product_link %>"></div>
+                                            <div class="ds-thread" data-thread-key="<% product._id %>" data-title="<% product.Title %>" data-url="<% product_link %>"></div>
                                             <!-- 多说评论框 end -->
 
                                         </div>
