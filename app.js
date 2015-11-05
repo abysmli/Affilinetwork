@@ -42,18 +42,19 @@ app.use(bodyParser.urlencoded({
     extended: false,
     limit: '50mb'
 }));
+
 app.use(cookieParser('your secret here'));
-app.use(session());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(partials());
 
-
 app.use(session({
-    secret: process.env.EXPRESS_SECRET,
-    key: 'sid',
+    secret: process.env.EXPRESS_SECRET || 'Affilinet',
+    key: 'F&&L',
     cookie: {
         secure: false
-    }
+    },
+    resave: true,
+    saveUninitialized: true
 }));
 
 app.use(passport.initialize());

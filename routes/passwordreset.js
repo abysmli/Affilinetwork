@@ -3,6 +3,7 @@ var fs = require('fs');
 
 var router = express.Router();
 
+/*
 var forgot = require('password-reset')({
     uri : 'http://localhost:8818/password_reset',
     from : 'password-robot@localhost',
@@ -10,7 +11,7 @@ var forgot = require('password-reset')({
 });
 
 router.use(forgot.middleware);
-
+*/
 
 router.get("/", function(req, res){
     res.render("userlogin/forgot", {

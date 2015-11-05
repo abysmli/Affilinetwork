@@ -10,65 +10,82 @@ module.exports = (function () {
         return 0;
     }
 
-    _Class.prototype.fromAffilinetToLocalProducts = function fromAffilinetToLocalProducts(products) {
-        var _products = [];
-        products.forEach(function(product){
-            var _product = {
-                ASIN: "",
-                URL: product.Deeplink1,
-                SalesRank: "",
-                ProductImage: (product.Images[0][1] !== undefined) ? product.Images[0][1].URL : null,
-                ProductImageSet: (product.Images[0][1] !== undefined) ? product.Images[0][1].URL : null,
-                Brand: product.Brand,
-                Manufactor: product.Manufactor,
-                EAN: product.EAN,
-                Description: product.DescriptionShort + " " + product.Description,
-                DescriptionCN: "",
-                Price: product.PriceInformation.PriceDetails.Price,
-                PriceCurrency: product.PriceInformation.Currency,
-                Title: product.ProductName,
-                TitleCN: "",
-                LastproductChange: product.LastProductChange,
-                DeliveryTime: product.DeliveryTime,
-                Keywords: product.Keywords || "",
-                Source: "Affilinet",
-                Tranlated: false,
-            };
-            _products.push(_product);
-        });
-        return _products;
+    _Class.prototype.fromAmazonToLocalProduct = function fromAmazonToLocalProduct(product) {
+        var _product = {};
+        if ( product !== undefined ) {
+            if (product.OfferSummary.TotalNew !== "0") {
+                var _images = [];
+                if (product.ImageSets !== undefined && Array.isArray(product.ImageSets.ImageSet)) {
+                    product.ImageSets.ImageSet.forEach(function(image){
+                        _images.push(image.LargeImage.URL);
+                    });
+                }
+                _product = {
+                    ProductId: product.ProductId || null,
+                    ASIN: product.ASIN || null,
+                    URL: product.DetailPageURL || null,
+                    SalesRank: product.SalesRank || null,
+                    ProductImage: (product.LargeImage !== undefined) ? product.LargeImage.URL || null : null,
+                    ProductImageSet: _images,
+                    Brand: (product.ItemAttributes !== undefined) ? product.ItemAttributes.Brand || null : null,
+                    Manufactor: (product.ItemAttributes !== undefined) ? product.ItemAttributes.Manufacturer || null : null,
+                    EAN: (product.ItemAttributes !== undefined) ? product.ItemAttributes.EAN || null : null,
+                    Description: (product.ItemAttributes !== undefined) ? product.ItemAttributes.Feature || null : null,
+                    DescriptionCN: null,
+                    Price: (product.OfferSummary !== undefined) ? product.OfferSummary.LowestNewPrice.Amount / 100 || null : null,
+                    PriceCurrency: (product.OfferSummary !== undefined) ? product.OfferSummary.LowestNewPrice.CurrencyCode || null : null,
+                    Title: (product.ItemAttributes !== undefined) ? product.ItemAttributes.Title || null : null,
+                    TitleCN: null,
+                    LastproductChange: null,
+                    DeliveryTime: null,
+                    Keywords: null,
+                    Source: "Amazon",
+                    Tranlated: false,
+                };
+            }
+        }
+        return _product;
     }
 
-    _Class.prototype.fromAmazonToLocalProducts = function fromAmazonToLocalProducts(products) {
-        
+    _Class.prototype.fromAffilinetToLocalProduct = function fromAffilinetToLocalProduct(product) {
+        var _product = {
+            ProductId: product.ProductId || null,
+            ASIN: null,
+            URL: product.Deeplink1 || null,
+            SalesRank: null,
+            ProductImage: (product.Images[0][0] !== undefined) ? product.Images[0][0].URL || null : null,
+            ProductImageSet: [(product.Images[0][0] !== undefined) ? product.Images[0][0].URL || null : null],
+            Brand: product.Brand || null,
+            Manufactor: product.Manufacturer || null,
+            EAN: product.EAN || null,
+            Description: "" + product.DescriptionShort || null + " " + product.Description || null,
+            DescriptionCN: null,
+            Price: (product.Images[0][0] !== undefined) ? product.PriceInformation.PriceDetails.Price || null : null,
+            PriceCurrency: (product.Images[0][0] !== undefined) ? product.PriceInformation.Currency || null : null,
+            Title: product.ProductName || null,
+            TitleCN: null,
+            LastproductChange: product.LastProductChange || null,
+            DeliveryTime: product.DeliveryTime || null,
+            Keywords: product.Keywords || null,
+            Source: "Affilinet",
+            Tranlated: false,
+        };
+        return _product;
+    }
+
+    _Class.prototype.isEmptyObject = function isEmptyObject(obj){
+        return JSON.stringify(obj) === '{}';
+    }
+
+    _Class.prototype.ToLocalProducts = function ToLocalProducts(products, type) {
+        var self = this; 
         var _products = [];
         products.forEach(function(product){
-            var _images = [];
-            //product.ImageSets.ImageSet.forEach(function(image){
-            //    _images.push(image.LargeImage.URL);
-            //});
-            var _product = {
-                ASIN: product.ASIN,
-                URL: product.DetailPageURL,
-                SalesRank: product.SalesRank,
-                ProductImage: product.LargeImage.URL,
-                ProductImageSet: _images,
-                Brand: product.ItemAttributes.Brand,
-                Manufactor: product.ItemAttributes.Manufactor,
-                EAN: product.ItemAttributes.EAN,
-                Description: product.ItemAttributes.Feature,
-                DescriptionCN: "",
-                Price: product.ItemAttributes.ListPrice.Amount / 100,
-                PriceCurrency: "Dollar",
-                Title: product.ItemAttributes.Title,
-                TitleCN: "",
-                LastproductChange: "",
-                DeliveryTime: "",
-                Keywords: "",
-                Source: "Amazon",
-                Tranlated: false,
-            };
-            _products.push(_product);
+            var _product = {};
+            (type == "amazon") ? _product = self.fromAmazonToLocalProduct(product) : _product = self.fromAffilinetToLocalProduct(product);
+            if (!self.isEmptyObject(_product)) {
+                _products.push(_product);
+            }
         });
         return _products;
     }

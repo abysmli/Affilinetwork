@@ -1,18 +1,19 @@
-module.exports = (function () {
+module.exports = (function() {
     var _this;
 
-    function _Class(_product, _affilinet, _options, _socket) {
+    function _Class(_product, _affilinet, _prodAdv, _options, _socket) {
         this.products = [];
         this.params = {
             count: 0
         };
         this.Affilinet = _affilinet;
+        this.prodAdv = _prodAdv;
         this.Product = _product;
         this.options = _options;
         this.socket = _socket;
         this.options.query = {
-            ShopIds: _options.shopid == "0" ? 0 : _options.shopid ,
-            CategoryIds: _options.categoryid == "0" ? 0 : _options.categoryid ,
+            ShopIds: _options.shopid == "0" ? 0 : _options.shopid,
+            CategoryIds: _options.categoryid == "0" ? 0 : _options.categoryid,
             Query: _options.query,
             FQ: _options.fq,
             CurrentPage: 1,
@@ -28,9 +29,15 @@ module.exports = (function () {
     _Class.prototype.sync = function sync(_currentPage) {
         this.options.query.CurrentPage = typeof _currentPage !== 'undefined' ? _currentPage : 1;
         this.Affilinet.searchProducts(this.options.query, loadAffilinetData);
+        if (this.options.query.Query !== "" && _currentPage == 1) {
+            loadAmazonDataByKeywords(this.options.query.Query);
+        }
+        if (this.options.query.FQ !== "" && _currentPage == 1) {
+            loadAmazonDataByKeywords(this.options.query.Query);
+        }
     }
 
-    var loadAffilinetData = function (error, response, results) {
+    var loadAffilinetData = function(error, response, results) {
         if (!error && response.statusCode == 200) {
             _this.params.Records = results.ProductsSummary.Records;
             _this.params.TotalRecords = results.ProductsSummary.TotalRecords;
@@ -41,7 +48,7 @@ module.exports = (function () {
                 currentpage: _this.params.CurrentPage,
                 totalpage: _this.params.TotalPages
             });
-            writeIntoDatabase(results.Products);
+            writeAffilinetDataIntoDatabase(results.Products);
 
             if (_this.params.CurrentPage < _this.params.TotalPages) {
                 _this.sync(_this.params.CurrentPage + 1);
@@ -51,15 +58,15 @@ module.exports = (function () {
         }
     }
 
-    var writeIntoDatabase = function (products) {
-        products.forEach(function (_product, index) {
+    var writeAffilinetDataIntoDatabase = function(products) {
+        products.forEach(function(_product, index) {
             var query = _this.Product.where({
                 ProductId: _product.ProductId
             });
-            query.findOne(function (err, product) {
+            query.findOne(function(err, product) {
                 if (err) return err;
                 if (!product) {
-                    _this.Product.create(_product, function (err, product) {
+                    _this.Product.create(_product, function(err, product) {
                         if (err) {
                             console.log(err);
                             return err;
@@ -76,5 +83,44 @@ module.exports = (function () {
         });
         return 0;
     }
+
+    var loadAmazonDataByKeywords = function(keywords) {
+        for (var i = 1; i <= 5; i++) {
+            prodAdv.call("ItemSearch", {
+                SearchIndex: "All",
+                Keywords: keywords,
+                ItemPage: i,
+                ResponseGroup: "Medium"
+            }, function(err, results) {
+                if (!err) {
+                    var products = Utils.ToLocalProducts(results.Items.Item, "amazon");
+                    writeAmazonDataIntoDatabase(products);
+                } else {
+                    return err;
+                }
+            });
+        }
+    }
+
+    var writeAmazonDataIntoDatabase = function(products) {
+        products.forEach(function(_product, index) {
+            var query = _this.Product.where({
+                ASIN: _product.ASIN
+            });
+            query.findOne(function(err, product) {
+                if (err) return err;
+                if (!product) {
+                    _this.Product.create(_product, function(err, product) {
+                        if (err) {
+                            console.log(err);
+                            return err;
+                        }
+                        _this.params.count++;
+                    });
+                }
+            });
+        });
+    }
+
     return _Class;
 })();

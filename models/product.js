@@ -3,6 +3,7 @@ var setting = require('../setting.js');
 mongoose.connect('mongodb://localhost/'+setting.database);
 
 var ProductSchema = new mongoose.Schema({
+    ProductId: String,
     ASIN: String,
     URL: String,
     SalesRank: String,

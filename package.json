@@ -27,6 +27,7 @@
     "socket.io": "*",
     "static-favicon": "~1.0.0",
     "stormpath": "^0.13.4",
+    "express-stormpath": "*",
     "xml2js": "*"
   }
 }

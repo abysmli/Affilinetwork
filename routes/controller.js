@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var auth = require('../models/auth.js');
 var affilinet = require('../utils/affilinetapi.js');
+var aws = require('aws-lib');
 var Product = require('../models/product.js');
 var setting = require('../setting.js');
 var utils = require('../utils/utils.js');
@@ -11,12 +12,12 @@ var Affilinet = new affilinet({
     productWebservicePassword: setting.affilinet_setting.productWebservicePassword,
     publisherWebservicePassword: setting.affilinet_setting.publisherWebservicePassword
 });
-var aws = require('aws-lib');
-var prodAdv = aws.createProdAdvClient('AKIAIXMHRQX5VHGPA2AQ', 'l4QqJxXYbyiiAFnTXnFkJy87zT2l2mhOBFoDRQfu', 'ba0f6-21');
+
+var prodAdv = aws.createProdAdvClient(setting.amazon_setting.AccessKeyId, setting.amazon_setting.SecretAccessKey, setting.amazon_setting.AssociateTag);
 
 /* GET users listing. */
-router.get('/', auth, function (req, res, next) {
-    Affilinet.getShopList({}, function (error, response, shops) {
+router.get('/', auth, auth, function(req, res, next) {
+    Affilinet.getShopList({}, function(error, response, shops) {
         if (!error && response.statusCode == 200) {
             res.render('controller/index', {
                 title: 'Shops Manage',
@@ -29,12 +30,12 @@ router.get('/', auth, function (req, res, next) {
     });
 });
 
-router.get('/category', function (req, res, next) {
+router.get('/category', auth, function(req, res, next) {
     var ShopId = req.query.shopid == undefined ? 0 : req.query.shopid;
     var shoptitle = req.query.shoptitle == undefined ? "for All Shops" : "for " + req.query.shoptitle;
     Affilinet.getCategoryList({
         ShopId: ShopId
-    }, function (error, response, categorylist) {
+    }, function(error, response, categorylist) {
         if (!error && response.statusCode == 200) {
             res.render('controller/category', {
                 title: 'Categories Manage',
@@ -49,15 +50,15 @@ router.get('/category', function (req, res, next) {
     });
 });
 
-router.get('/programs', function (req, res, next) {
+router.get('/programs', auth, function(req, res, next) {
     res.render('controller/programs', {
         title: 'Programs Manage',
         layout: 'controller/layout'
     });
 });
 
-router.get('/product/remove_all', function (req, res, next) {
-    Product.remove(function (err) {
+router.get('/product/remove_all', auth, function(req, res, next) {
+    Product.remove(function(err) {
         if (err)
             res.render('error');
         else
@@ -65,7 +66,7 @@ router.get('/product/remove_all', function (req, res, next) {
     });
 });
 
-router.get('/product', function (req, res, next) {
+router.get('/product', auth, function(req, res, next) {
     if (req.query.type == "remote") {
         var query = {
             ShopIds: req.query.shopid,
@@ -75,7 +76,7 @@ router.get('/product', function (req, res, next) {
             query.ShopIdMode = "Include";
             query.UseAffilinetCategories = "false";
         }
-        Affilinet.searchProducts(query, function (error, response, results) {
+        Affilinet.searchProducts(query, function(error, response, results) {
             if (!error && response.statusCode == 200) {
                 var counter = results.ProductsSummary.TotalRecords;
                 var products = Utils.fromAffilinetToLocalProducts(results.Products);
@@ -94,13 +95,13 @@ router.get('/product', function (req, res, next) {
             }
         });
     } else {
-        Product.count({}, function (err, count) {
+        Product.count({}, function(err, count) {
             Product.find({}, null, {
                 limit: 500,
                 sort: {
                     updated_at: -1
                 }
-            }, function (err, products) {
+            }, function(err, products) {
                 if (err)
                     res.render('error');
                 else
@@ -118,54 +119,58 @@ router.get('/product', function (req, res, next) {
     }
 });
 
-router.post('/product', function (req, res, next) {
-    var affilinetFlag = false, amazonFlag = false;
+router.post('/product', auth, function(req, res, next) {
     var query = {};
     if (req.body.search_type == "Query") {
-        affilinetFlag = true;
-        amazonFlag = true;
         query.Query = req.body.search_value;
-    } else if (req.body.search_type == "ASIN") {
-        amazonFlag = true;
-    } else if (req.body.search_type == "EAN") {
-        affilinetFlag = true;
-        query.FQ = req.body.search_type+":"+req.body.search_value;
-    }
-    if (affilinetFlag) {
-        Affilinet.searchProducts(query, function (error, response, results) {
-            if (!error && response.statusCode == 200) {
+        Affilinet.searchProducts(query, function(err, response, results) {
+            if (!err && response.statusCode == 200) {
                 var counter = results.ProductsSummary.TotalRecords;
-                var products = Utils.fromAffilinetToLocalProducts(results.Products);
-                if (amazonFlag) {
-                    prodAdv.call("ItemSearch", {SearchIndex: "All", Keywords: req.body.search_value, ResponseGroup: "Medium"}, function(error, results) {
-                        if (!error) {
-                            counter = parseInt(counter) + parseInt(results.Items.TotalResults);
-                            var _products = Utils.fromAmazonToLocalProducts(results.Items.Item);
-                            res.render('controller/products', {
-                                title: 'Products Manage',
-                                shopid: 0,
-                                categoryid: 0,
-                                query: query.Query || "",
-                                fq: query.FQ || "",
-                                type: 'search',
-                                counter: counter,
-                                products: products.concat(_products),
-                                layout: 'controller/layout'
-                            });
-                        } else {
-                            res.render('error');
-                        }
-                    });
-                }
+                var products = Utils.ToLocalProducts(results.Products, "affilinet");
+                prodAdv.call("ItemSearch", {
+                    SearchIndex: "All",
+                    Keywords: req.body.search_value,
+                    ResponseGroup: "Medium"
+                }, function(err, results) {
+                    if (!err) {
+                        counter = parseInt(counter) + parseInt(results.Items.TotalResults);
+                        var _products = Utils.ToLocalProducts(results.Items.Item, "amazon");
+                        products = products.concat(_products);
+                        req.session.products = products;
+                        res.render('controller/products', {
+                            title: 'Products Manage',
+                            shopid: 0,
+                            categoryid: 0,
+                            query: query.Query || "",
+                            fq: query.FQ || "",
+                            type: 'search',
+                            counter: counter,
+                            products: products,
+                            layout: 'controller/layout'
+                        });
+                    } else {
+                        res.render('error');
+                    }
+                });
             } else {
                 res.render('error');
             }
         });
-    } else {
-        prodAdv.call("ItemSearch", {SearchIndex: "All", ASIN: req.body.search_value, ResponseGroup: "Medium"}, function(error, results) {
-            if (!error) {
-                var counter = results.Items.TotalResults;
-                var products = Utils.fromAmazonToLocalProducts(results.Items.Item);
+    } else if (req.body.search_type == "ASIN") {
+        query.FQ = "ASIN:" + req.body.search_value;
+        prodAdv.call("ItemLookup", {
+            ItemId: req.body.search_value,
+            ResponseGroup: "Medium"
+        }, function(err, product) {
+            if (!err) {
+                var counter = 0;
+                var products = [];
+                var _product = Utils.fromAmazonToLocalProduct(product.Items.Item);
+                if (!Utils.isEmptyObject(_product)) {
+                    counter = 1;
+                    products.push(_product);
+                }
+                req.session.products = products;
                 res.render('controller/products', {
                     title: 'Products Manage',
                     shopid: 0,
@@ -181,16 +186,88 @@ router.post('/product', function (req, res, next) {
                 res.render('error');
             }
         });
+    } else if (req.body.search_type == "EAN") {
+        query.FQ = "EAN:" + req.body.search_value;
+        Affilinet.searchProducts(query, function(err, response, results) {
+            if (!err && response.statusCode == 200) {
+                var counter = results.ProductsSummary.TotalRecords;
+                var products = Utils.ToLocalProducts(results.Products, "affilinet");
+                prodAdv.call("ItemLookup", {
+                    ItemId: req.body.search_value,
+                    IdType: "EAN",
+                    SearchIndex: "All",
+                    ResponseGroup: "Medium"
+                }, function(err, product) {
+                    if (!err) {
+                        var _product = Utils.fromAmazonToLocalProduct(product.Items.Item);
+                        if (!Utils.isEmptyObject(_product)) {
+                            counter = parseInt(counter) + 1;
+                            products.push(_product);
+                        }
+                        req.session.products = products;
+                        res.render('controller/products', {
+                            title: 'Products Manage',
+                            shopid: 0,
+                            categoryid: 0,
+                            query: query.Query || "",
+                            fq: query.FQ || "",
+                            type: 'search',
+                            counter: counter,
+                            products: products,
+                            layout: 'controller/layout'
+                        });
+                    } else {
+                        res.render('error');
+                    }
+                });
+            } else {
+                res.render('error');
+            }
+        });
     }
 });
 
-router.get('/product/edit', function (req, res, next) {
-    Product.findOne({
-        ProductId: req.query.product_id
-    }, function (err, product) {
+router.get('/product/add', auth, function(req, res, next) {
+    var product = {};
+    if (req.query.add_type == "auto") {
+        product = req.session.products[req.query.id];
+    }
+    res.render('controller/product_form', {
+        title: 'Add Product',
+        product: product,
+        layout: 'controller/layout'
+    });
+});
+
+router.post('/product/add', function(req, res, next) {
+    var product = req.body;
+    var query = Product.where({
+        ProductId: product.ProductId,
+        ASIN: product.ASIN
+    });
+    query.findOne(function(err, _product) {
+        if (err) return err;
+        if (!_product) {
+            product.ProductImageSet = JSON.parse(product.ProductImageSet);
+            if (product.TitleCN !== "" && product.DescriptionCN !== "") {
+                product.Tranlated = true;
+            }
+            Product.create(product, function(err, product) {
+                if (err) {
+                    console.log(err);
+                    return err;
+                }
+            });
+        }
+        return res.redirect('/controller/product');
+    });
+});
+
+router.get('/product/edit', auth, function(req, res, next) {
+    Product.findById(req.query.id, function(err, product) {
         if (err != null) res.render('error');
         else {
-            res.render('controller/product_edit', {
+            res.render('controller/product_form', {
                 title: 'Edit Product',
                 product: product,
                 layout: 'controller/layout'
@@ -199,18 +276,27 @@ router.get('/product/edit', function (req, res, next) {
     });
 });
 
-router.post('/product/edit', function (req, res, next) {
-    Product.update({
-        ProductId: req.query.product_id
-    }, {
-        ProductName_cn: req.body.product_name,
-        Description_cn: req.body.product_desc,
-        DescriptionShort_cn: req.body.product_desc_short,
-        Tranlated: true
-    }, function (err, product) {
+router.post('/product/edit', auth, function(req, res, next) {
+    var product = req.body;
+    if (product.TitleCN !== "" && product.DescriptionCN !== "") {
+        product.Tranlated = true;
+    }
+    product.ProductImageSet = JSON.parse(product.ProductImageSet);
+    Product.findOneAndUpdate({
+        _id: req.query.id
+    }, product, function(err, product) {
         if (err != null) res.render('error');
         else {
             res.redirect('/controller/product');
+        }
+    });
+});
+
+router.get('/product/remove', auth, function(req, res, next) {
+    Product.findByIdAndRemove(req.query.id, function(err, product) {
+        if (err != null) res.render('error');
+        else {
+            return res.redirect('/controller/product');
         }
     });
 });

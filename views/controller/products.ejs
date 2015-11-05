@@ -1,14 +1,14 @@
 <div class="page-header">
-    <h1>Product Manage <small>Total Products: <%= counter %></small></h1>
     <% if(type != 'local') { %>
-        <a id="sync_button" class="btn btn-primary btn-sm" href="#">Synchronize</a>
-        <% } else { %>
-            <a id="update_button" class="btn btn-success btn-sm" href="#">Update</a>
-            <% } %>
-                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#search_modal">
-                    Search
-                </button>
-                <a id="remove_all" href="/controller/product/remove_all/" class="btn btn-danger btn-sm pull-right">Remove all</a>
+    <h1>Product Manage <small>Total Products: <%= counter %> <i>In Cloud Mode</i></small></h1>
+    <a id="sync_button" class="btn btn-primary btn-sm" href="#">Synchronize</a>
+    <% } else { %>
+    <h1>Product Manage <small>Total Products: <%= counter %> <i>In Local Mode</i></small></h1>
+    <a id="update_button" class="btn btn-success btn-sm" href="#">Update</a>
+    <% } %>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#search_modal">Search</button>
+    <a id="add_button" class="btn btn-warning btn-sm" href="/controller/product/add?add_type=manu">Add a Product</a>
+    <a id="remove_all" href="/controller/product/remove_all/" class="btn btn-danger btn-sm pull-right">Remove all</a>
 </div>
 
 <table id="product_table" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
@@ -16,32 +16,42 @@
         <tr>
             <th>Image</th>
             <th>Title</th>
+            <th>TitleCN</th>
             <th>Brand</th>
             <th>Price</th>
             <th>URL</th>
+            <th>ProductID</th>
             <th>EAN</th>
             <th>ASIN</th>
             <th>Keywords</th>
             <th>Source</th>
             <% if(type == 'local') { %>
                 <th>Translated</th>
-                <% } %>
+                <th>Delete</th>
+            <% } else { %>
+                <th>Database</th>
+            <% } %>
         </tr>
     </thead>
     <tfoot>
         <tr>
             <th>Image</th>
             <th>Title</th>
+            <th>TitleCN</th>
             <th>Brand</th>
             <th>Price</th>
             <th>URL</th>
+            <th>ProductID</th>
             <th>EAN</th>
             <th>ASIN</th>
             <th>Keywords</th>
             <th>Source</th>
             <% if(type == 'local') { %>
                 <th>Translated</th>
-                <% } %>
+                <th>Delete</th>
+            <% } else { %>
+                <th>Database</th>
+            <% } %>
         </tr>
     </tfoot>
 
@@ -51,12 +61,15 @@
                 <td>
                     <% if (type != "local") { %>
                         <img src="<%= product.ProductImage %>" style="max-width: 100px; max-height: 100px">
-                        <% } else { %>
-                            <a href="/controller/product/edit?product_id=<%= product.ProductId %>"><img src="<%= product.ProductImage %>"></a>
-                            <% } %>
+                    <% } else { %>
+                        <a href="/controller/product/edit?id=<%= product._id %>"><img src="<%= product.ProductImage %>" style="max-width: 100px; max-height: 100px"></a>
+                    <% } %>
                 </td>
                 <td>
                     <%= product.Title %>
+                </td>
+                <td>
+                    <%= product.TitleCN %>
                 </td>
                 <td>
                     <%= product.Brand %>
@@ -66,6 +79,9 @@
                 </td>
                 <td>
                     <a href="<%= product.URL %>">Link</a>
+                </td>
+                <td>
+                    <%= product.ProductId %>
                 </td>
                 <td>
                     <%= product.EAN %>
@@ -82,14 +98,21 @@
                 <% if(type == 'local') { %>
                     <td>
                         <% if (product.Tranlated) { %>
-                            <span class="label label-primary">Translated</span>
-                            <% } else { %>
-                                <span class="label label-warning">Not Translated</span>
-                                <% } %>
+                        <span class="label label-primary">Translated</span>
+                        <% } else { %>
+                        <span class="label label-warning">Not Translated</span>
+                        <% } %>
                     </td>
-                    <% } %>
+                    <td>
+                        <a class="btn btn-sm btn-danger" href="/controller/product/remove?id=<%= product._id %>" role="button">Remove</a>
+                    </td>
+                <% } else { %>
+                    <td>
+                        <a class="btn btn-sm btn-default" href="/controller/product/add?add_type=auto&id=<%= index %>" role="button">Add</a>
+                    </td>
+                <% } %>
             </tr>
-            <% }) %>
+        <% }) %>
     </tbody>
 </table>
 
