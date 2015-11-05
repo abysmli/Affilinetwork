@@ -181,6 +181,7 @@ router.get('/product', function(req, res, next) {
 });
 
 router.get('/test', function(req, res, next) {
+    /*
     prodAdv.call("ItemLookup", {
         ItemId: "B00PWEYDZC",
         IdType: "ASIN",
@@ -189,17 +190,16 @@ router.get('/test', function(req, res, next) {
     }, function(err, product) {
         res.json(product);
     });
+    */
     
-    /*
         var query = {};
         //query.FQ = "EAN:04905524974720";
         query.Query = "Thinkpad"
         Affilinet.searchProducts(query, function(error, response, results) {
-            var _product = Utils.fromAffilinetToLocalProduct(results.Products[0]);
-            console.log(_product);
+            var results = Utils.fromAffilinetToLocalProduct(results.Products[0]);
             res.json(results);
         });
-    */
+    
 });
 
 
