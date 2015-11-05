@@ -23,6 +23,7 @@
     "passport-local-mongoose": "*",
     "passport-stormpath": "^0.2.4",
     "request": "*",
+    "aws-lib": "*",
     "socket.io": "*",
     "static-favicon": "~1.0.0",
     "stormpath": "^0.13.4",
