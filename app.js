@@ -23,7 +23,9 @@ var basicAuth = require('basic-auth');
 var Account = require('./models/account.js');
 
 var app = express();
+
 var strategy = new StormpathStrategy();
+
 passport.use(strategy);
 passport.serializeUser(strategy.serializeUser);
 passport.deserializeUser(strategy.deserializeUser);
@@ -49,7 +51,7 @@ app.use(partials());
 
 app.use(session({
     secret: process.env.EXPRESS_SECRET || 'Affilinet',
-    key: 'F&&L',
+    key: "F&&L",
     cookie: {
         secure: false
     },
