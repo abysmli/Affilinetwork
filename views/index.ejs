@@ -13,22 +13,31 @@
 <div class="page-intro">
     <div class="container">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-10">
                 <ol class="breadcrumb">
                     <li><i class="fa fa-th-large pr-10"></i>产品分类: </li>
-                    <li class="active"><a href="/category?category=clothes_shoes">服装鞋子</a></li>
-                    <li class="active"><a href="/category?category=food">食品饮食</a></li>
-                    <li class="active"><a href="/category?category=kitchen">厨房用具</a></li>
-                    <li class="active"><a href="/category?category=electronics">电子产品</a></li>
-                    <li class="active"><a href="/category?category=handy_pad">手机平板</a></li>
-                    <li class="active"><a href="/category?category=makeup">化妆品</a></li>
-                    <li class="active"><a href="/category?category=medicine">药品</a></li>
-                    <li class="active"><a href="/category?category=travel">旅游</a></li>
-                    <li class="active"><a href="/category?category=coupon">打折券</a></li>
-                    <li class="active"><a href="/category?category=others">其他</a></li>
+                    <li class="active"><a href="/category?category=clothes_shoes&page=<%= currentPage %>">服装鞋子</a></li>
+                    <li class="active"><a href="/category?category=food&page=<%= currentPage %>">食品饮食</a></li>
+                    <li class="active"><a href="/category?category=kitchen&page=<%= currentPage %>">厨房用具</a></li>
+                    <li class="active"><a href="/category?category=electronics&page=<%= currentPage %>">电子产品</a></li>
+                    <li class="active"><a href="/category?category=handy_pad&page=<%= currentPage %>">手机平板</a></li>
+                    <li class="active"><a href="/category?category=makeup&page=<%= currentPage %>">化妆品</a></li>
+                    <li class="active"><a href="/category?category=medicine&page=<%= currentPage %>">药品</a></li>
+                    <li class="active"><a href="/category?category=travel&page=<%= currentPage %>">旅游</a></li>
+                    <li class="active"><a href="/category?category=coupon&page=<%= currentPage %>">打折券</a></li>
+                    <li class="active"><a href="/category?category=others&page=<%= currentPage %>">其他</a></li>
                 </ol>
             </div>
+            <div class="col-md-2">
+                <form role="search" class="search-box" action="/search" method="post">
+                    <div class="has-feedback">
+                        <input type="text" class="form-control" placeholder="Search" name="search" style="-webkit-appearance: textfield; border-radius: 25px">
+                        <i class="fa fa-search form-control-feedback"></i>
+                    </div>
+                </form>
+            </div>
         </div>
+
     </div>
 </div>
 <!-- banner end -->
@@ -62,10 +71,12 @@
                         <div class="element col-lg-3 col-sm-6 masonry-grid-item">
                             <div class="listing-item">
                                 <div class="overlay-container">
-                                    <img src="<%= product.Images[0] %>"  style="max-height:280px; max-width:280px; position: absolute; margin: auto; top: 0;left: 0;
+                                    <img src="<%= product.Images[0] %>" style="max-height:280px; max-width:280px; position: absolute; margin: auto; top: 0;left: 0;
                                                                                        right: 0;bottom: 0;" onerror="this.src= '/stylesheets/images/no-image.jpg';" />
                                     <a href="/product?product_id=<%= product.ProductId %>" class="overlay small">
-                                        <p><%= JSON.stringify(product)%></p>
+                                        <p>
+                                            <%= JSON.stringify(product)%>
+                                        </p>
                                         <i class="fa fa-eye"></i>
                                         <span>查看详细介绍</span>
                                     </a>
@@ -73,7 +84,7 @@
                                 </div>
                                 <div class="listing-item-body clearfix">
                                     <h3 class="title"><a href="/product?product_id=<%= product.ProductId %>"><%= product.ProductName %></a></h3>
-                                   <% if (product.Price.length == 1 || Math.min.apply(null, product.Price) == Math.max.apply(null, product.Price)) { %>
+                                    <% if (product.Price.length == 1 || Math.min.apply(null, product.Price) == Math.max.apply(null, product.Price)) { %>
                                         <span class="price" style="font-size: 20px"><%= product.Price[0].replace(".", ",") %> €</span>
                                         <% } else { %>
                                             <span class="price" style="font-size: 20px"><%= Math.min.apply(null,product.Price).replace(".", ",") %> - <%= Math.max.apply(null,product.Price).replace(".", ".") %> €</span>
@@ -171,7 +182,6 @@
         $(page).show()
 
     }
-
 </script>
 <script type="text/javascript">
     $(document).ready(function() {
@@ -217,5 +227,4 @@
           }*/
 
     });
-
 </script>

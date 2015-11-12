@@ -249,7 +249,6 @@ router.post('/filter', function (req, res, next) {
                         "$sort": {
                             update_at: -1
                         }
-
                 }],
                 function (err, products) {
                     console.log(JSON.stringify(products));
@@ -273,8 +272,22 @@ router.post('/filter', function (req, res, next) {
     };
 });
 
+/*search the product from input*/
+router.post('/search', function(req, res){
+    var search = req.body.search;
+    console.log(search);
+    Product.textSearch('电子产品', function(err, output){
+        if (err != null) {
+                res.render('error');
+            }
+        console.log(JSON.stringify(output));
+    });
+});
+
 router.get('/category', function (req, res) {
     var category = req.query.category;
+    var page = req.query.page || 1;
+    console.log(page);
     if (category === 'clothes_shoes') {
         category = "服装鞋子";
     } else if (category === 'food') {
@@ -302,33 +315,61 @@ router.get('/category', function (req, res) {
     }, function (err, count) {
         var pageColumn = count / 50;
         Product.aggregate([{
-                "$match": {
-                    $and: [{
-                        EAN:{
-                            $ne:null
-                        },
-                        Category: {
-                            $eq: category
-                        }
+            "$match": {
+                $and: [{
+                    EAN: {
+                        $ne: null
+                    },
+                    Category: {
+                        $eq: category
+                    }
                     }]
-                }
+            }
         }, {
             "$group": {
-                id:"$EAN",
+                _id: "$EAN",
                 ProductId: {
-                    $first: "_id"
+                    $first: "$_id"
                 },
-                Images:{
+                Images: {
                     $first: "$ProductImageSet"
+                },
+                ProductName: {
+                    $first: "$TitleCN"
+                },
+                Price: {
+                    $push: "$Price"
                 }
-        }
+            }
+        }, {
+            "$skip": (page - 1) * 50,
+                    }, {
+            "$limit": 50
+                    }, {
+            "$sort": {
+                update_at: -1
+            }
 
-        ], function (err, ) {
-
+        }], function (err, products) {
+            console.log(JSON.stringify(products));
+            if (err != null) {
+                res.render('error');
+            } else {
+                res.render('index', {
+                    title: '',
+                    count: count,
+                    pageColum: pageColumn,
+                    currentPage: page,
+                    products: products,
+                    user: req.user,
+                    layout: 'layout'
+                });
+            }
         });
 
     });
 });
+
 
 router.get('/login', function (req, res) {
     res.render('userlogin/login', {
@@ -372,43 +413,7 @@ router.get('/product', function (req, res, next) {
     });
 });
 
-<<<<<<< HEAD
-router.get('/test', function (req, res, next) {
-=======
-router.get('/test', function(req, res, next) {
->>>>>>> origin/master
-    /*
-    prodAdv.call("ItemLookup", {
-        ItemId: "B00PWEYDZC",
-        IdType: "ASIN",
-        //SearchIndex: "All",
-        ResponseGroup: "Medium"
-    }, function(err, product) {
-        res.json(product);
-    });
-    */
-<<<<<<< HEAD
 
-    var query = {};
-    //query.FQ = "EAN:04905524974720";
-    query.Query = "Thinkpad"
-    Affilinet.searchProducts(query, function (error, response, results) {
-        var results = Utils.fromAffilinetToLocalProduct(results.Products[0]);
-        res.json(results);
-    });
-
-=======
-
-        var query = {};
-        //query.FQ = "EAN:04905524974720";
-        query.Query = "Thinkpad"
-        Affilinet.searchProducts(query, function(error, response, results) {
-            var results = Utils.fromAffilinetToLocalProduct(results.Products[0]);
-            res.json(results);
-        });
-
->>>>>>> origin/master
-});
 
 
 module.exports = router;

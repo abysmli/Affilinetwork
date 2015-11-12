@@ -28,6 +28,7 @@
     "static-favicon": "~1.0.0",
     "stormpath": "*",
     "express-stormpath": "*",
+    "mongoose-text-search": "*",
     "xml2js": "*"
   }
 }
