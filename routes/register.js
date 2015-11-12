@@ -19,10 +19,13 @@ router.post('/', function(req, res){
     var usermail = req.body.emailadress;
     var lastname = req.body.lastname;
     var firstname = req.body.firstname;
+<<<<<<< HEAD
+    console.log(JSON.stringify(process.env['STORMPATH_API_KEY_ID']));
+=======
+>>>>>>> origin/master
     var apiKey = new stormpath.ApiKey(process.env['STORMPATH_API_KEY_ID'], process.env['STORMPATH_API_KEY_SECRET']);
     console.log(JSON.stringify(apiKey));
     var spClient = new stormpath.Client({apiKey: apiKey});
-
     var app = spClient.getApplication(process.env['STORMPATH_APP_HREF'], function(err, app){
         if(err) throw err;
 

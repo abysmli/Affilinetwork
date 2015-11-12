@@ -16,9 +16,16 @@
             <div class="col-md-12">
                 <ol class="breadcrumb">
                     <li><i class="fa fa-th-large pr-10"></i>产品分类: </li>
-                    <li class="active">化妆品类</li>
-                    <li class="active">特价手机合同</li>
-                    <li class="active">酒类</li>
+                    <li class="active"><a href="/category?category=clothes_shoes">服装鞋子</a></li>
+                    <li class="active"><a href="/category?category=food">食品饮食</a></li>
+                    <li class="active"><a href="/category?category=kitchen">厨房用具</a></li>
+                    <li class="active"><a href="/category?category=electronics">电子产品</a></li>
+                    <li class="active"><a href="/category?category=handy_pad">手机平板</a></li>
+                    <li class="active"><a href="/category?category=makeup">化妆品</a></li>
+                    <li class="active"><a href="/category?category=medicine">药品</a></li>
+                    <li class="active"><a href="/category?category=travel">旅游</a></li>
+                    <li class="active"><a href="/category?category=coupon">打折券</a></li>
+                    <li class="active"><a href="/category?category=others">其他</a></li>
                 </ol>
             </div>
         </div>
@@ -55,23 +62,23 @@
                         <div class="element col-lg-3 col-sm-6 masonry-grid-item">
                             <div class="listing-item">
                                 <div class="overlay-container">
-                                    <img src="<%= product.Images[0][0].URL %>"  style="max-height:280px; max-width:280px; position: absolute; margin: auto; top: 0;left: 0;
+                                    <img src="<%= product.Images[0] %>"  style="max-height:280px; max-width:280px; position: absolute; margin: auto; top: 0;left: 0;
                                                                                        right: 0;bottom: 0;" onerror="this.src= '/stylesheets/images/no-image.jpg';" />
                                     <a href="/product?product_id=<%= product.ProductId %>" class="overlay small">
+                                        <p><%= JSON.stringify(product)%></p>
                                         <i class="fa fa-eye"></i>
                                         <span>查看详细介绍</span>
                                     </a>
 
                                 </div>
                                 <div class="listing-item-body clearfix">
-                                    <h3 class="title"><a href="/product?product_id=<%= product.ProductId %>"><%= product.ProductName_cn %></a></h3>
-                                    <% if (product.Price.length == 1 || Math.min.apply(null, product.Price) == Math.max.apply(null, product.Price)) { %>
-                                        <span class="price" style="font-size: 20px"><%= product.Price[0] %> €</span>
+                                    <h3 class="title"><a href="/product?product_id=<%= product.ProductId %>"><%= product.ProductName %></a></h3>
+                                   <% if (product.Price.length == 1 || Math.min.apply(null, product.Price) == Math.max.apply(null, product.Price)) { %>
+                                        <span class="price" style="font-size: 20px"><%= product.Price[0].replace(".", ",") %> €</span>
                                         <% } else { %>
-                                            <span class="price" style="font-size: 20px"><%= Math.min.apply(null,product.Price) %> - <%= Math.max.apply(null,product.Price) %> €</span>
+                                            <span class="price" style="font-size: 20px"><%= Math.min.apply(null,product.Price).replace(".", ",") %> - <%= Math.max.apply(null,product.Price).replace(".", ".") %> €</span>
                                             <% } %>
                                                 <div class="elements-list pull-right">
-                                                    <a href="#" class="wishlist" title="wishlist"><i class="fa fa-heart-o"></i></a>
                                                     <a href="/product?product_id=<%= product.ProductId %>"><i class="fa fa-gift pr-10"></i>点击查看</a>
                                                 </div>
 
@@ -144,31 +151,6 @@
                             </div>
                         </div>
                 </form>
-                <div class="block clearfix">
-                    <h3>品牌</h3>
-                    <form role="form" class="form-list">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" value=""> Sony 摄像机<small>(16)</small>
-                            </label>
-                        </div>
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" value=""> Hugo Boss西服<small>(78)</small>
-                            </label>
-                        </div>
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" value=""> LV 系列奢侈品 <small>(47)</small>
-                            </label>
-                        </div>
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" value=""> 德国双心保养品<small>(12)</small>
-                            </label>
-                        </div>
-                    </form>
-                </div>
                 </div>
             </aside>
 
