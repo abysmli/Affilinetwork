@@ -19,6 +19,8 @@ var ProductSchema = new mongoose.Schema({
     PriceCurrency: String,
     Title: String,
     TitleCN: String,
+    ShopName: String,
+    Category: String,
     LastproductChange: String,
     DeliveryTime: String,
     Keywords: String,

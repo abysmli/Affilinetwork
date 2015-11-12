@@ -48,7 +48,7 @@
                         </div>
                         <!-- Tab panes end-->
                         <hr>
-                        <span class="price"><%= product.Price %>€</span>
+                        <span class="price"><%= product.Price.replace(".", ",") %>€</span>
                         <div class="elements-list pull-right clearfix">
                             <a href="<%= product.URL %>"><span>去买</span></a>
                             <span><i class="fa fa-star text-default"></i><i class="fa fa-star text-default"></i><i class="fa fa-star text-default"></i><i class="fa fa-star text-default"></i><i class="fa fa-star"></i></span>
@@ -63,10 +63,10 @@
                                 <% products.forEach(function(product, index) { %>
                                     <tr>
                                         <td>
-                                            <%= product.Price %>
+                                            <%= product.Price.replace(".", ",") %>
                                         </td>
                                         <td>
-                                            <%= product.SalesRank %>
+                                            <%= product.ShopName %>
                                         </td>
                                         <td><a href="<%= product.URL %>">入店购买</a></td>
                                     </tr>

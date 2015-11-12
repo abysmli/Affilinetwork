@@ -25,10 +25,10 @@ var utils = require('../utils/utils.js');
 var Utils = new utils();
 
 passport.use(new LocalStrategy(
-    function(username, password, done) {
+    function (username, password, done) {
         User.findOne({
             username: username
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) {
                 return done(err);
             }
@@ -46,15 +46,14 @@ passport.use(new LocalStrategy(
 
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
     var Utils = new utils();
     var page = req.query.page || 1;
-    Product.count({}, function(err, count) {
+    Product.count({}, function (err, count) {
         var pageColum = count / 50;
         Product.aggregate(
             [{
                 "$match": {
-                    //Tranlated: true,
                     EAN: {
                         $ne: null
                     }
@@ -63,7 +62,7 @@ router.get('/', function(req, res, next) {
                 "$group": {
                     _id: "$EAN",
                     ProductId: {
-                        $first: "$ProductId"
+                        $first: "$_id"
                     },
                     Images: {
                         $first: "$ProductImageSet"
@@ -84,7 +83,7 @@ router.get('/', function(req, res, next) {
                     updated_at: -1
                 }
             }],
-            function(err, products) {
+            function (err, products) {
                 if (err != null) {
                     console.log(JSON.stringify(err));
                     res.render('error');
@@ -119,23 +118,219 @@ router.post('/', passport.authenticate('stormpath', {
     failureRedirect: '/login',
     layout: 'layout',
     title: '错误登录信息'
-}), function(req, res) {
+}), function (req, res) {
     res.redirect('/');
 
 });
 
 
 
-router.post('/filter', function(req, res, next) {
+router.post('/filter', function (req, res, next) {
     var category = req.body.category;
     var minprice = req.body.minprice;
     var maxprice = req.body.maxprice;
     var page = req.query.page || 1;
-    console.log(category);
+    if (minprice == '') {
+        minprice = String(Number.NEGATIVE_INFINITY);
+    }
+    if (maxprice == '') {
+        maxprice = String(Number.POSITIVE_INFINITY);
+    }
+    console.log(minprice);
+    console.log(maxprice);
+    if (category == "所有") {
+        Product.count({}, function (err, count) {
+            var pageColum = count / 50;
+            Product.aggregate([
+                    {
+                        "$match": {
+                            $and: [
+                                {
+                                    EAN: {
+                                        $ne: null
+                                    }
+                                },
+                                {
+                                    Price: {
+                                        $lte: maxprice,
+                                        $gte: minprice
+                                    }
+                                }
+                            ]
+                        }
+                },
+                    {
+                        "$group": {
+                            _id: "$EAN",
+                            ProductId: {
+                                $first: "$_id"
+                            },
+                            Images: {
+                                $first: "$ProductImageSet"
+                            },
+                            ProductName: {
+                                $first: "$TitleCN"
+                            },
+                            Price: {
+                                $push: "$Price"
+                            }
+                        }
+                    }, {
+                        "$skip": (page - 1) * 50,
+                    }, {
+                        "$limit": 50
+                    }, {
+                        "$sort": {
+                            update_at: -1
+                        }
+                    }],
+                function (err, products) {
+                    console.log(JSON.stringify(products));
+                    if (err != null) {
+                        res.render('error');
+                    } else {
+                        res.render('index', {
+                            title: '',
+                            count: count,
+                            pageColum: pageColum,
+                            currentPage: page,
+                            products: products,
+                            user: req.user,
+                            layout: 'layout'
+                        });
+                    }
 
+                });
+        });
+
+    } else {
+        Product.count({
+            Category: category
+        }, function (err, count) {
+            var pageColumn = count / 50;
+            Product.aggregate([
+                    {
+                        "$match": {
+                            $and: [{
+                                EAN: {
+                                    $ne: null
+                                },
+                                Price: {
+                                    $lte: maxprice,
+                                    $gte: minprice
+                                },
+                                Category: {
+                                    $eq: category
+                                }
+                        }]
+                        }
+                }, {
+                        "$group": {
+                            _id: "$EAN",
+                            ProductId: {
+                                $first: "$_id"
+                            },
+                            Images: {
+                                $first: "$ProductImageSet"
+                            },
+                            ProductName: {
+                                $first: "$TitleCN"
+                            },
+                            Price: {
+                                $push: "$Price"
+                            }
+                        }
+
+                }, {
+                        "$skip": (page - 1) * 50,
+                    }, {
+                        "$limit": 50
+                    }, {
+                        "$sort": {
+                            update_at: -1
+                        }
+
+                }],
+                function (err, products) {
+                    console.log(JSON.stringify(products));
+                    if (err != null) {
+                        res.render('error');
+                    } else {
+                        res.render('index', {
+                            title: '',
+                            count: count,
+                            pageColum: pageColumn,
+                            currentPage: page,
+                            products: products,
+                            user: req.user,
+                            layout: 'layout'
+                        });
+                    }
+
+                });
+
+        });
+    };
 });
 
-router.get('/login', function(req, res) {
+router.get('/category', function (req, res) {
+    var category = req.query.category;
+    if (category === 'clothes_shoes') {
+        category = "服装鞋子";
+    } else if (category === 'food') {
+        category = "食品饮食";
+    } else if (category === 'kitchen') {
+        category = "厨房用具";
+    } else if (category === 'electronics') {
+        category = "电子产品";
+    } else if (category === 'handy_pad') {
+        category = "手机平板";
+    } else if (category === 'makeup') {
+        category = "化妆品";
+    } else if (category === 'medicine') {
+        category = "药品";
+    } else if (category === 'travel') {
+        category = "旅游";
+    } else if (category === 'coupon') {
+        category = "打折券";
+    } else if (category === 'others') {
+        category = "其他";
+    }
+
+    Product.count({
+        Category: category
+    }, function (err, count) {
+        var pageColumn = count / 50;
+        Product.aggregate([{
+                "$match": {
+                    $and: [{
+                        EAN:{
+                            $ne:null
+                        },
+                        Category: {
+                            $eq: category
+                        }
+                    }]
+                }
+        }, {
+            "$group": {
+                id:"$EAN",
+                ProductId: {
+                    $first: "_id"
+                },
+                Images:{
+                    $first: "$ProductImageSet"
+                }
+        }
+
+        ], function (err, ) {
+
+        });
+
+    });
+});
+
+router.get('/login', function (req, res) {
     res.render('userlogin/login', {
         title: '登录',
         layout: 'layout',
@@ -146,20 +341,20 @@ router.get('/login', function(req, res) {
 });
 
 //logout
-router.get('/logout', function(req, res) {
+router.get('/logout', function (req, res) {
     req.logout();
     res.redirect('/');
 });
 
 
-router.get('/product', function(req, res, next) {
+router.get('/product', function (req, res, next) {
     var query = Product.where({
-        ProductId: req.query.product_id,
+        _id: req.query.product_id,
     });
-    query.findOne(function(err, _product) {
+    query.findOne(function (err, _product) {
         Product.find({
             EAN: _product.EAN
-        }, null, function(err, _products) {
+        }, null, function (err, _products) {
             console.log(req.user);
             if (err != null) res.render('error');
             else {
@@ -177,7 +372,8 @@ router.get('/product', function(req, res, next) {
     });
 });
 
-router.get('/test', function(req, res, next) {
+router.get('/test', function (req, res, next) {
+    /*
     prodAdv.call("ItemLookup", {
         ItemId: "B00PWEYDZC",
         IdType: "ASIN",
@@ -186,17 +382,16 @@ router.get('/test', function(req, res, next) {
     }, function(err, product) {
         res.json(product);
     });
-    
-    /*
-        var query = {};
-        //query.FQ = "EAN:04905524974720";
-        query.Query = "Thinkpad"
-        Affilinet.searchProducts(query, function(error, response, results) {
-            var _product = Utils.fromAffilinetToLocalProduct(results.Products[0]);
-            console.log(_product);
-            res.json(results);
-        });
     */
+
+    var query = {};
+    //query.FQ = "EAN:04905524974720";
+    query.Query = "Thinkpad"
+    Affilinet.searchProducts(query, function (error, response, results) {
+        var results = Utils.fromAffilinetToLocalProduct(results.Products[0]);
+        res.json(results);
+    });
+
 });
 
 

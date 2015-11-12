@@ -32,9 +32,6 @@ router.post("/", function (req, res) {
     }, function (err, passwordResetToken) {
         res.redirect('/');
     });
-
-
-
 });
 
 router.get('/changePassword', function (req, res) {

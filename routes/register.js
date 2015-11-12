@@ -13,27 +13,6 @@ router.get('/', function (req, res, next) {
 
 });
 
-
-/*router.post('/', function (req, res) {
-    Account.register(new Account({
-        username: req.body.username,
-        usermail: req.body.emailadress
-    }), req.body.password, function (err, account) {
-        if (err) {
-            return res.render("userlogin/error", {
-                title: 'Sign Up',
-                layout: "layout",
-                user: req.user,
-                info: "抱歉, 用户名已被注册, 请重新填写一个."
-            });
-        }
-        passport.authenticate('local')(req, res, function () {
-            res.redirect('/');
-        });
-    });
-});*/
-
-
 router.post('/', function(req, res){
     var username = req.body.username;
     var password = req.body.password;
@@ -42,8 +21,8 @@ router.post('/', function(req, res){
     var firstname = req.body.firstname;
     console.log(JSON.stringify(process.env['STORMPATH_API_KEY_ID']));
     var apiKey = new stormpath.ApiKey(process.env['STORMPATH_API_KEY_ID'], process.env['STORMPATH_API_KEY_SECRET']);
+    console.log(JSON.stringify(apiKey));
     var spClient = new stormpath.Client({apiKey: apiKey});
-
     var app = spClient.getApplication(process.env['STORMPATH_APP_HREF'], function(err, app){
         if(err) throw err;
 
@@ -68,7 +47,5 @@ router.post('/', function(req, res){
         });
     });
 });
-
-
 
 module.exports = router;
