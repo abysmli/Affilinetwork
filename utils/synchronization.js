@@ -1,3 +1,6 @@
+var utils = require('./utils.js');
+var Utils = new utils();
+
 module.exports = (function() {
     var _this;
 
@@ -29,12 +32,13 @@ module.exports = (function() {
     _Class.prototype.sync = function sync(_currentPage) {
         this.options.query.CurrentPage = typeof _currentPage !== 'undefined' ? _currentPage : 1;
         this.Affilinet.searchProducts(this.options.query, loadAffilinetData);
-        if (this.options.query.Query !== "" && _currentPage == 1) {
+        if (this.options.query.Query !== "" && this.options.query.CurrentPage == 1) {
             loadAmazonDataByKeywords(this.options.query.Query);
         }
+        /*
         if (this.options.query.FQ !== "" && _currentPage == 1) {
             loadAmazonDataByKeywords(this.options.query.Query);
-        }
+        }*/
     }
 
     var loadAffilinetData = function(error, response, results) {
@@ -48,8 +52,7 @@ module.exports = (function() {
                 currentpage: _this.params.CurrentPage,
                 totalpage: _this.params.TotalPages
             });
-            writeAffilinetDataIntoDatabase(results.Products);
-
+            writeAffilinetDataIntoDatabase(Utils.ToLocalProducts(results.Products, "affilinet"));
             if (_this.params.CurrentPage < _this.params.TotalPages) {
                 _this.sync(_this.params.CurrentPage + 1);
             }
@@ -86,15 +89,14 @@ module.exports = (function() {
 
     var loadAmazonDataByKeywords = function(keywords) {
         for (var i = 1; i <= 5; i++) {
-            prodAdv.call("ItemSearch", {
+            _this.prodAdv.call("ItemSearch", {
                 SearchIndex: "All",
                 Keywords: keywords,
                 ItemPage: i,
                 ResponseGroup: "Medium"
             }, function(err, results) {
                 if (!err) {
-                    var products = Utils.ToLocalProducts(results.Items.Item, "amazon");
-                    writeAmazonDataIntoDatabase(products);
+                    writeAmazonDataIntoDatabase(Utils.ToLocalProducts(results.Items.Item, "amazon"));
                 } else {
                     return err;
                 }

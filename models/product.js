@@ -20,7 +20,7 @@ var ProductSchema = new mongoose.Schema({
     TitleCN: String,
     ShopName: String,
     Category: String,
-    LastproductChange: String,
+    LastProductChange: String,
     DeliveryTime: String,
     Keywords: String,
     Source: String,

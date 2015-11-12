@@ -27,7 +27,7 @@ module.exports = function (io) {
         });
         
         socket.on('update', function (data) {
-            var updatedatabase = new UpdateDatabase(Product, Affilinet, socket);
+            var updatedatabase = new UpdateDatabase(Product, Affilinet, prodAdv, socket);
             updatedatabase.update();
         });
     });
