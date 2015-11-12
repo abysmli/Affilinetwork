@@ -1,4 +1,4 @@
-module.exports = (function () {
+module.exports = (function() {
     function _Class() {}
 
     _Class.prototype.findByEAN = function findByEAN(product, EAN) {
@@ -12,11 +12,11 @@ module.exports = (function () {
 
     _Class.prototype.fromAmazonToLocalProduct = function fromAmazonToLocalProduct(product) {
         var _product = {};
-        if ( product !== undefined ) {
+        if (product !== undefined && product.OfferSummary !== undefined) {
             if (product.OfferSummary.TotalNew !== "0") {
                 var _images = [];
                 if (product.ImageSets !== undefined && Array.isArray(product.ImageSets.ImageSet)) {
-                    product.ImageSets.ImageSet.forEach(function(image){
+                    product.ImageSets.ImageSet.forEach(function(image) {
                         _images.push(image.LargeImage.URL);
                     });
                 }
@@ -39,7 +39,7 @@ module.exports = (function () {
                     TitleCN: null,
                     ShopName: "Amazon",
                     Category: null,
-                    LastproductChange: null,
+                    LastProductChange: null,
                     DeliveryTime: null,
                     Keywords: null,
                     Source: "Amazon",
@@ -70,7 +70,7 @@ module.exports = (function () {
             TitleCN: null,
             ShopName: product.ShopTitle || null,
             Category: null,
-            LastproductChange: product.LastProductChange || null,
+            LastProductChange: product.LastProductChange || null,
             DeliveryTime: product.DeliveryTime || null,
             Keywords: product.Keywords || null,
             Source: "Affilinet",
@@ -79,22 +79,24 @@ module.exports = (function () {
         return _product;
     }
 
-    _Class.prototype.isEmptyObject = function isEmptyObject(obj){
+    _Class.prototype.isEmptyObject = function isEmptyObject(obj) {
         return JSON.stringify(obj) === '{}';
     }
 
     _Class.prototype.ToLocalProducts = function ToLocalProducts(products, type) {
-        var self = this; 
+        var self = this;
         var _products = [];
-        products.forEach(function(product){
-            var _product = {};
-            (type == "amazon") ? _product = self.fromAmazonToLocalProduct(product) : _product = self.fromAffilinetToLocalProduct(product);
-            if (!self.isEmptyObject(_product)) {
-                _products.push(_product);
-            }
-        });
+        if (products) {
+            products.forEach(function(product) {
+                var _product = {};
+                (type == "amazon") ? _product = self.fromAmazonToLocalProduct(product): _product = self.fromAffilinetToLocalProduct(product);
+                if (!self.isEmptyObject(_product)) {
+                    _products.push(_product);
+                }
+            });
+        }
         return _products;
     }
-    
+
     return _Class;
 })();

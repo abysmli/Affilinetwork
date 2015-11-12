@@ -12,43 +12,43 @@
         </tr>
     </thead>
     <tfoot>
-        <tr>
-            <th>Category ID</th>
-            <th>ID Path</th>
-            <th>Title</th>
-            <th>Title Path</th>
-            <th>Product Count</th>
-        </tr>
+    <tr>
+        <th>Category ID</th>
+        <th>ID Path</th>
+        <th>Title</th>
+        <th>Title Path</th>
+        <th>Product Count</th>
+    </tr>
     </tfoot>
-
     <tbody>
         <% categorylist.forEach(function(category, index) { %>
-            <tr>
-                <td>
-                    <a href="/controller/product?categoryid=<%= category.Id %>&shopid=<%= shopid %>&type=remote"><%= category.Id %></a>
-                </td>
-                <td>
-                    <%= category.IdPath %>
-                </td>
-                <td>
-                    <%= category.Title %>
-                </td>
-                <td>
-                    <%= category.TitlePath %>
-                </td>
-                <td>
-                    <%= category.ProductCount %>
-                </td>
-            </tr>
-            <% }) %>
+        <tr>
+            <td>
+                <a href="/controller/product?categoryid=<%= category.Id %>&shopid=<%= shopid %>&type=remote"><%= category.Id %></a>
+            </td>
+            <td>
+                <%= category.IdPath %>
+            </td>
+            <td>
+                <%= category.Title %>
+            </td>
+            <td>
+                <%= category.TitlePath %>
+            </td>
+            <td>
+                <%= category.ProductCount %>
+            </td>
+        </tr>
+        <% }) %>
     </tbody>
 </table>
 
 <script>
-    $(document).ready(function() {
-        var dt = $('#category_table').DataTable({
-            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
-            stateSave: true,
-        });
+$(document).ready(function() {
+    var dt = $('#category_table').DataTable({
+        lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+        stateSave: true,
     });
+    $("#category_page").addClass("active");
+});
 </script>

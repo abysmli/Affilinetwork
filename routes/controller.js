@@ -4,6 +4,7 @@ var auth = require('../models/auth.js');
 var affilinet = require('../utils/affilinetapi.js');
 var aws = require('aws-lib');
 var Product = require('../models/product.js');
+var Article = require('../models/article.js');
 var setting = require('../setting.js');
 var utils = require('../utils/utils.js');
 var Utils = new utils();
@@ -79,12 +80,14 @@ router.get('/product', auth, function(req, res, next) {
         Affilinet.searchProducts(query, function(error, response, results) {
             if (!error && response.statusCode == 200) {
                 var counter = results.ProductsSummary.TotalRecords;
-                var products = Utils.fromAffilinetToLocalProducts(results.Products);
+                var products = Utils.ToLocalProducts(results.Products, "affilinet");
 
                 res.render('controller/products', {
                     title: 'Products Manage',
                     shopid: req.query.shopid,
                     categoryid: req.query.categoryid,
+                    query: "",
+                    fq: "",
                     type: 'remote',
                     counter: counter,
                     products: products,
@@ -109,6 +112,8 @@ router.get('/product', auth, function(req, res, next) {
                         title: 'Products Manage',
                         shopid: -1,
                         categoryid: -1,
+                        query: "",
+                        fq: "",
                         type: 'local',
                         counter: count,
                         products: products,
@@ -133,7 +138,7 @@ router.post('/product', auth, function(req, res, next) {
                     ResponseGroup: "Medium"
                 }, function(err, results) {
                     if (!err) {
-                        counter = parseInt(counter) + parseInt(results.Items.TotalResults);
+                        counter = "Affilinet: " + counter + " | Amazon: " + results.Items.TotalResults;
                         var _products = Utils.ToLocalProducts(results.Items.Item, "amazon");
                         products = products.concat(_products);
                         req.session.products = products;
@@ -300,5 +305,68 @@ router.get('/product/remove', auth, function(req, res, next) {
         }
     });
 });
+
+router.get('/article', auth, function(req, res, next) {
+    Article.find({}, function(err, articles) {
+        if (err) {
+            return res.render('error');
+        } else {
+            res.render('controller/article', {
+                title: 'Articles Manage',
+                articles: articles,
+                layout: 'controller/layout'
+            });
+        }
+    });
+
+})
+
+router.get('/article/add', auth, function(req, res, next) {
+    res.render('controller/article', {
+        title: 'Articles Manage',
+        article: 'article',
+        layout: 'controller/layout'
+    });
+})
+
+router.post('/article/add', auth, function(req, res, next) {
+    res.render('controller/article', {
+        title: 'Articles Manage',
+        article: 'article',
+        layout: 'controller/layout'
+    });
+})
+
+router.get('/article/edit', auth, function(req, res, next) {
+    res.render('controller/article', {
+        title: 'Articles Manage',
+        article: 'article',
+        layout: 'controller/layout'
+    });
+})
+
+router.post('/article/edit', auth, function(req, res, next) {
+    res.render('controller/article', {
+        title: 'Articles Manage',
+        article: 'article',
+        layout: 'controller/layout'
+    });
+})
+
+router.get('/article/remove', auth, function(req, res, next) {
+    res.render('controller/article', {
+        title: 'Articles Manage',
+        article: 'article',
+        layout: 'controller/layout'
+    });
+})
+
+router.get('/article/remove_all', auth, function(req, res, next) {
+    res.render('controller/article', {
+        title: 'Articles Manage',
+        article: 'article',
+        layout: 'controller/layout'
+    });
+})
 
 module.exports = router;

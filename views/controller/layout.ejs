@@ -11,6 +11,7 @@
     </title>
 
     <!-- Bootstrap -->
+    <link rel="stylesheet" href="//cdn.quilljs.com/0.20.1/quill.snow.css" />
     <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
     <link href="/stylesheets/dataTables.bootstrap.css" rel="stylesheet">
     <link href="/stylesheets/style.css" rel="stylesheet">
@@ -24,6 +25,7 @@
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
+    <script src="http://cdn.quilljs.com/latest/quill.js"></script>
     <script src="/javascripts/jquery-2.1.3.min.js"></script>
     <script src="/javascripts/jquery.lazyload.min.js"></script>
     <script src="/javascripts/jquery.dataTables.min.js"></script>
@@ -51,10 +53,11 @@
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
-                        <li id="shop_page"><a href="/controller/">Shops Manage<span class="sr-only">(current)</span></a></li>
+                        <li id="shop_page"><a href="/controller/">Shops Manage</a></li>
                         <li id="program_page"><a href="/controller/programs">Programs Manage</a></li>
                         <li id="category_page"><a href="/controller/category">Categories Manage</a></li>
                         <li id="product_page"><a href="/controller/product">Products Manage</a></li>
+                        <li id="article_page"><a href="/controller/article">Article Manage</a></li>
                     </ul>
                 </div>
                 <!-- /.navbar-collapse -->
@@ -64,32 +67,6 @@
         <div class="container-fluid">
             <%- body %>
         </div>
-        <script>
-            var page_name = '<%= title %>';
-            $(document).ready(function() {
-                if (page_name == 'Shops Manage') {
-                    $('li#shop_page').addClass('active');
-                    $('li#program_page').removeClass('active');
-                    $('li#product_page').removeClass('active');
-                    $('li#category_page').removeClass('active');
-                } else if (page_name == 'Programs Manage'){
-                    $('li#program_page').addClass('active');
-                    $('li#shop_page').removeClass('active');
-                    $('li#product_page').removeClass('active');
-                    $('li#category_page').removeClass('active');
-                } else if (page_name == 'Catagory Manage') {
-                    $('li#program_page').removeClass('active');
-                    $('li#shop_page').removeClass('active');
-                    $('li#product_page').removeClass('active');
-                    $('li#category_page').addClass('active');
-                } else if (page_name == 'Programs Manage') {
-                    $('li#program_page').removeClass('active');
-                    $('li#shop_page').removeClass('active');
-                    $('li#product_page').addClass('active');
-                    $('li#category_page').removeClass('active');
-                }
-            });
-        </script>
     </div>
     <footer id="footer" class="footer">
         <div class="container">
