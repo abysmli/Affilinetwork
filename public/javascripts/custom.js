@@ -7,3 +7,15 @@
  * License URI:http://support.wrapbootstrap.com/
  * File Description: Place here your custom scripts
  */
+
+function sendAjax(url, data, success, error) {
+  $.ajax({
+    url: url,
+    type:'GET',
+    timeout: 20000,
+    dataType:'json',
+    data: data,
+    success: success,
+    error: error,
+  });
+}

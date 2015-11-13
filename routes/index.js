@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var Product = require('../models/product.js');
+var Favourite = require('../models/favourite.js');
 var affilinet = require('../utils/affilinetapi.js');
 var aws = require('aws-lib');
 var utils = require('../utils/utils.js');
@@ -25,10 +26,10 @@ var utils = require('../utils/utils.js');
 var Utils = new utils();
 
 passport.use(new LocalStrategy(
-    function (username, password, done) {
+    function(username, password, done) {
         User.findOne({
             username: username
-        }, function (err, user) {
+        }, function(err, user) {
             if (err) {
                 return done(err);
             }
@@ -43,19 +44,18 @@ passport.use(new LocalStrategy(
     }
 ));
 
-
-
 /* GET home page. */
-router.get('/', function (req, res, next) {
+router.get('/', function(req, res, next) {
+    console.log(req.user);
     var Utils = new utils();
     var page = req.query.page || 1;
-    Product.count({}, function (err, count) {
+    Product.count({}, function(err, count) {
         var pageColum = count / 50;
         Product.aggregate(
             [{
                 "$match": {
                     EAN: {
-                        $ne: null
+                        $ne: ""
                     }
                 },
             }, {
@@ -65,10 +65,13 @@ router.get('/', function (req, res, next) {
                         $first: "$_id"
                     },
                     Images: {
-                        $first: "$ProductImageSet"
+                        $first: "$ProductImage"
                     },
                     ProductName: {
                         $first: "$TitleCN"
+                    },
+                    DescriptionCN: {
+                        $first: "$DescriptionCN"
                     },
                     Price: {
                         $push: "$Price"
@@ -83,12 +86,12 @@ router.get('/', function (req, res, next) {
                     updated_at: -1
                 }
             }],
-            function (err, products) {
+            function(err, products) {
                 if (err != null) {
                     console.log(JSON.stringify(err));
                     res.render('error');
                 } else {
-                    console.log(JSON.stringify(products));
+                    console.log(products);
                     res.render('index', {
                         title: '',
                         count: count,
@@ -103,29 +106,15 @@ router.get('/', function (req, res, next) {
     });
 });
 
-
-//login
-/*router.post('/', passport.authenticate('local', {
-    failureRedirect: '/login',
-    layout: 'layout',
-    title: '错误登录信息'
-}), function (req, res) {
-    res.redirect('/');
-
-});*/
-
 router.post('/', passport.authenticate('stormpath', {
     failureRedirect: '/login',
     layout: 'layout',
     title: '错误登录信息'
-}), function (req, res) {
+}), function(req, res) {
     res.redirect('/');
-
 });
 
-
-
-router.post('/filter', function (req, res, next) {
+router.post('/filter', function(req, res, next) {
     var category = req.body.category;
     var minprice = req.body.minprice;
     var maxprice = req.body.maxprice;
@@ -136,55 +125,48 @@ router.post('/filter', function (req, res, next) {
     if (maxprice == '') {
         maxprice = String(Number.POSITIVE_INFINITY);
     }
-    console.log(minprice);
-    console.log(maxprice);
     if (category == "所有") {
-        Product.count({}, function (err, count) {
+        Product.count({}, function(err, count) {
             var pageColum = count / 50;
-            Product.aggregate([
-                    {
-                        "$match": {
-                            $and: [
-                                {
-                                    EAN: {
-                                        $ne: null
-                                    }
-                                },
-                                {
-                                    Price: {
-                                        $lte: maxprice,
-                                        $gte: minprice
-                                    }
-                                }
-                            ]
-                        }
-                },
-                    {
-                        "$group": {
-                            _id: "$EAN",
-                            ProductId: {
-                                $first: "$_id"
-                            },
-                            Images: {
-                                $first: "$ProductImageSet"
-                            },
-                            ProductName: {
-                                $first: "$TitleCN"
-                            },
-                            Price: {
-                                $push: "$Price"
+            Product.aggregate([{
+                    "$match": {
+                        $and: [{
+                            EAN: {
+                                $ne: null
                             }
+                        }, {
+                            Price: {
+                                $lte: maxprice,
+                                $gte: minprice
+                            }
+                        }]
+                    }
+                }, {
+                    "$group": {
+                        _id: "$EAN",
+                        ProductId: {
+                            $first: "$_id"
+                        },
+                        Images: {
+                            $first: "$ProductImageSet"
+                        },
+                        ProductName: {
+                            $first: "$TitleCN"
+                        },
+                        Price: {
+                            $push: "$Price"
                         }
-                    }, {
-                        "$skip": (page - 1) * 50,
-                    }, {
-                        "$limit": 50
-                    }, {
-                        "$sort": {
-                            update_at: -1
-                        }
-                    }],
-                function (err, products) {
+                    }
+                }, {
+                    "$skip": (page - 1) * 50,
+                }, {
+                    "$limit": 50
+                }, {
+                    "$sort": {
+                        update_at: -1
+                    }
+                }],
+                function(err, products) {
                     console.log(JSON.stringify(products));
                     if (err != null) {
                         res.render('error');
@@ -206,51 +188,50 @@ router.post('/filter', function (req, res, next) {
     } else {
         Product.count({
             Category: category
-        }, function (err, count) {
+        }, function(err, count) {
             var pageColumn = count / 50;
-            Product.aggregate([
-                    {
-                        "$match": {
-                            $and: [{
-                                EAN: {
-                                    $ne: null
-                                },
-                                Price: {
-                                    $lte: maxprice,
-                                    $gte: minprice
-                                },
-                                Category: {
-                                    $eq: category
-                                }
-                        }]
-                        }
-                }, {
-                        "$group": {
-                            _id: "$EAN",
-                            ProductId: {
-                                $first: "$_id"
-                            },
-                            Images: {
-                                $first: "$ProductImageSet"
-                            },
-                            ProductName: {
-                                $first: "$TitleCN"
+            Product.aggregate([{
+                    "$match": {
+                        $and: [{
+                            EAN: {
+                                $ne: null
                             },
                             Price: {
-                                $push: "$Price"
+                                $lte: maxprice,
+                                $gte: minprice
+                            },
+                            Category: {
+                                $eq: category
                             }
+                        }]
+                    }
+                }, {
+                    "$group": {
+                        _id: "$EAN",
+                        ProductId: {
+                            $first: "$_id"
+                        },
+                        Images: {
+                            $first: "$ProductImageSet"
+                        },
+                        ProductName: {
+                            $first: "$TitleCN"
+                        },
+                        Price: {
+                            $push: "$Price"
                         }
+                    }
 
                 }, {
-                        "$skip": (page - 1) * 50,
-                    }, {
-                        "$limit": 50
-                    }, {
-                        "$sort": {
-                            update_at: -1
-                        }
+                    "$skip": (page - 1) * 50,
+                }, {
+                    "$limit": 50
+                }, {
+                    "$sort": {
+                        update_at: -1
+                    }
                 }],
-                function (err, products) {
+                function(err, products) {
                     console.log(JSON.stringify(products));
                     if (err != null) {
                         res.render('error');
@@ -273,18 +254,18 @@ router.post('/filter', function (req, res, next) {
 });
 
 /*search the product from input*/
-router.post('/search', function(req, res){
+router.post('/search', function(req, res) {
     var search = req.body.search;
     console.log(search);
-    Product.textSearch('电子产品', function(err, output){
+    Product.textSearch('电子产品', function(err, output) {
         if (err != null) {
-                res.render('error');
-            }
+            res.render('error');
+        }
         console.log(JSON.stringify(output));
     });
 });
 
-router.get('/category', function (req, res) {
+router.get('/category', function(req, res) {
     var category = req.query.category;
     var page = req.query.page || 1;
     console.log(page);
@@ -312,7 +293,7 @@ router.get('/category', function (req, res) {
 
     Product.count({
         Category: category
-    }, function (err, count) {
+    }, function(err, count) {
         var pageColumn = count / 50;
         Product.aggregate([{
             "$match": {
@@ -323,7 +304,7 @@ router.get('/category', function (req, res) {
                     Category: {
                         $eq: category
                     }
-                    }]
+                }]
             }
         }, {
             "$group": {
@@ -343,14 +324,14 @@ router.get('/category', function (req, res) {
             }
         }, {
             "$skip": (page - 1) * 50,
-                    }, {
+        }, {
             "$limit": 50
-                    }, {
+        }, {
             "$sort": {
                 update_at: -1
             }
 
-        }], function (err, products) {
+        }], function(err, products) {
             console.log(JSON.stringify(products));
             if (err != null) {
                 res.render('error');
@@ -371,7 +352,7 @@ router.get('/category', function (req, res) {
 });
 
 
-router.get('/login', function (req, res) {
+router.get('/login', function(req, res) {
     res.render('userlogin/login', {
         title: '登录',
         layout: 'layout',
@@ -382,38 +363,60 @@ router.get('/login', function (req, res) {
 });
 
 //logout
-router.get('/logout', function (req, res) {
+router.get('/logout', function(req, res) {
     req.logout();
     res.redirect('/');
 });
 
-
-router.get('/product', function (req, res, next) {
+router.get('/product', function(req, res, next) {
     var query = Product.where({
         _id: req.query.product_id,
     });
-    query.findOne(function (err, _product) {
+    query.findOne(function(err, _product) {
         Product.find({
             EAN: _product.EAN
-        }, null, function (err, _products) {
-            console.log(req.user);
+        }, null, function(err, _products) {
             if (err != null) res.render('error');
             else {
+                console.log(_product);
                 res.render('product_details', {
                     title: '德国打折商品, 产品描述',
                     product: _product,
                     product_link: req.url,
                     products: _products,
                     layout: '/layout',
-                    user: req.user
+                    user: req.user || ""
                 });
             }
         });
-
     });
 });
 
-
-
+router.get('/favourite', function(req, res, next) {
+    var data = {
+        Username: req.query.Username,
+        ProductEAN: req.query.ProductEAN,
+    };
+    if (data.Username != "" && data.Username != undefined && data.ProductEAN != "" && data.ProductEAN != undefined) {
+        var query = Favourite.where(data);
+        query.findOne(function(err, _favourite) {
+            if (err) return res.status(500).send('Service Error!');
+            if (!_favourite) {
+                Favourite.create(req.body, function(err, favourite) {
+                    if (err) {
+                        return res.status(500).send('Service Error!');
+                    } else {
+                        return res.json({result: "已经成功加入收藏夹!"});
+                    }
+                    return res.redirect('/controller/article');
+                });
+            } else {
+                return res.json({result: "该收藏已经存在！"});
+            }
+        });
+    } else {
+        res.status(500).send('Service Error!');
+    }
+});
 
 module.exports = router;

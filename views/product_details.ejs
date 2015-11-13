@@ -11,23 +11,18 @@
     </div>
 </div>
 <!-- page-intro end -->
-
 <!-- main-container start -->
 <!-- ================ -->
 <section class="main-container">
-
     <div class="container">
         <div class="row">
-
             <!-- main start -->
             <!-- ================ -->
             <div class="main col-md-12">
-
                 <!-- page-title start -->
                 <!-- ================ -->
                 <h1 class="page-title margin-top-clear"><%= product.TitleCN %></h1>
                 <!-- page-title end -->
-
                 <div class="row">
                     <div class="col-md-4">
                         <!-- Nav tabs -->
@@ -35,32 +30,34 @@
                         <div class="tab-content clear-style">
                             <div class="tab-pane active" id="product-images">
                                 <div class="owl-carousel content-slider-with-controls-bottom">
-                                    <% for (var i=0; i<product.ProductImageSet.length; i++){ %>
+                                    <div class="overlay-container outside">
+                                        <img src="<%= product.ProductImage %>" alt="">
+                                        <a href="<%= product.ProductImage %>" class="popup-img overlay" title="<%= product.TitleCN %>"><i class="fa fa-search-plus"></i></a>
+                                    </div>
+                                    <% for (var i=0; i<product.ProductImageSet.length; i++) { %>
                                         <div class="overlay-container outside">
                                             <img src="<%= product.ProductImageSet[i] %>" alt="">
-                                            <a href="<%= product.ProductImageSet[i] %>" class="popup-img overlay" title="image title"><i class="fa fa-search-plus"></i></a>
+                                            <a href="<%= product.ProductImageSet[i] %>" class="popup-img overlay" title="<%= product.TitleCN %>"><i class="fa fa-search-plus"></i></a>
                                         </div>
-
                                         <% } %>
-
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <!-- Tab panes end-->
-                        <hr>
-                        <span class="price"><%= product.Price.replace(".", ",") %>€</span>
-                        <div class="elements-list pull-right clearfix">
-                            <a href="<%= product.URL %>"><span>去买</span></a>
-                            <span><i class="fa fa-star text-default"></i><i class="fa fa-star text-default"></i><i class="fa fa-star text-default"></i><i class="fa fa-star text-default"></i><i class="fa fa-star"></i></span>
-                        </div>
-                        <div class="clearfix">
-                            <table class="table table-striped">
-                                <tr>
-                                    <td>价格</td>
-                                    <td>商家</td>
-                                    <td>点击购买</td>
-                                </tr>
-                                <% products.forEach(function(product, index) { %>
+                            <!-- Tab panes end-->
+                            <hr/>
+                            <span class="price"><%= product.Price.replace(".", ",") %>€</span>
+                            <div class="elements-list pull-right clearfix">
+                                <a href="<%= product.URL %>"><span>去买</span></a>
+                                <a id="add_favourite_button" href="#"><span>收藏</span></a>
+                            </div>
+                            <div class="clearfix">
+                                <table class="table table-striped">
+                                    <tr>
+                                        <td>价格</td>
+                                        <td>商家</td>
+                                        <td>点击购买</td>
+                                    </tr>
+                                    <% products.forEach(function(product, index) { %>
                                     <tr>
                                         <td>
                                             <%= product.Price.replace(".", ",") %>
@@ -71,55 +68,45 @@
                                         <td><a href="<%= product.URL %>">入店购买</a></td>
                                     </tr>
                                     <% }) %>
-                            </table>
+                                </table>
+                            </div>
+                            <hr/>
                         </div>
-                        <hr>
-                        <div class="row">
-                            <form role="form">
-
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- product side start -->
-                    <aside class="col-md-8">
-                        <div class="sidebar">
-                            <div class="side product-item vertical-divider-left">
-                                <div class="tabs-style-2">
-                                    <!-- Nav tabs -->
-                                    <ul class="nav nav-tabs" role="tablist">
-                                        <li class="active"><a href="#h2tab1" role="tab" data-toggle="tab"><i class="fa fa-file-text-o pr-5"></i>产品介绍</a></li>
-                                        <li><a href="#h2tab3" role="tab" data-toggle="tab"><i class="fa fa-star pr-5"></i>用户反馈</a></li>
-                                    </ul>
-                                    <!-- Tab panes -->
-                                    <div class="tab-content padding-top-clear padding-bottom-clear">
-                                        <div class="tab-pane fade in active" id="h2tab1">
-                                            <h4 class="title"><%= product.TitleCN %></h4>
-                                            <p>
-                                                <%= product.DescriptionCN%>
-                                            </p>
+                        <!-- product side start -->
+                        <aside class="col-md-8">
+                            <div class="sidebar">
+                                <div class="side product-item vertical-divider-left">
+                                    <div class="tabs-style-2">
+                                        <!-- Nav tabs -->
+                                        <ul class="nav nav-tabs" role="tablist">
+                                            <li class="active"><a href="#h2tab1" role="tab" data-toggle="tab"><i class="fa fa-file-text-o pr-5"></i>产品介绍</a></li>
+                                            <li><a href="#h2tab3" role="tab" data-toggle="tab"><i class="fa fa-star pr-5"></i>用户反馈</a></li>
+                                        </ul>
+                                        <!-- Tab panes -->
+                                        <div class="tab-content padding-top-clear padding-bottom-clear">
+                                            <div class="tab-pane fade in active" id="h2tab1">
+                                                <h4 class="title"><%= product.TitleCN %></h4>
+                                                <p>
+                                                    <%= product.DescriptionCN%>
+                                                </p>
+                                            </div>
+                                            <div class="tab-pane fade" id="h2tab3">
+                                                <!-- 多说评论框 start -->
+                                                <div class="ds-thread" data-thread-key="<% product._id %>" data-title="<% product.Title %>" data-url="<% product_link %>"></div>
+                                                <!-- 多说评论框 end -->
+                                            </div>
                                         </div>
-                                        <div class="tab-pane fade" id="h2tab3">
-                                            <!-- 多说评论框 start -->
-                                            <div class="ds-thread" data-thread-key="<% product._id %>" data-title="<% product.Title %>" data-url="<% product_link %>"></div>
-                                            <!-- 多说评论框 end -->
-
-                                        </div>
-
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </aside>
-                    <!-- product side end -->
+                        </aside>
+                        <!-- product side end -->
+                    </div>
                 </div>
-
+                <!-- main end -->
             </div>
-            <!-- main end -->
-
         </div>
-    </div>
-</section>
+    </section>
 
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
@@ -139,5 +126,23 @@
         ds.charset = 'UTF-8';
         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
     })();
+    $(document).ready(function() {
+        $("#add_favourite_button").click(function() {
+            if (user.username != "" && user.username != undefined) {
+                var data = {
+                    Username: "<%= user.username %>",
+                    ProductEAN: "<%= product.EAN %>"
+                };
+                sendAjax('/favourite', data, function(result) {
+                    messg.success(JSON.stringify(result), 1000);
+                }, function(error) {
+                    messg.warning('服务器错误，请稍后再试!', 1000);
+                });
+            } else {
+                alert(1);
+                messg.warning('请先登陆!', 1000);
+            }
+        });
+    });
 </script>
 <!-- 多说公共JS代码 end -->
