@@ -128,21 +128,22 @@
     })();
     $(document).ready(function() {
         $("#add_favourite_button").click(function() {
-            if (user.username != "" && user.username != undefined) {
+            <% if (user != "" && user != undefined) { %>
                 var data = {
                     Username: "<%= user.username %>",
                     ProductEAN: "<%= product.EAN %>"
                 };
                 sendAjax('/favourite', data, function(result) {
-                    messg.success(JSON.stringify(result), 1000);
+                    Notify('success', result.result);
                 }, function(error) {
-                    messg.warning('服务器错误，请稍后再试!', 1000);
+                    Notify('warning', '服务器错误，请稍后再试!');
                 });
-            } else {
-                alert(1);
-                messg.warning('请先登陆!', 1000);
-            }
+            <% } else { %>
+                Notify('warning', '请先登陆!');
+            <% } %>
         });
     });
+
+
 </script>
 <!-- 多说公共JS代码 end -->

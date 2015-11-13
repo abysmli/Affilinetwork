@@ -9,13 +9,21 @@
  */
 
 function sendAjax(url, data, success, error) {
-  $.ajax({
-    url: url,
-    type:'GET',
-    timeout: 20000,
-    dataType:'json',
-    data: data,
-    success: success,
-    error: error,
-  });
+	$.ajax({
+		url: url,
+		type: 'GET',
+		timeout: 20000,
+		dataType: 'json',
+		data: data,
+		success: success,
+		error: error,
+	});
+}
+
+function Notify(type, msg) {
+	Lobibox.notify(type, {
+		size: 'normal',
+		position: 'top right',
+		msg: msg
+	});
 }

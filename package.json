@@ -29,7 +29,6 @@
     "stormpath": "*",
     "express-stormpath": "*",
     "mongoose-text-search": "*",
-    "xml2js": "*",
-    "component-event": "*"
+    "xml2js": "*"
   }
 }

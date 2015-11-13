@@ -36,7 +36,7 @@
     <link href="/plugins/owl-carousel/owl.carousel.css" rel="stylesheet">
     <link href="/stylesheets/style.css" rel="stylesheet">
     <link href="/stylesheets/simplePagination.css" rel="stylesheet">
-    <link href="/stylesheets/messg.css" rel="stylesheet">
+    <link href="/plugins/lobibox/css/Lobibox.min.css" rel="stylesheet">
 
     <!-- iDea core CSS file -->
     <link href="/stylesheets/css/style.css" rel="stylesheet">
@@ -97,51 +97,47 @@
 
                                 <div class="btn-group dropdown">
                                     <% if(typeof user == 'undefined' ) { %>
-                                        <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i>登录</button>
-                                        <ul class="dropdown-menu dropdown-menu-right dropdown-animation">
-                                            <li>
-                                                <form class="login-form" action="/" method="post">
-                                                    <div class="form-group has-feedback ">
-                                                        <label class="control-label">用户名</label>
-                                                        <input name="username" type="text" class="form-control" placeholder="">
-                                                        <i class="fa fa-user form-control-feedback"></i>
-                                                    </div>
-                                                    <div class="form-group has-feedback">
-                                                        <label class="control-label">密码</label>
-                                                        <input name="password" type="password" class="form-control" placeholder="">
-                                                        <i class="fa fa-lock form-control-feedback"></i>
-                                                    </div>
-                                                    <button type="submit" class="btn btn-group btn-dark btn-sm">登入</button>
-                                                    <span>or</span>
-                                                    <a href="/register" role="button" class="btn btn-group btn-default btn-sm">点这里注册</a>
-                                                    <ul>
-                                                        <li><a href="/password_reset">忘记密码?</a></li>
-                                                    </ul>
-                                                    <div class="divider"></div>
-                                                    <span class="text-center">通过以下方式登录</span>
-                                                    <ul class="social-links clearfix">
-                                                        <li class="facebook"><a target="_blank" href="http://www.facebook.com"><i class="fa fa-facebook"></i></a></li>
-                                                        <li class="qq"><a target="_blank" href="http://plus.google.com"><i class="fa fa fa-qq"></i></a></li>
-                                                        <li class="wechat"><a target="_blank" href="http://plus.google.com"><i class="fa fa fa-weixin"></i></a></li>
-                                                    </ul>
-                                                    <div class="divider"></div>
-                                                    <div class="ds-login"></div>
-
-                                                </form>
-                                            </li>
-                                            <% } else { %>
-                                                <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i>
-                                                    <%= user.username %>
-                                                </button>
-                                                <ul class="dropdown-menu dropdown-menu-left dropdown-animation">
-
-                                                    <button class="btn btn-group btn-dark btn-sm">查看购物券</button>
-                                                    <span>
-                                                    <p style="font-size: small"><a href="/logout">退出登录</a></p>
-                                                </span>
-
+                                    <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i>登录</button>
+                                    <ul class="dropdown-menu dropdown-menu-right dropdown-animation">
+                                        <li>
+                                            <form class="login-form" action="/" method="post">
+                                                <div class="form-group has-feedback ">
+                                                    <label class="control-label">用户名</label>
+                                                    <input name="username" type="text" class="form-control" placeholder="">
+                                                    <i class="fa fa-user form-control-feedback"></i>
+                                                </div>
+                                                <div class="form-group has-feedback">
+                                                    <label class="control-label">密码</label>
+                                                    <input name="password" type="password" class="form-control" placeholder="">
+                                                    <i class="fa fa-lock form-control-feedback"></i>
+                                                </div>
+                                                <button type="submit" class="btn btn-group btn-dark btn-sm">登入</button>
+                                                <span>or</span>
+                                                <a href="/register" role="button" class="btn btn-group btn-default btn-sm">点这里注册</a>
+                                                <ul>
+                                                    <li><a href="/password_reset">忘记密码?</a></li>
                                                 </ul>
-                                                <% } %>
+                                                <!--
+                                                <div class="divider"></div>
+                                                <span class="text-center">通过以下方式登录</span>
+                                                <ul class="social-links clearfix">
+                                                    <li class="facebook"><a target="_blank" href="http://www.facebook.com"><i class="fa fa-facebook"></i></a></li>
+                                                    <li class="qq"><a target="_blank" href="http://plus.google.com"><i class="fa fa fa-qq"></i></a></li>
+                                                    <li class="wechat"><a target="_blank" href="http://plus.google.com"><i class="fa fa fa-weixin"></i></a></li>
+                                                </ul>
+                                                <div class="divider"></div>
+                                                <div class="ds-login"></div>
+                                                -->
+                                            </form>
+                                        </li>
+                                    </ul>
+                                    <% } else { %>
+                                    <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i><%= user.username %></button>
+                                    <ul class="dropdown-menu dropdown-menu-left dropdown-animation">
+                                        <a class="btn btn-group btn-dark btn-sm">查看收藏夹</a>
+                                        <span><p style="font-size: small"><a href="/logout">退出登录</a></p></span>
+                                    </ul>
+                                    <% } %>
                                 </div>
                             </div>
                             <!--  header top dropdowns end -->
@@ -183,11 +179,47 @@
 
                     </div>
                     <div class="col-md-9">
-
                         <!-- header-right start -->
-                        <!-- /input-group -->
+                            <!-- ================ -->
+                            <div class="header-right clearfix">
 
-                        <!-- /.col-lg-6 -->
+                                <!-- main-navigation start -->
+                                <!-- ================ -->
+                                <div class="main-navigation animated">
+
+                                    <!-- navbar start -->
+                                    <!-- ================ -->
+                                    <nav class="navbar navbar-default" role="navigation">
+                                        <div class="container-fluid">
+
+                                            <!-- Toggle get grouped for better mobile display -->
+                                            <div class="navbar-header">
+                                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
+                                                    <span class="sr-only">Toggle navigation</span>
+                                                    <span class="icon-bar"></span>
+                                                    <span class="icon-bar"></span>
+                                                    <span class="icon-bar"></span>
+                                                </button>
+                                            </div>
+
+                                            <!-- Collect the nav links, forms, and other content for toggling -->
+                                            <div class="collapse navbar-collapse scrollspy smooth-scroll" id="navbar-collapse-1">
+                                                <ul class="nav navbar-nav navbar-right">
+                                                    <li><a href="/">首页</a></li>
+                                                    <li><a href="/voucher">折扣券</a></li>
+                                                    <li><a href="/article">精彩点评</a></li>
+                                                </ul>
+                                            </div>
+
+                                        </div>
+                                    </nav>
+                                    <!-- navbar end -->
+
+                                </div>
+                                <!-- main-navigation end -->
+
+                            </div>
+                            <!-- header-right end -->
                     </div>
                     <!-- /.row -->
                     <!-- ================ -->
@@ -294,7 +326,7 @@
         <script type="text/javascript" src="/javascripts/template.js"></script>
 
         <!-- Messg Plugin -->
-        <script type="text/javascript" src="/javascripts/messg.js"></script>
+        <script type="text/javascript" src="/plugins/lobibox/js/lobibox.min.js"></script>
 
         <!-- Custom Scripts -->
         <script type="text/javascript" src="/javascripts/custom.js"></script>
