@@ -58,15 +58,6 @@ router.get('/programs', auth, function(req, res, next) {
     });
 });
 
-router.get('/product/remove_all', auth, function(req, res, next) {
-    Product.remove(function(err) {
-        if (err)
-            res.render('error');
-        else
-            res.redirect('/controller/product');
-    });
-});
-
 router.get('/product', auth, function(req, res, next) {
     if (req.query.type == "remote") {
         var query = {
@@ -306,6 +297,15 @@ router.get('/product/remove', auth, function(req, res, next) {
     });
 });
 
+router.get('/product/remove_all', auth, function(req, res, next) {
+    Product.remove(function(err) {
+        if (err)
+            res.render('error');
+        else
+            res.redirect('/controller/product');
+    });
+});
+
 router.get('/article', auth, function(req, res, next) {
     Article.find({}, function(err, articles) {
         if (err) {
@@ -322,50 +322,62 @@ router.get('/article', auth, function(req, res, next) {
 })
 
 router.get('/article/add', auth, function(req, res, next) {
-    res.render('controller/article', {
-        title: 'Articles Manage',
-        article: 'article',
+    res.render('controller/article_form', {
+        title: 'Add Article',
+        article: '',
         layout: 'controller/layout'
     });
 })
 
 router.post('/article/add', auth, function(req, res, next) {
-    res.render('controller/article', {
-        title: 'Articles Manage',
-        article: 'article',
-        layout: 'controller/layout'
+    Article.create(req.body, function(err, article) {
+        if (err) {
+            console.log(err);
+            return err;
+        }
+        return res.redirect('/controller/article');
     });
 })
 
 router.get('/article/edit', auth, function(req, res, next) {
-    res.render('controller/article', {
-        title: 'Articles Manage',
-        article: 'article',
-        layout: 'controller/layout'
+    Article.findById(req.query.id, function(err, article) {
+        if (err != null) res.render('error');
+        else {
+            res.render('controller/article_form', {
+                title: 'Edit Article',
+                article: article,
+                layout: 'controller/layout'
+            });
+        }
     });
 })
 
 router.post('/article/edit', auth, function(req, res, next) {
-    res.render('controller/article', {
-        title: 'Articles Manage',
-        article: 'article',
-        layout: 'controller/layout'
+    Article.findOneAndUpdate({
+        _id: req.query.id
+    }, req.body, function(err, article) {
+        if (err != null) res.render('error');
+        else {
+            res.redirect('/controller/article');
+        }
     });
 })
 
 router.get('/article/remove', auth, function(req, res, next) {
-    res.render('controller/article', {
-        title: 'Articles Manage',
-        article: 'article',
-        layout: 'controller/layout'
+    Article.findByIdAndRemove(req.query.id, function(err, article) {
+        if (err != null) res.render('error');
+        else {
+            return res.redirect('/controller/article');
+        }
     });
 })
 
 router.get('/article/remove_all', auth, function(req, res, next) {
-    res.render('controller/article', {
-        title: 'Articles Manage',
-        article: 'article',
-        layout: 'controller/layout'
+    Article.remove(function(err) {
+        if (err)
+            res.render('error');
+        else
+            res.redirect('/controller/article');
     });
 })
 
