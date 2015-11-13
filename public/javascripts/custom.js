@@ -11,7 +11,7 @@
 function sendAjax(url, data, success, error) {
 	$.ajax({
 		url: url,
-		type: 'GET',
+		type: 'POST',
 		timeout: 20000,
 		dataType: 'json',
 		data: data,

@@ -1,0 +1,56 @@
+<!-- page-intro start-->
+<!-- ================ -->
+<div class="page-intro">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<ol class="breadcrumb">
+					<li><i class="fa fa-home pr-10"></i><a href="/">首页</a></li>
+					<li class="active">精彩点评</li>
+				</ol>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- page-intro end -->
+<!-- main-container start -->
+<!-- ================ -->
+<section class="main-container">
+	<div class="container">
+		<div class="row">
+			<!-- main start -->
+			<!-- ================ -->
+			<div class="main col-md-12">
+				<!-- page-title start -->
+				<!-- ================ -->
+				<h1 id="accordions" class="page-title"><%= title %></h1>
+				<!-- accordion start -->
+				
+				<div class="panel-group" id="accordion">
+					<% articles.forEach(function(article) { %>
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h4 class="panel-title">
+							<a data-toggle="collapse" data-parent="#accordion" href="#<%= article._id %>">
+								<i class="fa fa-bold"></i><%= article.Title %>
+							</a>
+							</h4>
+						</div>
+						<div id="<%= article._id %>" class="panel-collapse collapse in">
+							<div class="panel-body">
+								<%- article.Content %>
+							</div>
+						</div>
+					</div>
+					<% }) %>
+				</div>	
+
+				<div class="space-bottom"></div>
+				
+				<!-- accordion end -->
+			</div>
+			<!-- main end -->
+		</div>
+	</div>
+</section>
+<!-- main-container end -->

@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var Product = require('../models/product.js');
 var Favourite = require('../models/favourite.js');
+var Article = require('../models/article.js');
 var affilinet = require('../utils/affilinetapi.js');
 var aws = require('aws-lib');
 var utils = require('../utils/utils.js');
@@ -289,24 +290,58 @@ router.post('/search', function(req, res) {
                                 },
                                 ProductName: {
                                     $first: "$TitleCN" 
+    Product.find({}, function(err, result) {
+        result.forEach(function(product, index) {
+            if (product.Title.match(search)) {
+                console.log(product.Title);
+                Product.count({
+                    $text: {
+                        $search: product.Title
+                    }
+                }, function(err, results) {
+                    count = results;
+                    var pageColum = count / 50;
+                    console.log(count);
+                    Product.aggregate([{
+                        "$match": {
+                            $and: [{
+                                EAN: {
+                                    $ne: null
                                 },
-                                Price: {
-                                    $push: "$Price"
+                                Title: { //此处到时候需修改成TitleCN
+                                    $eq: product.Title
                                 }
+                            }]
+                        }
+                    }, {
+                        "$group": {
+                            _id: "$EAN",
+                            ProductId: {
+                                $first: "$_id"
+                            },
+                            Images: {
+                                $first: "$ProductImageSet"
+                            },
+                            ProductName: {
+                                $first: "$TitleCN"
+                            },
+                            Price: {
+                                $push: "$Price"
                             }
-                        }, {
-                            "$skip": (page - 1) * 50
-                        }, {
-                            "$limit": 50
-                        }, {
-                            "$sort": {
-                                update_at: -1
-                            }
-                        }], function(err, products){
-                                console.log(JSON.stringify(products));
-                                if (err != null) {
-                                res.render('error');
-                            } else {
+                        }
+                    }, {
+                        "$skip": (page - 1) * 50
+                    }, {
+                        "$limit": 50
+                    }, {
+                        "$sort": {
+                            update_at: -1
+                        }
+                    }], function(err, products) {
+                        console.log(JSON.stringify(products));
+                        if (err != null) {
+                            res.render('error');
+                        } else {
                             res.render('index', {
                                 title: '',
                                 count: count,
@@ -316,13 +351,14 @@ router.post('/search', function(req, res) {
                                 user: req.user,
                                 layout: 'layout'
                             });
-                         }
+                        }
 
+                    });
                             });
                     
                 });*/
 
-            }else{
+            } else {
                 console.log("Can not find a product");
             }
         });
@@ -456,10 +492,10 @@ router.get('/product', function(req, res, next) {
     });
 });
 
-router.get('/favourite', function(req, res, next) {
+router.post('/favourite', function(req, res, next) {
     var data = {
-        Username: req.query.Username,
-        ProductEAN: req.query.ProductEAN,
+        Username: req.body.Username,
+        ProductEAN: req.body.ProductEAN,
     };
     console.log(data);
     if (data.Username != "" && data.Username != undefined && data.ProductEAN != "" && data.ProductEAN != undefined) {
@@ -471,17 +507,54 @@ router.get('/favourite', function(req, res, next) {
                     if (err) {
                         return res.status(500).send('Service Error!');
                     } else {
-                        return res.json({result: "已经成功加入收藏夹!"});
+                        return res.json({
+                            result: "已经成功加入收藏夹!"
+                        });
                     }
                     return res.redirect('/controller/article');
                 });
             } else {
-                return res.json({result: "该收藏已经存在！"});
+                return res.json({
+                    result: "该收藏已经存在！"
+                });
             }
         });
     } else {
         res.status(500).send('Service Error!');
     }
+});
+
+router.get('/favourite', function(req, res, next) {
+    Favourite.find({
+        Username: req.user.username
+    }, function(err, favourites) {
+        var productEANs = [];
+        favourites.forEach(function(favourite) {
+            productEANs.push(favourite.ProductEAN);
+        });
+        Product.find({
+            'EAN': {
+                $in: productEANs
+            }
+        }, function(err, products) {
+            console.log(products)
+            res.render('favourite', {
+                title: '用户收藏',
+                products: products,
+                user: req.user
+            });
+        });
+    });
+});
+
+router.get('/article', function(req, res, next) {
+    Article.find({}, function(err, articles) {
+        res.render('article', {
+            title: '精彩的文章点评',
+            articles: articles,
+            user: req.user
+        });
+    });
 });
 
 module.exports = router;
