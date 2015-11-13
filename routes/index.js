@@ -46,7 +46,6 @@ passport.use(new LocalStrategy(
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    console.log(req.user);
     var Utils = new utils();
     var page = req.query.page || 1;
     Product.count({}, function(err, count) {
@@ -91,7 +90,6 @@ router.get('/', function(req, res, next) {
                     console.log(JSON.stringify(err));
                     res.render('error');
                 } else {
-                    console.log(products);
                     res.render('index', {
                         title: '',
                         count: count,
@@ -118,6 +116,7 @@ router.post('/filter', function(req, res, next) {
     var category = req.body.category;
     var minprice = req.body.minprice;
     var maxprice = req.body.maxprice;
+    console.log(minprice + ' ' + maxprice);
     var page = req.query.page || 1;
     if (minprice == '') {
         minprice = String(Number.NEGATIVE_INFINITY);
@@ -130,14 +129,14 @@ router.post('/filter', function(req, res, next) {
             var pageColum = count / 50;
             Product.aggregate([{
                     "$match": {
-                        $and: [{
+                        "$and": [{
                             EAN: {
-                                $ne: null
+                                $ne: ""
                             }
                         }, {
                             Price: {
-                                $lte: maxprice,
-                                $gte: minprice
+                                $lte: Number(maxprice),
+                                $gte: Number(minprice)
                             }
                         }]
                     }
@@ -148,7 +147,7 @@ router.post('/filter', function(req, res, next) {
                             $first: "$_id"
                         },
                         Images: {
-                            $first: "$ProductImageSet"
+                            $first: "$ProductImage"
                         },
                         ProductName: {
                             $first: "$TitleCN"
@@ -212,7 +211,7 @@ router.post('/filter', function(req, res, next) {
                             $first: "$_id"
                         },
                         Images: {
-                            $first: "$ProductImageSet"
+                            $first: "$ProductImage"
                         },
                         ProductName: {
                             $first: "$TitleCN"
@@ -260,10 +259,11 @@ router.post('/search', function(req, res) {
     var count = 0;
     Product.find({}, function(err, result){
         result.forEach(function (product, index){
-            if(product.Title.match(search)){
+            if(product.Title.match(new RegExp(search, 'gi'))){
+                count ++ ;
                 console.log(product.Title);
-                Product.count({$text: {$search: product.Title}}, function(err, results){
-                        count = results;
+                /*Product.count({$text: {$search: product.Title}}, function(err, results){
+                        
                         var pageColum = count / 50;
                         console.log(count);
                         Product.aggregate([
@@ -320,7 +320,7 @@ router.post('/search', function(req, res) {
 
                             });
                     
-                });
+                });*/
 
             }else{
                 console.log("Can not find a product");
@@ -377,7 +377,7 @@ router.get('/category', function(req, res) {
                     $first: "$_id"
                 },
                 Images: {
-                    $first: "$ProductImageSet"
+                    $first: "$ProductImage"
                 },
                 ProductName: {
                     $first: "$TitleCN"

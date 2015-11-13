@@ -16,7 +16,7 @@ var ProductSchema = new mongoose.Schema({
     EAN: String,
     Description: String,
     DescriptionCN: String,
-    Price: String,
+    Price: Number,
     PriceCurrency: String,
     Title: String,
     TitleCN: String,
