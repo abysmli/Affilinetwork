@@ -275,12 +275,76 @@ router.post('/filter', function (req, res, next) {
 /*search the product from input*/
 router.post('/search', function(req, res){
     var search = req.body.search;
-    console.log(search);
-    Product.textSearch('电子产品', function(err, output){
-        if (err != null) {
-                res.render('error');
+    var page = req.body.page || 1;
+    var count = 0;
+    Product.find({}, function(err, result){
+        result.forEach(function (product, index){
+            if(product.Title.match(search)){
+                console.log(product.Title);
+                Product.count({$text: {$search: product.Title}}, function(err, results){
+                        count = results;
+                        var pageColum = count / 50;
+                        console.log(count);
+                        Product.aggregate([
+                        {
+                            "$match": {
+                                $and: [{
+                                    EAN: {
+                                        $ne: null
+                                    },
+                                    Title: { //此处到时候需修改成TitleCN
+                                        $eq: product.Title
+                                    }
+                                }]
+                            }
+                        }, {
+                            "$group": {
+                                _id: "$EAN",
+                                ProductId: {
+                                    $first: "$_id"
+                                },
+                                Images: {
+                                    $first: "$ProductImageSet"
+                                },
+                                ProductName: {
+                                    $first: "$TitleCN" 
+                                },
+                                Price: {
+                                    $push: "$Price"
+                                }
+                            }
+                        }, {
+                            "$skip": (page - 1) * 50
+                        }, {
+                            "$limit": 50
+                        }, {
+                            "$sort": {
+                                update_at: -1
+                            }
+                        }], function(err, products){
+                                console.log(JSON.stringify(products));
+                                if (err != null) {
+                                res.render('error');
+                            } else {
+                            res.render('index', {
+                                title: '',
+                                count: count,
+                                pageColum: pageColum,
+                                currentPage: page,
+                                products: products,
+                                user: req.user,
+                                layout: 'layout'
+                            });
+                         }
+
+                            });
+                    
+                });
+
+            }else{
+                console.log("Can not find a product");
             }
-        console.log(JSON.stringify(output));
+        });
     });
 });
 
