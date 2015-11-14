@@ -120,10 +120,10 @@ router.post('/filter', function(req, res, next) {
     console.log(minprice + ' ' + maxprice);
     var page = req.query.page || 1;
     if (minprice == '') {
-        minprice = String(Number.NEGATIVE_INFINITY);
+        minprice = Number.NEGATIVE_INFINITY;
     }
     if (maxprice == '') {
-        maxprice = String(Number.POSITIVE_INFINITY);
+        maxprice = Number.POSITIVE_INFINITY;
     }
     if (category == "所有") {
         Product.count({}, function(err, count) {
@@ -258,11 +258,91 @@ router.post('/search', function(req, res) {
     var search = req.body.search;
     var page = req.body.page || 1;
     var count = 0;
-    Product.find({}, function(err, result){
-        result.forEach(function (product, index){
-            if(product.Title.match(new RegExp(search, 'gi'))){
-                count ++ ;
-                console.log(product.Title);
+    var query = {
+        $or: [
+            {
+                Title: new RegExp(search, 'gi')
+            },
+            {
+                Category: new RegExp(search, 'gi')
+            },
+            {
+                Keywords: new RegExp(search, 'gi')
+            }
+        ]
+    };
+
+    Product.count(query, function(err, count){
+        var pageColum = count / 50;
+        Product.aggregate([{
+            "$match": {
+                $and : [{
+                    EAN: {
+                        $ne: null
+                    },
+                    $or: [
+                        {
+                Title: new RegExp(search, 'gi')
+            },
+            {
+                Category: new RegExp(search, 'gi')
+            },
+            {
+                Keywords: new RegExp(search, 'gi')
+            }
+                    ]
+
+                }]
+            }
+        }, {
+            "$group": {
+                _id: "$EAN",
+                ProductId: {
+                    $first: "$_id"
+                },
+                Images: {
+                    $first: "$ProductImage"
+                },
+                ProductName: {
+                    $first: "$TitleCN"
+                },
+                Price: {
+                    $push: "$Price"
+                }
+            }
+        }, {
+            "$skip": (page-1) * 50
+        }, {
+            "$limit": 50
+        }, {
+            "$sort": {
+                update_at: -1
+            }
+        }], function(err, results){
+                console.log(JSON.stringify(results));
+                if (err != null) {
+                    res.render('error');
+                } else {
+                    res.render('index', {
+                        title: '',
+                        count: count,
+                        pageColum: pageColum,
+                        currentPage: page,
+                        products: results,
+                        user: req.user,
+                        layout: 'layout'
+                    });
+                }
+
+        });
+
+    });
+});
+    //Product.find({}, function(err, result){
+      //  result.forEach(function (product, index){
+        //    if(product.Title.match(new RegExp(search, 'gi'))){
+          //      count ++ ;
+            //    console.log(product.Title);
                 /*Product.count({$text: {$search: product.Title}}, function(err, results){
                         
                         var pageColum = count / 50;
@@ -358,12 +438,6 @@ router.post('/search', function(req, res) {
                     
                 });*/
 
-            } else {
-                console.log("Can not find a product");
-            }
-        });
-    });
-});
 
 router.get('/category', function(req, res) {
     var category = req.query.category;
