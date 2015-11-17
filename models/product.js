@@ -8,7 +8,7 @@ var ProductSchema = new mongoose.Schema({
     ASIN: String,
     URL: String,
     ProductName: String,
-    SalesRank: String,
+    SalesRank: Number,
     ProductImage: String,
     ProductImageSet: [mongoose.Schema.Types.Mixed],
     Brand: String,

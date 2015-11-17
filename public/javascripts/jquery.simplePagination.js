@@ -19,7 +19,7 @@
 				displayedPages: 5,
 				edges: 2,
 				currentPage: 0,
-				hrefTextPrefix: '?page=',
+				hrefTextPrefix: '/pagination?page=',
 				hrefTextSuffix: '',
 				prevText: 'Prev',
 				nextText: 'Next',

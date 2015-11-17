@@ -49,13 +49,55 @@ passport.use(new LocalStrategy(
 router.get('/', function(req, res, next) {
     var Utils = new utils();
     var page = req.query.page || 1;
+    var hotproduct;
+    Product.aggregate([{
+        "$match": {
+            $and: [{
+                EAN: {
+                    $ne: 'null'
+                },
+                SalesRank: {
+                    $lte: 15,
+                    $gte: 1
+                }
+            }]
+
+        }
+    }, {
+        "$group": {
+            _id: "$EAN",
+            ProductId: {
+                $first: "$_id"
+            },
+            Images: {
+                $first: "$ProductImage"
+            },
+            ProductName: {
+                $first: "$TitleCN"
+            },
+            DescriptionCN: {
+                $first: "$DescriptionCN"
+            },
+            Price: {
+                $push: "$Price"
+            }
+        }
+    }, {
+        "$sort": {
+            update_at: -1
+        }
+    }], function(err, hotresult) {
+        hotproduct = hotresult;
+        console.log(hotproduct);
+
+    });
     Product.count({}, function(err, count) {
         var pageColum = count / 50;
         Product.aggregate(
             [{
                 "$match": {
                     EAN: {
-                        $ne: ""
+                        $ne: null
                     }
                 },
             }, {
@@ -97,12 +139,80 @@ router.get('/', function(req, res, next) {
                         pageColum: pageColum,
                         currentPage: page,
                         products: products,
+                        hotproducts: hotproduct,
+                        category: '所有',
+                        sort: '按日期',
                         user: req.user,
                         layout: 'layout'
                     });
                 }
             });
     });
+});
+
+router.get('/pagination', function(req, res) {
+    var page = req.query.page;
+    if (page == 1) {
+        res.redirect('/');
+    } else {
+        Product.count({}, function(err, count) {
+            var pageColum = count / 50;
+            Product.aggregate(
+                [{
+                    "$match": {
+                        EAN: {
+                            $ne: null
+                        }
+                    },
+                }, {
+                    "$group": {
+                        _id: "$EAN",
+                        ProductId: {
+                            $first: "$_id"
+                        },
+                        Images: {
+                            $first: "$ProductImage"
+                        },
+                        ProductName: {
+                            $first: "$TitleCN"
+                        },
+                        DescriptionCN: {
+                            $first: "$DescriptionCN"
+                        },
+                        Price: {
+                            $push: "$Price"
+                        },
+                    }
+                }, {
+                    "$skip": (page - 1) * 50,
+                }, {
+                    "$limit": 50
+                }, {
+                    "$sort": {
+                        updated_at: -1
+                    }
+                }],
+                function(err, products) {
+                    if (err != null) {
+                        console.log(JSON.stringify(err));
+                        res.render('error');
+                    } else {
+                        res.render('searchproduct', {
+                            title: '',
+                            count: count,
+                            pageColum: pageColum,
+                            currentPage: page,
+                            products: products,
+                            category: '所有',
+                            sort: '按日期',
+                            user: req.user,
+                            layout: 'layout'
+                        });
+                    }
+                });
+        });
+    }
+
 });
 
 router.post('/', passport.authenticate('stormpath', {
@@ -113,11 +223,13 @@ router.post('/', passport.authenticate('stormpath', {
     res.redirect('/');
 });
 
+
 router.post('/filter', function(req, res, next) {
     var category = req.body.category;
     var minprice = req.body.minprice;
     var maxprice = req.body.maxprice;
-    console.log(minprice + ' ' + maxprice);
+    var sort = req.body.sort;
+    console.log(category);
     var page = req.query.page || 1;
     if (minprice == '') {
         minprice = Number.NEGATIVE_INFINITY;
@@ -128,126 +240,492 @@ router.post('/filter', function(req, res, next) {
     if (category == "所有") {
         Product.count({}, function(err, count) {
             var pageColum = count / 50;
-            Product.aggregate([{
-                    "$match": {
-                        "$and": [{
-                            EAN: {
-                                $ne: ""
-                            }
-                        }, {
-                            Price: {
-                                $lte: Number(maxprice),
-                                $gte: Number(minprice)
-                            }
-                        }]
-                    }
-                }, {
-                    "$group": {
-                        _id: "$EAN",
-                        ProductId: {
-                            $first: "$_id"
-                        },
-                        Images: {
-                            $first: "$ProductImage"
-                        },
-                        ProductName: {
-                            $first: "$TitleCN"
-                        },
-                        Price: {
-                            $push: "$Price"
+            if (sort == '按日期') {
+                Product.aggregate([{
+                        "$match": {
+                            "$and": [{
+                                EAN: {
+                                    $ne: null
+                                }
+                            }, {
+                                Price: {
+                                    $lte: Number(maxprice),
+                                    $gte: Number(minprice)
+                                }
+                            }]
                         }
-                    }
-                }, {
-                    "$skip": (page - 1) * 50,
-                }, {
-                    "$limit": 50
-                }, {
-                    "$sort": {
-                        update_at: -1
-                    }
-                }],
-                function(err, products) {
-                    console.log(JSON.stringify(products));
-                    if (err != null) {
-                        res.render('error');
-                    } else {
-                        res.render('index', {
-                            title: '',
-                            count: count,
-                            pageColum: pageColum,
-                            currentPage: page,
-                            products: products,
-                            user: req.user,
-                            layout: 'layout'
-                        });
-                    }
+                    }, {
+                        "$group": {
+                            _id: "$EAN",
+                            ProductId: {
+                                $first: "$_id"
+                            },
+                            Images: {
+                                $first: "$ProductImage"
+                            },
+                            ProductName: {
+                                $first: "$TitleCN"
+                            },
+                            Price: {
+                                $push: "$Price"
+                            }
+                        }
+                    }, {
+                        "$skip": (page - 1) * 50,
+                    }, {
+                        "$limit": 50
+                    }, {
+                        "$sort": {
+                            update_at: -1
+                        }
+                    }],
+                    function(err, products) {
+                        console.log(JSON.stringify(products));
+                        if (err != null) {
+                            res.render('error');
+                        } else {
+                            res.render('searchproduct', {
+                                title: '',
+                                count: count,
+                                pageColum: pageColum,
+                                currentPage: page,
+                                products: products,
+                                category: category,
+                                sort: sort,
+                                user: req.user,
+                                layout: 'layout'
+                            });
+                        }
 
-                });
+                    });
+            } else if (sort == '按价格由低到高') {
+                Product.aggregate([{
+                        "$match": {
+                            "$and": [{
+                                EAN: {
+                                    $ne: null
+                                }
+                            }, {
+                                Price: {
+                                    $lte: Number(maxprice),
+                                    $gte: Number(minprice)
+                                }
+                            }]
+                        }
+                    }, {
+                        "$group": {
+                            _id: "$EAN",
+                            ProductId: {
+                                $first: "$_id"
+                            },
+                            Images: {
+                                $first: "$ProductImage"
+                            },
+                            ProductName: {
+                                $first: "$TitleCN"
+                            },
+                            Price: {
+                                $push: "$Price"
+                            }
+                        }
+                    }, {
+                        "$skip": (page - 1) * 50,
+                    }, {
+                        "$limit": 50
+                    }, {
+                        "$sort": {
+                            Price: 1
+                        }
+                    }],
+                    function(err, products) {
+                        console.log(JSON.stringify(products));
+                        if (err != null) {
+                            res.render('error');
+                        } else {
+                            res.render('searchproduct', {
+                                title: '',
+                                count: count,
+                                pageColum: pageColum,
+                                currentPage: page,
+                                products: products,
+                                category: category,
+                                sort: sort,
+                                user: req.user,
+                                layout: 'layout'
+                            });
+                        }
+
+                    });
+            } else if (sort == '按价格由高到低') {
+                Product.aggregate([{
+                        "$match": {
+                            "$and": [{
+                                EAN: {
+                                    $ne: null
+                                }
+                            }, {
+                                Price: {
+                                    $lte: Number(maxprice),
+                                    $gte: Number(minprice)
+                                }
+                            }]
+                        }
+                    }, {
+                        "$group": {
+                            _id: "$EAN",
+                            ProductId: {
+                                $first: "$_id"
+                            },
+                            Images: {
+                                $first: "$ProductImage"
+                            },
+                            ProductName: {
+                                $first: "$TitleCN"
+                            },
+                            Price: {
+                                $push: "$Price"
+                            }
+                        }
+                    }, {
+                        "$skip": (page - 1) * 50,
+                    }, {
+                        "$limit": 50
+                    }, {
+                        "$sort": {
+                            Price: -1
+                        }
+                    }],
+                    function(err, products) {
+                        console.log(JSON.stringify(products));
+                        if (err != null) {
+                            res.render('error');
+                        } else {
+                            res.render('searchproduct', {
+                                title: '',
+                                count: count,
+                                pageColum: pageColum,
+                                currentPage: page,
+                                products: products,
+                                category: category,
+                                sort: sort,
+                                user: req.user,
+                                layout: 'layout'
+                            });
+                        }
+                    });
+            } else if (sort == '按热度') {
+                Product.aggregate([{
+                        "$match": {
+                            "$and": [{
+                                EAN: {
+                                    $ne: null
+                                }
+                            }, {
+                                Price: {
+                                    $lte: Number(maxprice),
+                                    $gte: Number(minprice)
+                                }
+                            }]
+                        }
+                    }, {
+                        "$group": {
+                            _id: "$EAN",
+                            ProductId: {
+                                $first: "$_id"
+                            },
+                            Images: {
+                                $first: "$ProductImage"
+                            },
+                            ProductName: {
+                                $first: "$TitleCN"
+                            },
+                            Price: {
+                                $push: "$Price"
+                            }
+                        }
+                    }, {
+                        "$skip": (page - 1) * 50,
+                    }, {
+                        "$limit": 50
+                    }, {
+                        "$sort": {
+                            SaleRank: -1
+                        }
+                    }],
+                    function(err, products) {
+                        console.log(JSON.stringify(products));
+                        if (err != null) {
+                            res.render('error');
+                        } else {
+                            res.render('searchproduct', {
+                                title: '',
+                                count: count,
+                                pageColum: pageColum,
+                                currentPage: page,
+                                products: products,
+                                category: category,
+                                sort: sort,
+                                user: req.user,
+                                layout: 'layout'
+                            });
+                        }
+                    });
+            }
         });
 
     } else {
         Product.count({
             Category: category
         }, function(err, count) {
-            var pageColumn = count / 50;
-            Product.aggregate([{
-                    "$match": {
-                        $and: [{
-                            EAN: {
-                                $ne: null
+            var pageColum = count / 50;
+            if (sort == '按日期') {
+                Product.aggregate([{
+                        "$match": {
+                            "$and": [{
+                                EAN: {
+                                    $ne: null
+                                }
+                            }, {
+                                Price: {
+                                    $lte: Number(maxprice),
+                                    $gte: Number(minprice)
+                                }
+                            }, {
+                                Category: {
+                                    $eq: category
+                                }
+                            }]
+                        }
+                    }, {
+                        "$group": {
+                            _id: "$EAN",
+                            ProductId: {
+                                $first: "$_id"
+                            },
+                            Images: {
+                                $first: "$ProductImage"
+                            },
+                            ProductName: {
+                                $first: "$TitleCN"
                             },
                             Price: {
-                                $lte: maxprice,
-                                $gte: minprice
-                            },
-                            Category: {
-                                $eq: category
+                                $push: "$Price"
                             }
-                        }]
-                    }
-                }, {
-                    "$group": {
-                        _id: "$EAN",
-                        ProductId: {
-                            $first: "$_id"
-                        },
-                        Images: {
-                            $first: "$ProductImage"
-                        },
-                        ProductName: {
-                            $first: "$TitleCN"
-                        },
-                        Price: {
-                            $push: "$Price"
                         }
-                    }
+                    }, {
+                        "$skip": (page - 1) * 50,
+                    }, {
+                        "$limit": 50
+                    }, {
+                        "$sort": {
+                            update_at: -1
+                        }
+                    }],
+                    function(err, products) {
+                        console.log(JSON.stringify(products));
+                        if (err != null) {
+                            res.render('error');
+                        } else {
+                            res.render('searchproduct', {
+                                title: '',
+                                count: count,
+                                pageColum: pageColum,
+                                currentPage: page,
+                                products: products,
+                                category: category,
+                                sort: sort,
+                                user: req.user,
+                                layout: 'layout'
+                            });
+                        }
 
-                }, {
-                    "$skip": (page - 1) * 50,
-                }, {
-                    "$limit": 50
-                }, {
-                    "$sort": {
-                        update_at: -1
-                    }
-                }],
-                function(err, products) {
-                    console.log(JSON.stringify(products));
-                    if (err != null) {
-                        res.render('error');
-                    } else {
-                        res.render('index', {
-                            title: '',
-                            count: count,
-                            pageColum: pageColumn,
-                            currentPage: page,
-                            products: products,
-                            user: req.user,
-                            layout: 'layout'
-                        });
-                    }
+                    });
+            } else if (sort == '按价格由低到高') {
+                Product.aggregate([{
+                        "$match": {
+                            "$and": [{
+                                EAN: {
+                                    $ne: null
+                                }
+                            }, {
+                                Price: {
+                                    $lte: Number(maxprice),
+                                    $gte: Number(minprice)
+                                }
+                            }, {
+                                Category: {
+                                    $eq: category
+                                }
+                            }]
+                        }
+                    }, {
+                        "$group": {
+                            _id: "$EAN",
+                            ProductId: {
+                                $first: "$_id"
+                            },
+                            Images: {
+                                $first: "$ProductImage"
+                            },
+                            ProductName: {
+                                $first: "$TitleCN"
+                            },
+                            Price: {
+                                $push: "$Price"
+                            }
+                        }
+                    }, {
+                        "$skip": (page - 1) * 50,
+                    }, {
+                        "$limit": 50
+                    }, {
+                        "$sort": {
+                            Price: 1
+                        }
+                    }],
+                    function(err, products) {
+                        console.log(JSON.stringify(products));
+                        if (err != null) {
+                            res.render('error');
+                        } else {
+                            res.render('searchproduct', {
+                                title: '',
+                                count: count,
+                                pageColum: pageColum,
+                                currentPage: page,
+                                products: products,
+                                category: category,
+                                sort: sort,
+                                user: req.user,
+                                layout: 'layout'
+                            });
+                        }
 
-                });
+                    });
+            } else if (sort == '按价格由高到低') {
+                Product.aggregate([{
+                        "$match": {
+                            "$and": [{
+                                EAN: {
+                                    $ne: null
+                                }
+                            }, {
+                                Price: {
+                                    $lte: Number(maxprice),
+                                    $gte: Number(minprice)
+                                }
+                            }, {
+                                Category: {
+                                    $eq: category
+                                }
+                            }]
+                        }
+                    }, {
+                        "$group": {
+                            _id: "$EAN",
+                            ProductId: {
+                                $first: "$_id"
+                            },
+                            Images: {
+                                $first: "$ProductImage"
+                            },
+                            ProductName: {
+                                $first: "$TitleCN"
+                            },
+                            Price: {
+                                $push: "$Price"
+                            }
+                        }
+                    }, {
+                        "$skip": (page - 1) * 50,
+                    }, {
+                        "$limit": 50
+                    }, {
+                        "$sort": {
+                            Price: -1
+                        }
+                    }],
+                    function(err, products) {
+                        console.log(JSON.stringify(products));
+                        if (err != null) {
+                            res.render('error');
+                        } else {
+                            res.render('searchproduct', {
+                                title: '',
+                                count: count,
+                                pageColum: pageColum,
+                                currentPage: page,
+                                products: products,
+                                category: category,
+                                sort: sort,
+                                user: req.user,
+                                layout: 'layout'
+                            });
+                        }
+                    });
+            } else if (sort == '按热度') {
+                Product.aggregate([{
+                        "$match": {
+                            "$and": [{
+                                EAN: {
+                                    $ne: null
+                                }
+                            }, {
+                                Price: {
+                                    $lte: Number(maxprice),
+                                    $gte: Number(minprice)
+                                }
+                            }, {
+                                Category: {
+                                    $eq: category
+                                }
+                            }]
+                        }
+                    }, {
+                        "$group": {
+                            _id: "$EAN",
+                            ProductId: {
+                                $first: "$_id"
+                            },
+                            Images: {
+                                $first: "$ProductImage"
+                            },
+                            ProductName: {
+                                $first: "$TitleCN"
+                            },
+                            Price: {
+                                $push: "$Price"
+                            }
+                        }
+                    }, {
+                        "$skip": (page - 1) * 50,
+                    }, {
+                        "$limit": 50
+                    }, {
+                        "$sort": {
+                            SaleRank: -1
+                        }
+                    }],
+                    function(err, products) {
+                        console.log(JSON.stringify(products));
+                        if (err != null) {
+                            res.render('error');
+                        } else {
+                            res.render('searchproduct', {
+                                title: '',
+                                count: count,
+                                pageColum: pageColum,
+                                currentPage: page,
+                                products: products,
+                                category: category,
+                                sort: sort,
+                                user: req.user,
+                                layout: 'layout'
+                            });
+                        }
+                    });
+            }
+
 
         });
     };
@@ -259,38 +737,30 @@ router.post('/search', function(req, res) {
     var page = req.body.page || 1;
     var count = 0;
     var query = {
-        $or: [
-            {
-                Title: new RegExp(search, 'gi')
-            },
-            {
-                Category: new RegExp(search, 'gi')
-            },
-            {
-                Keywords: new RegExp(search, 'gi')
-            }
-        ]
+        $or: [{
+            Title: new RegExp(search, 'gi')
+        }, {
+            Category: new RegExp(search, 'gi')
+        }, {
+            Keywords: new RegExp(search, 'gi')
+        }]
     };
 
-    Product.count(query, function(err, count){
+    Product.count(query, function(err, count) {
         var pageColum = count / 50;
         Product.aggregate([{
             "$match": {
-                $and : [{
+                $and: [{
                     EAN: {
                         $ne: null
                     },
-                    $or: [
-                        {
-                Title: new RegExp(search, 'gi')
-            },
-            {
-                Category: new RegExp(search, 'gi')
-            },
-            {
-                Keywords: new RegExp(search, 'gi')
-            }
-                    ]
+                    $or: [{
+                        Title: new RegExp(search, 'gi')
+                    }, {
+                        Category: new RegExp(search, 'gi')
+                    }, {
+                        Keywords: new RegExp(search, 'gi')
+                    }]
 
                 }]
             }
@@ -311,133 +781,35 @@ router.post('/search', function(req, res) {
                 }
             }
         }, {
-            "$skip": (page-1) * 50
+            "$skip": (page - 1) * 50
         }, {
             "$limit": 50
         }, {
             "$sort": {
                 update_at: -1
             }
-        }], function(err, results){
-                console.log(JSON.stringify(results));
-                if (err != null) {
-                    res.render('error');
-                } else {
-                    res.render('index', {
-                        title: '',
-                        count: count,
-                        pageColum: pageColum,
-                        currentPage: page,
-                        products: results,
-                        user: req.user,
-                        layout: 'layout'
-                    });
-                }
+        }], function(err, results) {
+            console.log(JSON.stringify(results));
+            if (err != null) {
+                res.render('error');
+            } else {
+                res.render('searchproduct', {
+                    title: '',
+                    count: count,
+                    pageColum: pageColum,
+                    currentPage: page,
+                    category: '所有',
+                    sort: '按日期',
+                    products: results,
+                    user: req.user,
+                    layout: 'layout'
+                });
+            }
 
         });
 
     });
 });
-    //Product.find({}, function(err, result){
-      //  result.forEach(function (product, index){
-        //    if(product.Title.match(new RegExp(search, 'gi'))){
-          //      count ++ ;
-            //    console.log(product.Title);
-                /*Product.count({$text: {$search: product.Title}}, function(err, results){
-                        
-                        var pageColum = count / 50;
-                        console.log(count);
-                        Product.aggregate([
-                        {
-                            "$match": {
-                                $and: [{
-                                    EAN: {
-                                        $ne: null
-                                    },
-                                    Title: { //此处到时候需修改成TitleCN
-                                        $eq: product.Title
-                                    }
-                                }]
-                            }
-                        }, {
-                            "$group": {
-                                _id: "$EAN",
-                                ProductId: {
-                                    $first: "$_id"
-                                },
-                                Images: {
-                                    $first: "$ProductImageSet"
-                                },
-                                ProductName: {
-                                    $first: "$TitleCN" 
-    Product.find({}, function(err, result) {
-        result.forEach(function(product, index) {
-            if (product.Title.match(search)) {
-                console.log(product.Title);
-                Product.count({
-                    $text: {
-                        $search: product.Title
-                    }
-                }, function(err, results) {
-                    count = results;
-                    var pageColum = count / 50;
-                    console.log(count);
-                    Product.aggregate([{
-                        "$match": {
-                            $and: [{
-                                EAN: {
-                                    $ne: null
-                                },
-                                Title: { //此处到时候需修改成TitleCN
-                                    $eq: product.Title
-                                }
-                            }]
-                        }
-                    }, {
-                        "$group": {
-                            _id: "$EAN",
-                            ProductId: {
-                                $first: "$_id"
-                            },
-                            Images: {
-                                $first: "$ProductImageSet"
-                            },
-                            ProductName: {
-                                $first: "$TitleCN"
-                            },
-                            Price: {
-                                $push: "$Price"
-                            }
-                        }
-                    }, {
-                        "$skip": (page - 1) * 50
-                    }, {
-                        "$limit": 50
-                    }, {
-                        "$sort": {
-                            update_at: -1
-                        }
-                    }], function(err, products) {
-                        console.log(JSON.stringify(products));
-                        if (err != null) {
-                            res.render('error');
-                        } else {
-                            res.render('index', {
-                                title: '',
-                                count: count,
-                                pageColum: pageColum,
-                                currentPage: page,
-                                products: products,
-                                user: req.user,
-                                layout: 'layout'
-                            });
-                        }
-
-                    });
-                            });
-                    
-                });*/
-
 
 router.get('/category', function(req, res) {
     var category = req.query.category;
@@ -510,11 +882,13 @@ router.get('/category', function(req, res) {
             if (err != null) {
                 res.render('error');
             } else {
-                res.render('index', {
+                res.render('searchproduct', {
                     title: '',
                     count: count,
                     pageColum: pageColumn,
                     currentPage: page,
+                    category: category,
+                    sort: '按日期',
                     products: products,
                     user: req.user,
                     layout: 'layout'
@@ -628,6 +1002,13 @@ router.get('/article', function(req, res, next) {
             articles: articles,
             user: req.user
         });
+    });
+});
+
+router.get('/aboutus', function(req, res){
+    res.render('aboutus', {
+        layout: 'layout',
+        user: req.user,
     });
 });
 
