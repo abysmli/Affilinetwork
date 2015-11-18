@@ -7,6 +7,7 @@
     <thead>
         <tr>
             <th>Title</th>
+            <th>Image</th>
             <th>Content</th>
             <th>Last Update</th>
             <th>Remove</th>
@@ -15,6 +16,7 @@
     <tfoot>
     <tr>
         <th>Title</th>
+        <th>Image</th>
         <th>Content</th>
         <th>Last Update</th>
         <th>Remove</th>
@@ -25,6 +27,9 @@
         <tr>
             <td>
                 <a href="/controller/article/edit?id=<%= article._id %>"><%= article.Title %></a>
+            </td>
+            <td>
+                <a href="/controller/product/edit?id=<%= article._id %>"><img src=<%- article.Image %> onerror="this.src= '/stylesheets/images/no-image.jpg';" style="max-width: 100px; max-height: 100px"></a>
             </td>
             <td>
                 <div class="article_content">

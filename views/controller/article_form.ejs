@@ -8,6 +8,15 @@
 				<label for="Title">Title</label>
 				<input type="text" class="form-control" id="Title" placeholder="Title" name="Title" value="<%= article.Title || '' %>">
 			</div>
+			<div class="form-group">
+                <label>Image</label>
+                <input type="file" id="image" onchange="previewFile('#image')"/>
+                <div class="row">
+                    <div class="col-xs-12 col-md-12">
+                        <a href="#" class="thumbnail" id="image_preview"></a>
+                    </div>
+                </div>
+            </div>
 			<div id="full-toolbar" class="toolbar">
 				<span class="ql-format-group">
 					<select title="Font" class="ql-font">
@@ -135,24 +144,39 @@
 	</div>
 	<div class="col-md-6">
 		<h3>Preview</h3>
+		<% if (article.Image !== "" && article.Image !== undefined) { %>
+        <label>Image</label>
+        <div class="row">
+            <div class="col-xs-4 col-md-2">
+                <a href="#" class="thumbnail">
+                    <img src=<%- article.Image %> alt="prduct image set">
+                </a>
+            </div>
+        </div>
+        <% } %>
 		<div id="preview_block"></div>
 	</div>
 </div>
 <hr/>
 <script>
+	var _image = "";
 	$(document).ready(function() {
 		$("#article_page").addClass("active");
 
-		$('#article_form').submit(function(event){
+		$('#article_form').submit(function(event) {
 			var data = {
-				Content: fullEditor.getHTML()
+				Content_pre: fullEditor.getText(),
+				Content: fullEditor.getHTML(),
+				Image: JSON.stringify(_image)
 			};
 			post(data);
 		});
 
-		$("#preview_button").click(function(){ 
+		$("#preview_button").click(function() {
 			$("#preview_block").html(fullEditor.getHTML());
 		});
+
+
 
 		// Initialize editor with custom theme and modules
 		var fullEditor = new Quill('#full-editor', {
@@ -165,22 +189,40 @@
 			},
 			theme: 'snow'
 		});
-
-		function post(params) {
-            // The rest of this code assumes you are not using a library.
-            // It can be made less wordy if you use one.
-            var form = document.getElementById("article_form");
-
-            for (var key in params) {
-                if (params.hasOwnProperty(key)) {
-                    var hiddenField = document.createElement("input");
-                    hiddenField.setAttribute("type", "hidden");
-                    hiddenField.setAttribute("name", key);
-                    hiddenField.setAttribute("value", params[key]);
-                    form.appendChild(hiddenField);
-                }
-            }
-            form.submit();
-        }
 	});
+
+	function previewFile(input_id) {
+		var files = document.querySelector(input_id).files;
+
+		for (var i = 0; i < files.length; i++) {
+			(function(file) {
+				var reader = new FileReader();
+				reader.onloadend = function(e) {
+					$('#image_preview').html('<img src="' + e.target.result + '">');
+					_image = e.target.result;
+					console.log(_image);
+				}
+				if (file) {
+					reader.readAsDataURL(file);
+				}
+			})(files[i]);
+		};
+	}
+
+	function post(params) {
+		// The rest of this code assumes you are not using a library.
+		// It can be made less wordy if you use one.
+		var form = document.getElementById("article_form");
+
+		for (var key in params) {
+			if (params.hasOwnProperty(key)) {
+				var hiddenField = document.createElement("input");
+				hiddenField.setAttribute("type", "hidden");
+				hiddenField.setAttribute("name", key);
+				hiddenField.setAttribute("value", params[key]);
+				form.appendChild(hiddenField);
+			}
+		}
+		form.submit();
+	}
 </script>
