@@ -88,8 +88,6 @@ router.get('/', function(req, res, next) {
         }
     }], function(err, hotresult) {
         hotproduct = hotresult;
-        console.log(hotproduct);
-
     });
     Product.count({}, function(err, count) {
         var pageColum = count / 50;
@@ -130,11 +128,10 @@ router.get('/', function(req, res, next) {
             }],
             function(err, products) {
                 if (err != null) {
-                    console.log(JSON.stringify(err));
                     res.render('error');
                 } else {
                     res.render('index', {
-                        title: '',
+                        title: 'Allhaha',
                         count: count,
                         pageColum: pageColum,
                         currentPage: page,
@@ -194,11 +191,10 @@ router.get('/pagination', function(req, res) {
                 }],
                 function(err, products) {
                     if (err != null) {
-                        console.log(JSON.stringify(err));
                         res.render('error');
                     } else {
                         res.render('searchproduct', {
-                            title: '',
+                            title: 'Allhaha',
                             count: count,
                             pageColum: pageColum,
                             currentPage: page,
@@ -229,7 +225,6 @@ router.post('/filter', function(req, res, next) {
     var minprice = req.body.minprice;
     var maxprice = req.body.maxprice;
     var sort = req.body.sort;
-    console.log(category);
     var page = req.query.page || 1;
     if (minprice == '') {
         minprice = Number.NEGATIVE_INFINITY;
@@ -280,12 +275,11 @@ router.post('/filter', function(req, res, next) {
                         }
                     }],
                     function(err, products) {
-                        console.log(JSON.stringify(products));
                         if (err != null) {
                             res.render('error');
                         } else {
                             res.render('searchproduct', {
-                                title: '',
+                                title: 'Allhaha',
                                 count: count,
                                 pageColum: pageColum,
                                 currentPage: page,
@@ -338,12 +332,11 @@ router.post('/filter', function(req, res, next) {
                         }
                     }],
                     function(err, products) {
-                        console.log(JSON.stringify(products));
                         if (err != null) {
                             res.render('error');
                         } else {
                             res.render('searchproduct', {
-                                title: '',
+                                title: 'Allhaha',
                                 count: count,
                                 pageColum: pageColum,
                                 currentPage: page,
@@ -396,12 +389,11 @@ router.post('/filter', function(req, res, next) {
                         }
                     }],
                     function(err, products) {
-                        console.log(JSON.stringify(products));
                         if (err != null) {
                             res.render('error');
                         } else {
                             res.render('searchproduct', {
-                                title: '',
+                                title: 'Allhaha',
                                 count: count,
                                 pageColum: pageColum,
                                 currentPage: page,
@@ -453,12 +445,11 @@ router.post('/filter', function(req, res, next) {
                         }
                     }],
                     function(err, products) {
-                        console.log(JSON.stringify(products));
                         if (err != null) {
                             res.render('error');
                         } else {
                             res.render('searchproduct', {
-                                title: '',
+                                title: 'Allhaha',
                                 count: count,
                                 pageColum: pageColum,
                                 currentPage: page,
@@ -522,12 +513,11 @@ router.post('/filter', function(req, res, next) {
                         }
                     }],
                     function(err, products) {
-                        console.log(JSON.stringify(products));
                         if (err != null) {
                             res.render('error');
                         } else {
                             res.render('searchproduct', {
-                                title: '',
+                                title: 'Allhaha',
                                 count: count,
                                 pageColum: pageColum,
                                 currentPage: page,
@@ -584,12 +574,11 @@ router.post('/filter', function(req, res, next) {
                         }
                     }],
                     function(err, products) {
-                        console.log(JSON.stringify(products));
                         if (err != null) {
                             res.render('error');
                         } else {
                             res.render('searchproduct', {
-                                title: '',
+                                title: 'Allhaha',
                                 count: count,
                                 pageColum: pageColum,
                                 currentPage: page,
@@ -646,12 +635,11 @@ router.post('/filter', function(req, res, next) {
                         }
                     }],
                     function(err, products) {
-                        console.log(JSON.stringify(products));
                         if (err != null) {
                             res.render('error');
                         } else {
                             res.render('searchproduct', {
-                                title: '',
+                                title: 'Allhaha',
                                 count: count,
                                 pageColum: pageColum,
                                 currentPage: page,
@@ -707,12 +695,11 @@ router.post('/filter', function(req, res, next) {
                         }
                     }],
                     function(err, products) {
-                        console.log(JSON.stringify(products));
                         if (err != null) {
                             res.render('error');
                         } else {
                             res.render('searchproduct', {
-                                title: '',
+                                title: 'Allhaha',
                                 count: count,
                                 pageColum: pageColum,
                                 currentPage: page,
@@ -789,12 +776,11 @@ router.post('/search', function(req, res) {
                 update_at: -1
             }
         }], function(err, results) {
-            console.log(JSON.stringify(results));
             if (err != null) {
                 res.render('error');
             } else {
                 res.render('searchproduct', {
-                    title: '',
+                    title: 'Allhaha',
                     count: count,
                     pageColum: pageColum,
                     currentPage: page,
@@ -814,7 +800,6 @@ router.post('/search', function(req, res) {
 router.get('/category', function(req, res) {
     var category = req.query.category;
     var page = req.query.page || 1;
-    console.log(page);
     if (category === 'clothes_shoes') {
         category = "服装鞋子";
     } else if (category === 'food') {
@@ -876,14 +861,12 @@ router.get('/category', function(req, res) {
             "$sort": {
                 update_at: -1
             }
-
         }], function(err, products) {
-            console.log(JSON.stringify(products));
             if (err != null) {
                 res.render('error');
             } else {
                 res.render('searchproduct', {
-                    title: '',
+                    title: 'Allhaha',
                     count: count,
                     pageColum: pageColumn,
                     currentPage: page,
@@ -926,7 +909,6 @@ router.get('/product', function(req, res, next) {
         }, null, function(err, _products) {
             if (err != null) res.render('error');
             else {
-                console.log(_product);
                 res.render('product_details', {
                     title: '德国打折商品, 产品描述',
                     product: _product,
@@ -945,7 +927,6 @@ router.post('/favourite', function(req, res, next) {
         Username: req.body.Username,
         ProductEAN: req.body.ProductEAN,
     };
-    console.log(data);
     if (data.Username != "" && data.Username != undefined && data.ProductEAN != "" && data.ProductEAN != undefined) {
         var query = Favourite.where(data);
         query.findOne(function(err, _favourite) {
@@ -985,7 +966,6 @@ router.get('/favourite', function(req, res, next) {
                 $in: productEANs
             }
         }, function(err, products) {
-            console.log(products)
             res.render('favourite', {
                 title: '用户收藏',
                 products: products,
