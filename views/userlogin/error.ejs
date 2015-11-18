@@ -1,19 +1,62 @@
 <div class="container">
     <h3> <%= info %> </h3>
-    <br/>
-    <form role="form" action="/sinup" method="post" style="max-width: 300px;">
-        <div class="form-group">
-            <input type="text" name="username" placeholder="用户名" class="form-control" id="username_input"/>
+    <section class="main-container">
+        <div class="container">
+            <div class="row">
+                <!-- main start -->
+                <!-- ================ -->
+                <div class="main object-non-visible" data-animation-effect="fadeInDownSmall" data-effect-delay="300">
+                    <div class="form-block center-block">
+                        <h2 class="title">成为我们的用户</h2>
+                        <hr>
+                        <form class="form-horizontal" role="form" action="/register" method="post">
+                            <div class="form-group has-feedback">
+                                <label for="inputName" class="col-sm-3 control-label">名字 <span class="text-danger small">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="inputName" placeholder="名字" name="firstname" required>
+                                    <i class="fa fa-pencil form-control-feedback"></i>
+                                </div>
+                            </div>
+                            <div class="form-group has-feedback">
+                                <label for="inputLastName" class="col-sm-3 control-label">姓氏 <span class="text-danger small">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="inputLastName" placeholder="姓氏" name="lastname" required>
+                                    <i class="fa fa-pencil form-control-feedback"></i>
+                                </div>
+                            </div>
+                            <div class="form-group has-feedback">
+                                <label for="inputUserName" class="col-sm-3 control-label">用户名 <span class="text-danger small">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="inputUserName" placeholder="用户名" name="username" required>
+                                    <i class="fa fa-user form-control-feedback"></i>
+                                </div>
+                            </div>
+                            <div class="form-group has-feedback">
+                                <label for="inputEmail" class="col-sm-3 control-label">邮箱地址 <span class="text-danger small">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="email" class="form-control" id="inputEmail" placeholder="Email" name="emailadress" required>
+                                    <i class="fa fa-envelope form-control-feedback"></i>
+                                </div>
+                            </div>
+                            <div class="form-group has-feedback">
+                                <label for="inputPassword" class="col-sm-3 control-label">登录密码 <span class="text-danger small">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="password" class="form-control" id="inputPassword" placeholder="登录密码" name="password" required>
+                                    <i class="fa fa-lock form-control-feedback"></i>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-3 col-sm-8">
+                                    <button type="submit" class="btn btn-default">注册</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!-- main end -->
+            </div>
         </div>
-        <div class="form-group">
-            <input type="password" name="password" placeholder="密码" class="form-control" id="password_input"/>
-        </div>
-        <button type="submit" class="btn btn-success">注册</button>
-        <a href="/">
-            <button type="button" class="btn btn-primary">取消</button>
-        </a>
-    </form>
-    <br/>
+    </section>
     <h4></h4>
 </div>
 

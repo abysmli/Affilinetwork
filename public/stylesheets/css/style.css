@@ -3250,7 +3250,7 @@ ul.pagination li > a:focus {
 .fixed-image {
 	background-position: center center;
 	background-repeat: no-repeat;
-	height: 400px;
+	height: 300px;
 }
 .no-touch .fixed-image {
 	background-attachment: fixed;
