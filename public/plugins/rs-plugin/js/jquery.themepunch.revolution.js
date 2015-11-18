@@ -143,7 +143,7 @@
 							punchgs.TweenLite.lagSmoothing(1000,16);
 							punchgs.force3D = "true";
 						}
-
+						
 						if (window.tplogs==true)
 							try{
 								console.groupEnd();
@@ -621,7 +621,7 @@
 
 
 									swipeAction(container,opt);
-
+									
 
 									if (opt.hideThumbs>0) hideThumbs(container,opt);
 
@@ -1096,15 +1096,15 @@
 		var swipeAction = function(container,opt) {
 			// TOUCH ENABLED SCROLL
 				var aps = "vertical";
-
+				
 				if (opt.touchenabled=="on") {
-							if (opt.drag_block_vertical == true)
+							if (opt.drag_block_vertical == true) 
 							    aps = "none";
-
+							    
 							container.swipe({
 								allowPageScroll:aps,
-								fingers:opt.swipe_min_touches,
-								treshold:opt.swipe_treshold,
+								fingers:opt.swipe_min_touches,								
+								treshold:opt.swipe_treshold,								
 								swipe:function(event,direction,distance,duration,fingerCount,fingerData) {
 									switch (direction) {
 										case "left":
@@ -1131,9 +1131,9 @@
 												jQuery("html, body").animate({scrollTop:(container.offset().top - jQuery(window).height())+"px"});
 										break;
 									}
-								}
+								}	
 							})
-
+						
 				}
 
 		}
@@ -3862,7 +3862,7 @@
 
 								if (opt.autoHeight=="on" || (opt.minHeight!=undefined && opt.minHeight>0))
 									  offsety = opt.container.height()/2 - (opt.startheight*opt.bh)/2;;
-
+									  
 
 								if (offsety<0) offsety=0;
 
@@ -4169,42 +4169,42 @@
 																// VIDEO EVENT LISTENER FOR "PLAY"
 																if (video.addEventListener)
 																	video.addEventListener("play",function() {
-
+	
 																		if (nextcaption.data('volume')=="mute")
 																			  video.muted=true;
-
+	
 																		html5vid.addClass("videoisplaying");
-
+	
 			 															if (nextcaption.data('videoloop')=="loopandnoslidestop") {
 																			opt.videoplaying=false;
 																			opt.container.trigger('starttimer');
 																			opt.container.trigger('revolution.slide.onvideostop');
 																		} else {
-
+	
 																			opt.videoplaying=true;
 																			opt.container.trigger('stoptimer');
 																			opt.container.trigger('revolution.slide.onvideoplay');
-
+	
 																		}
 																	});
 																else
 																	video.attachEvent("play",function() {
-
+	
 																		if (nextcaption.data('volume')=="mute")
 																			  video.muted=true;
-
+	
 																		html5vid.addClass("videoisplaying");
-
+	
 			 															if (nextcaption.data('videoloop')=="loopandnoslidestop") {
 																			opt.videoplaying=false;
 																			opt.container.trigger('starttimer');
 																			opt.container.trigger('revolution.slide.onvideostop');
 																		} else {
-
+	
 																			opt.videoplaying=true;
 																			opt.container.trigger('stoptimer');
 																			opt.container.trigger('revolution.slide.onvideoplay');
-
+	
 																		}
 																	});
 
@@ -4225,7 +4225,7 @@
 																	});
 
 																// VIDEO EVENT LISTENER FOR "END"
-																if (video.addEventListener)
+																if (video.addEventListener)																
 																	video.addEventListener("ended",function() {
 																			html5vid.removeClass("videoisplaying");
 																			opt.videoplaying=false;
@@ -5511,7 +5511,7 @@
 							removeAllListeners(container,opt);
 							clearInterval(opt.cdint);
 						}
-
+						
 						container.trigger("revolution.slide.slideatend");
 
 						//STATE OF API CHANGED -> MOVE TO AIP BETTER

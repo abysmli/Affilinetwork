@@ -6,7 +6,7 @@
 		var untilDate = new Date(2016, 2 - 1, 1);
 
 		$(".countdown").countdown({
-			until: untilDate,
+			until: untilDate, 
 			format: 'dHMS',
 			padZeroes: true
 		});

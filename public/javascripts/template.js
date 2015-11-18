@@ -2,10 +2,10 @@
  * Author:HtmlCoder
  * Author URI:http://www.htmlcoder.me
  * Author e-mail:htmlcoder.me@gmail.com
- * Version: 1.2.1
+ * Version: 1.3
  * Created:October 2014
  * License URI:http://support.wrapbootstrap.com/
- * File Description: Initializations of plugins
+ * File Description: Initializations of plugins 
  */
 
 (function($){
@@ -14,7 +14,15 @@
 		$(window).load(function() {
 			$("body").removeClass("no-trans");
 		});
-
+		// Enable Smooth Scroll only on Chrome and only on Win and Linux Systems
+		var platform = navigator.platform.toLowerCase();
+		if ((platform.indexOf('win') == 0 || platform.indexOf('linux') == 0) && !Modernizr.touch) {
+			/*
+			if ($.browser.webkit) {
+				$.webkitSmoothScroll();
+				console.log("hello webkit");
+			}*/
+		};
 		//Show dropdown on hover only for desktop devices
 		//-----------------------------------------------
 		var delay=0, setTimeoutConst;
@@ -27,7 +35,7 @@
 					$this.find('.dropdown-toggle').addClass('disabled');
 				}, delay);
 
-			},	function(){
+			},	function(){ 
 				clearTimeout(setTimeoutConst );
 				$(this).removeClass('open');
 				$(this).find('.dropdown-toggle').removeClass('disabled');
@@ -39,9 +47,9 @@
 		if (Modernizr.mq('only all and (max-width: 767px)') || Modernizr.touch) {
 			$('.main-navigation [data-toggle=dropdown], .header-top [data-toggle=dropdown]').on('click', function(event) {
 			// Avoid following the href location when clicking
-			event.preventDefault();
+			event.preventDefault(); 
 			// Avoid having the menu to close when clicking
-			event.stopPropagation();
+			event.stopPropagation(); 
 			// close all the siblings
 			$(this).parent().siblings().removeClass('open');
 			// close all the submenus of siblings
@@ -56,16 +64,16 @@
 
 		//Revolution Slider
 		if ($(".slider-banner-container").length>0) {
-
+			
 			$(".tp-bannertimer").show();
 
 			$('.slider-banner-container .slider-banner').show().revolution({
 				delay:10000,
 				startwidth:1140,
 				startheight:520,
-
+				
 				navigationArrows:"solo",
-
+				
 				navigationStyle: "round",
 				navigationHAlign:"center",
 				navigationVAlign:"bottom",
@@ -85,23 +93,23 @@
 				fullWidth:"on",
 
 				spinner:"spinner0",
-
+				
 				stopLoop:"off",
 				stopAfterLoops:-1,
 				stopAtSlide:-1,
 				onHoverStop: "off",
 
 				shuffle:"off",
-
-				autoHeight:"off",
-				forceFullWidth:"off",
-
+				
+				autoHeight:"off",						
+				forceFullWidth:"off",						
+										
 				hideThumbsOnMobile:"off",
-				hideNavDelayOnMobile:1500,
+				hideNavDelayOnMobile:1500,						
 				hideBulletsOnMobile:"off",
 				hideArrowsOnMobile:"off",
 				hideThumbsUnderResolution:0,
-
+				
 				hideSliderAtLimit:0,
 				hideCaptionAtLimit:0,
 				hideAllCaptionAtLilmit:0,
@@ -112,9 +120,9 @@
 				delay:10000,
 				startwidth:1140,
 				startheight:520,
-
+				
 				navigationArrows:"solo",
-
+				
 				navigationStyle: "preview4",
 				navigationHAlign:"center",
 				navigationVAlign:"bottom",
@@ -134,23 +142,23 @@
 				fullWidth:"on",
 
 				spinner:"spinner0",
-
+				
 				stopLoop:"off",
 				stopAfterLoops:-1,
 				stopAtSlide:-1,
 				onHoverStop: "off",
 
 				shuffle:"off",
-
-				autoHeight:"off",
-				forceFullWidth:"off",
-
+				
+				autoHeight:"off",						
+				forceFullWidth:"off",						
+										
 				hideThumbsOnMobile:"off",
-				hideNavDelayOnMobile:1500,
+				hideNavDelayOnMobile:1500,						
 				hideBulletsOnMobile:"off",
 				hideArrowsOnMobile:"off",
 				hideThumbsUnderResolution:0,
-
+				
 				hideSliderAtLimit:0,
 				hideCaptionAtLimit:0,
 				hideAllCaptionAtLilmit:0,
@@ -166,9 +174,9 @@
 				parallax:"mouse",
 				parallaxBgFreeze:"on",
 				parallaxLevels:[3,2,1],
-
+				
 				navigationArrows:"solo",
-
+				
 				navigationStyle: "preview5",
 				navigationHAlign:"center",
 				navigationVAlign:"bottom",
@@ -188,29 +196,29 @@
 				fullWidth:"on",
 
 				spinner:"spinner0",
-
+				
 				stopLoop:"off",
 				stopAfterLoops:-1,
 				stopAtSlide:-1,
 				onHoverStop: "off",
 
 				shuffle:"off",
-
-				autoHeight:"off",
-				forceFullWidth:"off",
-
+				
+				autoHeight:"off",						
+				forceFullWidth:"off",						
+										
 				hideThumbsOnMobile:"off",
-				hideNavDelayOnMobile:1500,
+				hideNavDelayOnMobile:1500,						
 				hideBulletsOnMobile:"off",
 				hideArrowsOnMobile:"off",
 				hideThumbsUnderResolution:0,
-
+				
 				hideSliderAtLimit:0,
 				hideCaptionAtLimit:0,
 				hideAllCaptionAtLilmit:0,
 				startWithSlide:0
 			});
-
+			
 			if ($(".transparent.header").length>0 || $(".offcanvas-container").length>0) {
 				$('.slider-banner-container .slider-banner-fullscreen').show().revolution({
 					delay:10000,
@@ -222,7 +230,7 @@
 					fullScreenOffset: "",
 
 					navigationArrows:"solo",
-
+					
 					navigationStyle: "preview4",
 					navigationHAlign:"center",
 					navigationVAlign:"bottom",
@@ -240,7 +248,7 @@
 					soloArrowRightVOffset:0,
 
 					spinner:"spinner4",
-
+					
 					stopLoop:"off",
 					stopAfterLoops:-1,
 					stopAtSlide:-1,
@@ -249,15 +257,15 @@
 					shuffle:"off",
 					hideTimerBar:"on",
 
-					autoHeight:"off",
-					forceFullWidth:"off",
-
+					autoHeight:"off",						
+					forceFullWidth:"off",						
+											
 					hideThumbsOnMobile:"off",
-					hideNavDelayOnMobile:1500,
+					hideNavDelayOnMobile:1500,						
 					hideBulletsOnMobile:"off",
 					hideArrowsOnMobile:"off",
 					hideThumbsUnderResolution:0,
-
+					
 					hideSliderAtLimit:0,
 					hideCaptionAtLimit:0,
 					hideAllCaptionAtLilmit:0,
@@ -274,7 +282,7 @@
 					fullScreenOffset: "82px",
 
 					navigationArrows:"solo",
-
+					
 					navigationStyle: "preview4",
 					navigationHAlign:"center",
 					navigationVAlign:"bottom",
@@ -292,7 +300,7 @@
 					soloArrowRightVOffset:0,
 
 					spinner:"spinner4",
-
+					
 					stopLoop:"off",
 					stopAfterLoops:-1,
 					stopAtSlide:-1,
@@ -301,15 +309,121 @@
 					shuffle:"off",
 					hideTimerBar:"on",
 
-					autoHeight:"off",
-					forceFullWidth:"off",
-
+					autoHeight:"off",						
+					forceFullWidth:"off",						
+											
 					hideThumbsOnMobile:"off",
-					hideNavDelayOnMobile:1500,
+					hideNavDelayOnMobile:1500,						
 					hideBulletsOnMobile:"off",
 					hideArrowsOnMobile:"off",
 					hideThumbsUnderResolution:0,
+					
+					hideSliderAtLimit:0,
+					hideCaptionAtLimit:0,
+					hideAllCaptionAtLilmit:0,
+					startWithSlide:0
+				});
+			};
 
+			if ($(".transparent.header").length>0 || $(".offcanvas-container").length>0) {
+				$('.slider-banner-container .slider-banner-fullscreen-alt-nav').show().revolution({
+					delay:10000,
+					startwidth:1140,
+					startheight:520,
+					fullWidth:"off",
+					fullScreen:"on",
+					fullScreenOffsetContainer: "",
+					fullScreenOffset: "",
+
+					navigationArrows:"solo",
+					
+					navigationStyle: "preview2",
+					navigationHAlign:"center",
+					navigationVAlign:"bottom",
+					navigationHOffset:0,
+					navigationVOffset:20,
+
+					soloArrowLeftHalign:"left",
+					soloArrowLeftValign:"center",
+					soloArrowLeftHOffset:20,
+					soloArrowLeftVOffset:0,
+
+					soloArrowRightHalign:"right",
+					soloArrowRightValign:"center",
+					soloArrowRightHOffset:20,
+					soloArrowRightVOffset:0,
+
+					spinner:"spinner4",
+					
+					stopLoop:"off",
+					stopAfterLoops:-1,
+					stopAtSlide:-1,
+					onHoverStop: "off",
+
+					shuffle:"off",
+					hideTimerBar:"on",
+
+					autoHeight:"off",						
+					forceFullWidth:"off",						
+											
+					hideThumbsOnMobile:"off",
+					hideNavDelayOnMobile:1500,						
+					hideBulletsOnMobile:"off",
+					hideArrowsOnMobile:"off",
+					hideThumbsUnderResolution:0,
+					
+					hideSliderAtLimit:0,
+					hideCaptionAtLimit:0,
+					hideAllCaptionAtLilmit:0,
+					startWithSlide:0
+				});
+			} else {
+				$('.slider-banner-container .slider-banner-fullscreen-alt-nav').show().revolution({
+					delay:10000,
+					startwidth:1140,
+					startheight:520,
+					fullWidth:"off",
+					fullScreen:"on",
+					fullScreenOffsetContainer: "",
+					fullScreenOffset: "82px",
+
+					navigationArrows:"solo",
+					
+					navigationStyle: "preview2",
+					navigationHAlign:"center",
+					navigationVAlign:"bottom",
+					navigationHOffset:0,
+					navigationVOffset:20,
+
+					soloArrowLeftHalign:"left",
+					soloArrowLeftValign:"center",
+					soloArrowLeftHOffset:20,
+					soloArrowLeftVOffset:0,
+
+					soloArrowRightHalign:"right",
+					soloArrowRightValign:"center",
+					soloArrowRightHOffset:20,
+					soloArrowRightVOffset:0,
+
+					spinner:"spinner4",
+					
+					stopLoop:"off",
+					stopAfterLoops:-1,
+					stopAtSlide:-1,
+					onHoverStop: "off",
+
+					shuffle:"off",
+					hideTimerBar:"on",
+
+					autoHeight:"off",						
+					forceFullWidth:"off",						
+											
+					hideThumbsOnMobile:"off",
+					hideNavDelayOnMobile:1500,						
+					hideBulletsOnMobile:"off",
+					hideArrowsOnMobile:"off",
+					hideThumbsUnderResolution:0,
+					
 					hideSliderAtLimit:0,
 					hideCaptionAtLimit:0,
 					hideAllCaptionAtLilmit:0,
@@ -394,6 +508,19 @@
 			});
 		};
 
+		// Text Rotators
+		//-----------------------------------------------
+		if ($(".text-rotator").length>0) {
+			$(".text-rotator").each(function() {
+				var tr_animationEffect = $(this).attr("data-rotator-animation-effect");
+				$(this).Morphext({
+					animation: ""+tr_animationEffect+"", // Overrides default "bounceIn"
+					separator: ",", // Overrides default ","
+					speed: 5000 // Overrides default 2000
+				});
+			});
+		};
+
 		// Stats Count To
 		//-----------------------------------------------
 		if ($(".stats [data-to]").length>0) {
@@ -450,7 +577,7 @@
 				var currentTab = $(".hc-tabs .nav.nav-tabs li.active a").attr("href"),
 				tabsImageAnimation = $(".hc-tabs-top").find("[data-tab='" + currentTab + "']").attr("data-tab-animation-effect");
 				$(".hc-tabs-top").find("[data-tab='" + currentTab + "']").addClass("current-img show " + tabsImageAnimation + " animated");
-
+				
 				$('.hc-tabs .nav.nav-tabs li a').on('click', function(event) {
 					var currentTab = $(this).attr("href"),
 					tabsImageAnimation = $(".hc-tabs-top").find("[data-tab='" + currentTab + "']").attr("data-tab-animation-effect");
@@ -479,9 +606,152 @@
 			$(".knob").knob();
 		}
 
+		// Charts
+		//-----------------------------------------------
+		if ($(".graph").length>0) {
+			// Creates random numbers you don't need this for real graphs
+			var randomScalingFactor = function(){ return Math.round(Math.random()*500)};
+
+			if ($(".graph.line").length>0) {
+				// Data for line charts
+				var lineChartData = {
+					labels : ["January","February","March","April","May","June","July"],
+					datasets : [
+					{
+						label: "First dataset",
+						fillColor : "rgba(188,188,188,0.2)",
+						strokeColor : "rgba(188,188,188,1)",
+						pointColor : "rgba(188,188,188,1)",
+						pointStrokeColor : "#fff",
+						pointHighlightFill : "#fff",
+						pointHighlightStroke : "rgba(188,188,188,1)",
+						data : [250,300,250,200,250,300,250]
+					},
+					{
+						label: "Second dataset",
+						fillColor : "rgba(126,187,205,0.2)",
+						strokeColor : "rgba(126,187,205,1)",
+						pointColor : "rgba(126,187,205,1)",
+						pointStrokeColor : "#fff",
+						pointHighlightFill : "#fff",
+						pointHighlightStroke : "rgba(126,187,205,1)",
+						data : [300,250,200,250,300,250,200]
+					},
+					{
+						label: "Third dataset",
+						fillColor : "rgba(98,187,205,0.2)",
+						strokeColor : "rgba(98,187,205,1)",
+						pointColor : "rgba(98,187,205,1)",
+						pointStrokeColor : "#fff",
+						pointHighlightFill : "#fff",
+						pointHighlightStroke : "rgba(98,187,205,1)",
+						data : [0,100,200,300,400,500,400]
+					}
+					]
+				}
+
+				// Line Charts Initialization
+				$(window).load(function() {
+					var ctx = document.getElementById("lines-graph").getContext("2d");
+					window.newLine = new Chart(ctx).Line(lineChartData, {
+						responsive: true,
+						bezierCurve : false
+					});
+				});
+			}
+			if ($(".graph.bar").length>0) {
+				// Data for bar charts
+				var barChartData = {
+					labels : ["January","February","March","April","May","June","July"],
+					datasets : [
+						{
+							fillColor : "rgba(188,188,188,0.5)",
+							strokeColor : "rgba(188,188,188,0.8)",
+							highlightFill: "rgba(188,188,188,0.75)",
+							highlightStroke: "rgba(188,188,188,1)",
+							data : [randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor()]
+						},
+						{
+							fillColor : "rgba(168,187,205,0.5)",
+							strokeColor : "rgba(168,187,205,0.8)",
+							highlightFill : "rgba(168,187,205,0.75)",
+							highlightStroke : "rgba(168,187,205,1)",
+							data : [randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor()]
+						}
+					]
+				}
+				
+				// Bar Charts Initialization		
+				$(window).load(function() {
+					var ctx = document.getElementById("bars-graph").getContext("2d");
+					window.myBar = new Chart(ctx).Bar(barChartData, {
+						responsive : true
+					});
+				});
+			}
+			if ($(".graph.pie").length>0) {			
+				// Data for pie chart
+				var pieData = [
+					{
+						value: 120,
+						color:"#09afdf",
+						highlight: "#6BD5F4",
+						label: "Blue"
+					},
+					{
+						value: 120,
+						color: "#FDB45C",
+						highlight: "#FFC870",
+						label: "Yellow"
+					},
+					{
+						value: 120,
+						color: "#4D5360",
+						highlight: "#616774",
+						label: "Dark Grey"
+					}
+				];
+
+				// Pie Chart Initialization
+				$(window).load(function() {
+					var ctx = document.getElementById("pie-graph").getContext("2d");
+					window.myPie = new Chart(ctx).Pie(pieData);
+				});
+			}
+			if ($(".graph.doughnut").length>0) {	
+				// Data for doughnut chart
+				var doughnutData = [
+					{
+						value: 120,
+						color:"#09afdf",
+						highlight: "#6BD5F4",
+						label: "Blue"
+					},
+					{
+						value: 120,
+						color: "#FDB45C",
+						highlight: "#FFC870",
+						label: "Yellow"
+					},
+					{
+						value: 120,
+						color: "#4D5360",
+						highlight: "#616774",
+						label: "Dark Grey"
+					}
+				];
+				
+				// Doughnut Chart Initialization
+				$(window).load(function() {
+					var ctx = document.getElementById("doughnut-graph").getContext("2d");
+					window.myDoughnut = new Chart(ctx).Doughnut(doughnutData, {responsive : true});
+				});
+			}
+		};
+
 		// Magnific popup
 		//-----------------------------------------------
-		if (($(".popup-img").length > 0) || ($(".popup-iframe").length > 0) || ($(".popup-img-single").length > 0)) {
+		if (($(".popup-img").length > 0) || ($(".popup-iframe").length > 0) || ($(".popup-img-single").length > 0)) { 		
 			$(".popup-img").magnificPopup({
 				type:"image",
 				gallery: {
@@ -500,14 +770,14 @@
 				preloader: false,
 				fixedContentPos: false
 			});
-		};
+		};		
 
 		// Fixed header
 		//-----------------------------------------------
 		var	headerTopHeight = $(".header-top").outerHeight(),
 		headerHeight = $("header.header.fixed").outerHeight();
 		$(window).scroll(function() {
-			if (($(".header.fixed").length > 0)) {
+			if (($(".header.fixed").length > 0)) { 
 				if(($(this).scrollTop() > headerTopHeight+headerHeight) && ($(window).width() > 767)) {
 					$("body").addClass("fixed-header-on");
 					$(".header.fixed").addClass('animated object-visible fadeInDown');
@@ -560,10 +830,11 @@
 		};
 
 		// Contact forms validation
-		//-----------------------------------------------
+		//-----------------------------------------------		
 		if($("#contact-form").length>0) {
 			$("#contact-form").validate({
 				submitHandler: function(form) {
+					$('.submit-button').button("loading");
 					$.ajax({
 						type: "POST",
 						url: "php/email-sender.php",
@@ -579,7 +850,7 @@
 								$("#MessageSent").removeClass("hidden");
 								$("#MessageNotSent").addClass("hidden");
 								$(".submit-button").removeClass("btn-default").addClass("btn-success").prop('value', 'Message Sent');
-								$("#contact-form .form-control").each(function() {
+								$("#contact-form .form-control").each(function() { 
 									$(this).prop('value', '').parent().removeClass("has-success").removeClass("has-error");
 								});
 							} else {
@@ -588,7 +859,7 @@
 							}
 						}
 					});
-				},
+				},				
 				// debug: true,
 				errorPlacement: function(error, element) {
 					error.insertBefore( element );
@@ -627,16 +898,16 @@
 					message: {
 						required: "Please enter a message",
 						minlength: "Your message must be longer than 10 characters"
-					}
+					}					
 				},
 				errorElement: "span",
 				highlight: function (element) {
 					$(element).parent().removeClass("has-success").addClass("has-error");
-					$(element).siblings("label").addClass("hide");
+					$(element).siblings("label").addClass("hide"); 
 				},
 				success: function (element) {
 					$(element).parent().removeClass("has-error").addClass("has-success");
-					$(element).siblings("label").removeClass("hide");
+					$(element).siblings("label").removeClass("hide"); 
 				}
 			});
 		};
@@ -644,6 +915,7 @@
 		if($("#footer-form").length>0) {
 			$("#footer-form").validate({
 				submitHandler: function(form) {
+					$('.submit-button').button("loading");
 					$.ajax({
 						type: "POST",
 						url: "php/email-sender.php",
@@ -659,7 +931,7 @@
 								$("#MessageSent2").removeClass("hidden");
 								$("#MessageNotSent2").addClass("hidden");
 								$(".submit-button").removeClass("btn-default").addClass("btn-success").prop('value', 'Message Sent');
-								$("#footer-form .form-control").each(function() {
+								$("#footer-form .form-control").each(function() { 
 									$(this).prop('value', '').parent().removeClass("has-success").removeClass("has-error");
 								});
 							} else {
@@ -668,7 +940,7 @@
 							}
 						}
 					});
-				},
+				},				
 				// debug: true,
 				errorPlacement: function(error, element) {
 					error.insertAfter( element );
@@ -706,11 +978,11 @@
 				errorElement: "span",
 				highlight: function (element) {
 					$(element).parent().removeClass("has-success").addClass("has-error");
-					$(element).siblings("label").addClass("hide");
+					$(element).siblings("label").addClass("hide"); 
 				},
 				success: function (element) {
 					$(element).parent().removeClass("has-error").addClass("has-success");
-					$(element).siblings("label").removeClass("hide");
+					$(element).siblings("label").removeClass("hide"); 
 				}
 			});
 		};
@@ -719,6 +991,7 @@
 
 			$("#sidebar-form").validate({
 				submitHandler: function(form) {
+					$('.submit-button').button("loading");
 					$.ajax({
 						type: "POST",
 						url: "php/email-sender.php",
@@ -735,7 +1008,7 @@
 								$("#MessageSent3").removeClass("hidden");
 								$("#MessageNotSent3").addClass("hidden");
 								$(".submit-button").removeClass("btn-default").addClass("btn-success").prop('value', 'Message Sent');
-								$("#sidebar-form .form-control").each(function() {
+								$("#sidebar-form .form-control").each(function() { 
 									$(this).prop('value', '').parent().removeClass("has-success").removeClass("has-error");
 								});
 							} else {
@@ -744,7 +1017,7 @@
 							}
 						}
 					});
-				},
+				},				
 				// debug: true,
 				errorPlacement: function(error, element) {
 					error.insertAfter( element );
@@ -777,7 +1050,7 @@
 					message3: {
 						required: "Please enter a message",
 						minlength: "Your message must be longer than 10 characters"
-					}
+					}					
 				},
 				errorElement: "span",
 				highlight: function (element) {
@@ -797,7 +1070,7 @@
 
 				var affixBottom = $(".footer").outerHeight(true) + $(".subfooter").outerHeight(true) + $(".blogpost footer").outerHeight(true),
 				affixTop = $("#affix").offset().top;
-
+				
 				if ($(".comments").length>0) {
 					affixBottom = affixBottom + $(".comments").outerHeight(true);
 				}
@@ -842,7 +1115,7 @@
 							var affixBottom = $(".footer").outerHeight(true) + $(".subfooter").outerHeight(true)
 							if ($(".footer-top").length>0) {
 								affixBottom = affixBottom + $(".footer-top").outerHeight(true)
-							}
+							}						
 							return (this.bottom = affixBottom+50)
 						}
 					}
@@ -887,32 +1160,69 @@
 		if($(".scrollspy").length>0) {
 			$("body").addClass("scroll-spy");
 			if($(".fixed.header").length>0) {
-				$('body').scrollspy({
+				$('body').scrollspy({ 
 					target: '.scrollspy',
 					offset: 85
 				});
 			} else {
-				$('body').scrollspy({
+				$('body').scrollspy({ 
 					target: '.scrollspy',
 					offset: 20
 				});
 			}
 		}
 
+		//Video Background
+		//-----------------------------------------------		
+		if($(".video-background").length>0) {
+			if (Modernizr.touch) {
+				$(".video-background").vide({
+					mp4: "videos/background-video.mp4",
+					webm: "videos/background-video.webm",
+					poster: "videos/video-fallback.jpg"
+				}, {
+					volume: 1,
+					playbackRate: 1,
+					muted: true,
+					loop: true,
+					autoplay: true,
+					position: "50% 60%", // Similar to the CSS `background-position` property.
+					posterType: "jpg", // Poster image type. "detect" — auto-detection; "none" — no poster; "jpg", "png", "gif",... - extensions.
+					resizing: true 
+				});
+			} else {
+				$(".video-background").vide({
+					mp4: "videos/background-video.mp4",
+					webm: "videos/background-video.webm",
+					poster: "videos/video-poster.jpg"
+				}, {
+					volume: 1,
+					playbackRate: 1,
+					muted: true,
+					loop: true,
+					autoplay: true,
+					position: "50% 60%", // Similar to the CSS `background-position` property.
+					posterType: "jpg", // Poster image type. "detect" — auto-detection; "none" — no poster; "jpg", "png", "gif",... - extensions.
+					resizing: true 
+				});
+			};
+
+		};
+
 		//Scroll totop
 		//-----------------------------------------------
 		$(window).scroll(function() {
 			if($(this).scrollTop() != 0) {
-				$(".scrollToTop").fadeIn();
+				$(".scrollToTop").fadeIn();	
 			} else {
 				$(".scrollToTop").fadeOut();
 			}
 		});
-
+		
 		$(".scrollToTop").click(function() {
 			$("body,html").animate({scrollTop:0},800);
 		});
-
+		
 		//Modal
 		//-----------------------------------------------
 		if($(".modal").length>0) {
@@ -920,7 +1230,7 @@
 				$(".modal").prependTo( "body" );
 			});
 		}
-
+		
 		// Pricing tables popovers
 		//-----------------------------------------------
 		if ($(".pricing-tables").length>0) {
@@ -933,6 +1243,21 @@
 		//-----------------------------------------------
 		if (($(".parallax").length>0)  && !Modernizr.touch ){
 			$(".parallax").parallax("50%", 0.2, false);
+		};
+
+		if (($(".parallax-2").length>0)  && !Modernizr.touch ){
+			$(".parallax-2").parallax("50%", 0.2, false);
+		};
+		if (($(".parallax-text").length>0)  && !Modernizr.touch ){
+			$(window).scroll(function() {
+				//Get the scoll position of the page
+				scrollPos = $(this).scrollTop();
+
+				//Scroll and fade out the banner text
+				$('.parallax-text').css({
+					'opacity' : 1-(scrollPos/400)
+				});
+			});
 		};
 
 		// Remove Button
@@ -957,7 +1282,7 @@
 		//This will prevent the event from bubbling up and close the dropdown when you type/click on text boxes (Header Top).
 		//-----------------------------------------------
 		$('.header-top .dropdown-menu input').click(function(e) {
-			e.stopPropagation();
+			e.stopPropagation(); 
 		});
 
 		// Offcanvas side navbar
@@ -973,9 +1298,9 @@
 		if ($("#offcanvas").length>0) {
 			$('#offcanvas [data-toggle=dropdown]').on('click', function(event) {
 			// Avoid following the href location when clicking
-			event.preventDefault();
+			event.preventDefault(); 
 			// Avoid having the menu to close when clicking
-			event.stopPropagation();
+			event.stopPropagation(); 
 			// close all the siblings
 			$(this).parent().siblings().removeClass('open');
 			// close all the submenus of siblings

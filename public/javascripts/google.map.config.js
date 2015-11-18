@@ -30,4 +30,4 @@
 		}
 	}); // End document ready
 
-})(this.jQuery);
+})(this.jQuery);		

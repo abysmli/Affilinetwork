@@ -37,7 +37,7 @@
 					<div class="masonry-grid-item col-sm-6 col-md-4">
 						<!-- blogpost start -->
 						<article class="clearfix blogpost">
-							<div class="overlay-container">
+							<div class="overlay-container" style="text-align: center;">
 								<img src=<%- article.Image %> alt="">
 								<div class="overlay">
 									<div class="overlay-links">
@@ -48,22 +48,18 @@
 							</div>
 							<div class="blogpost-body">
 								<div class="post-info">
-									<span class="day">12</span>
-									<span class="month">Sept 2014</span>
+									<span class="day"><%= article.updated_at.getDay() %></span>
+									<span class="month"><%= article.updated_at.getMonth() %> <%= article.updated_at.getFullYear() %></span>
 								</div>
 								<div class="blogpost-content">
 									<header>
 										<h2 class="title"><a href="/article_detail?id=<%= article._id %>"><%= article.Title %></a></h2>
 										<div class="submitted"><i class="fa fa-user pr-5"></i> by <a href="#">XXX网推荐</a></div>
 									</header>
-									<p><%= article.Content_pre %></p>
+									<p><%= article.Content_pre.substr(0, 100) + '...' %></p>
 								</div>
 							</div>
 							<footer class="clearfix">
-								<ul class="links pull-left">
-									<li><i class="fa fa-comment-o pr-5"></i> <a href="#">22 comments</a> |</li>
-									<li><i class="fa fa-tags pr-5"></i> <a href="#">tag 1</a></li>
-								</ul>
 								<a class="pull-right link" href="/article_detail?id=<%= article._id %>"><span>查看详情</span></a>
 							</footer>
 						</article>

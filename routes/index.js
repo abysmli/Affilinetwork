@@ -998,15 +998,30 @@ router.get('/favourite', function(req, res, next) {
 router.get('/article', function(req, res, next) {
     Article.find({}, function(err, articles) {
         res.render('article', {
-            title: '精彩的文章点评',
+            title: '精彩的文章',
             articles: articles,
             user: req.user
         });
     });
 });
 
-router.get('/aboutus', function(req, res){
+router.get('/article_detail', function(req, res, next) {
+    Article.findById(req.query.id, function(err, article) {
+        if (article) {
+            res.render('article_details', {
+                title: "精彩的文章",
+                article: article,
+                user: req.user
+            });
+        } else {
+            res.render('error');
+        }
+    });
+});
+
+router.get('/aboutus', function(req, res) {
     res.render('aboutus', {
+        title: '关于我们',
         layout: 'layout',
         user: req.user,
     });
