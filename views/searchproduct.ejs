@@ -17,9 +17,9 @@
                 </ol>
             </div>
             <div class="col-md-2">
-                <form role="search" class="search-box" action="/search" method="post">
+                <form role="search" class="search-box" action="/search" method="post" style="margin: 0 !important;">
                     <div class="has-feedback">
-                        <input type="text" class="form-control" placeholder="Search" name="search" style="-webkit-appearance: textfield; border-radius: 25px">
+                        <input type="text" class="form-control" placeholder="搜索产品" name="search" style="-webkit-appearance: textfield; border-radius: 25px">
                         <i class="fa fa-search form-control-feedback"></i>
                     </div>
                 </form>
@@ -27,10 +27,7 @@
         </div>
     </div>
 </div>
-<!-- banner end -->
-<!-- page-intro start-->
-<!-- ================ -->
-<!-- page-intro end -->
+
 <!-- main-container start -->
 <!-- ================ -->
 <section class="main-container">
@@ -43,13 +40,9 @@
                 <!-- ================ -->
                 <h2 class="page-title">折扣商品</h2>
                 <div class="separator-2"></div>
-                <!--<p class="lead">
-                <br class="hidden-sm hidden-xs"> 点选商品图片, 就可以看到更多详细内容!</p>-->
-                <!-- page-title end -->
-                <!-- shop items start -->
                 <div id="container" class="row">
                     <% products.forEach(function(product, index) { %>
-                    <div class="element col-lg-3 col-sm-6 masonry-grid-item">
+                    <div class="element col-lg-3 col-md-3 col-sm-6 col-xs-6 masonry-grid-item">
                         <div class="listing-item">
                             <div class="overlay-container">
                                 <img src="<%= product.Images %>" onerror="this.src= '/stylesheets/images/no-image.jpg';" />
@@ -76,112 +69,88 @@
                 <!-- shop items end -->
                 <div class="clearfix"></div>
                 <!-- pagination start -->
-                <ul class="pagination">
-                    <!--<li><a href="/">«</a></li>-->
-                    <!--<li class="active"><a href="/?page=1">1 <span class="sr-only"></span></a></li>-->
-                    <!--<li><a href="/?page=<%= parseInt(currentPage) +1 %>">next page</a></li>
-                    <li><a href="#">»</a></li>-->
-                </ul>
+                <ul class="pagination"></ul>
                 <!-- pagination end -->
             </div>
             <!-- main end -->
             <aside class="col-md-2">
-                <form role="form" action="/filter" method="post">
-                    <div class="siderbar">
-                        <div class="body clearfixed">
-                            <h3>筛选</h3>
-                            <div class="sorting-filters">
-                                <form>
-                                    <div class="form-group">
-                                        <label>种类</label>
-                                        <select class="form-control" name="category">
-                                            <option <% if(category=='所有') { %> selected='selected' <% } %>>所有</option>
-                                            <option <% if(category=='服装鞋子') { %> selected='selected' <% } %>>服装鞋子</option>
-                                            <option <% if(category=='食品饮食') { %> selected='selected' <% } %>>食品饮食</option>
-                                            <option <% if(category=='厨房用具') { %> selected='selected' <% } %>>厨房用具</option>
-                                            <option <% if(category=='电子产品') { %> selected='selected' <% } %>>电子产品</option>
-                                            <option <% if(category=='手机平板') { %> selected='selected' <% } %>>手机平板</option>
-                                            <option <% if(category=='化妆品') { %> selected='selected' <% } %>>化妆品</option>
-                                            <option <% if(category=='药品') { %> selected='selected' <% } %> >药品</option>
-                                            <option <% if(category=='旅游') { %> selected='selected' <% } %> >旅游</option>
-                                            <option <% if(category=='打折券') { %> selected='selected' <% } %> >打折券</option>
-                                            <option <% if(category=='其他') { %> selected='selected' <% } %> >其他</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>价格区间</label>
-                                        <div class="row grid-space-10">
-                                            <div class="col-sm-6">
-                                                <input type="text" name="minprice" class="form-control" placeholder='最低价格'>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <input type="text" name="maxprice" class="form-control col-xs-6" placeholder='最高价格'>
-                                            </div>
+                <div class="siderbar">
+                    <div class="body clearfixed">
+                        <h3>筛选</h3>
+                        <div class="sorting-filters">
+                            <form role="form" action="/filter" method="post">
+                                <div class="form-group">
+                                    <label>种类</label>
+                                    <select class="form-control" name="category">
+                                        <option <% if(category=='所有') { %> selected='selected' <% } %>>所有</option>
+                                        <option <% if(category=='服装鞋子') { %> selected='selected' <% } %>>服装鞋子</option>
+                                        <option <% if(category=='食品饮食') { %> selected='selected' <% } %>>食品饮食</option>
+                                        <option <% if(category=='厨房用具') { %> selected='selected' <% } %>>厨房用具</option>
+                                        <option <% if(category=='电子产品') { %> selected='selected' <% } %>>电子产品</option>
+                                        <option <% if(category=='手机平板') { %> selected='selected' <% } %>>手机平板</option>
+                                        <option <% if(category=='化妆品') { %> selected='selected' <% } %>>化妆品</option>
+                                        <option <% if(category=='药品') { %> selected='selected' <% } %> >药品</option>
+                                        <option <% if(category=='旅游') { %> selected='selected' <% } %> >旅游</option>
+                                        <option <% if(category=='打折券') { %> selected='selected' <% } %> >打折券</option>
+                                        <option <% if(category=='其他') { %> selected='selected' <% } %> >其他</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>价格区间</label>
+                                    <div class="row grid-space-10">
+                                        <div class="col-sm-6">
+                                            <input type="text" name="minprice" class="form-control" placeholder='最低价格'>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input type="text" name="maxprice" class="form-control col-xs-6" placeholder='最高价格'>
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label>排序</label>
-                                        <select class="form-control" name="sort">
-                                            <option <% if(sort=='按日期') { %> selected='selected' <% } %>>按日期</option>
-                                            <option <% if(sort=='按价格由低到高') { %> selected='selected' <% } %>>按价格由低到高</option>
-                                            <option <% if(sort=='按价格由高到低') { %> selected='selected' <% } %>>按价格由高到低</option>
-                                            <option <% if(sort=='按热度') { %> selected='selected' <% } %>>按热度</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                    <button type="submit" class="btn btn-default">确认</a>
+                                </div>
+                                <div class="form-group">
+                                    <label>排序</label>
+                                    <select class="form-control" name="sort">
+                                        <option <% if(sort=='按日期') { %> selected='selected' <% } %>>按日期</option>
+                                        <option <% if(sort=='按价格由低到高') { %> selected='selected' <% } %>>按价格由低到高</option>
+                                        <option <% if(sort=='按价格由高到低') { %> selected='selected' <% } %>>按价格由高到低</option>
+                                        <option <% if(sort=='按热度') { %> selected='selected' <% } %>>按热度</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-default">确认</button>
                                 </div>
                             </form>
                         </div>
                     </div>
-                </form>
-            </div>
-        </aside>
+                </div>
+            </aside>
+        </div>
     </div>
-</div>
 </section>
-<!-- main-container end -->
-<!-- section start -->
-<!-- ================ -->
-<script>
-function test(pageNumber) {
-var page = "#page-" + pageNumber;
-$('.selection').hide()
-$(page).show()
-}
-</script>
+
+
 <script type="text/javascript">
+function test(pageNumber) {
+    var page = "#page-" + pageNumber;
+    $('.selection').hide()
+    $(page).show()
+}
 $(document).ready(function() {
-var $container = $('#container');
-$container.imagesLoaded(function() {
-$container.isotope({
-masonry: {
-columnWidth: ('.masonry-grid-item')
-}
-});
-});
-$('.siderbar').sticky({
-topSpacing: 20
-});
-$('.pagination').pagination({
-items: <%= count %>,
-itemsOnPage: 30,
-cssStyle: 'light-theme',
-currentPage: <%= currentPage %>
-//onPageClick: function(pageNumber)
-});
-/*  $container.infinitescroll({
-navSelector: '#page_nav', // selector for the paged navigation
-nextSelector: '#page_nav a', // selector for the NEXT link (to page 2)
-itemSelector: '.element', // selector for all items you'll retrieve
-loading: {
-finishedMsg: 'No more pages to load.',
-img: 'http://i.imgur.com/qkKy8.gif'
-}
-},loadproducts);
-// call Isotope as a callback
-function loadproducts(newElements) {
-alert(1);
-}*/
+    var $container = $('#container');
+    $container.imagesLoaded(function() {
+        $container.isotope({
+            masonry: {
+                columnWidth: ('.masonry-grid-item')
+            }
+        });
+    });
+    $('.siderbar').sticky({
+        topSpacing: 20
+    });
+    $('.pagination').pagination({
+        items: <%= count %> ,
+        itemsOnPage: 30,
+        cssStyle: 'light-theme',
+        currentPage: <%= currentPage %>
+    });
 });
 </script>

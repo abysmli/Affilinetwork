@@ -1,29 +1,4 @@
 <div class="container">
-    <!--<br/>
-    <form role="form" action="/register" method="post" style="max-width: 300px;" id="form">
-        <div class="form-group">
-            <input type="text" name="username" placeholder="用户名" class="form-control" id="username_input" />
-        </div>
-        <div class="form-group">
-            <input type="text" name="lastname" placeholder="姓氏" class="form-control" id="email_input" />
-        </div>
-        <div class="form-group">
-            <input type="text" name="firstname" placeholder="名字" class="form-control" id="email_input" />
-        </div>
-        <div class="form-group">
-            <input type="password" name="password" placeholder="登录密码" class="form-control" id="password_input" />
-        </div>
-        <div class="form-group">
-            <input type="email" name="emailadress" placeholder="邮箱地址" class="form-control" id="email_input" />
-        </div>
-        <div class = "form-group">
-            <button type="submit" class="btn btn-success" id="submit_button">注册</button>
-            <a href="/">
-                <button type="button" class="btn btn-primary">取消</button>
-            </a>
-        </div>
-    </form>
-    <br/>-->
     <section class="main-container">
         <div class="container">
             <div class="row">
@@ -84,19 +59,19 @@
 </div>
 <script>
 $(document).ready(function() {
-$("#form").submit(function(e) {
-if ($("#username_input").val() == "") {
-alert("请正确输入用户名");
-e.preventDefault();
-}
-if ($("#password_input").val() == "") {
-alert("请正确输入密码");
-e.preventDefault();
-}
-if ($("#email_input").val() == "") {
-alert("请输入邮箱");
-e.preventDefault();
-}
-});
+    $("#form").submit(function(e) {
+        if ($("#username_input").val() == "") {
+            alert("请正确输入用户名");
+            e.preventDefault();
+        }
+        if ($("#password_input").val() == "") {
+            alert("请正确输入密码");
+            e.preventDefault();
+        }
+        if ($("#email_input").val() == "") {
+            alert("请输入邮箱");
+            e.preventDefault();
+        }
+    });
 });
 </script>

@@ -1,10 +1,10 @@
 <div class="container">
-    <h3> <%= info %> </h3>
     <section class="main-container">
         <div class="container">
             <div class="row">
                 <!-- main start -->
                 <!-- ================ -->
+
                 <div class="main object-non-visible" data-animation-effect="fadeInDownSmall" data-effect-delay="300">
                     <div class="form-block center-block">
                         <h2 class="title">成为我们的用户</h2>
@@ -51,21 +51,20 @@
                                 </div>
                             </div>
                         </form>
+                        <div class="alert alert-danger" role="alert">
+                            <%= info %>
+                        </div>
                     </div>
                 </div>
                 <!-- main end -->
             </div>
         </div>
     </section>
-    <h4></h4>
 </div>
-
 
 <script>
     $(document).ready(function() {
-
         $("#form").submit(function(e) {
-
             if ($("#username_input").val() == "") {
                 alert("请正确输入用户名");
                 e.preventDefault();

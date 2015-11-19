@@ -128,7 +128,7 @@ router.get('/', function(req, res, next) {
             }],
             function(err, products) {
                 if (err != null) {
-                    res.render('error');
+                    next(err);
                 } else {
                     res.render('index', {
                         title: 'Allhaha',
@@ -147,7 +147,7 @@ router.get('/', function(req, res, next) {
     });
 });
 
-router.get('/pagination', function(req, res) {
+router.get('/pagination', function(req, res, next) {
     var page = req.query.page;
     if (page == 1) {
         res.redirect('/');
@@ -191,7 +191,7 @@ router.get('/pagination', function(req, res) {
                 }],
                 function(err, products) {
                     if (err != null) {
-                        res.render('error');
+                        next(err);
                     } else {
                         res.render('searchproduct', {
                             title: 'Allhaha',
@@ -215,7 +215,7 @@ router.post('/', passport.authenticate('stormpath', {
     failureRedirect: '/login',
     layout: 'layout',
     title: '错误登录信息'
-}), function(req, res) {
+}), function(req, res, next) {
     res.redirect('/');
 });
 
@@ -276,7 +276,7 @@ router.post('/filter', function(req, res, next) {
                     }],
                     function(err, products) {
                         if (err != null) {
-                            res.render('error');
+                            next(err);
                         } else {
                             res.render('searchproduct', {
                                 title: 'Allhaha',
@@ -333,7 +333,7 @@ router.post('/filter', function(req, res, next) {
                     }],
                     function(err, products) {
                         if (err != null) {
-                            res.render('error');
+                            next(err);
                         } else {
                             res.render('searchproduct', {
                                 title: 'Allhaha',
@@ -390,7 +390,7 @@ router.post('/filter', function(req, res, next) {
                     }],
                     function(err, products) {
                         if (err != null) {
-                            res.render('error');
+                            next(err);
                         } else {
                             res.render('searchproduct', {
                                 title: 'Allhaha',
@@ -446,7 +446,7 @@ router.post('/filter', function(req, res, next) {
                     }],
                     function(err, products) {
                         if (err != null) {
-                            res.render('error');
+                            next(err);
                         } else {
                             res.render('searchproduct', {
                                 title: 'Allhaha',
@@ -514,7 +514,7 @@ router.post('/filter', function(req, res, next) {
                     }],
                     function(err, products) {
                         if (err != null) {
-                            res.render('error');
+                            next(err);
                         } else {
                             res.render('searchproduct', {
                                 title: 'Allhaha',
@@ -575,7 +575,7 @@ router.post('/filter', function(req, res, next) {
                     }],
                     function(err, products) {
                         if (err != null) {
-                            res.render('error');
+                            next(err);
                         } else {
                             res.render('searchproduct', {
                                 title: 'Allhaha',
@@ -636,7 +636,7 @@ router.post('/filter', function(req, res, next) {
                     }],
                     function(err, products) {
                         if (err != null) {
-                            res.render('error');
+                            next(err);
                         } else {
                             res.render('searchproduct', {
                                 title: 'Allhaha',
@@ -696,7 +696,7 @@ router.post('/filter', function(req, res, next) {
                     }],
                     function(err, products) {
                         if (err != null) {
-                            res.render('error');
+                            next(err);
                         } else {
                             res.render('searchproduct', {
                                 title: 'Allhaha',
@@ -712,14 +712,12 @@ router.post('/filter', function(req, res, next) {
                         }
                     });
             }
-
-
         });
     };
 });
 
 /*search the product from input*/
-router.post('/search', function(req, res) {
+router.post('/search', function(req, res, next) {
     var search = req.body.search;
     var page = req.body.page || 1;
     var count = 0;
@@ -777,7 +775,7 @@ router.post('/search', function(req, res) {
             }
         }], function(err, results) {
             if (err != null) {
-                res.render('error');
+                next(err);
             } else {
                 res.render('searchproduct', {
                     title: 'Allhaha',
@@ -797,7 +795,7 @@ router.post('/search', function(req, res) {
     });
 });
 
-router.get('/category', function(req, res) {
+router.get('/category', function(req, res, next) {
     var category = req.query.category;
     var page = req.query.page || 1;
     if (category === 'clothes_shoes') {
@@ -863,7 +861,7 @@ router.get('/category', function(req, res) {
             }
         }], function(err, products) {
             if (err != null) {
-                res.render('error');
+                next(err);
             } else {
                 res.render('searchproduct', {
                     title: 'Allhaha',
@@ -883,7 +881,7 @@ router.get('/category', function(req, res) {
 });
 
 
-router.get('/login', function(req, res) {
+router.get('/login', function(req, res, next) {
     res.render('userlogin/login', {
         title: '登录',
         layout: 'layout',
@@ -894,7 +892,7 @@ router.get('/login', function(req, res) {
 });
 
 //logout
-router.get('/logout', function(req, res) {
+router.get('/logout', function(req, res, next) {
     req.logout();
     res.redirect('/');
 });
@@ -907,7 +905,7 @@ router.get('/product', function(req, res, next) {
         Product.find({
             EAN: _product.EAN
         }, null, function(err, _products) {
-            if (err != null) res.render('error');
+            if (err != null) next(err);
             else {
                 res.render('product_details', {
                     title: '德国打折商品, 产品描述',
@@ -994,17 +992,21 @@ router.get('/article_detail', function(req, res, next) {
                 user: req.user
             });
         } else {
-            res.render('error');
+            next(err);
         }
     });
 });
 
-router.get('/aboutus', function(req, res) {
+router.get('/aboutus', function(req, res, next) {
     res.render('aboutus', {
         title: '关于我们',
         layout: 'layout',
         user: req.user,
     });
+});
+
+router.get('/test', function(req, res, next) {
+
 });
 
 module.exports = router;

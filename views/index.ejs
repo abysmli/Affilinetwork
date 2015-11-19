@@ -1,15 +1,3 @@
-<!--<div class="banner">
-    <div class="fixed-image section light-translucent-bg parallax-bg-3">
-        <div class="container">
-            <div class="space-top"></div>
-            <h1>欢迎来到德国购物</h1>
-            <div class="separator-2"></div>
-            <p class="lead">在这里您可以选购到当下德国本地所有打折的商品!
-                <br class="hidden-xs hidden-sm"> 您只需鼠标轻点, 便可以享受轻松实惠的海淘.
-            <br class="hidden-xs hidden-sm"> 祝您接下来有一个愉快的购物享乐.</p>
-        </div>
-    </div>
-</div>-->
 <div class="page-intro">
     <div class="container">
         <div class="row">
@@ -29,9 +17,9 @@
                 </ol>
             </div>
             <div class="col-md-2">
-                <form role="search" class="search-box" action="/search" method="post">
+                <form role="search" class="search-box" action="/search" method="post" style="margin: 0 !important;">
                     <div class="has-feedback">
-                        <input type="text" class="form-control" placeholder="Search" name="search" style="-webkit-appearance: textfield; border-radius: 25px">
+                        <input type="text" class="form-control" placeholder="搜索产品" name="search" style="-webkit-appearance: textfield; border-radius: 25px">
                         <i class="fa fa-search form-control-feedback"></i>
                     </div>
                 </form>
@@ -39,86 +27,78 @@
         </div>
     </div>
 </div>
-<h1 class="page-title">当前最热</h1>
-<div class="separator-2"></div>
-<div class="main col-md-10">
-    <div class="owl-carousel carousel-autoplay owl-theme">
-        <% hotproducts.forEach(function(product, index) { %>
-        <div class="image-box">
-            <div class="overlay-container">
-                <img src="<%= product.Images %>" />
-                <a href="/product?product_id=<%= product.ProductId %>" class="overlay small">
-                    <i class="fa fa-plus"></i>
-                    <span><%= product.DescriptionCN %></span>
-                </a>
-            </div>
-            <div class="listing-item-body clearfix">
-                <h3 class="title"><a href="/product?product_id=<%= product.ProductId %>"><%= product.ProductName %></a></h3>
-                <% if (product.Price.length == 1 || Math.min.apply(null, product.Price) == Math.max.apply(null, product.Price)) { %>
-                <span class="price" style="font-size: 20px"><%= product.Price[0].toString().replace(".", ",") %> €</span>
-                <% } else { %>
-                <span class="price" style="font-size: 20px"><%= Math.min.apply(null,product.Price).toString().replace(".", ",") %> - <%= Math.max.apply(null,product.Price).toString().replace(".", ",") %> €</span>
-                <% } %>
-                <div class="elements-list pull-right">
-                    <a href="/product?product_id=<%= product.ProductId %>"><i class="fa fa-gift pr-10"></i>点击查看</a>
-                </div>
-            </div>
-        </div>
-        <% }); %>
-        <div class="image-box">
-            <div class="overlay-container">
-                <img src="images/portfolio-1.jpg" alt="">
-                <a href="portfolio-item.html" class="overlay small">
-                    <i class="fa fa-link"></i>
-                    <span>Web Design</span>
-                </a>
-            </div>
-            <a href="portfolio-item.html" class="btn btn-light-gray btn-block">Project Title</a>
-        </div>
-        <div class="image-box">
-            <div class="overlay-container">
-                <img src="images/portfolio-1.jpg" alt="">
-                <a href="portfolio-item.html" class="overlay small">
-                    <i class="fa fa-link"></i>
-                    <span>Web Design</span>
-                </a>
-            </div>
-            <a href="portfolio-item.html" class="btn btn-light-gray btn-block">Project Title</a>
-        </div>
-        <div class="image-box">
-            <div class="overlay-container">
-                <img src="images/portfolio-1.jpg" alt="">
-                <a href="portfolio-item.html" class="overlay small">
-                    <i class="fa fa-link"></i>
-                    <span>Web Design</span>
-                </a>
-            </div>
-            <a href="portfolio-item.html" class="btn btn-light-gray btn-block">Project Title</a>
-        </div><div class="image-box">
-        <div class="overlay-container">
-            <img src="images/portfolio-1.jpg" alt="">
-            <a href="portfolio-item.html" class="overlay small">
-                <i class="fa fa-link"></i>
-                <span>Web Design</span>
-            </a>
-        </div>
-        <a href="portfolio-item.html" class="btn btn-light-gray btn-block">Project Title</a>
-    </div>
-</div>
-</div>
-<!-- banner end -->
-<!-- page-intro start-->
-<!-- ================ -->
-<!-- page-intro end -->
+
 <!-- main-container start -->
 <!-- ================ -->
-<aside class="col-md-2">
-            <form role="form" action="/filter" method="post">
+<section class="main-container">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="main col-md-10">
+                <h2 class="page-title">当前最热</h2>
+                <div class="separator-2"></div>
+                <div class="owl-carousel carousel-autoplay owl-theme col-xs-6">
+                    <% hotproducts.forEach(function(product, index) { %>
+                    <div class="image-box">
+                        <div class="overlay-container">
+                            <img src="<%= product.Images %>" />
+                            <a href="/product?product_id=<%= product.ProductId %>" class="overlay small">
+                                <i class="fa fa-plus"></i>
+                                <span><%= product.DescriptionCN %></span>
+                            </a>
+                        </div>
+                        <div class="listing-item-body clearfix">
+                            <h3 class="title"><a href="/product?product_id=<%= product.ProductId %>"><%= product.ProductName %></a></h3>
+                            <% if (product.Price.length == 1 || Math.min.apply(null, product.Price) == Math.max.apply(null, product.Price)) { %>
+                            <span class="price" style="font-size: 20px"><%= product.Price[0].toString().replace(".", ",") %> €</span>
+                            <% } else { %>
+                            <span class="price" style="font-size: 20px"><%= Math.min.apply(null,product.Price).toString().replace(".", ",") %> - <%= Math.max.apply(null,product.Price).toString().replace(".", ",") %> €</span>
+                            <% } %>
+                            <div class="elements-list pull-right">
+                                <a href="/product?product_id=<%= product.ProductId %>"><i class="fa fa-gift pr-10"></i>点击查看</a>
+                            </div>
+                        </div>
+                    </div>
+                    <% }); %>
+                </div>
+                <div class="clearfix"></div>
+                <h2 class="page-title">折扣商品</h2>
+                <div class="separator-2"></div>
+                <div id="container" class="row">
+                    <% products.forEach(function(product, index) { %>
+                    <div class="element col-lg-3 col-md-3 col-sm-6 col-xs-6 masonry-grid-item">
+                        <div class="listing-item">
+                            <div class="overlay-container">
+                                <img src="<%= product.Images %>" onerror="this.src= '/stylesheets/images/no-image.jpg';" />
+                                <a href="/product?product_id=<%= product.ProductId %>" class="overlay small">
+                                    <i class="fa fa-plus"></i>
+                                    <span><%= product.DescriptionCN %></span>
+                                </a>
+                            </div>
+                            <div class="listing-item-body clearfix">
+                                <h3 class="title"><a href="/product?product_id=<%= product.ProductId %>"><%= product.ProductName %></a></h3>
+                                <% if (product.Price.length == 1 || Math.min.apply(null, product.Price) == Math.max.apply(null, product.Price)) { %>
+                                <span class="price" style="font-size: 20px"><%= product.Price[0].toString().replace(".", ",") %> €</span>
+                                <% } else { %>
+                                <span class="price" style="font-size: 20px"><%= Math.min.apply(null,product.Price).toString().replace(".", ",") %> - <%= Math.max.apply(null,product.Price).toString().replace(".", ",") %> €</span>
+                                <% } %>
+                                <div class="elements-list pull-right">
+                                    <a href="/product?product_id=<%= product.ProductId %>"><i class="fa fa-gift pr-10"></i>点击查看</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% }); %>
+                </div>
+                <div class="clearfix"></div>
+                <ul class="pagination"></ul>
+            </div>
+            <aside class="col-md-2">
                 <div class="siderbar">
                     <div class="body clearfixed">
                         <h3>筛选</h3>
+                        <div class="separator"></div>
                         <div class="sorting-filters">
-                            <form>
+                            <form role="form" action="/filter" method="post">
                                 <div class="form-group">
                                     <label>种类</label>
                                     <select class="form-control" name="category">
@@ -156,112 +136,45 @@
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                <button type="submit" class="btn btn-default">确认</a>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </aside>
-
-<div class="container-fluid">
-    <div class="row">
-        <!-- main start -->
-        <!-- ================ -->
-        <div class="main col-md-10">
-            <!-- page-title start -->
-            <!-- ================ -->
-            <h2 class="page-title">折扣商品</h2>
-            <div class="separator-2"></div>
-            <!--<p class="lead">
-            <br class="hidden-sm hidden-xs"> 点选商品图片, 就可以看到更多详细内容!</p>-->
-            <!-- page-title end -->
-            <!-- shop items start -->
-            <div id="container" class="row">
-                <% products.forEach(function(product, index) { %>
-                <div class="element col-lg-3 col-sm-6 masonry-grid-item">
-                    <div class="listing-item">
-                        <div class="overlay-container">
-                            <img src="<%= product.Images %>" onerror="this.src= '/stylesheets/images/no-image.jpg';" />
-                            <a href="/product?product_id=<%= product.ProductId %>" class="overlay small">
-                                <i class="fa fa-plus"></i>
-                                <span><%= product.DescriptionCN %></span>
-                            </a>
-                        </div>
-                        <div class="listing-item-body clearfix">
-                            <h3 class="title"><a href="/product?product_id=<%= product.ProductId %>"><%= product.ProductName %></a></h3>
-                            <% if (product.Price.length == 1 || Math.min.apply(null, product.Price) == Math.max.apply(null, product.Price)) { %>
-                            <span class="price" style="font-size: 20px"><%= product.Price[0].toString().replace(".", ",") %> €</span>
-                            <% } else { %>
-                            <span class="price" style="font-size: 20px"><%= Math.min.apply(null,product.Price).toString().replace(".", ",") %> - <%= Math.max.apply(null,product.Price).toString().replace(".", ",") %> €</span>
-                            <% } %>
-                            <div class="elements-list pull-right">
-                                <a href="/product?product_id=<%= product.ProductId %>"><i class="fa fa-gift pr-10"></i>点击查看</a>
-                            </div>
+                                    <button type="submit" class="btn btn-default">确认</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
-                <% }); %>
-            </div>
-            <!-- shop items end -->
-            <div class="clearfix"></div>
-            <!-- pagination start -->
-            <ul class="pagination">
-                <!--<li><a href="/">«</a></li>
-                <li class="active"><a href="/?page=1">1 <span class="sr-only"></span></a></li>
-                <li><a href="/?page=<%= parseInt(currentPage) +1 %>">next page</a></li>
-                <li><a href="#">»</a></li>-->
-            </ul>
-            <!-- pagination end -->
+            </aside>
         </div>
-        <!-- main end -->
-        
-</div>
-</div>
+    </div>
 </section>
 <!-- main-container end -->
 <!-- section start -->
 <!-- ================ -->
-<script>
-function test(pageNumber) {
-var page = "#page-" + pageNumber;
-$('.selection').hide()
-$(page).show()
-}
-</script>
 <script type="text/javascript">
+
+function test(pageNumber) {
+    var page = "#page-" + pageNumber;
+    $('.selection').hide()
+    $(page).show()
+}
+
 $(document).ready(function() {
-var $container = $('#container');
-$container.imagesLoaded(function() {
-$container.isotope({
-masonry: {
-columnWidth: ('.masonry-grid-item')
-}
+    var $container = $('#container');
+    $container.imagesLoaded(function() {
+        $container.isotope({
+            masonry: {
+                columnWidth: ('.masonry-grid-item')
+            }
+        });
+    });
+    $('.siderbar').sticky({
+        topSpacing: 60
+    });
+    $('.pagination').pagination({
+        items: <%= count %> ,
+        itemsOnPage: 30,
+        cssStyle: 'light-theme',
+        currentPage: <%= currentPage %>
+    });
 });
-});
-$('.siderbar').sticky({
-topSpacing: 60
-});
-$('.pagination').pagination({
-items: <%= count %>,
-itemsOnPage: 30,
-cssStyle: 'light-theme',
-currentPage: <%= currentPage %>
-//onPageClick: function(pageNumber)
-});
-/*  $container.infinitescroll({
-navSelector: '#page_nav', // selector for the paged navigation
-nextSelector: '#page_nav a', // selector for the NEXT link (to page 2)
-itemSelector: '.element', // selector for all items you'll retrieve
-loading: {
-finishedMsg: 'No more pages to load.',
-img: 'http://i.imgur.com/qkKy8.gif'
-}
-},loadproducts);
-// call Isotope as a callback
-function loadproducts(newElements) {
-alert(1);
-}*/
-});
+
 </script>

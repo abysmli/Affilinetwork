@@ -17,16 +17,16 @@ var Affilinet = new affilinet({
 var prodAdv = aws.createProdAdvClient(setting.amazon_setting.AccessKeyId, setting.amazon_setting.SecretAccessKey, setting.amazon_setting.AssociateTag);
 
 /* GET users listing. */
-router.get('/', auth, auth, function(req, res, next) {
-    Affilinet.getShopList({}, function(error, response, shops) {
-        if (!error && response.statusCode == 200) {
+router.get('/', auth, function(req, res, next) {
+    Affilinet.getShopList({}, function(err, response, shops) {
+        if (!err && response.statusCode == 200) {
             res.render('controller/index', {
                 title: 'Shops Manage',
                 shops: shops.Shops,
                 layout: 'controller/layout'
             });
         } else {
-            res.render('error');
+            next(err);
         }
     });
 });
@@ -36,8 +36,8 @@ router.get('/category', auth, function(req, res, next) {
     var shoptitle = req.query.shoptitle == undefined ? "for All Shops" : "for " + req.query.shoptitle;
     Affilinet.getCategoryList({
         ShopId: ShopId
-    }, function(error, response, categorylist) {
-        if (!error && response.statusCode == 200) {
+    }, function(err, response, categorylist) {
+        if (!err && response.statusCode == 200) {
             res.render('controller/category', {
                 title: 'Categories Manage',
                 categorylist: categorylist.Categories,
@@ -46,14 +46,14 @@ router.get('/category', auth, function(req, res, next) {
                 layout: 'controller/layout'
             });
         } else {
-            res.render('error');
+            next(err);
         }
     });
 });
 
-router.get('/programs', auth, function(req, res, next) {
-    res.render('controller/programs', {
-        title: 'Programs Manage',
+router.get('/vouchers', auth, function(req, res, next) {
+    res.render('controller/voucher', {
+        title: 'Vouchers Manage',
         layout: 'controller/layout'
     });
 });
@@ -68,11 +68,10 @@ router.get('/product', auth, function(req, res, next) {
             query.ShopIdMode = "Include";
             query.UseAffilinetCategories = "false";
         }
-        Affilinet.searchProducts(query, function(error, response, results) {
-            if (!error && response.statusCode == 200) {
+        Affilinet.searchProducts(query, function(err, response, results) {
+            if (!err && response.statusCode == 200) {
                 var counter = results.ProductsSummary.TotalRecords;
                 var products = Utils.ToLocalProducts(results.Products, "affilinet");
-
                 res.render('controller/products', {
                     title: 'Products Manage',
                     shopid: req.query.shopid,
@@ -85,7 +84,7 @@ router.get('/product', auth, function(req, res, next) {
                     layout: 'controller/layout'
                 });
             } else {
-                res.render('error');
+                next(err);
             }
         });
     } else {
@@ -96,9 +95,10 @@ router.get('/product', auth, function(req, res, next) {
                     updated_at: -1
                 }
             }, function(err, products) {
-                if (err)
-                    res.render('error');
-                else
+                if (err) {
+                    next(err);
+                }
+                else {
                     res.render('controller/products', {
                         title: 'Products Manage',
                         shopid: -1,
@@ -110,6 +110,7 @@ router.get('/product', auth, function(req, res, next) {
                         products: products,
                         layout: 'controller/layout'
                     });
+                }
             });
         });
     }
@@ -145,11 +146,11 @@ router.post('/product', auth, function(req, res, next) {
                             layout: 'controller/layout'
                         });
                     } else {
-                        res.render('error');
+                        next(err);
                     }
                 });
             } else {
-                res.render('error');
+                next(err);
             }
         });
     } else if (req.body.search_type == "ASIN") {
@@ -179,7 +180,7 @@ router.post('/product', auth, function(req, res, next) {
                     layout: 'controller/layout'
                 });
             } else {
-                res.render('error');
+                next(err);
             }
         });
     } else if (req.body.search_type == "EAN") {
@@ -213,11 +214,11 @@ router.post('/product', auth, function(req, res, next) {
                             layout: 'controller/layout'
                         });
                     } else {
-                        res.render('error');
+                        next(err);
                     }
                 });
             } else {
-                res.render('error');
+                next(err);
             }
         });
     }
@@ -235,7 +236,7 @@ router.get('/product/add', auth, function(req, res, next) {
     });
 });
 
-router.post('/product/add', function(req, res, next) {
+router.post('/product/add', auth, function(req, res, next) {
     var product = req.body;
     var query = Product.where({
         ProductId: product.ProductId,
@@ -261,7 +262,7 @@ router.post('/product/add', function(req, res, next) {
 
 router.get('/product/edit', auth, function(req, res, next) {
     Product.findById(req.query.id, function(err, product) {
-        if (err != null) res.render('error');
+        if (err != null) next(err);
         else {
             res.render('controller/product_form', {
                 title: 'Edit Product',
@@ -281,7 +282,7 @@ router.post('/product/edit', auth, function(req, res, next) {
     Product.findOneAndUpdate({
         _id: req.query.id
     }, product, function(err, product) {
-        if (err != null) res.render('error');
+        if (err != null) next(err);
         else {
             res.redirect('/controller/product');
         }
@@ -290,7 +291,7 @@ router.post('/product/edit', auth, function(req, res, next) {
 
 router.get('/product/remove', auth, function(req, res, next) {
     Product.findByIdAndRemove(req.query.id, function(err, product) {
-        if (err != null) res.render('error');
+        if (err != null) next(err);
         else {
             return res.redirect('/controller/product');
         }
@@ -300,7 +301,7 @@ router.get('/product/remove', auth, function(req, res, next) {
 router.get('/product/remove_all', auth, function(req, res, next) {
     Product.remove(function(err) {
         if (err)
-            res.render('error');
+            next(err);
         else
             res.redirect('/controller/product');
     });
@@ -309,7 +310,7 @@ router.get('/product/remove_all', auth, function(req, res, next) {
 router.get('/article', auth, function(req, res, next) {
     Article.find({}, function(err, articles) {
         if (err) {
-            return res.render('error');
+            return next(err);
         } else {
             res.render('controller/article', {
                 title: 'Articles Manage',
@@ -341,7 +342,7 @@ router.post('/article/add', auth, function(req, res, next) {
 
 router.get('/article/edit', auth, function(req, res, next) {
     Article.findById(req.query.id, function(err, article) {
-        if (err != null) res.render('error');
+        if (err != null) next(err);
         else {
             res.render('controller/article_form', {
                 title: 'Edit Article',
@@ -356,7 +357,7 @@ router.post('/article/edit', auth, function(req, res, next) {
     Article.findOneAndUpdate({
         _id: req.query.id
     }, req.body, function(err, article) {
-        if (err != null) res.render('error');
+        if (err != null) next(err);
         else {
             res.redirect('/controller/article');
         }
@@ -365,7 +366,7 @@ router.post('/article/edit', auth, function(req, res, next) {
 
 router.get('/article/remove', auth, function(req, res, next) {
     Article.findByIdAndRemove(req.query.id, function(err, article) {
-        if (err != null) res.render('error');
+        if (err != null) next(err);
         else {
             return res.redirect('/controller/article');
         }
@@ -375,7 +376,7 @@ router.get('/article/remove', auth, function(req, res, next) {
 router.get('/article/remove_all', auth, function(req, res, next) {
     Article.remove(function(err) {
         if (err)
-            res.render('error');
+            next(err);
         else
             res.redirect('/controller/article');
     });

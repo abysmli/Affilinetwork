@@ -1,3 +1,47 @@
-<h1><%= message %></h1>
-<h2><%= error.status %></h2>
-<pre><%= JSON.stringify(error) %></pre>
+<!-- page-intro start-->
+<!-- ================ -->
+<div class="page-intro">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<ol class="breadcrumb">
+					<li><i class="fa fa-home pr-10"></i><a href="/">首页</a></li>
+					<li class="active">Error <%= error.status %></li>
+				</ol>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- page-intro end -->
+<!-- main-container start -->
+<!-- ================ -->
+<section class="main-container">
+	<div class="container">
+		<div class="row">
+			<!-- main start -->
+			<!-- ================ -->
+			<div class="main col-md-12">
+				<h3 class="title"><%= error.message %></h3>
+				<br>
+				<div id="error_block"></div>
+				<br>
+				<button class="btn btn-success btn-sm" onclick="window.history.back()">返回上一页</button>
+				<hr/>
+				<form role="search" method="post" action="/search" class="col-md-6 col-md-offset-3">
+					<div class="form-group has-feedback">
+						<input type="text" class="form-control" placeholder="搜索产品">
+						<i class="fa fa-search form-control-feedback"></i>
+					</div>
+				</form>
+			</div>
+			<!-- main end -->
+		</div>
+	</div>
+</section>
+
+<script>
+	var node = new PrettyJSON.view.Node({
+		el: $('#error_block'),
+		data: JSON.parse('<%- JSON.stringify(error) %>')
+	});
+</script>
