@@ -1,0 +1,127 @@
+<div class="page-header">
+    <h1><%= title %></h1>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <form method="post">
+            <div class="form-group">
+                <label for="Source">Source</label>
+                <input type="text" class="form-control" id="Source" name="Source" value="<%= product.Source || "Manual" %>" placeholder="Source" readonly>
+            </div>
+            <div class="form-group">
+                <label for="Title">Title</label>
+                <input type="text" class="form-control" id="Title" name="Title" value="<%= product.Title || '' %>" placeholder="Title">
+            </div>
+            <div class="form-group">
+                <label for="TitleCN">中文名称</label>
+                <input type="text" name="TitleCN" value="<%= product.TitleCN || '' %>" class="form-control" placeholder="中文名称" id="TitleCN">
+            </div>
+            <div class="form-group">
+                <label for="Description">Description</label>
+                <textarea rows="5" class="form-control" id="Description" name="Description" placeholder="Description"><%= product.Description || '' %></textarea>
+            </div>
+            <div class="form-group">
+                <label for="ShopName">ShopName</label>
+                <input type="text" class="form-control" id="ShopName" name="ShopName" value="<%= product.ShopName || '' %>" placeholder="ShopName">
+            </div>
+            <div class="form-group">
+                <label for="DescriptionCN">中文详细</label>
+                <textarea rows="5" class="form-control" id="DescriptionCN" name="DescriptionCN" placeholder="中文详细"><%= product.DescriptionCN || '' %></textarea>
+            </div>
+            <div class="form-group">
+                <label for="Category">Category</label>
+                <select name="Category">
+                    <option value="电子产品">电子产品</option>
+                    <option value="旅游">旅游</option>
+                    <option value="手机平板">手机平板</option>
+                    <option value="化妆品">化妆品</option>
+                    <option value="食品饮食">食品饮食</option>
+                    <option value="厨房用具">厨房用具</option>
+                    <option value="药品">药品</option>
+                    <option value="服装鞋子">服装鞋子</option>
+                    <option value="打折券">打折券</option>
+                    <option value="其它">其它</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="Price">Price</label>
+                <input type="text" class="form-control" id="Price" name="Price" value="<%= product.Price || '' %>" placeholder="Price">
+            </div>
+            <div class="form-group">
+                <label for="PriceCurrency">PriceCurrency</label>
+                <input type="text" class="form-control" id="PriceCurrency" name="PriceCurrency" value="<%= product.PriceCurrency || '' %>" placeholder="PriceCurrency">
+            </div>
+            <div class="form-group">
+                <label for="DeliveryTime">DeliveryTime</label>
+                <input type="text" class="form-control" id="DeliveryTime" name="DeliveryTime" value="<%= product.DeliveryTime || '' %>" placeholder="DeliveryTime">
+            </div>
+            <div class="form-group">
+                <label for="URL">URL</label>
+                <input type="text" class="form-control" id="URL" name="URL" value="<%= product.URL || '' %>" placeholder="URL">
+            </div>
+            <div class="form-group">
+                <label for="SalesRank">SalesRank</label>
+                <input type="text" class="form-control" id="SalesRank" name="SalesRank" value="<%= product.SalesRank || '' %>" placeholder="SalesRank">
+            </div>
+            <div class="form-group">
+                <label for="EAN">EAN</label>
+                <input type="text" class="form-control" id="EAN" name="EAN" value="<%= product.EAN || '' %>" placeholder="EAN">
+            </div>
+            <div class="form-group">
+                <label for="ProductId">ProductId (Affilinet Identification Number)</label>
+                <input type="text" class="form-control" id="ProductId" name="ProductId" value="<%= product.ProductId || '' %>" placeholder="ProductId" readonly>
+            </div>
+            <div class="form-group">
+                <label for="ASIN">ASIN (Amazon Standard Identification Number)</label>
+                <input type="text" class="form-control" id="ASIN" name="ASIN" value="<%= product.ASIN || '' %>" placeholder="ASIN" readonly>
+            </div>
+            <div class="form-group">
+                <label for="Brand">Brand</label>
+                <input type="text" class="form-control" id="Brand" name="Brand" value="<%= product.Brand || '' %>" placeholder="Brand">
+            </div>
+            <div class="form-group">
+                <label for="Manufactor">Manufactor</label>
+                <input type="text" class="form-control" id="Manufactor" name="Manufactor" value="<%= product.Manufactor || '' %>" placeholder="Manufactor">
+            </div>
+            <div class="form-group">
+                <label for="Keywords">Keywords</label>
+                <input type="text" class="form-control" id="Keywords" name="Keywords" value="<%= product.Keywords || '' %>" placeholder="Keywords">
+            </div>
+            <div class="form-group">
+                <label for="ProductImage">ProductImage</label>
+                <input type="text" class="form-control" id="ProductImage" name="ProductImage" value="<%= product.ProductImage || '' %>" placeholder="ProductImage">
+            </div>
+            <div class="form-group">
+                <label for="ProductImageSet">ProductImageSet</label>
+                <textarea rows="5" class="form-control" id="ProductImageSet" name="ProductImageSet" placeholder="ProductImageSet"><%= JSON.stringify(product.ProductImageSet) || '' %></textarea>
+            </div>
+            <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-share-alt"></span> <%= title %></button>
+        </form>
+        <hr/>
+        <% if (product.ProductImage !== "" && product.ProductImage !== undefined) { %>
+        <label>Product Image</label>
+        <div class="row">
+            <div class="col-xs-4 col-md-2">
+                <a href="#" class="thumbnail">
+                    <img src="<%= product.ProductImage %>" alt="prduct image set">
+                </a>
+            </div>
+        </div>
+        <% } %>
+        <% if (product.ProductImageSet !== "" && product.ProductImageSet !== undefined) { %>
+        <label>Product Image Set</label>
+        <div class="row">
+            <% product.ProductImageSet.forEach(function(image) { %>
+            <div class="col-xs-4 col-md-2">
+                <a href="#" class="thumbnail">
+                    <img src="<%= image %>" alt="prduct image">
+                </a>
+            </div>
+            <% }); %>
+        </div>
+        <% } %>
+    </div>
+</div>
+<script>
+    $("#product_page").addClass("active");
+</script>

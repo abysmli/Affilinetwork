@@ -303,7 +303,7 @@ if ( typeof define === 'function' && define.amd ) {
  */
 
 (function () {
-
+	
 
 	/**
 	 * Class for managing events.
@@ -1051,7 +1051,7 @@ if ( typeof define === 'function' && define.amd ) {
 
 ( function( global, ElemProto ) {
 
-
+  
 
   var matchesMethod = ( function() {
     // check un-prefixed

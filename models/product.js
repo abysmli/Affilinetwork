@@ -1,65 +1,37 @@
 var mongoose = require('mongoose');
+var textSearch = require('mongoose-text-search');
 var setting = require('../setting.js');
 mongoose.connect('mongodb://localhost/'+setting.database);
 
 var ProductSchema = new mongoose.Schema({
-    LastShopUpdate: String,
-    LastProductChange: String,
-    Score: Number,
-	ProductId: Number,
-	ArticleNumber: String,
-    ShopId: Number,
-    ShopTitle: String,
+    ProductId: String,
+    ASIN: String,
+    URL: String,
     ProductName: String,
-    ProductName_cn: { type: String, default: "" },
-	Description: String,
-    Description_cn: { type: String, default: "" },
-    DescriptionShort: String,
-    DescriptionShort_cn: { type: String, default: "" },
-    ShopCategoryId: Number,
-    AffilinetCategoryId: Number,
-    ShopCategoryPath: String,
-    AffilinetCategoryPath: String,
-    ShopCategoryIdPath: String,
-    AffilinetCategoryIdPath: String,
-    Availability: String,
-    DeliveryTime: String,
-    Deeplink1: String,
-    Deeplink2: String,
+    SalesRank: Number,
+    ProductImage: String,
+    ProductImageSet: [mongoose.Schema.Types.Mixed],
     Brand: String,
-    Manufacturer: String,
-    Distributor: String,
+    Manufactor: String,
     EAN: String,
+    Description: String,
+    DescriptionCN: String,
+    Price: Number,
+    PriceCurrency: String,
+    Title: String,
+    TitleCN: String,
+    ShopName: String,
+    Category: String,
+    LastProductChange: String,
+    DeliveryTime: String,
     Keywords: String,
-    ProgramId: Number,
-    PriceInformation: {
-        Currency: String,
-        DisplayPrice: String,
-        DisplayShipping: String,
-        DisplayBasePrice: String,
-        PriceDetails: {
-            PriceOld: Number,
-            PricePrefix: String,
-            Price: Number,
-            PriceSuffix: String,
-        },
-        ShippingDetails: {
-            ShippingPrefix: String,
-            Shipping: Number,
-            ShippingSuffix: String,
-        },
-        BasePriceDetails: {
-            BasePricePrefix: String,
-            BasePrice: Number,
-            BasePriceSuffix: String,
-        }
-    },
-    Images: [mongoose.Schema.Types.Mixed],
-    Logos: [mongoose.Schema.Types.Mixed],
-    Properties: [mongoose.Schema.Types.Mixed],
-	Tranlated: { type: Boolean, default: false },
+    Source: String,
+    Tranlated: { type: Boolean, default: false },
 	updated_at: { type: Date, default: Date.now }
 });
 
+ProductSchema.plugin(textSearch);
+
+ProductSchema.index({Title: 'text'});
 
 module.exports = mongoose.model('Product', ProductSchema);

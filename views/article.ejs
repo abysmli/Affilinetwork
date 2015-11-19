@@ -1,0 +1,77 @@
+<!-- page-intro start-->
+<!-- ================ -->
+<div class="page-intro">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<ol class="breadcrumb">
+					<li><i class="fa fa-home pr-10"></i><a href="/">首页</a></li>
+					<li class="active">精彩文章</li>
+				</ol>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- page-intro end -->
+
+<!-- main-container start -->
+<!-- ================ -->
+<section class="main-container">
+	<div class="container">
+		<div class="row">
+			<!-- main start -->
+			<!-- ================ -->
+			<div class="main col-md-12">
+				<!-- page-title start -->
+				<!-- ================ -->
+				<h1 class="page-title"><%= title %></h1>
+				<div class="separator-2"></div>
+				<p class="lead">这里是一些优良的产品推荐 <br class="hidden-sm hidden-xs"> 走过路过不要错过哦！</p>
+				<!-- page-title end -->
+
+				
+				<!-- masonry grid start -->
+				<div class="masonry-grid row">
+					<% articles.forEach(function(article) { %>
+					<!-- masonry grid item start -->
+					<div class="masonry-grid-item col-sm-6 col-md-4">
+						<!-- blogpost start -->
+						<article class="clearfix blogpost">
+							<div class="overlay-container" style="text-align: center;">
+								<img src=<%- article.Image %> alt="">
+								<div class="overlay">
+									<div class="overlay-links">
+										<a href="/article_detail?id=<%= article._id %>"><i class="fa fa-link"></i></a>
+										<a href=<%- article.Image %> class="popup-img-single"><i class="fa fa-search-plus"></i></a>
+									</div>
+								</div>
+							</div>
+							<div class="blogpost-body">
+								<div class="post-info">
+									<span class="day"><%= article.updated_at.getDay() %></span>
+									<span class="month"><%= article.updated_at.getMonth() %> <%= article.updated_at.getFullYear() %></span>
+								</div>
+								<div class="blogpost-content">
+									<header>
+										<h2 class="title"><a href="/article_detail?id=<%= article._id %>"><%= article.Title %></a></h2>
+										<div class="submitted"><i class="fa fa-user pr-5"></i> by <a href="#">XXX网推荐</a></div>
+									</header>
+									<p><%= article.Content_pre.substr(0, 100) + '...' %></p>
+								</div>
+							</div>
+							<footer class="clearfix">
+								<a class="pull-right link" href="/article_detail?id=<%= article._id %>"><span>查看详情</span></a>
+							</footer>
+						</article>
+						<!-- blogpost end -->
+					</div>
+					<!-- masonry grid item end -->
+					<% }) %>
+				</div>
+
+			</div>
+			<!-- main end -->
+		</div>
+	</div>
+</section>
+<!-- main-container end -->

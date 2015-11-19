@@ -1,49 +1,59 @@
 <div class="page-header">
-    <h1>Product Manage <small>Total Products: <%= counter %></small></h1>
-    <% if(type != 'local') { %>
-        <a id="sync_button" class="btn btn-primary btn-sm" href="#">Synchronize</a>
-        <% } else { %>
-            <a id="update_button" class="btn btn-success btn-sm" href="#">Update</a>
-            <% } %>
-                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#search_modal">
-                    Search
-                </button>
-                <a id="remove_all" href="/controller/product/remove_all/" class="btn btn-danger btn-sm pull-right">Remove all</a>
+    <% if(type != 'local' && fq == "") { %>
+    <h1>Product Manage <small>Total Products: <%= counter %> <i>In Cloud Mode</i></small></h1>
+    <a id="sync_button" class="btn btn-primary btn-sm" href="#">Synchronize</a>
+    <% } else if (type == 'local'){ %>
+    <h1>Product Manage <small>Total Products: <%= counter %> <i>In Local Mode</i></small></h1>
+    <a id="update_button" class="btn btn-success btn-sm" href="#">Update</a>
+    <% } else { %>
+    <h1>Product Manage <small>Total Products: <%= counter %> <i>In Cloud Mode</i></small></h1>
+    <% } %>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#search_modal">Search</button>
+    <a id="add_button" class="btn btn-warning btn-sm" href="/controller/product/add?add_type=manu">Add a Product</a>
+    <a id="remove_all" href="/controller/product/remove_all/" class="btn btn-danger btn-sm pull-right">Remove all</a>
 </div>
 
 <table id="product_table" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
     <thead>
         <tr>
             <th>Image</th>
-            <th>ID</th>
-            <th>Num.</th>
-            <th>EAN</th>
-            <th>Brand</th>
             <th>Title</th>
-            <th>Shop</th>
+            <th>TitleCN</th>
+            <th>Brand</th>
             <th>Price</th>
-            <th>Link</th>
-            <th>Category</th>
+            <th>URL</th>
+            <th>ProductID</th>
+            <th>EAN</th>
+            <th>ASIN</th>
+            <th>Keywords</th>
+            <th>Source</th>
             <% if(type == 'local') { %>
                 <th>Translated</th>
-                <% } %>
+                <th>Delete</th>
+            <% } else { %>
+                <th>Database</th>
+            <% } %>
         </tr>
     </thead>
     <tfoot>
         <tr>
             <th>Image</th>
-            <th>ID</th>
-            <th>Num.</th>
-            <th>EAN</th>
-            <th>Brand</th>
             <th>Title</th>
-            <th>Shop</th>
+            <th>TitleCN</th>
+            <th>Brand</th>
             <th>Price</th>
-            <th>Link</th>
-            <th>Category</th>
+            <th>URL</th>
+            <th>ProductID</th>
+            <th>EAN</th>
+            <th>ASIN</th>
+            <th>Keywords</th>
+            <th>Source</th>
             <% if(type == 'local') { %>
                 <th>Translated</th>
-                <% } %>
+                <th>Delete</th>
+            <% } else { %>
+                <th>Database</th>
+            <% } %>
         </tr>
     </tfoot>
 
@@ -52,50 +62,59 @@
             <tr>
                 <td>
                     <% if (type != "local") { %>
-                        <img src="<%= (product.Images[0][1] !== undefined) ? product.Images[0][1].URL : null %>">
-                        <% } else { %>
-                            <a href="/controller/product/edit?product_id=<%= product.ProductId %>"><img src="<%= (product.Images[0][1] !== undefined) ? product.Images[0][1].URL : null %>"></a>
-                            <% } %>
+                        <img src="<%= product.ProductImage %>" style="max-width: 100px; max-height: 100px" onerror="this.src= '/stylesheets/images/no-image.jpg';">
+                    <% } else { %>
+                        <a href="/controller/product/edit?id=<%= product._id %>"><img src="<%= product.ProductImage %>" onerror="this.src= '/stylesheets/images/no-image.jpg';" style="max-width: 100px; max-height: 100px"></a>
+                    <% } %>
                 </td>
                 <td>
-                    <%= product.ProductId %>
+                    <%= product.Title %>
                 </td>
                 <td>
-                    <%= product.ArticleNumber %>
-                </td>
-                <td>
-                    <%= product.EAN %>
+                    <%= product.TitleCN %>
                 </td>
                 <td>
                     <%= product.Brand %>
                 </td>
                 <td>
-                    <%= product.ProductName %>
+                    <%= product.Price %>
                 </td>
                 <td>
-                    <%= product.ShopTitle %>
+                    <a href="<%= product.URL %>">Link</a>
                 </td>
                 <td>
-                    <%= product.PriceInformation.DisplayPrice %>
+                    <%= product.ProductId %>
                 </td>
                 <td>
-                    <a href="<%= product.Deeplink1 %>">Link</a>
+                    <%= product.EAN %>
                 </td>
                 <td>
-                    <%= product.AffilinetCategoryId %> |
-                        <%= product.ShopCategoryId %>
+                    <%= product.ASIN %>
+                </td>
+                <td>
+                    <%= product.Keywords %>
+                </td>
+                <td>
+                    <%= product.Source %>
                 </td>
                 <% if(type == 'local') { %>
                     <td>
                         <% if (product.Tranlated) { %>
-                            <span class="label label-primary">Translated</span>
-                            <% } else { %>
-                                <span class="label label-warning">Not Translated</span>
-                                <% } %>
+                        <span class="label label-primary">Translated</span>
+                        <% } else { %>
+                        <span class="label label-warning">Not Translated</span>
+                        <% } %>
                     </td>
-                    <% } %>
+                    <td>
+                        <a class="btn btn-sm btn-danger" href="/controller/product/remove?id=<%= product._id %>" role="button">Remove</a>
+                    </td>
+                <% } else { %>
+                    <td>
+                        <a class="btn btn-sm btn-default" href="/controller/product/add?add_type=auto&id=<%= index %>" role="button">Add</a>
+                    </td>
+                <% } %>
             </tr>
-            <% }) %>
+        <% }) %>
     </tbody>
 </table>
 
@@ -131,8 +150,7 @@
                         <button type="button" id="search_selector" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">EAN <span class="caret"></span></button>
                         <ul class="dropdown-menu">
                             <li><a id="ean_se" href="#">EAN</a></li>
-                            <li><a id="brand_se" href="#">Brand</a></li>
-                            <li><a id="manu_se" href="#">Manufacturer</a></li>
+                            <li><a id="asin_se" href="#">ASIN</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a id="query_se" href="#">Query</a></li>
                         </ul>
@@ -152,6 +170,8 @@
 
 <script>
     $(document).ready(function() {
+
+        $("#product_page").addClass("active");
 
         var search_selector = "EAN";
 
@@ -234,13 +254,9 @@
             $("#search_selector").html("EAN <span class='caret'></span>");
             search_selector = "EAN";
         });
-        $("#brand_se").click(function() {
-            $("#search_selector").html("Brand <span class='caret'></span>");
-            search_selector = "Brand";
-        });
-        $("#manu_se").click(function() {
-            $("#search_selector").html("Manufacturer <span class='caret'></span>");
-            search_selector = "Manufacturer";
+        $("#asin_se").click(function() {
+            $("#search_selector").html("ASIN <span class='caret'></span>");
+            search_selector = "ASIN";
         });
         $("#query_se").click(function() {
             $("#search_selector").html("Query <span class='caret'></span>");

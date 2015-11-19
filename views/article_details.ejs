@@ -1,0 +1,103 @@
+<!-- page-intro start-->
+<!-- ================ -->
+<div class="page-intro">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<ol class="breadcrumb">
+					<li><i class="fa fa-home pr-10"></i><a href="/">首页</a></li>
+					<li><a href="/article">精彩文章</a></li>
+					<li class="active"><%= article.Title%></li>
+				</ol>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- page-intro end -->
+<!-- main-container start -->
+<!-- ================ -->
+<section class="main-container">
+	<div class="container">
+		<div class="row">
+			<!-- main start -->
+			<!-- ================ -->
+			<div class="main col-md-12">
+				<!-- page-title start -->
+				<!-- ================ -->
+				<h1 class="page-title"><%= article.Title%></h1>
+				<!-- page-title end -->
+				<!-- blogpost start -->
+				<article class="clearfix blogpost full">
+					<div class="blogpost-body">
+						<div class="side">
+							<div class="post-info">
+								<span class="day"><%= article.updated_at.getDay() %></span>
+								<span class="month"><%= article.updated_at.getMonth() %> <%= article.updated_at.getFullYear() %></span>
+							</div>
+						</div>
+						<div class="blogpost-content">
+							<header>
+								<div class="submitted"><i class="fa fa-user pr-5"></i> by <a href="#">XXX网</a></div>
+							</header>
+							<%- article.Content %>
+						</div>
+					</div>
+					<footer class="clearfix">
+						<ul class="links pull-right">
+							<!-- JiaThis Button BEGIN -->
+							<div class="jiathis_style_32x32">
+								<a class="jiathis_button_tsina"></a>
+								<a class="jiathis_button_weixin"></a>
+								<a class="jiathis_button_renren"></a>
+								<a class="jiathis_button_email"></a>
+								<a class="jiathis_button_tqq"></a>
+								<a class="jiathis_button_qzone"></a>
+							</div>
+						</ul>
+					</footer>
+				</article>
+				<!-- blogpost end -->
+				<!-- comments start -->
+				<div class="comments" id="h2tab3">
+					<!-- 多说评论框 start -->
+					<div class="ds-thread" data-thread-key="<%= article._id %>" data-title="<%= article.Title %>"</div>
+					<!-- 多说评论框 end -->
+				</div>
+			</div>
+		</div>
+		<!-- main end -->
+	</div>
+</div>
+</section>
+<!-- main-container end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+
+	var jiathis_config={
+		data_track_clickback:true,
+		title:"<%= article.Title %> #<%= article.Title %>#",
+		hideMore:false
+	}
+
+    var duoshuoQuery = {
+        short_name: "icedeer",
+        sso: {
+            login: "localhost:8818/login",
+            logout: "localhost:8818/logout"
+        }
+    };
+    
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';
+        ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+
+ </script>
+
+
+
+
