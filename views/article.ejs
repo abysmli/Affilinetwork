@@ -27,9 +27,7 @@
 				<h1 class="page-title"><%= title %></h1>
 				<div class="separator-2"></div>
 				<p class="lead">这里是一些优良的产品推荐 <br class="hidden-sm hidden-xs"> 走过路过不要错过哦！</p>
-				<!-- page-title end -->
-
-				
+				<!-- page-title end -->				
 				<!-- masonry grid start -->
 				<div class="masonry-grid row">
 					<% articles.forEach(function(article) { %>
@@ -48,8 +46,8 @@
 							</div>
 							<div class="blogpost-body">
 								<div class="post-info">
-									<span class="day"><%= article.updated_at.getDay() %></span>
-									<span class="month"><%= article.updated_at.getMonth() %> <%= article.updated_at.getFullYear() %></span>
+									<span class="day"><%= article.updated_at.getDate() %></span>
+									<span class="month"><%= article.updated_at.getMonth() + 1 %> <%= article.updated_at.getFullYear() %></span>
 								</div>
 								<div class="blogpost-content">
 									<header>
