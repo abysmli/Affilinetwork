@@ -31,8 +31,8 @@
 					<div class="blogpost-body">
 						<div class="side">
 							<div class="post-info">
-								<span class="day"><%= article.updated_at.getDay() %></span>
-								<span class="month"><%= article.updated_at.getMonth() %> <%= article.updated_at.getFullYear() %></span>
+								<span class="day"><%= article.updated_at.getDate() %></span>
+								<span class="month"><%= article.updated_at.getMonth() + 1 %> <%= article.updated_at.getFullYear() %></span>
 							</div>
 						</div>
 						<div class="blogpost-content">
