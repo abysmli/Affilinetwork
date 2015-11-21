@@ -64,7 +64,7 @@ h2 {
     margin-bottom: 15px;
 }
 h3 {
-    font-size: 22px;
+    font-size: 18px;
 }
 h4 {
     font-size: 18px;
@@ -1835,7 +1835,7 @@ tbody {
 .price {
     font-size: 22px;
     color: #000;
-    font-weight: 300;
+    font-weight: 400;
 }
 .wishlist:hover i:before {
     content: "\f004";

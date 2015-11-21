@@ -833,8 +833,8 @@
 		//-----------------------------------------------		
 		if($("#contact-form").length>0) {
 			$("#contact-form").validate({
-				submitHandler: function(form) {
-					$('.submit-button').button("loading");
+				/*submitHandler: function(form) {
+					$('.submit-button').button("发送中");
 					$.ajax({
 						type: "POST",
 						url: "php/email-sender.php",
@@ -859,7 +859,7 @@
 							}
 						}
 					});
-				},				
+				},	*/
 				// debug: true,
 				errorPlacement: function(error, element) {
 					error.insertBefore( element );
@@ -885,18 +885,18 @@
 				},
 				messages: {
 					name: {
-						required: "Please specify your name",
+						required: "请输入您的姓名",
 						minlength: "Your name must be longer than 2 characters"
 					},
 					email: {
-						required: "We need your email address to contact you",
+						required: "我们需要您的邮箱以便及时联系您",
 						email: "Please enter a valid email address e.g. name@domain.com"
 					},
 					subject: {
-						required: "Please enter a subject"
+						required: "请输入反馈的标题"
 					},
 					message: {
-						required: "Please enter a message",
+						required: "请输入反馈的内容",
 						minlength: "Your message must be longer than 10 characters"
 					}					
 				},

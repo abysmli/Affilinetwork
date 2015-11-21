@@ -1,0 +1,57 @@
+<section class="main-container">
+	<div class="container">
+		<div class="row">
+			<!-- main start -->
+			<!-- ================ -->
+			<div class="main col-md-12">
+				<!-- page-title start -->
+				<!-- ================ -->
+				<h1 class="page-title">联系我们</h1>
+				<!-- page-title end -->
+				<div class="row">
+					<div class="col-md-6">
+						<p>留下您们的意见, 让我们做的更好</p>
+						<div class="alert alert-success hidden" id="MessageSent">
+							我们收到您的反馈, 非常感谢
+						</div>
+						<div class="alert alert-danger hidden" id="MessageNotSent">
+							Oops! Something went wrong please refresh the page and try again.
+						</div>
+						<div class="contact-form">
+							<form id="contact-form" role="form" action="/contactus" method="post">
+								<div class="form-group has-feedback">
+									<label for="name">名字</label>
+									<input type="text" class="form-control" id="name" name="name" placeholder="">
+									<i class="fa fa-user form-control-feedback"></i>
+								</div>
+								<div class="form-group has-feedback">
+									<label for="email">邮件</label>
+									<input type="email" class="form-control" id="email" name="email" placeholder="">
+									<i class="fa fa-envelope form-control-feedback"></i>
+								</div>
+								<div class="form-group has-feedback">
+									<label for="subject">标题</label>
+									<input type="text" class="form-control" id="subject" name="subject" placeholder="">
+									<i class="fa fa-navicon form-control-feedback"></i>
+								</div>
+								<div class="form-group has-feedback">
+									<label for="message">改进意见</label>
+									<textarea class="form-control" rows="6" id="message" name="message" placeholder=""></textarea>
+									<i class="fa fa-pencil form-control-feedback"></i>
+								</div>
+								<button type="submit" class="btn btn-default">发送</button>
+							</form>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<!-- google maps start -->
+						<div id="map-canvas"></div>
+						<!-- google maps end -->
+					</div>
+				</div>
+			</div>
+			<!-- main end -->
+
+		</div>
+	</div>
+</section>

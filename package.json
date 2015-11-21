@@ -29,6 +29,7 @@
     "stormpath": "*",
     "express-stormpath": "*",
     "mongoose-text-search": "*",
+    "nodemailer": "*",
     "xml2js": "*"
   }
 }

@@ -3,6 +3,7 @@ var router = express.Router();
 var Product = require('../models/product.js');
 var Favourite = require('../models/favourite.js');
 var Article = require('../models/article.js');
+var Feedback = require('../models/feedback.js');
 var affilinet = require('../utils/affilinetapi.js');
 var aws = require('aws-lib');
 var utils = require('../utils/utils.js');
@@ -11,6 +12,7 @@ var Account = require("../models/account.js");
 var passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy;
 var stormpath = require('stormpath');
+var nodemailer = require('nodemailer');
 var setting = require('../setting.js');
 var parseString = require('xml2js').parseString;
 
@@ -25,6 +27,21 @@ var Affilinet = new affilinet({
 
 var utils = require('../utils/utils.js');
 var Utils = new utils();
+
+var transporter = nodemailer.createTransport({
+    service: 'hotmail',
+    auth: {
+        user: 'fei.minhao@hotmail.com',
+        pass: 'feifei2904401'
+    }
+}, {
+    // default values for sendMail method
+    from: 'fei.minhao@hotmail.com',
+    headers: {
+        'My-Awesome-Header': '123'
+    }
+});
+
 
 passport.use(new LocalStrategy(
     function(username, password, done) {
@@ -1003,6 +1020,31 @@ router.get('/aboutus', function(req, res, next) {
         layout: 'layout',
         user: req.user,
     });
+});
+
+router.get('/contactus', function(req, res, next) {
+    res.render('contactus', {
+        title: '联系我们',
+        layout: 'layout',
+        user: req.user,
+    });
+
+});
+
+router.post('/contactus', function(req, res, next) {
+    name = req.body.name;
+    email = req.body.email;
+    subject = req.body.subject;
+    message = req.body.message;
+    console.log(name + ' ' + email + ' ' + subject + ' ' + message);
+    transporter.sendMail({
+        to: 'fei.minhao@hotmail.com',
+        subject: 'Feedback from ' + email,
+        text: message
+
+    });
+    res.redirect('/');
+
 });
 
 router.get('/test', function(req, res, next) {
