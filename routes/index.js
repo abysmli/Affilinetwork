@@ -1041,9 +1041,17 @@ router.post('/contactus', function(req, res, next) {
         to: 'fei.minhao@hotmail.com',
         subject: 'Feedback from ' + email,
         text: message
-
     });
-    res.redirect('/');
+
+
+    new Feedback({
+        name: name,
+        email: email,
+        subtitle: subject,
+        feedback: message
+    }).save(function(err, todo, count) {
+        res.redirect('/');
+    });
 
 });
 
