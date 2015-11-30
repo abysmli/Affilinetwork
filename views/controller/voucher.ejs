@@ -1,6 +1,188 @@
 <div class="page-header">
-    <h1>Comming Soon...</h1>
+	<% if(type == 'local') { %>
+    <h1><%= title %> <small>Total Vouchers: <%= vouchers.length %> <i>In Local Mode</i></small></h1>
+    <% } else { %>
+    <h1><%= title %> <small><%= programTitle %> | Total Vouchers: <%= vouchers.length %> <i>In Cloud Mode</i></small></h1>
+    <% } %>
+    <a id="all_button" class="btn btn-warning btn-sm" href="/controller/voucher?type=getAll">All Vouchers in Cloud</a>
+    <a id="add_button" class="btn btn-warning btn-sm" href="/controller/voucher/add?add_type=manu">Add a Voucher</a>
+    <a id="remove_all" href="/controller/voucher/remove_all/" class="btn btn-danger btn-sm pull-right">Remove all</a>
 </div>
+<table id="voucher_table" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <% if(type == 'local') { %>
+            <th>Image</th>
+            <% } %>
+            <th>ID</th>
+            <th>Code</th>
+            <th>Description</th>
+            <% if(type == 'local') { %>
+            <th>DescriptionCN</th>
+            <% } %>
+            <th>IntegrationCode</th>
+            <% if(type == 'local') { %>
+            <th>IntegrationCodeCN</th>
+            <% } %>
+            <th>ActivePartnership</th>
+            <th>IsRestricted</th>
+            <th>StartDate</th>
+            <th>EndDate</th>
+            <% if(type == 'local') { %>
+                <th>Translated</th>
+                <th>Delete</th>
+            <% } else { %>
+                <th>Database</th>
+            <% } %>
+        </tr>
+    </thead>
+    <tfoot>
+	    <tr>
+            <% if(type == 'local') { %>
+            <th>Image</th>
+            <% } %>
+            <th>ID</th>
+            <th>Code</th>
+            <th>Description</th>
+            <% if(type == 'local') { %>
+            <th>DescriptionCN</th>
+            <% } %>
+            <th>IntegrationCode</th>
+            <% if(type == 'local') { %>
+            <th>IntegrationCodeCN</th>
+            <% } %>
+            <th>ActivePartnership</th>
+            <th>IsRestricted</th>
+            <th>StartDate</th>
+            <th>EndDate</th>
+            <% if(type == 'local') { %>
+                <th>Translated</th>
+                <th>Delete</th>
+            <% } else { %>
+                <th>Database</th>
+            <% } %>
+	    </tr>
+    </tfoot>
+    <tbody>
+        <% vouchers.forEach(function(voucher, index) { %>
+        <tr>
+            <% if(type == 'local') { %>
+            <th>
+                <a href="/controller/voucher/edit?id=<%= voucher._id %>"><img src="<%- voucher.Image %>" onerror="this.src= '/stylesheets/images/no-image.jpg';" style="max-width: 100px; max-height: 100px"></a>
+            </th>
+            <% } %>
+            <td>
+                <%= voucher.Id %>
+            </td>
+            <td>
+            	<%= voucher.Code %>
+            </td>
+            <td>
+                <div class="voucher_desc">
+                    <p tyle="overflow: hidden;"><%- voucher.Description %></p>
+                </div>
+            </td>
+            <% if(type == 'local') { %>
+            <td>
+                <div class="voucher_desc">
+                    <p tyle="overflow: hidden;"><%- voucher.Description %></p>
+                </div>
+            </td>
+            <% } %>
+            <td>
+            	<div class="voucher_inte"></div>
+            	<button class="btn btn-sm btn-danger inte_button" alt="<%= voucher.Id %>" role="button">Show</button>
+            </td>
+            <% if(type == 'local') { %>
+            <td>
+                <div class="voucher_inteCN"></div>
+                <button class="btn btn-sm btn-danger inteCN_button" alt="<%= voucher.Id %>" role="button">Show</button>
+            </td>
+            <% } %>
+            <td>
+            	<%= voucher.ActivePartnership %>
+            </td>
+            <td>
+            	<%= voucher.IsRestricted %>
+            </td>
+            <td>
+            	<%= voucher.StartDate %>
+            </td>
+            <td>
+            	<%= voucher.EndDate %>
+            </td>
+            <% if(type == 'local') { %>
+                <td>
+                    <% if (voucher.Tranlated) { %>
+                    <span class="label label-primary">Translated</span>
+                    <% } else { %>
+                    <span class="label label-warning">Not Translated</span>
+                    <% } %>
+                </td>
+                <td>
+                    <a class="btn btn-sm btn-danger" href="/controller/voucher/remove?id=<%= voucher._id %>" role="button">Remove</a>
+                </td>
+            <% } else { %>
+                <td>
+                    <a class="btn btn-sm btn-default" href="/controller/voucher/add?add_type=auto&id=<%= index %>" role="button">Add</a>
+                </td>
+            <% } %>
+        </tr>
+        <% }) %>
+    </tbody>
+</table>
+
 <script>
+	var dt = $('#voucher_table').DataTable({
+		lengthMenu: [
+			[10, 25, 50, -1],
+			[10, 25, 50, "All"]
+		],
+		stateSave: true
+	});
+
+    $("#remove_all").click(function(event) {
+        if (!confirm('Remove All products?！')) {
+            event.preventDefault();
+        }
+    });
+
 	$("#voucher_page").addClass("active");
+	$(".inte_button").click(function() {
+		var that = $(this);
+		if (that.text() == "Show") {
+			sendAjax('/controller/voucher_details', {
+				voucher_id: that.attr("alt")
+			}, function(voucher_content) {
+				that.siblings("div.voucher_inte").html(voucher_content.IntegrationCode + "<hr/>");
+				that.text("Hide");
+			}, function(jqXHR, error, errorThrown) {
+				console.log(JSON.stringify(jqXHR));
+			});
+		} else {
+			that.siblings("div.voucher_inte").html("");
+			that.text("Show");
+		}
+	});
+    $(".inteCN_button").click(function() {
+        var that = $(this);
+        if (that.text() == "Show") {
+            sendAjax('/controller/voucher_details', {
+                voucher_id: that.attr("alt")
+            }, function(voucher_content) {
+                that.siblings("div.voucher_inteCN").html(voucher_content.IntegrationCode + "<hr/>");
+                that.text("Hide");
+            }, function(jqXHR, error, errorThrown) {
+                console.log(JSON.stringify(jqXHR));
+            });
+        } else {
+            that.siblings("div.voucher_inteCN").html("");
+            that.text("Show");
+        }
+    });
+	$(".voucher_desc").shorten({
+		showChars: 50,
+		moreText: 'Show More',
+		lessText: 'Show Less'
+	});
 </script>

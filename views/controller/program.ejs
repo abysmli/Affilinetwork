@@ -1,0 +1,100 @@
+<div class="page-header">
+	<h1><%= title %></h1>
+</div>
+<table id="program_table" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Program ID</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Limitations</th>
+            <th>URL</th>
+        </tr>
+    </thead>
+    <tfoot>
+	    <tr>
+            <th>Program ID</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Limitations</th>
+            <th>URL</th>
+	    </tr>
+    </tfoot>
+    <tbody>
+        <% programs.forEach(function(program, index) { %>
+        <tr>
+            <td>
+                <a href="/controller/voucher?program_id=<%= program.ProgramID %>&type=remote&program_title=<%= program.Title %>"><%= program.ProgramID %></a>
+            </td>
+            <td>
+                <%= program.Title %>
+            </td>
+            <td>
+            	<div class="program_desc"></div>
+            	<button class="btn btn-sm btn-danger desc_button" alt="<%= program.ProgramID %>" role="button">Show</button>
+            </td>
+            <td>
+            	<div class="program_limit"></div>
+            	<button class="btn btn-sm btn-danger limit_button" alt="<%= program.ProgramID %>" role="button">Show</button>
+            </td>
+            <td>
+                <a href="<%= program.URL %>">Link</a>
+            </td>
+        </tr>
+        <% }) %>
+    </tbody>
+</table>
+
+<script>
+    var dt = $('#program_table').DataTable({
+    	lengthMenu: [
+    		[10, 25, 50, -1],
+    		[10, 25, 50, "All"]
+    	],
+    	stateSave: true,
+    	"columns": [
+    		null,
+    		null,
+			{
+    			"width": "35%"
+    		},
+    		{
+    			"width": "35%"
+    		},    		
+    		null
+    	]
+    });
+    $("#program_page").addClass("active");
+    $(".desc_button").click(function() {
+    	var that = $(this);
+    	if (that.text() == "Show") {
+	    	sendAjax('/controller/program_details', {
+	    		program_id: that.attr("alt")
+	    	}, function(program_content) {
+	    		that.siblings("div.program_desc").html(program_content.Description + "<hr/>");
+	    		that.text("Hide");
+	    	}, function(jqXHR, error, errorThrown) {
+	    		console.log(JSON.stringify(jqXHR));
+	    	});
+    	} else {
+    		that.siblings("div.program_desc").html("");
+	    	that.text("Show");
+    	}
+    });
+    $(".limit_button").click(function() {
+    	var that = $(this);
+    	if (that.text() == "Show") {
+	    	sendAjax('/controller/program_details', {
+	    		program_id: that.attr("alt")
+	    	}, function(program_content) {
+	    		that.siblings("div.program_limit").html(program_content.Limitations + "<hr/>");
+	    		that.text("Hide");
+	    	}, function(jqXHR, error, errorThrown) {
+	    		console.log(JSON.stringify(jqXHR));
+	    	});
+    	} else {
+    		that.siblings("div.program_limit").html("");
+	    	that.text("Show");
+    	}
+    });
+</script>

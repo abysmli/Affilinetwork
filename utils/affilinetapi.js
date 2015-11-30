@@ -131,13 +131,16 @@ module.exports = (function () {
     _Class.prototype.getMyPrograms = function getMyPrograms(params, callback) {
         params.publisherId = this.auth.publisherId;
         params.Password = this.auth.publisherWebservicePassword;
+        params.SearchToken = params.SearchToken || "";
+        params.PageSize = params.PageSize || 1000;
+        params.CurrentPage = params.CurrentPage || 1;
         requestHandler("http://publisher-webservices.affili.net/Publisher/ProgramList.asmx/GetMyPrograms", params, callback);
     }
 
     _Class.prototype.searchMyPrograms = function searchMyPrograms(params, callback) {
         params.publisherId = this.auth.publisherId;
         params.Password = this.auth.publisherWebservicePassword;
-        requestHandler("http://publisher-webservices.affili.net/Publisher/ProgramList.asmx/SearchMyPrograms", params, callback);
+        requestHandler("http://publisher-webservices.affili.net/Publisher/ProgramList.asmx/SearchPrograms", params, callback);
     }
 
     _Class.prototype.getNewPrograms = function getNewPrograms(params, callback) {
@@ -213,7 +216,35 @@ module.exports = (function () {
         requestHandler("http://publisher-webservices.affili.net/Publisher/Statistics.asmx/GetTransactions", params, callback);
     }
 
+    // ######################### Voucher Webservice #########################
+    _Class.prototype.getVoucherCodes = function getVoucherCodes(params, callback) {
+        params.publisherId = this.auth.publisherId;
+        params.Password = this.auth.publisherWebservicePassword;
+        params.Query = params.Query || "";
+        params.VoucherCode = params.VoucherCode || null;
+        params.StartDate = params.StartDate || new Date();
+        params.EndDate = params.EndDate || new Date();
+        requestHandler("http://publisher-webservices.affili.net/Publisher/Inbox.asmx/GetVoucherCodes", params, callback);
+    }
 
-
+    _Class.prototype.searchVoucherCodes = function searchVoucherCodes(params, callback) {
+        params.publisherId = this.auth.publisherId;
+        params.Password = this.auth.publisherWebservicePassword;
+        params.Query = params.Query || "";
+        params.VoucherCode = params.VoucherCode || null;
+        params.VoucherCodeContent = params.VoucherCodeContent || 0;
+        params.VoucherType = params.VoucherType || 0;
+        params.StartDate = params.StartDate ||new Date ();
+        params.EndDate = params.EndDate ||new Date ();
+        params.PartnershipStatus = params.PartnershipStatus || 0;
+        params.MinimumOrderValue = params.MinimumOrderValue || 0;
+        params.CustomerRestriction = params.CustomerRestriction || 0;
+        params.ExclusivesOnly = params.ExclusivesOnly || true;
+        params.CurrentPage = params.CurrentPage || 1;
+        params.PageSize = params.PageSize || 1000;
+        params.OrderBy = params.OrderBy || 0;
+        params.SortDesc = params.SortDesc || false;
+        requestHandler("http://publisher-webservices.affili.net/Publisher/Inbox.asmx/SearchVoucherCodes", params, callback);
+    }
     return _Class;
 })();

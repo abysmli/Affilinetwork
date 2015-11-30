@@ -2,12 +2,13 @@ var mongoose = require('mongoose');
 var setting = require('../setting.js');
 mongoose.createConnection('mongodb://localhost/'+setting.database);
 
-var FeedbackSchema = new mongoose.Schema({
+var RequestSchema = new mongoose.Schema({
     name: String,
     email: String,
-    subtitle: String,
-    feedback: String,
+    description: String,
+    image: String,
     updated_at: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model('Feedback', FeedbackSchema);
+module.exports = mongoose.model('Request', RequestSchema);
+

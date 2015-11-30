@@ -1,12 +1,12 @@
 <div class="page-header">
     <% if(type != 'local' && fq == "") { %>
-    <h1>Product Manage <small>Total Products: <%= counter %> <i>In Cloud Mode</i></small></h1>
+    <h1><%= title %> <small>Total Products: <%= counter %> <i>In Cloud Mode</i></small></h1>
     <a id="sync_button" class="btn btn-primary btn-sm" href="#">Synchronize</a>
     <% } else if (type == 'local'){ %>
-    <h1>Product Manage <small>Total Products: <%= counter %> <i>In Local Mode</i></small></h1>
+    <h1><%= title %> <small>Total Products: <%= counter %> <i>In Local Mode</i></small></h1>
     <a id="update_button" class="btn btn-success btn-sm" href="#">Update</a>
     <% } else { %>
-    <h1>Product Manage <small>Total Products: <%= counter %> <i>In Cloud Mode</i></small></h1>
+    <h1><%= title %> <small>Total Products: <%= counter %> <i>In Cloud Mode</i></small></h1>
     <% } %>
     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#search_modal">Search</button>
     <a id="add_button" class="btn btn-warning btn-sm" href="/controller/product/add?add_type=manu">Add a Product</a>

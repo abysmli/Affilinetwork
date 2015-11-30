@@ -10,10 +10,10 @@
 			</div>
 			<div class="form-group">
                 <label>Image</label>
-                <input type="file" id="image" onchange="previewFile('#image')"/>
+                <input type="file" id="image" onchange="previewFile('#image', '#image_preview')"/>
                 <div class="row">
                     <div class="col-xs-12 col-md-12">
-                        <a href="#" class="thumbnail" id="image_preview"></a>
+                        <a href="#" class="thumbnail" id="image_preview" hidden></a>
                     </div>
                 </div>
             </div>
@@ -169,14 +169,12 @@
 				Content: fullEditor.getHTML(),
 				Image: JSON.stringify(_image)
 			};
-			post(data);
+			post(data, "article_form");
 		});
 
 		$("#preview_button").click(function() {
 			$("#preview_block").html(fullEditor.getHTML());
 		});
-
-
 
 		// Initialize editor with custom theme and modules
 		var fullEditor = new Quill('#full-editor', {
@@ -190,39 +188,4 @@
 			theme: 'snow'
 		});
 	});
-
-	function previewFile(input_id) {
-		var files = document.querySelector(input_id).files;
-
-		for (var i = 0; i < files.length; i++) {
-			(function(file) {
-				var reader = new FileReader();
-				reader.onloadend = function(e) {
-					$('#image_preview').html('<img src="' + e.target.result + '">');
-					_image = e.target.result;
-					console.log(_image);
-				}
-				if (file) {
-					reader.readAsDataURL(file);
-				}
-			})(files[i]);
-		};
-	}
-
-	function post(params) {
-		// The rest of this code assumes you are not using a library.
-		// It can be made less wordy if you use one.
-		var form = document.getElementById("article_form");
-
-		for (var key in params) {
-			if (params.hasOwnProperty(key)) {
-				var hiddenField = document.createElement("input");
-				hiddenField.setAttribute("type", "hidden");
-				hiddenField.setAttribute("name", key);
-				hiddenField.setAttribute("value", params[key]);
-				form.appendChild(hiddenField);
-			}
-		}
-		form.submit();
-	}
 </script>

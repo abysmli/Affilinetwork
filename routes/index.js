@@ -1,21 +1,28 @@
 var express = require('express');
 var router = express.Router();
+
+var ejs = require('ejs');
+var request = require("request");
+var aws = require('aws-lib');
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+var stormpath = require('stormpath');
+var parseString = require('xml2js').parseString;
+
+var setting = require('../setting.js');
 var Product = require('../models/product.js');
 var Favourite = require('../models/favourite.js');
 var Article = require('../models/article.js');
+var Voucher = require('../models/voucher.js');
 var Feedback = require('../models/feedback.js');
-var affilinet = require('../utils/affilinetapi.js');
-var aws = require('aws-lib');
-var utils = require('../utils/utils.js');
-var request = require("request");
+var Request = require('../models/request.js');
 var Account = require("../models/account.js");
-var passport = require('passport'),
-    LocalStrategy = require('passport-local').Strategy;
-var stormpath = require('stormpath');
-var nodemailer = require('nodemailer');
-var setting = require('../setting.js');
-var parseString = require('xml2js').parseString;
 
+var affilinet = require('../utils/affilinetapi.js');
+var emailSender = require('../utils/emailsender.js');
+var EmailSender = new emailSender();
+var utils = require('../utils/utils.js');
+var Utils = new utils();
 
 var prodAdv = aws.createProdAdvClient(setting.amazon_setting.AccessKeyId, setting.amazon_setting.SecretAccessKey, setting.amazon_setting.AssociateTag);
 
@@ -23,23 +30,6 @@ var Affilinet = new affilinet({
     publisherId: setting.affilinet_setting.publisherId,
     productWebservicePassword: setting.affilinet_setting.productWebservicePassword,
     publisherWebservicePassword: setting.affilinet_setting.publisherWebservicePassword
-});
-
-var utils = require('../utils/utils.js');
-var Utils = new utils();
-
-var transporter = nodemailer.createTransport({
-    service: 'hotmail',
-    auth: {
-        user: 'fei.minhao@hotmail.com',
-        pass: 'feifei2904401'
-    }
-}, {
-    // default values for sendMail method
-    from: 'fei.minhao@hotmail.com',
-    headers: {
-        'My-Awesome-Header': '123'
-    }
 });
 
 
@@ -1014,6 +1004,16 @@ router.get('/article_detail', function(req, res, next) {
     });
 });
 
+router.get('/voucher', function(req, res, next) {
+    Voucher.find({}, function(err, vouchers) {
+        res.render('voucher', {
+            title: '折扣券',
+            vouchers: vouchers,
+            user: req.user
+        });
+    });
+});
+
 router.get('/aboutus', function(req, res, next) {
     res.render('aboutus', {
         title: '关于我们',
@@ -1028,35 +1028,110 @@ router.get('/contactus', function(req, res, next) {
         layout: 'layout',
         user: req.user,
     });
-
 });
 
 router.post('/contactus', function(req, res, next) {
-    name = req.body.name;
-    email = req.body.email;
-    subject = req.body.subject;
-    message = req.body.message;
-    console.log(name + ' ' + email + ' ' + subject + ' ' + message);
-    transporter.sendMail({
-        to: 'fei.minhao@hotmail.com',
-        subject: 'Feedback from ' + email,
-        text: message
+    var feedback = {
+        name: req.body.name,
+        email: req.body.email,
+        subtitle: req.body.subject,
+        feedback: req.body.message
+    };
+
+    EmailSender.send({
+        to: "abysmli@gmail.com",
+        subject: 'Feedback from ' + feedback.name,
+        template: 'email_template',
+        content: {
+            title: feedback.subtitle,
+            content: feedback.feedback,
+            image: "",
+            url: req.protocol + '://' + req.get('host')
+        }
+    }, function(err) {
+        if (err) return next(err);
     });
 
+    EmailSender.send({
+        to: feedback.email,
+        subject: '非常感谢您的回馈信息',
+        template: 'email_template',
+        content: {
+            title: "非常感谢您的回馈信息",
+            content: "非常感谢您的回馈信息，我们将尽快进行处理，并由相关的客服人员与您联系！",
+            image: "",
+            url: req.protocol + '://' + req.get('host')
+        }
+    }, function(err) {
+        if (err) return next(err);
+    });
 
-    new Feedback({
-        name: name,
-        email: email,
-        subtitle: subject,
-        feedback: message
-    }).save(function(err, todo, count) {
+    new Feedback(feedback).save(function(err, todo, count) {
         res.redirect('/');
     });
+});
 
+router.get('/product_request', function(req, res, next) {
+    res.render('product_request', {
+        title: '产品请求',
+        layout: 'layout',
+        user: req.user,
+    });
+});
+
+router.post('/product_request', function(req, res, next) {
+    var request = {
+        name: req.body.name,
+        email: req.body.email,
+        description: req.body.description,
+        image: JSON.parse(req.body.image)
+    };
+
+    EmailSender.send({
+        to: "abysmli@gmail.com",
+        subject: 'Product Request from ' + request.name,
+        template: 'email_template',
+        content: {
+            title: 'Product Request from ' + request.name,
+            content: request.description,
+            image: request.image,
+            url: req.protocol + '://' + req.get('host')
+        }
+    }, function(err) {
+        if (err) return next(err);
+    });
+
+    EmailSender.send({
+        to: request.email,
+        subject: '非常感谢您的产品请求',
+        template: 'email_template',
+        content: {
+            title: "非常感谢您的产品请求",
+            content: "非常感谢您的产品请求，我们的采购人员会以最快的速度找到您要的产品并告知您！",
+            image: "",
+            url: req.protocol + '://' + req.get('host')
+        }
+    }, function(err) {
+        if (err) return next(err);
+    });
+
+    new Request(request).save(function(err, todo, count) {
+        res.redirect('/');
+    });
 });
 
 router.get('/test', function(req, res, next) {
+    res.json();
+});
 
+router.get('/email', function(req, res, next) {
+    res.render('email_template', {
+        layout: null,
+        title: "非常感谢您的回馈信息",
+        content: "非常感谢您的回馈信息，我们将尽快进行处理，并由相关的客服人员与您联系！",
+        image: "http://lostinasupermarket.com/wp-content/uploads/2011/06/sexy-girl-2-500x375.jpg",
+        url: req.protocol + '://' + req.get('host')
+    });
 });
 
 module.exports = router;

@@ -6,8 +6,7 @@
 			<div class="col-md-12">
 				<ol class="breadcrumb">
 					<li><i class="fa fa-home pr-10"></i><a href="/">首页</a></li>
-					<li><a href="/article">精彩文章</a></li>
-					<li class="active"><%= article.Title%></li>
+					<li class="active">折扣券</li>
 				</ol>
 			</div>
 		</div>
@@ -24,22 +23,32 @@
 			<div class="main col-md-12">
 				<!-- page-title start -->
 				<!-- ================ -->
-				<h1 class="page-title"><%= article.Title%></h1>
+				<h1 class="page-title">折扣券</h1>
+				<div class="separator-2"></div>
+				<p class="lead">这里是各大网站的打折券和折扣信息 <br class="hidden-sm hidden-xs"> 千万不要错过哦!</p>
 				<!-- page-title end -->
 				<!-- blogpost start -->
-				<article class="clearfix blogpost full">
-					<div class="blogpost-body">
-						<div class="side">
-							<div class="post-info">
-								<span class="day"><%= article.updated_at.getDate() %></span>
-								<span class="month"><%= article.updated_at.getMonth() + 1 %> <%= article.updated_at.getFullYear() %></span>
+				<% vouchers.forEach(function(voucher) { %>
+				<article class="clearfix blogpost object-non-visible" data-animation-effect="fadeInUpSmall" data-effect-delay="200">
+					<div class="overlay-container">
+						<img src="<%- voucher.Image %>" alt="">
+						<div class="overlay">
+							<div class="overlay-links">
+								<a href="<%- voucher.Image %>" class="popup-img-single"><i class="fa fa-search-plus"></i></a>
 							</div>
+						</div>
+					</div>
+					<div class="blogpost-body">
+						<div class="post-info">
+							<span class="day"><%= voucher.updated_at.getDate() %></span>
+							<span class="month"><%= voucher.updated_at.getMonth() + 1 %> <%= voucher.updated_at.getFullYear() %></span>
 						</div>
 						<div class="blogpost-content">
 							<header>
+								<h2 class="title"><a href="blog-post.html"><%= voucher.DescriptionCN %></a></h2>
 								<div class="submitted"><i class="fa fa-user pr-5"></i> by <a href="#">Allhaha网推荐</a></div>
 							</header>
-							<%- article.Content %>
+							<p><%- voucher.IntegrationCodeCN %></p>
 						</div>
 					</div>
 					<footer class="clearfix">
@@ -56,48 +65,21 @@
 						</ul>
 					</footer>
 				</article>
+				<% }) %>
 				<!-- blogpost end -->
-				<!-- comments start -->
-				<div class="comments" id="h2tab3">
-					<!-- 多说评论框 start -->
-					<div class="ds-thread" data-thread-key="<%= article._id %>" data-title="<%= article.Title %>"</div>
-					<!-- 多说评论框 end -->
-				</div>
 			</div>
+			<!-- main end -->
 		</div>
-		<!-- main end -->
 	</div>
-</div>
 </section>
 <!-- main-container end -->
+
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
 
 	var jiathis_config={
 		data_track_clickback:true,
-		title:"<%= article.Title %> #<%= article.Title %>#",
 		hideMore:false
 	}
 
-    var duoshuoQuery = {
-        short_name: "icedeer",
-        sso: {
-            login: "localhost:8818/login",
-            logout: "localhost:8818/logout"
-        }
-    };
-    
-    (function() {
-        var ds = document.createElement('script');
-        ds.type = 'text/javascript';
-        ds.async = true;
-        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-        ds.charset = 'UTF-8';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
-    })();
-
  </script>
-
-
-
-

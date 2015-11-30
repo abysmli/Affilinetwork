@@ -1,0 +1,90 @@
+<!-- page-intro start-->
+<!-- ================ -->
+<div class="page-intro">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<ol class="breadcrumb">
+					<li><i class="fa fa-home pr-10"></i><a href="/">首页</a></li>
+					<li class="active">产品请求</li>
+				</ol>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- page-intro end -->
+<!-- main-container start -->
+<!-- ================ -->
+<section class="main-container">
+	<div class="container">
+		<div class="row">
+			<!-- main start -->
+			<!-- ================ -->
+			<div class="main col-md-12">
+				<!-- page-title start -->
+				<!-- ================ -->
+				<h1 class="page-title">产品请求</h1>
+				<!-- page-title end -->
+				<div class="row">
+					<div class="col-md-6">
+						<p>如果我们的网站上没有您想找的产品，在这里可以告诉我们您想找的产品的信息和图片，我们的采购人员会以最快的速度找到您要的产品并告知您。</p>
+						<div class="contact-form">
+							<form id="contact-form" role="form" method="post">
+								<div class="form-group has-feedback">
+									<label for="name">姓名*</label>
+									<% if(typeof user == 'undefined' ) { %>
+									<input type="text" class="form-control" id="name" name="name" placeholder="姓名" required>
+									<% } else { %>
+									<input type="text" class="form-control" id="name" name="name" placeholder="姓名" value="<%= user.username %>" required>
+									<% } %>
+									<i class="fa fa-user form-control-feedback"></i>
+								</div>
+								<div class="form-group has-feedback">
+									<label for="email">邮箱*</label>
+									<input type="email" class="form-control" id="email" name="email" placeholder="邮箱" required>
+									<i class="fa fa-envelope form-control-feedback"></i>
+								</div>
+								<div class="form-group has-feedback">
+									<label for="description">产品说明*</label>
+									<textarea class="form-control" rows="6" id="description" name="description" placeholder="产品说明" required></textarea>
+									<i class="fa fa-pencil form-control-feedback"></i>
+								</div>
+								<div class="form-group has-feedback">
+									<label for="image">产品图片</label>
+									<input type="file" id="image" onchange="previewFile('#image', '#image_preview')">
+									<i class="fa fa-pencil form-control-feedback"></i>
+									<p class="help-block">Example block-level help text here.</p>
+								</div>
+								<button type="submit" class="submit-button btn btn-default">发送</button>
+							</form>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<label>产品图片预览</label>
+						<a href="#" class="thumbnail" id="image_preview" hidden></a>
+					</div>
+				</div>
+			</div>
+			<!-- main end -->
+			
+		</div>
+	</div>
+</section>
+<!-- main-container end -->
+
+<script>
+
+var _image = "";
+
+$(document).ready(function() {
+	$('#contact-form').submit(function(event) {
+		alert(1);
+		var data = {
+			image: JSON.stringify(_image)
+		};
+		alert(2);
+		post(data, "contact-form");
+	});
+});
+
+</script>

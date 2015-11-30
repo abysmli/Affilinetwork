@@ -1,10 +1,14 @@
 var express = require('express');
 var router = express.Router();
+var parseString = require('xml2js').parseString;
 var auth = require('../models/auth.js');
 var affilinet = require('../utils/affilinetapi.js');
 var aws = require('aws-lib');
 var Product = require('../models/product.js');
 var Article = require('../models/article.js');
+var Voucher = require('../models/voucher.js');
+var Feedback = require('../models/feedback.js');
+var Request = require('../models/request.js');
 var setting = require('../setting.js');
 var utils = require('../utils/utils.js');
 var Utils = new utils();
@@ -51,10 +55,156 @@ router.get('/category', auth, function(req, res, next) {
     });
 });
 
-router.get('/vouchers', auth, function(req, res, next) {
-    res.render('controller/voucher', {
-        title: 'Vouchers Manage',
+router.get('/program', auth, function(req, res, next) {
+    Affilinet.getMyPrograms({}, function(err, response, programs) {
+        if (!err && response.statusCode == 200) {
+            parseString(programs, {
+                explicitArray: false
+            }, function(err, programs) {
+                var programs = programs.ProgramList.Programs.ProgramSummary;
+                req.session.programs = programs;
+                res.render('controller/program', {
+                    title: 'Programs Manage',
+                    programs: programs,
+                    layout: 'controller/layout'
+                });
+            });
+        } else {
+            next(err);
+        }
+    });
+});
+
+router.post('/program_details', auth, function(req, res, next) {
+    req.session.programs.forEach(function(program, index) {
+        if (program.ProgramID == req.body.program_id) {
+            return res.json(program);
+        }
+    });
+});
+
+router.get('/voucher', auth, function(req, res, next) {
+    if (req.query.type == 'remote') {
+        Affilinet.getVoucherCodes({
+            ProgramId: req.query.program_id,
+        }, function(err, response, vouchers) {
+            parseString(vouchers, {
+                explicitArray: false
+            }, function(err, vouchers) {
+                var vouchers = vouchers.GetVoucherCodesResponse.VoucherCodeCollection.VoucherCode || [];
+                if (vouchers.constructor != Array) {
+                    vouchers = [vouchers];
+                }
+                req.session.vouchers = vouchers;
+                res.render('controller/voucher', {
+                    title: 'Vouchers Manage',
+                    vouchers: vouchers,
+                    type: 'remote',
+                    programTitle: req.query.program_title,
+                    layout: 'controller/layout'
+                });
+            });
+        });
+    } else if (req.query.type == 'getAll') {
+
+    } else {
+        Voucher.find({}, function(err, vouchers) {
+            req.session.vouchers = vouchers;
+            res.render('controller/voucher', {
+                title: 'Vouchers Manage',
+                vouchers: vouchers,
+                type: 'local',
+                programTitle: 'Local',
+                layout: 'controller/layout'
+            });
+        });
+    }
+});
+
+router.post('/voucher_details', auth, function(req, res, next) {
+    req.session.vouchers.forEach(function(voucher, index) {
+        if (voucher.Id == req.body.voucher_id) {
+            return res.json(voucher);
+        }
+    });
+});
+
+router.get('/voucher/add', auth, function(req, res, next) {
+    var voucher = {};
+    if (req.query.add_type == "auto") {
+        voucher = req.session.vouchers[req.query.id];
+    }
+    res.render('controller/voucher_form', {
+        title: 'Add Voucher',
+        voucher: voucher,
         layout: 'controller/layout'
+    });
+});
+
+router.post('/voucher/add', auth, function(req, res, next) {
+    var voucher = req.body;
+    var query = Voucher.where({
+        Id: voucher.Id
+    });
+    query.findOne(function(err, _voucher) {
+        if (err) next(err);
+        if (!_voucher) {
+            voucher.Image = JSON.parse(voucher.Image);
+            if (voucher.DescriptionCN !== "" && voucher.IntegrationCodeCN !== "") {
+                voucher.Tranlated = true;
+            }
+            Voucher.create(voucher, function(err, voucher) {
+                if (err) next(err);
+            });
+        }
+        return res.redirect('/controller/voucher');
+    });
+});
+
+router.get('/voucher/edit', auth, function(req, res, next) {
+    Voucher.findById(req.query.id, function(err, voucher) {
+        if (err != null) next(err);
+        else {
+            res.render('controller/voucher_form', {
+                title: 'Edit Voucher',
+                voucher: voucher,
+                layout: 'controller/layout'
+            });
+        }
+    });
+});
+
+router.post('/voucher/edit', auth, function(req, res, next) {
+    var voucher = req.body;
+    if (voucher.DescriptionCN !== "" && voucher.IntegrationCodeCN !== "") {
+        voucher.Tranlated = true;
+    }
+    voucher.Image = JSON.parse(voucher.Image);
+    Voucher.findOneAndUpdate({
+        _id: req.query.id
+    }, voucher, function(err, voucher) {
+        if (err != null) next(err);
+        else {
+            res.redirect('/controller/voucher');
+        }
+    });
+});
+
+router.get('/voucher/remove', auth, function(req, res, next) {
+    Voucher.findByIdAndRemove(req.query.id, function(err, voucher) {
+        if (err != null) next(err);
+        else {
+            return res.redirect('/controller/voucher');
+        }
+    });
+});
+
+router.get('/voucher/remove_all', auth, function(req, res, next) {
+    Voucher.remove(function(err) {
+        if (err)
+            next(err);
+        else
+            res.redirect('/controller/voucher');
     });
 });
 
@@ -97,8 +247,7 @@ router.get('/product', auth, function(req, res, next) {
             }, function(err, products) {
                 if (err) {
                     next(err);
-                }
-                else {
+                } else {
                     res.render('controller/products', {
                         title: 'Products Manage',
                         shopid: -1,
@@ -243,7 +392,7 @@ router.post('/product/add', auth, function(req, res, next) {
         ASIN: product.ASIN
     });
     query.findOne(function(err, _product) {
-        if (err) return err;
+        if (err) next(err);
         if (!_product) {
             product.ProductImageSet = JSON.parse(product.ProductImageSet);
             if (product.TitleCN !== "" && product.DescriptionCN !== "") {
@@ -251,8 +400,7 @@ router.post('/product/add', auth, function(req, res, next) {
             }
             Product.create(product, function(err, product) {
                 if (err) {
-                    console.log(err);
-                    return err;
+                    next(err);
                 }
             });
         }
@@ -310,7 +458,7 @@ router.get('/product/remove_all', auth, function(req, res, next) {
 router.get('/article', auth, function(req, res, next) {
     Article.find({}, function(err, articles) {
         if (err) {
-            return next(err);
+            next(err);
         } else {
             res.render('controller/article', {
                 title: 'Articles Manage',
@@ -319,8 +467,7 @@ router.get('/article', auth, function(req, res, next) {
             });
         }
     });
-
-})
+});
 
 router.get('/article/add', auth, function(req, res, next) {
     res.render('controller/article_form', {
@@ -328,17 +475,17 @@ router.get('/article/add', auth, function(req, res, next) {
         article: '',
         layout: 'controller/layout'
     });
-})
+});
 
 router.post('/article/add', auth, function(req, res, next) {
+    req.body.Image = JSON.parse(req.body.Image);
     Article.create(req.body, function(err, article) {
         if (err) {
-            console.log(err);
-            return err;
+            next(err);
         }
         return res.redirect('/controller/article');
     });
-})
+});
 
 router.get('/article/edit', auth, function(req, res, next) {
     Article.findById(req.query.id, function(err, article) {
@@ -351,9 +498,10 @@ router.get('/article/edit', auth, function(req, res, next) {
             });
         }
     });
-})
+});
 
 router.post('/article/edit', auth, function(req, res, next) {
+    req.body.Image = JSON.parse(req.body.Image);
     Article.findOneAndUpdate({
         _id: req.query.id
     }, req.body, function(err, article) {
@@ -362,7 +510,7 @@ router.post('/article/edit', auth, function(req, res, next) {
             res.redirect('/controller/article');
         }
     });
-})
+});
 
 router.get('/article/remove', auth, function(req, res, next) {
     Article.findByIdAndRemove(req.query.id, function(err, article) {
@@ -371,7 +519,7 @@ router.get('/article/remove', auth, function(req, res, next) {
             return res.redirect('/controller/article');
         }
     });
-})
+});
 
 router.get('/article/remove_all', auth, function(req, res, next) {
     Article.remove(function(err) {
@@ -380,6 +528,46 @@ router.get('/article/remove_all', auth, function(req, res, next) {
         else
             res.redirect('/controller/article');
     });
-})
+});
+
+router.get('/feedback', auth, function(req, res, next) {
+    Feedback.find({}, function(err, feedbacks) {
+        if (err) {
+            next(err);
+        } else {
+            Request.find({}, function(err, requests) {
+                if (err) {
+                    next(err);
+                } else {
+                    res.render('controller/feedback', {
+                        title: 'Feedback Manage',
+                        feedbacks: feedbacks,
+                        requests: requests,
+                        layout: 'controller/layout'
+                    });
+                }
+
+            });
+        }
+    });
+});
+
+router.get('/feedback/remove', auth, function(req, res, next) {
+    if (req.query.type == "feedback") {
+        Feedback.findByIdAndRemove(req.query.id, function(err, feedback) {
+            if (err != null) next(err);
+            else {
+                return res.redirect('/controller/feedback');
+            }
+        });
+    } else if (req.query.type == "request") {
+        Request.findByIdAndRemove(req.query.id, function(err, request) {
+            if (err != null) next(err);
+            else {
+                return res.redirect('/controller/feedback');
+            }
+        });
+    }
+});
 
 module.exports = router;

@@ -36,11 +36,11 @@
 						<!-- blogpost start -->
 						<article class="clearfix blogpost">
 							<div class="overlay-container" style="text-align: center;">
-								<img src=<%- article.Image %> alt="">
+								<img src="<%- article.Image %>" alt="">
 								<div class="overlay">
 									<div class="overlay-links">
 										<a href="/article_detail?id=<%= article._id %>"><i class="fa fa-link"></i></a>
-										<a href=<%- article.Image %> class="popup-img-single"><i class="fa fa-search-plus"></i></a>
+										<a href="<%- article.Image %>" class="popup-img-single"><i class="fa fa-search-plus"></i></a>
 									</div>
 								</div>
 							</div>
@@ -52,7 +52,7 @@
 								<div class="blogpost-content">
 									<header>
 										<h2 class="title"><a href="/article_detail?id=<%= article._id %>"><%= article.Title %></a></h2>
-										<div class="submitted"><i class="fa fa-user pr-5"></i> by <a href="#">XXX网推荐</a></div>
+										<div class="submitted"><i class="fa fa-user pr-5"></i> by <a href="#">Allhaha网推荐</a></div>
 									</header>
 									<p><%= article.Content_pre.substr(0, 100) + '...' %></p>
 								</div>
