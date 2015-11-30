@@ -78,11 +78,9 @@ var _image = "";
 
 $(document).ready(function() {
 	$('#contact-form').submit(function(event) {
-		alert(1);
 		var data = {
 			image: JSON.stringify(_image)
 		};
-		alert(2);
 		post(data, "contact-form");
 	});
 });
