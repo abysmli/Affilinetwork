@@ -1,17 +1,7 @@
 var express = require('express');
-var stormpath = require('stormpath')
-var fs = require('fs');
-var application, token;
 var router = express.Router();
-
-var apiKey = new stormpath.ApiKey(
-    process.env['STORMPATH_CLIENT_APIKEY_ID'],
-    process.env['STORMPATH_CLIENT_APIKEY_SECRET']
-);
-
-var client = new stormpath.Client({
-    apiKey: apiKey
-});
+var setting = require('../setting');
+var client = require('../utils/stormpathClient');
 
 router.get("/", function (req, res, next) {
     res.render("userlogin/forgot", {
@@ -22,10 +12,9 @@ router.get("/", function (req, res, next) {
 });
 
 router.post("/", function (req, res, next) {
-    var useremail = req.body.emailadress;
-    client.getApplication('https://api.stormpath.com/v1/applications/1B6KeDZJevx5CHhqQn6jdl', function (err, app) {
+    client.getApplication(setting.stormpath_setting.APP_HREF, function (err, app) {
         app.sendPasswordResetEmail({
-            email: useremail
+            email: req.body.emailadress
         }, function (err, passwordResetToken) {
             res.redirect('/');
         });
@@ -41,13 +30,12 @@ router.get('/changePassword', function (req, res, next) {
 });
 
 router.post('/changePassword', function (req, res, next) {
-    var password = req.body.newpassword;
-    client.getApplication('https://api.stormpath.com/v1/applications/1B6KeDZJevx5CHhqQn6jdl', function (err, app) {
+    client.getApplication(setting.stormpath_setting.APP_HREF, function (err, app) {
         app.verifyPasswordResetToken(req.query.sptoken, function (err, verficationResponse) {
             if (err) {
                 next(err);
             } else {
-                app.resetPassword(req.query.sptoken, password, function (err, result) {
+                app.resetPassword(req.query.sptoken, req.body.newpassword, function (err, result) {
                     res.redirect('/');
                 });
             }

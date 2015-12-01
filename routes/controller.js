@@ -1,17 +1,18 @@
 var express = require('express');
 var router = express.Router();
 var parseString = require('xml2js').parseString;
-var auth = require('../models/auth.js');
-var affilinet = require('../utils/affilinetapi.js');
+var auth = require('../models/auth');
+var affilinet = require('../utils/affilinetapi');
 var aws = require('aws-lib');
-var Product = require('../models/product.js');
-var Article = require('../models/article.js');
-var Voucher = require('../models/voucher.js');
-var Feedback = require('../models/feedback.js');
-var Request = require('../models/request.js');
-var setting = require('../setting.js');
-var utils = require('../utils/utils.js');
+var Product = require('../models/product');
+var Article = require('../models/article');
+var Voucher = require('../models/voucher');
+var Feedback = require('../models/feedback');
+var Request = require('../models/request');
+var setting = require('../setting');
+var utils = require('../utils/utils');
 var Utils = new utils();
+
 var Affilinet = new affilinet({
     publisherId: setting.affilinet_setting.publisherId,
     productWebservicePassword: setting.affilinet_setting.productWebservicePassword,

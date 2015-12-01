@@ -1,26 +1,26 @@
 var express = require('express');
 var router = express.Router();
 
-var ejs = require('ejs');
 var request = require("request");
 var aws = require('aws-lib');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
-var stormpath = require('stormpath');
 var parseString = require('xml2js').parseString;
 
-var setting = require('../setting.js');
-var Product = require('../models/product.js');
-var Favourite = require('../models/favourite.js');
-var Article = require('../models/article.js');
-var Voucher = require('../models/voucher.js');
-var Feedback = require('../models/feedback.js');
-var Request = require('../models/request.js');
-var Account = require("../models/account.js");
+var setting = require('../setting');
+var Product = require('../models/product');
+var Favourite = require('../models/favourite');
+var Article = require('../models/article');
+var Voucher = require('../models/voucher');
+var Feedback = require('../models/feedback');
+var Request = require('../models/request');
+var Account = require("../models/account");
 
-var affilinet = require('../utils/affilinetapi.js');
-var emailSender = require('../utils/emailsender.js');
+var affilinet = require('../utils/affilinetapi');
+
+var emailSender = require('../utils/emailsender');
 var EmailSender = new emailSender();
+
 var utils = require('../utils/utils.js');
 var Utils = new utils();
 
@@ -31,7 +31,6 @@ var Affilinet = new affilinet({
     productWebservicePassword: setting.affilinet_setting.productWebservicePassword,
     publisherWebservicePassword: setting.affilinet_setting.publisherWebservicePassword
 });
-
 
 passport.use(new LocalStrategy(
     function(username, password, done) {
@@ -894,7 +893,6 @@ router.get('/login', function(req, res, next) {
         layout: 'layout',
         info: '用户名或密码错误, 请重新填写',
         user: req.user
-
     });
 });
 
@@ -1135,20 +1133,6 @@ router.post('/product_request', function(req, res, next) {
 
     new Request(request).save(function(err, todo, count) {
         res.redirect('/');
-    });
-});
-
-router.get('/test', function(req, res, next) {
-    res.json();
-});
-
-router.get('/email', function(req, res, next) {
-    res.render('email_template', {
-        layout: null,
-        title: "非常感谢您的回馈信息",
-        content: "非常感谢您的回馈信息，我们将尽快进行处理，并由相关的客服人员与您联系！",
-        image: "http://lostinasupermarket.com/wp-content/uploads/2011/06/sexy-girl-2-500x375.jpg",
-        url: req.protocol + '://' + req.get('host')
     });
 });
 
