@@ -980,6 +980,18 @@ router.get('/favourite', function(req, res, next) {
     });
 });
 
+router.get('/favourite/remove', function(req, res, next) {
+    Favourite.remove({
+        Username: req.user.username,
+        ProductEAN: req.query.ean
+    }, function(err, feedback) {
+        if (err != null) next(err);
+        else {
+            return res.redirect('/favourite');
+        }
+    });
+});
+
 router.get('/article', function(req, res, next) {
     Article.find({}, function(err, articles) {
         res.render('article', {
@@ -1005,7 +1017,13 @@ router.get('/article_detail', function(req, res, next) {
 });
 
 router.get('/voucher', function(req, res, next) {
-    Voucher.find({}, function(err, vouchers) {
+    Voucher.find({
+        EndDate: {
+            $gte: new Date()
+        }
+    }).sort({
+        updated_at: -1
+    }).exec(function(err, vouchers) {
         res.render('voucher', {
             title: '折扣券',
             vouchers: vouchers,

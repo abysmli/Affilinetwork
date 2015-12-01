@@ -13,7 +13,6 @@
 	</div>
 </div>
 <!-- page-intro end -->
-
 <!-- main-container end -->
 <div class="container">
 	<h2>收藏夹</h2>
@@ -29,17 +28,19 @@
 				<div class="box-style-1 white-bg object-non-visible" data-animation-effect="fadeInLeft" data-effect-delay="300">
 					<div class="overlay-container">
 						<img src="<%= product.ProductImage %>" alt="">
-						<a href="portfolio-item.html" class="overlay small">
-							<i class="fa fa-plus"></i>
-							<span><%= product.DescriptionCN %></span>
-						</a>
+						<div class="overlay">
+							<div class="overlay-links">
+								<a href="/product?product_id=<%= product._id %>"><i class="fa fa-search-plus"></i></a>
+								<a href="/favourite/remove?ean=<%= product.EAN %>"><i class="fa fa-trash"></i></a>
+							</div>
+						</div>
 					</div>
 					<h3><a href="portfolio-item.html"><%= product.TitleCN %></a></h3>
 					<p><%= product.Price %> €</p>
 					<a href="/product?product_id=<%= product._id %>" class="btn btn-default">点击查看</a>
 				</div>
 			</div>
-			<% }) %>			
+			<% }) %>
 		</div>
 	</div>
 </div>

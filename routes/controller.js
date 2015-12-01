@@ -95,6 +95,9 @@ router.get('/voucher', auth, function(req, res, next) {
                 if (vouchers.constructor != Array) {
                     vouchers = [vouchers];
                 }
+                vouchers.forEach(function(voucher) {
+                    voucher.Program = req.query.program_title;
+                });
                 req.session.vouchers = vouchers;
                 res.render('controller/voucher', {
                     title: 'Vouchers Manage',
@@ -106,9 +109,54 @@ router.get('/voucher', auth, function(req, res, next) {
             });
         });
     } else if (req.query.type == 'getAll') {
-
+        Affilinet.getMyPrograms({}, function(err, response, programs) {
+            if (!err && response.statusCode == 200) {
+                parseString(programs, {
+                    explicitArray: false
+                }, function(err, programs) {
+                    var programs = programs.ProgramList.Programs.ProgramSummary;
+                    var allVouchers = [];
+                    programs.forEach(function(program, index) {
+                        Affilinet.getVoucherCodes({
+                            ProgramId: program.ProgramID
+                        }, function(err, response, vouchers) {
+                            parseString(vouchers, {
+                                explicitArray: false
+                            }, function(err, vouchers) {
+                                var vouchers = vouchers.GetVoucherCodesResponse.VoucherCodeCollection.VoucherCode || [];
+                                if (vouchers.constructor != Array) {
+                                    vouchers = [vouchers];
+                                }
+                                vouchers.forEach(function(voucher) {
+                                    voucher.Program = program.Title;
+                                });
+                                allVouchers = allVouchers.concat(vouchers);
+                                if (index == programs.length - 1) {
+                                    req.session.vouchers = allVouchers;
+                                    res.render('controller/voucher', {
+                                        title: 'Vouchers Manage',
+                                        vouchers: allVouchers,
+                                        type: 'remote',
+                                        programTitle: "All Programs",
+                                        layout: 'controller/layout'
+                                    });
+                                }
+                            });
+                        });
+                    });
+                });
+            } else {
+                next(err);
+            }
+        });
     } else {
-        Voucher.find({}, function(err, vouchers) {
+        Voucher.find({
+            EndDate: {
+                $gte: new Date()
+            }
+        }).sort({
+            updated_at: -1
+        }).exec(function(err, vouchers) {
             req.session.vouchers = vouchers;
             res.render('controller/voucher', {
                 title: 'Vouchers Manage',
@@ -179,7 +227,11 @@ router.post('/voucher/edit', auth, function(req, res, next) {
     if (voucher.DescriptionCN !== "" && voucher.IntegrationCodeCN !== "") {
         voucher.Tranlated = true;
     }
-    voucher.Image = JSON.parse(voucher.Image);
+    if (JSON.parse(voucher.Image) == "") {
+        delete voucher.Image;
+    } else {
+        voucher.Image = JSON.parse(voucher.Image);
+    }
     Voucher.findOneAndUpdate({
         _id: req.query.id
     }, voucher, function(err, voucher) {

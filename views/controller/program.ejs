@@ -31,11 +31,11 @@
             </td>
             <td>
             	<div class="program_desc"></div>
-            	<button class="btn btn-sm btn-danger desc_button" alt="<%= program.ProgramID %>" role="button">Show</button>
+            	<button class="btn btn-sm btn-primary desc_button" alt="<%= program.ProgramID %>" role="button">Show</button>
             </td>
             <td>
             	<div class="program_limit"></div>
-            	<button class="btn btn-sm btn-danger limit_button" alt="<%= program.ProgramID %>" role="button">Show</button>
+            	<button class="btn btn-sm btn-primary limit_button" alt="<%= program.ProgramID %>" role="button">Show</button>
             </td>
             <td>
                 <a href="<%= program.URL %>">Link</a>
@@ -65,23 +65,25 @@
     	]
     });
     $("#program_page").addClass("active");
-    $(".desc_button").click(function() {
-    	var that = $(this);
-    	if (that.text() == "Show") {
-	    	sendAjax('/controller/program_details', {
-	    		program_id: that.attr("alt")
-	    	}, function(program_content) {
-	    		that.siblings("div.program_desc").html(program_content.Description + "<hr/>");
-	    		that.text("Hide");
-	    	}, function(jqXHR, error, errorThrown) {
-	    		console.log(JSON.stringify(jqXHR));
-	    	});
-    	} else {
-    		that.siblings("div.program_desc").html("");
-	    	that.text("Show");
-    	}
+
+    $('tbody').on('click','button.desc_button',function() {
+        var that = $(this);
+        if (that.text() == "Show") {
+            sendAjax('/controller/program_details', {
+                program_id: that.attr("alt")
+            }, function(program_content) {
+                that.siblings("div.program_desc").html(program_content.Description + "<hr/>");
+                that.text("Hide");
+            }, function(jqXHR, error, errorThrown) {
+                console.log(JSON.stringify(jqXHR));
+            });
+        } else {
+            that.siblings("div.program_desc").html("");
+            that.text("Show");
+        }
     });
-    $(".limit_button").click(function() {
+
+    $('tbody').on('click','button.limit_button',function() {
     	var that = $(this);
     	if (that.text() == "Show") {
 	    	sendAjax('/controller/program_details', {

@@ -4,7 +4,7 @@
     <% } else { %>
     <h1><%= title %> <small><%= programTitle %> | Total Vouchers: <%= vouchers.length %> <i>In Cloud Mode</i></small></h1>
     <% } %>
-    <a id="all_button" class="btn btn-warning btn-sm" href="/controller/voucher?type=getAll">All Vouchers in Cloud</a>
+    <a id="all_button" class="btn btn-success btn-sm" href="/controller/voucher?type=getAll">All Vouchers in Cloud</a>
     <a id="add_button" class="btn btn-warning btn-sm" href="/controller/voucher/add?add_type=manu">Add a Voucher</a>
     <a id="remove_all" href="/controller/voucher/remove_all/" class="btn btn-danger btn-sm pull-right">Remove all</a>
 </div>
@@ -15,6 +15,7 @@
             <th>Image</th>
             <% } %>
             <th>ID</th>
+            <th>Program</th>
             <th>Code</th>
             <th>Description</th>
             <% if(type == 'local') { %>
@@ -42,6 +43,7 @@
             <th>Image</th>
             <% } %>
             <th>ID</th>
+            <th>Program</th>
             <th>Code</th>
             <th>Description</th>
             <% if(type == 'local') { %>
@@ -75,6 +77,9 @@
                 <%= voucher.Id %>
             </td>
             <td>
+                <%= voucher.Program %>
+            </td>
+            <td>
             	<%= voucher.Code %>
             </td>
             <td>
@@ -91,12 +96,12 @@
             <% } %>
             <td>
             	<div class="voucher_inte"></div>
-            	<button class="btn btn-sm btn-danger inte_button" alt="<%= voucher.Id %>" role="button">Show</button>
+            	<button class="btn btn-sm btn-primary inte_button" alt="<%= voucher.Id %>" role="button">Show</button>
             </td>
             <% if(type == 'local') { %>
             <td>
                 <div class="voucher_inteCN"></div>
-                <button class="btn btn-sm btn-danger inteCN_button" alt="<%= voucher.Id %>" role="button">Show</button>
+                <button class="btn btn-sm btn-primary inteCN_button" alt="<%= voucher.Id %>" role="button">Show</button>
             </td>
             <% } %>
             <td>
@@ -148,7 +153,8 @@
     });
 
 	$("#voucher_page").addClass("active");
-	$(".inte_button").click(function() {
+
+    $('tbody').on('click','button.inte_button',function() {
 		var that = $(this);
 		if (that.text() == "Show") {
 			sendAjax('/controller/voucher_details', {
@@ -164,7 +170,7 @@
 			that.text("Show");
 		}
 	});
-    $(".inteCN_button").click(function() {
+    $('tbody').on('click','button.inteCN_button',function() {
         var that = $(this);
         if (that.text() == "Show") {
             sendAjax('/controller/voucher_details', {

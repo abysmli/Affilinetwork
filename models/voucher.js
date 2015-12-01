@@ -5,6 +5,7 @@ mongoose.createConnection('mongodb://localhost/'+setting.database);
 var Voucherschema = new mongoose.Schema({
 	Id: String,
     ProgramId: String,
+    Program: String,
     Code: String,
     Description: String,
     IntegrationCode: String,
