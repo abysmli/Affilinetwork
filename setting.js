@@ -1,8 +1,8 @@
 var app_setting = {
     secret: 'Affilinet',
     database: 'affilinet',
-    username: 'admin',
-    password: 'admin',
+    username: 'LLHF',
+    password: 'LLHF!allhaha',
     affilinet_setting: {
         publisherId: '512499',
         productWebservicePassword: 'FaI69alVX0eZ4i28TnIq',
