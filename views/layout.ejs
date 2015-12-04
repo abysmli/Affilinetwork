@@ -46,7 +46,11 @@
         <!-- Pretty JSON -->
         <script type="text/javascript" src="/javascripts/pretty-json-min.js"></script>
     </head>
+    <% if(footer_bottom) { %>
+    <body class="no-trans" style="padding-bottom: 72px;">
+    <% } else { %>
     <body class="no-trans">
+    <% } %>
         <!-- scrollToTop -->
         <!-- ================ -->
         <div class="scrollToTop"><i class="icon-up-open-big"></i></div>
@@ -187,7 +191,11 @@
         <!-- .footer end -->
         <!-- .subfooter start -->
         <!-- ================ -->
+        <% if(footer_bottom) { %>
+        <div class="subfooter" style="position: fixed; width: 100%; bottom: 0px;">
+        <% } else { %>
         <div class="subfooter">
+        <% } %>
             <div class="container">
                 <div class="row">
                     <div class="col-md-7">

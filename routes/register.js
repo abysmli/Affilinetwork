@@ -6,7 +6,8 @@ var client = require('../utils/stormpathClient');
 
 router.get('/', function(req, res, next) {
     res.render('userlogin/register', {
-        title: 'Login',
+        title: '登入',
+        footer_bottom: true,
         layout: 'layout',
         error: req.flash('error')[0]
     });
@@ -26,6 +27,7 @@ router.post('/', function(req, res, next) {
             if (err) {
                 return res.render('userlogin/error', {
                     title: '注册信息有误, 需重新填写',
+                    footer_bottom: true,
                     layout: 'layout',
                     info: err.userMessage
                 });

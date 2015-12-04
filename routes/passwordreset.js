@@ -6,6 +6,7 @@ var client = require('../utils/stormpathClient');
 router.get("/", function (req, res, next) {
     res.render("userlogin/forgot", {
         title: "重置您的密码",
+        footer_bottom: true,
         info: "忘记密码? 请输入注册时的邮箱地址.",
         layout: "layout"
     });
@@ -24,6 +25,7 @@ router.post("/", function (req, res, next) {
 router.get('/changePassword', function (req, res, next) {   
     res.render('userlogin/changePassword', {
         title: '重置密码',
+        footer_bottom: true,
         info: '请输入您的新密码以重置',
         layout: 'layout'
     });

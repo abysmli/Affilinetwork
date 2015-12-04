@@ -55,46 +55,6 @@ passport.use(new LocalStrategy(
 router.get('/', function(req, res, next) {
     var Utils = new utils();
     var page = req.query.page || 1;
-    var hotproduct;
-    Product.aggregate([{
-        "$match": {
-            $and: [{
-                EAN: {
-                    $ne: 'null'
-                },
-                SalesRank: {
-                    $lte: 15,
-                    $gte: 1
-                }
-            }]
-
-        }
-    }, {
-        "$group": {
-            _id: "$EAN",
-            ProductId: {
-                $first: "$_id"
-            },
-            Images: {
-                $first: "$ProductImage"
-            },
-            ProductName: {
-                $first: "$TitleCN"
-            },
-            DescriptionCN: {
-                $first: "$DescriptionCN"
-            },
-            Price: {
-                $push: "$Price"
-            }
-        }
-    }, {
-        "$sort": {
-            update_at: -1
-        }
-    }], function(err, hotresult) {
-        hotproduct = hotresult;
-    });
     Product.count({}, function(err, count) {
         var pageColum = count / 50;
         Product.aggregate(
@@ -136,18 +96,58 @@ router.get('/', function(req, res, next) {
                 if (err != null) {
                     next(err);
                 } else {
-                    res.render('index', {
-                        title: 'Allhaha',
-                        count: count,
-                        pageColum: pageColum,
-                        currentPage: page,
-                        products: products,
-                        hotproducts: hotproduct,
-                        category: '所有',
-                        sort: '按日期',
-                        user: req.user,
-                        layout: 'layout'
+                    Product.aggregate([{
+                        "$match": {
+                            $and: [{
+                                EAN: {
+                                    $ne: 'null'
+                                },
+                                SalesRank: {
+                                    $lte: 15,
+                                    $gte: 1
+                                }
+                            }]
+
+                        }
+                    }, {
+                        "$group": {
+                            _id: "$EAN",
+                            ProductId: {
+                                $first: "$_id"
+                            },
+                            Images: {
+                                $first: "$ProductImage"
+                            },
+                            ProductName: {
+                                $first: "$TitleCN"
+                            },
+                            DescriptionCN: {
+                                $first: "$DescriptionCN"
+                            },
+                            Price: {
+                                $push: "$Price"
+                            }
+                        }
+                    }, {
+                        "$sort": {
+                            update_at: -1
+                        }
+                    }], function(err, hotproduct) {
+                        res.render('index', {
+                            title: 'Allhaha',
+                            footer_bottom: false,
+                            count: count,
+                            pageColum: pageColum,
+                            currentPage: page,
+                            products: products,
+                            hotproducts: hotproduct,
+                            category: '所有',
+                            sort: '按日期',
+                            user: req.user,
+                            layout: 'layout'
+                        });
                     });
+                    
                 }
             });
     });
@@ -201,6 +201,7 @@ router.get('/pagination', function(req, res, next) {
                     } else {
                         res.render('searchproduct', {
                             title: 'Allhaha',
+                            footer_bottom: true,
                             count: count,
                             pageColum: pageColum,
                             currentPage: page,
@@ -286,6 +287,7 @@ router.post('/filter', function(req, res, next) {
                         } else {
                             res.render('searchproduct', {
                                 title: 'Allhaha',
+                                footer_bottom: true,
                                 count: count,
                                 pageColum: pageColum,
                                 currentPage: page,
@@ -343,6 +345,7 @@ router.post('/filter', function(req, res, next) {
                         } else {
                             res.render('searchproduct', {
                                 title: 'Allhaha',
+                                footer_bottom: true,
                                 count: count,
                                 pageColum: pageColum,
                                 currentPage: page,
@@ -400,6 +403,7 @@ router.post('/filter', function(req, res, next) {
                         } else {
                             res.render('searchproduct', {
                                 title: 'Allhaha',
+                                footer_bottom: true,
                                 count: count,
                                 pageColum: pageColum,
                                 currentPage: page,
@@ -456,6 +460,7 @@ router.post('/filter', function(req, res, next) {
                         } else {
                             res.render('searchproduct', {
                                 title: 'Allhaha',
+                                footer_bottom: true,
                                 count: count,
                                 pageColum: pageColum,
                                 currentPage: page,
@@ -524,6 +529,7 @@ router.post('/filter', function(req, res, next) {
                         } else {
                             res.render('searchproduct', {
                                 title: 'Allhaha',
+                                footer_bottom: true,
                                 count: count,
                                 pageColum: pageColum,
                                 currentPage: page,
@@ -585,6 +591,7 @@ router.post('/filter', function(req, res, next) {
                         } else {
                             res.render('searchproduct', {
                                 title: 'Allhaha',
+                                footer_bottom: true,
                                 count: count,
                                 pageColum: pageColum,
                                 currentPage: page,
@@ -646,6 +653,7 @@ router.post('/filter', function(req, res, next) {
                         } else {
                             res.render('searchproduct', {
                                 title: 'Allhaha',
+                                footer_bottom: true,
                                 count: count,
                                 pageColum: pageColum,
                                 currentPage: page,
@@ -706,6 +714,7 @@ router.post('/filter', function(req, res, next) {
                         } else {
                             res.render('searchproduct', {
                                 title: 'Allhaha',
+                                footer_bottom: true,
                                 count: count,
                                 pageColum: pageColum,
                                 currentPage: page,
@@ -785,6 +794,7 @@ router.post('/search', function(req, res, next) {
             } else {
                 res.render('searchproduct', {
                     title: 'Allhaha',
+                    footer_bottom: true,
                     count: count,
                     pageColum: pageColum,
                     currentPage: page,
@@ -871,6 +881,7 @@ router.get('/category', function(req, res, next) {
             } else {
                 res.render('searchproduct', {
                     title: 'Allhaha',
+                    footer_bottom: true,
                     count: count,
                     pageColum: pageColumn,
                     currentPage: page,
@@ -890,6 +901,7 @@ router.get('/category', function(req, res, next) {
 router.get('/login', function(req, res, next) {
     res.render('userlogin/login', {
         title: '登录',
+        footer_bottom: true,
         layout: 'layout',
         info: '用户名或密码错误, 请重新填写',
         user: req.user
@@ -914,6 +926,7 @@ router.get('/product', function(req, res, next) {
             else {
                 res.render('product_details', {
                     title: '德国打折商品, 产品描述',
+                    footer_bottom: true,
                     product: _product,
                     product_link: req.url,
                     products: _products,
@@ -971,6 +984,7 @@ router.get('/favourite', function(req, res, next) {
         }, function(err, products) {
             res.render('favourite', {
                 title: '用户收藏',
+                footer_bottom: true,
                 products: products,
                 user: req.user
             });
@@ -994,6 +1008,7 @@ router.get('/article', function(req, res, next) {
     Article.find({}, function(err, articles) {
         res.render('article', {
             title: '精彩的文章',
+            footer_bottom: false,
             articles: articles,
             user: req.user
         });
@@ -1005,6 +1020,7 @@ router.get('/article_detail', function(req, res, next) {
         if (article) {
             res.render('article_details', {
                 title: "精彩的文章",
+                footer_bottom: true,
                 article: article,
                 user: req.user
             });
@@ -1024,6 +1040,7 @@ router.get('/voucher', function(req, res, next) {
     }).exec(function(err, vouchers) {
         res.render('voucher', {
             title: '折扣券',
+            footer_bottom: false,
             vouchers: vouchers,
             user: req.user
         });
@@ -1033,6 +1050,7 @@ router.get('/voucher', function(req, res, next) {
 router.get('/aboutus', function(req, res, next) {
     res.render('aboutus', {
         title: '关于我们',
+        footer_bottom: true,
         layout: 'layout',
         user: req.user,
     });
@@ -1041,6 +1059,7 @@ router.get('/aboutus', function(req, res, next) {
 router.get('/contactus', function(req, res, next) {
     res.render('contactus', {
         title: '联系我们',
+        footer_bottom: true,
         layout: 'layout',
         user: req.user,
     });
@@ -1090,6 +1109,7 @@ router.post('/contactus', function(req, res, next) {
 router.get('/product_request', function(req, res, next) {
     res.render('product_request', {
         title: '产品请求',
+        footer_bottom: true,
         layout: 'layout',
         user: req.user,
     });
