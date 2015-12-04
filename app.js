@@ -11,6 +11,7 @@ var session = require('express-session');
 var flash = require('connect-flash');
 
 var routes = require('./routes/index');
+var routes_de = require('./routes/index_de');
 var controller = require('./routes/controller');
 var register = require('./routes/register');
 var passwordreset = require('./routes/passwordreset');
@@ -60,6 +61,7 @@ app.use(passport.session());
 app.use(flash());
 
 app.use('/', routes);
+app.use('/DE', routes_de)
 app.use('/controller', controller);
 app.use('/register', register);
 app.use('/password_reset', passwordreset);
