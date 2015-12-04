@@ -1,0 +1,77 @@
+<div class="container">
+    <section class="main-container">
+        <div class="container">
+            <div class="row">
+                <!-- main start -->
+                <!-- ================ -->
+                <div class="main object-non-visible" data-animation-effect="fadeInDownSmall" data-effect-delay="300">
+                    <div class="form-block center-block">
+                        <h2 class="title">Als unsere Kunden anmelden</h2>
+                        <hr>
+                        <form class="form-horizontal" role="form" action="/register" method="post">
+                            <div class="form-group has-feedback">
+                                <label for="inputName" class="col-sm-3 control-label">Vorname</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="inputName" placeholder="Vorname" name="firstname">
+                                    <i class="fa fa-pencil form-control-feedback"></i>
+                                </div>
+                            </div>
+                            <div class="form-group has-feedback">
+                                <label for="inputLastName" class="col-sm-3 control-label">Nachname</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="inputLastName" placeholder="Nachname" name="lastname">
+                                    <i class="fa fa-pencil form-control-feedback"></i>
+                                </div>
+                            </div>
+                            <div class="form-group has-feedback">
+                                <label for="inputUserName" class="col-sm-3 control-label">Benutzername <span class="text-danger small">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="inputUserName" placeholder="Benutzername" name="username" required>
+                                    <i class="fa fa-user form-control-feedback"></i>
+                                </div>
+                            </div>
+                            <div class="form-group has-feedback">
+                                <label for="inputEmail" class="col-sm-3 control-label">Email<span class="text-danger small">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="email" class="form-control" id="inputEmail" placeholder="Email" name="emailadress" required>
+                                    <i class="fa fa-envelope form-control-feedback"></i>
+                                </div>
+                            </div>
+                            <div class="form-group has-feedback">
+                                <label for="inputPassword" class="col-sm-3 control-label">Password<span class="text-danger small">*</span></label>
+                                <div class="col-sm-8">
+                                    <input type="password" class="form-control" id="inputPassword" placeholder="Password" name="password" required>
+                                    <i class="fa fa-lock form-control-feedback"></i>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-3 col-sm-8">
+                                    <button type="submit" class="btn btn-default">Anmelden</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!-- main end -->
+            </div>
+        </div>
+    </section>
+</div>
+<script>
+$(document).ready(function() {
+    $("#form").submit(function(e) {
+        if ($("#username_input").val() == "") {
+            alert("请正确输入用户名");
+            e.preventDefault();
+        }
+        if ($("#password_input").val() == "") {
+            alert("请正确输入密码");
+            e.preventDefault();
+        }
+        if ($("#email_input").val() == "") {
+            alert("请输入邮箱");
+            e.preventDefault();
+        }
+    });
+});
+</script>
