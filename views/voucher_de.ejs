@@ -1,0 +1,87 @@
+<!-- page-intro start-->
+<!-- ================ -->
+<div class="page-intro">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<ol class="breadcrumb">
+					<li><i class="fa fa-home pr-10"></i><a href="/">Home</a></li>
+					<li class="active">Coupon</li>
+				</ol>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- page-intro end -->
+<!-- main-container start -->
+<!-- ================ -->
+<section class="main-container">
+	<div class="container">
+		<div class="row">
+			<!-- main start -->
+			<!-- ================ -->
+			<div class="main col-md-12">
+				<!-- page-title start -->
+				<!-- ================ -->
+				<h1 class="page-title">Coupon</h1>
+				<div class="separator-2"></div>
+				<p class="lead">Hier sind die Information über Gutschein und Coupon <br class="hidden-sm hidden-xs"></p>
+				<!-- page-title end -->
+				<!-- blogpost start -->
+				<% vouchers.forEach(function(voucher) { %>
+				<article class="clearfix blogpost object-non-visible" data-animation-effect="fadeInUpSmall" data-effect-delay="200">
+					<div class="overlay-container">
+						<img src="<%- voucher.Image %>" alt="">
+						<div class="overlay">
+							<div class="overlay-links">
+								<a href="<%- voucher.Image %>" class="popup-img-single"><i class="fa fa-search-plus"></i></a>
+							</div>
+						</div>
+					</div>
+					<div class="blogpost-body">
+						<div class="post-info">
+							<span class="day"><%= voucher.updated_at.getDate() %></span>
+							<span class="month"><%= voucher.updated_at.getMonth() + 1 %> <%= voucher.updated_at.getFullYear() %></span>
+						</div>
+						<div class="blogpost-content">
+							<header>
+								<h2 class="title"><%= voucher.Program %></h2>
+								<div class="submitted"><i class="fa fa-user pr-5"></i> by <a href="#">Empfehlung von Allhaha</a></div>
+							</header>
+							<h3><%= voucher.Description %></h3>
+							<hr/>
+							<p><%- voucher.IntegrationCode %></p>
+						</div>
+					</div>
+					<footer class="clearfix">
+						<ul class="links pull-right">
+							<!-- JiaThis Button BEGIN -->
+							<div class="jiathis_style_32x32">
+								<a class="jiathis_button_tsina"></a>
+								<a class="jiathis_button_weixin"></a>
+								<a class="jiathis_button_renren"></a>
+								<a class="jiathis_button_email"></a>
+								<a class="jiathis_button_tqq"></a>
+								<a class="jiathis_button_qzone"></a>
+							</div>
+						</ul>
+					</footer>
+				</article>
+				<% }) %>
+				<!-- blogpost end -->
+			</div>
+			<!-- main end -->
+		</div>
+	</div>
+</section>
+<!-- main-container end -->
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+
+	var jiathis_config={
+		data_track_clickback:true,
+		hideMore:false
+	}
+
+ </script>

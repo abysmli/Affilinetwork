@@ -1,0 +1,97 @@
+<!-- banner start -->
+<!-- ================ -->
+<div class="banner">
+	<!-- google maps start -->
+	<div id="map-canvas"></div>
+	<!-- google maps end -->
+</div>
+<!-- banner end -->
+<!-- page-intro start-->
+<!-- ================ -->
+<div class="page-intro">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<ol class="breadcrumb">
+					<li><i class="fa fa-home pr-10"></i><a href="/">Home</a></li>
+					<li class="active">Kontakt</li>
+				</ol>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- page-intro end -->
+<!-- main-container start -->
+<!-- ================ -->
+<section class="main-container">
+	<div class="container">
+		<div class="row">
+			<!-- main start -->
+			<!-- ================ -->
+			<div class="main col-md-8">
+				<!-- page-title start -->
+				<!-- ================ -->
+				<h1 class="page-title">Kontakt</h1>
+				<!-- page-title end -->
+				<p>Sie können Ihre Feedback hier eintragen.</p>
+				<div class="alert alert-success hidden" id="MessageSent">
+					Vielen Dank! Wir haben ihre Feedback erhalten.
+				</div>
+				<div class="alert alert-danger hidden" id="MessageNotSent">
+					Oops! Something went wrong please refresh the page and try again.
+				</div>
+				<div class="contact-form">
+					<form id="contact-form" role="form" action="/contactus" method="post">
+						<div class="form-group has-feedback">
+							<label for="name">Name*</label>
+							<% if(typeof user == 'undefined' ) { %>
+							<input type="text" class="form-control" id="name" name="name" placeholder="Name" required>
+							<% } else { %>
+							<input type="text" class="form-control" id="name" name="name" placeholder="Name" value="<%= user.username %>" required>
+							<% } %>
+							<i class="fa fa-user form-control-feedback"></i>
+						</div>
+						<div class="form-group has-feedback">
+							<label for="email">Email*</label>
+							<input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+							<i class="fa fa-envelope form-control-feedback"></i>
+						</div>
+						<div class="form-group has-feedback">
+							<label for="subject">Subjekt*</label>
+							<input type="text" class="form-control" id="subject" name="subject" placeholder="Title" required>
+							<i class="fa fa-navicon form-control-feedback"></i>
+						</div>
+						<div class="form-group has-feedback">
+							<label for="message">Ihre Meinung*</label>
+							<textarea class="form-control" rows="6" id="message" name="message" placeholder="Ihre Meinung" required></textarea>
+							<i class="fa fa-pencil form-control-feedback"></i>
+						</div>
+						<button type="submit" class="btn btn-default">Senden</button>
+					</form>
+				</div>
+			</div>
+			<!-- main end -->
+			<!-- sidebar start -->
+			<aside class="col-md-4">
+				<div class="sidebar">
+					<div class="side vertical-divider-left">
+						<h3 class="title">Allhaha打折网</h3>
+						<ul class="list">
+							<li><strong></strong></li>
+							<li><i class="fa fa-home pr-10"></i>Allmandring 26<br><span class="pl-20">Stuttgart, 70569</span></li>
+							<li><i class="fa fa-phone pr-10"></i><abbr title="Phone">P:</abbr> (0049) 157-7581536</li>
+							<li><i class="fa fa-mobile pr-10 pl-5"></i><abbr title="Phone">M:</abbr> (0049) 157-7581536</li>
+							<li><i class="fa fa-envelope pr-10"></i><a href="mailto:info@idea.com">info@idea.com</a></li>
+						</ul>
+						<ul class="social-links colored circle large">
+							<li class="facebook"><a target="_blank" href="http://www.facebook.com"><i class="fa fa-facebook"></i></a></li>
+							<li class="twitter"><a target="_blank" href="http://www.twitter.com"><i class="fa fa-twitter"></i></a></li>
+							<li class="googleplus"><a target="_blank" href="http://plus.google.com"><i class="fa fa-google-plus"></i></a></li>
+						</ul>
+					</div>
+				</div>
+			</aside>
+			<!-- sidebar end -->
+		</div>
+	</div>
+</section>

@@ -1,0 +1,87 @@
+<!-- page-intro start-->
+<!-- ================ -->
+<div class="page-intro">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<ol class="breadcrumb">
+					<li><i class="fa fa-home pr-10"></i><a href="/">Home</a></li>
+					<li class="active">Gesuchte Produkte</li>
+				</ol>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- page-intro end -->
+<!-- main-container start -->
+<!-- ================ -->
+<section class="main-container">
+	<div class="container">
+		<div class="row">
+			<!-- main start -->
+			<!-- ================ -->
+			<div class="main col-md-12">
+				<!-- page-title start -->
+				<!-- ================ -->
+				<h1 class="page-title">Gesuchte Produckte</h1>
+				<!-- page-title end -->
+				<div class="row">
+					<div class="col-md-6">
+						<p>Wenn Sie hier die von Ihnen erwünschte Produkte nicht gefunden, können Sie hier die Information über den erwünschten Produkt hinterlassen.</p>
+						<div class="contact-form">
+							<form id="contact-form" role="form" method="post">
+								<div class="form-group has-feedback">
+									<label for="name">Name*</label>
+									<% if(typeof user == 'undefined' ) { %>
+									<input type="text" class="form-control" id="name" name="name" placeholder="Name" required>
+									<% } else { %>
+									<input type="text" class="form-control" id="name" name="name" placeholder="Name" value="<%= user.username %>" required>
+									<% } %>
+									<i class="fa fa-user form-control-feedback"></i>
+								</div>
+								<div class="form-group has-feedback">
+									<label for="email">Email*</label>
+									<input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+									<i class="fa fa-envelope form-control-feedback"></i>
+								</div>
+								<div class="form-group has-feedback">
+									<label for="description">Beschreibung des Produkts*</label>
+									<textarea class="form-control" rows="6" id="description" name="description" placeholder="Beschreibung" required></textarea>
+									<i class="fa fa-pencil form-control-feedback"></i>
+								</div>
+								<div class="form-group has-feedback">
+									<label for="image">Bilder des Produkts</label>
+									<input type="file" id="image" onchange="previewFile('#image', '#image_preview')">
+									<i class="fa fa-pencil form-control-feedback"></i>
+									<p class="help-block">Example block-level help text here.</p>
+								</div>
+								<button type="submit" class="submit-button btn btn-default">Senden</button>
+							</form>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<label>Übersicht der Bilder</label>
+						<a href="#" class="thumbnail" id="image_preview" hidden></a>
+					</div>
+				</div>
+			</div>
+			<!-- main end -->
+
+		</div>
+	</div>
+</section>
+<!-- main-container end -->
+
+<script>
+
+var _image = "";
+
+$(document).ready(function() {
+	$('#contact-form').submit(function(event) {
+		var data = {
+			image: JSON.stringify(_image)
+		};
+		post(data, "contact-form");
+	});
+});
+</script>

@@ -199,7 +199,7 @@ router.get('/pagination', function(req, res, next) {
                     if (err != null) {
                         next(err);
                     } else {
-                        res.render('searchproduct', {
+                        res.render('searchproduct_de', {
                             title: 'Allhaha',
                             footer_bottom: true,
                             count: count,
@@ -219,11 +219,11 @@ router.get('/pagination', function(req, res, next) {
 });
 
 router.post('/', passport.authenticate('stormpath', {
-    failureRedirect: '/login',
-    layout: 'layout',
+    failureRedirect: '/DE/login',
+    layout: 'layout_de',
     title: 'Fehler beim Einloggen'
 }), function(req, res, next) {
-    res.redirect('/');
+    res.redirect('/DE');
 });
 
 
@@ -285,7 +285,7 @@ router.post('/filter', function(req, res, next) {
                         if (err != null) {
                             next(err);
                         } else {
-                            res.render('searchproduct', {
+                            res.render('searchproduct_de', {
                                 title: 'Allhaha',
                                 footer_bottom: true,
                                 count: count,
@@ -343,7 +343,7 @@ router.post('/filter', function(req, res, next) {
                         if (err != null) {
                             next(err);
                         } else {
-                            res.render('searchproduct', {
+                            res.render('searchproduct_de', {
                                 title: 'Allhaha',
                                 footer_bottom: true,
                                 count: count,
@@ -401,7 +401,7 @@ router.post('/filter', function(req, res, next) {
                         if (err != null) {
                             next(err);
                         } else {
-                            res.render('searchproduct', {
+                            res.render('searchproduct_de', {
                                 title: 'Allhaha',
                                 footer_bottom: true,
                                 count: count,
@@ -458,7 +458,7 @@ router.post('/filter', function(req, res, next) {
                         if (err != null) {
                             next(err);
                         } else {
-                            res.render('searchproduct', {
+                            res.render('searchproduct_de', {
                                 title: 'Allhaha',
                                 footer_bottom: true,
                                 count: count,
@@ -527,7 +527,8 @@ router.post('/filter', function(req, res, next) {
                         if (err != null) {
                             next(err);
                         } else {
-                            res.render('searchproduct', {
+                            console.log(category);
+                            res.render('searchproduct_de', {
                                 title: 'Allhaha',
                                 footer_bottom: true,
                                 count: count,
@@ -542,7 +543,7 @@ router.post('/filter', function(req, res, next) {
                         }
 
                     });
-            } else if (sort == '按价格由低到高') {
+            } else if (sort == 'Preis tief nach hoch') {
                 Product.aggregate([{
                         "$match": {
                             "$and": [{
@@ -589,7 +590,7 @@ router.post('/filter', function(req, res, next) {
                         if (err != null) {
                             next(err);
                         } else {
-                            res.render('searchproduct', {
+                            res.render('searchproduct_de', {
                                 title: 'Allhaha',
                                 footer_bottom: true,
                                 count: count,
@@ -599,12 +600,12 @@ router.post('/filter', function(req, res, next) {
                                 category: category,
                                 sort: sort,
                                 user: req.user,
-                                layout: 'layout'
+                                layout: 'layout_de'
                             });
                         }
 
                     });
-            } else if (sort == '按价格由高到低') {
+            } else if (sort == 'Preis hoch nach tief') {
                 Product.aggregate([{
                         "$match": {
                             "$and": [{
@@ -632,7 +633,7 @@ router.post('/filter', function(req, res, next) {
                                 $first: "$ProductImage"
                             },
                             ProductName: {
-                                $first: "$TitleCN"
+                                $first: "$Title"
                             },
                             Price: {
                                 $push: "$Price"
@@ -651,7 +652,7 @@ router.post('/filter', function(req, res, next) {
                         if (err != null) {
                             next(err);
                         } else {
-                            res.render('searchproduct', {
+                            res.render('searchproduct_de', {
                                 title: 'Allhaha',
                                 footer_bottom: true,
                                 count: count,
@@ -661,11 +662,11 @@ router.post('/filter', function(req, res, next) {
                                 category: category,
                                 sort: sort,
                                 user: req.user,
-                                layout: 'layout'
+                                layout: 'layout_de'
                             });
                         }
                     });
-            } else if (sort == '按热度') {
+            } else if (sort == 'Bewertung') {
                 Product.aggregate([{
                         "$match": {
                             "$and": [{
@@ -693,7 +694,7 @@ router.post('/filter', function(req, res, next) {
                                 $first: "$ProductImage"
                             },
                             ProductName: {
-                                $first: "$TitleCN"
+                                $first: "$Title"
                             },
                             Price: {
                                 $push: "$Price"
@@ -712,7 +713,7 @@ router.post('/filter', function(req, res, next) {
                         if (err != null) {
                             next(err);
                         } else {
-                            res.render('searchproduct', {
+                            res.render('searchproduct_de', {
                                 title: 'Allhaha',
                                 footer_bottom: true,
                                 count: count,
@@ -722,7 +723,7 @@ router.post('/filter', function(req, res, next) {
                                 category: category,
                                 sort: sort,
                                 user: req.user,
-                                layout: 'layout'
+                                layout: 'layout_de'
                             });
                         }
                     });
@@ -774,7 +775,7 @@ router.post('/search', function(req, res, next) {
                     $first: "$ProductImage"
                 },
                 ProductName: {
-                    $first: "$TitleCN"
+                    $first: "$Title"
                 },
                 Price: {
                     $push: "$Price"
@@ -792,17 +793,17 @@ router.post('/search', function(req, res, next) {
             if (err != null) {
                 next(err);
             } else {
-                res.render('searchproduct', {
+                res.render('searchproduct_de', {
                     title: 'Allhaha',
                     footer_bottom: true,
                     count: count,
                     pageColum: pageColum,
                     currentPage: page,
-                    category: '所有',
-                    sort: '按日期',
+                    category: 'Alle',
+                    sort: 'Datum',
                     products: results,
                     user: req.user,
-                    layout: 'layout'
+                    layout: 'layout_de'
                 });
             }
 
@@ -815,25 +816,23 @@ router.get('/category', function(req, res, next) {
     var category = req.query.category;
     var page = req.query.page || 1;
     if (category === 'clothes_shoes') {
-        category = "服装鞋子";
+        category = "Kleidung&Schuhe";
     } else if (category === 'food') {
-        category = "食品饮食";
+        category = "Essen";
     } else if (category === 'kitchen') {
-        category = "厨房用具";
+        category = "Küche";
     } else if (category === 'electronics') {
-        category = "电子产品";
+        category = "Elektro&Computer";
     } else if (category === 'handy_pad') {
-        category = "手机平板";
+        category = "Handy&Pad";
     } else if (category === 'makeup') {
-        category = "化妆品";
+        category = "Kosmetik";
     } else if (category === 'medicine') {
-        category = "药品";
+        category = "Medikamente";
     } else if (category === 'travel') {
-        category = "旅游";
-    } else if (category === 'coupon') {
-        category = "打折券";
+        category = "Reisen&Urlaub";
     } else if (category === 'others') {
-        category = "其他";
+        category = "Andere";
     }
 
     Product.count({
@@ -861,7 +860,7 @@ router.get('/category', function(req, res, next) {
                     $first: "$ProductImage"
                 },
                 ProductName: {
-                    $first: "$TitleCN"
+                    $first: "$Title"
                 },
                 Price: {
                     $push: "$Price"
@@ -879,17 +878,17 @@ router.get('/category', function(req, res, next) {
             if (err != null) {
                 next(err);
             } else {
-                res.render('searchproduct', {
+                res.render('searchproduct_de', {
                     title: 'Allhaha',
                     footer_bottom: true,
                     count: count,
                     pageColum: pageColumn,
                     currentPage: page,
                     category: category,
-                    sort: '按日期',
+                    sort: 'Datum',
                     products: products,
                     user: req.user,
-                    layout: 'layout'
+                    layout: 'layout_de'
                 });
             }
         });
@@ -899,11 +898,11 @@ router.get('/category', function(req, res, next) {
 
 
 router.get('/login', function(req, res, next) {
-    res.render('userlogin/login', {
-        title: '登录',
+    res.render('userlogin/login_de', {
+        title: 'Anmelden',
         footer_bottom: true,
-        layout: 'layout',
-        info: '用户名或密码错误, 请重新填写',
+        layout: 'layout_de',
+        info: 'Fehler beim Einloggen. Bitte geben Sie Benutzername und Password erneut ein.',
         user: req.user
     });
 });
@@ -911,7 +910,7 @@ router.get('/login', function(req, res, next) {
 //logout
 router.get('/logout', function(req, res, next) {
     req.logout();
-    res.redirect('/');
+    res.redirect('/DE');
 });
 
 router.get('/product', function(req, res, next) {
@@ -924,13 +923,13 @@ router.get('/product', function(req, res, next) {
         }, null, function(err, _products) {
             if (err != null) next(err);
             else {
-                res.render('product_details', {
-                    title: '德国打折商品, 产品描述',
+                res.render('product_details_de', {
+                    title: 'Details',
                     footer_bottom: true,
                     product: _product,
                     product_link: req.url,
                     products: _products,
-                    layout: '/layout',
+                    layout: '/layout_de',
                     user: req.user
                 });
             }
@@ -953,14 +952,14 @@ router.post('/favourite', function(req, res, next) {
                         return res.status(500).send('Service Error!');
                     } else {
                         return res.json({
-                            result: "已经成功加入收藏夹!"
+                            result: "Ware wurde in der Merkliste hinzugefügt!"
                         });
                     }
                     return res.redirect('/controller/article');
                 });
             } else {
                 return res.json({
-                    result: "该收藏已经存在！"
+                    result: "Bereits in der Merkliste！"
                 });
             }
         });
@@ -982,9 +981,10 @@ router.get('/favourite', function(req, res, next) {
                 $in: productEANs
             }
         }, function(err, products) {
-            res.render('favourite', {
-                title: '用户收藏',
+            res.render('favourite_de', {
+                title: 'Merkliste',
                 footer_bottom: true,
+                layout: 'layout_de',
                 products: products,
                 user: req.user
             });
@@ -999,7 +999,7 @@ router.get('/favourite/remove', function(req, res, next) {
     }, function(err, feedback) {
         if (err != null) next(err);
         else {
-            return res.redirect('/favourite');
+            return res.redirect('/DE/favourite');
         }
     });
 });
@@ -1038,8 +1038,8 @@ router.get('/voucher', function(req, res, next) {
     }).sort({
         updated_at: -1
     }).exec(function(err, vouchers) {
-        res.render('voucher', {
-            title: '折扣券',
+        res.render('voucher_de', {
+            title: 'Coupon',
             footer_bottom: false,
             vouchers: vouchers,
             user: req.user
@@ -1057,10 +1057,10 @@ router.get('/aboutus', function(req, res, next) {
 });
 
 router.get('/contactus', function(req, res, next) {
-    res.render('contactus', {
-        title: '联系我们',
+    res.render('contact_de', {
+        title: 'Kontakt',
         footer_bottom: true,
-        layout: 'layout',
+        layout: 'layout_de',
         user: req.user,
     });
 });
@@ -1089,11 +1089,11 @@ router.post('/contactus', function(req, res, next) {
 
     EmailSender.send({
         to: feedback.email,
-        subject: '非常感谢您的回馈信息',
+        subject: 'Vielen Dank für Ihre Ideen',
         template: 'email_template',
         content: {
-            title: "非常感谢您的回馈信息",
-            content: "非常感谢您的回馈信息，我们将尽快进行处理，并由相关的客服人员与您联系！",
+            title: "Vielen Dank für Ihre Ideen",
+            content: "Vielen Dank für Ihre Aufmerksamkeit. Wir werden schnell wie möglich mit Ihnen im Kontakt setzen！",
             image: "",
             url: req.protocol + '://' + req.get('host')
         }
@@ -1107,10 +1107,10 @@ router.post('/contactus', function(req, res, next) {
 });
 
 router.get('/product_request', function(req, res, next) {
-    res.render('product_request', {
-        title: '产品请求',
+    res.render('product_request_de', {
+        title: 'Von Ihnen gesuchte Produkte',
         footer_bottom: true,
-        layout: 'layout',
+        layout: 'layout_de',
         user: req.user,
     });
 });

@@ -82,7 +82,7 @@
                                             <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i>Login</button>
                                             <ul class="dropdown-menu dropdown-menu-right dropdown-animation">
                                                 <li>
-                                                    <form class="login-form" action="/" method="post">
+                                                    <form class="login-form" action="/DE" method="post">
                                                         <div class="form-group has-feedback">
                                                             <label class="control-label">Benutzername</label>
                                                             <input name="username" type="text" class="form-control" placeholder="">
@@ -95,9 +95,9 @@
                                                         </div>
                                                         <button type="submit" class="btn btn-group btn-dark btn-sm">Login</button>
                                                         <span>or</span>
-                                                        <a href="/register" role="button" class="btn btn-group btn-default btn-sm">Anmelden</a>
+                                                        <a href="/DE/register" role="button" class="btn btn-group btn-default btn-sm">Anmelden</a>
                                                         <ul>
-                                                            <li><a href="/password_reset">Passwort vergessen?</a></li>
+                                                            <li><a href="/DE/password_reset">Passwort vergessen?</a></li>
                                                         </ul>
                                                         <!--
                                                         <div class="divider"></div>
@@ -116,8 +116,8 @@
                                             <% } else { %>
                                             <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i><%= user.username %></button>
                                             <ul class="dropdown-menu dropdown-menu-left dropdown-animation">
-                                                <a class="btn btn-group btn-dark btn-sm" href="/favourite">Merkliste</a>
-                                                <span><p style="font-size: small"><a href="/logout">Logout</a></p></span>
+                                                <a class="btn btn-group btn-dark btn-sm" href="/DE/favourite">Merkliste</a>
+                                                <span><p style="font-size: small"><a href="/DE/logout">Logout</a></p></span>
                                             </ul>
                                             <% } %>
                                         </div>
@@ -138,7 +138,7 @@
                                 <div class="header-left clearfix">
                                     <!-- logo -->
                                     <div class="logo">
-                                        <a href="/"><img id="logo" src="/stylesheets/images/logo_red.png" alt="iDea"></a>
+                                        <a href="/DE"><img id="logo" src="/stylesheets/images/logo_red.png" alt="iDea"></a>
                                     </div>
                                     <!-- name-and-slogan -->
                                     <div class="site-slogan">
@@ -170,8 +170,8 @@
                                                 <!-- Collect the nav links, forms, and other content for toggling -->
                                                 <div class="collapse navbar-collapse scrollspy smooth-scroll" id="navbar-collapse-1">
                                                     <ul class="nav navbar-nav navbar-right">
-                                                        <li><a href="/">Home</a></li>
-                                                        <li><a href="/voucher">Coupon</a></li>
+                                                        <li><a href="/DE">Home</a></li>
+                                                        <li><a href="/DE/voucher">Coupon</a></li>
                                                     </ul>
                                                 </div>
                                             </div>
@@ -221,8 +221,8 @@
                                     </div>
                                     <div class="collapse navbar-collapse" id="navbar-collapse-2">
                                         <ul class="nav navbar-nav">
-                                            <li><a href="/product_request" target="_blank">Produkte nicht gefunden? Hier melden!</a></li>
-                                            <li><a href="/contactus" target="_blank">Kontakt</a></li>
+                                            <li><a href="/DE/product_request" target="_blank">Produkte nicht gefunden? Hier melden!</a></li>
+                                            <li><a href="/DE/contactus" target="_blank">Kontakt</a></li>
                                         </ul>
                                     </div>
                                 </nav>

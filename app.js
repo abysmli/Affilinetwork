@@ -14,7 +14,9 @@ var routes = require('./routes/index');
 var routes_de = require('./routes/index_de');
 var controller = require('./routes/controller');
 var register = require('./routes/register');
+var register_de = require('./routes/register_de');
 var passwordreset = require('./routes/passwordreset');
+var passwordreset_de = require('./routes/passwordreset_de');
 
 var setting = require('./setting');
 
@@ -64,7 +66,9 @@ app.use('/', routes);
 app.use('/DE', routes_de)
 app.use('/controller', controller);
 app.use('/register', register);
+app.use('/DE/register', register_de);
 app.use('/password_reset', passwordreset);
+app.use('/DE/password_reset', passwordreset_de);
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {
