@@ -156,7 +156,7 @@ router.get('/', function(req, res, next) {
 router.get('/pagination', function(req, res, next) {
     var page = req.query.page;
     if (page == 1) {
-        res.redirect('/');
+        res.redirect('/DE');
     } else {
         Product.count({}, function(err, count) {
             var pageColum = count / 50;
@@ -955,7 +955,6 @@ router.post('/favourite', function(req, res, next) {
                             result: "Ware wurde in der Merkliste hinzugefügt!"
                         });
                     }
-                    return res.redirect('/controller/article');
                 });
             } else {
                 return res.json({
@@ -1004,32 +1003,6 @@ router.get('/favourite/remove', function(req, res, next) {
     });
 });
 
-router.get('/article', function(req, res, next) {
-    Article.find({}, function(err, articles) {
-        res.render('article', {
-            title: '精彩的文章',
-            footer_bottom: false,
-            articles: articles,
-            user: req.user
-        });
-    });
-});
-
-router.get('/article_detail', function(req, res, next) {
-    Article.findById(req.query.id, function(err, article) {
-        if (article) {
-            res.render('article_details', {
-                title: "精彩的文章",
-                footer_bottom: true,
-                article: article,
-                user: req.user
-            });
-        } else {
-            next(err);
-        }
-    });
-});
-
 router.get('/voucher', function(req, res, next) {
     Voucher.find({
         EndDate: {
@@ -1041,6 +1014,7 @@ router.get('/voucher', function(req, res, next) {
         res.render('voucher_de', {
             title: 'Coupon',
             footer_bottom: false,
+            layout: 'layout_de',
             vouchers: vouchers,
             user: req.user
         });
@@ -1051,7 +1025,7 @@ router.get('/aboutus', function(req, res, next) {
     res.render('aboutus', {
         title: '关于我们',
         footer_bottom: true,
-        layout: 'layout',
+        layout: 'layout_de',
         user: req.user,
     });
 });
@@ -1102,7 +1076,7 @@ router.post('/contactus', function(req, res, next) {
     });
 
     new Feedback(feedback).save(function(err, todo, count) {
-        res.redirect('/');
+        res.redirect('/DE');
     });
 });
 

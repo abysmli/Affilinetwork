@@ -956,7 +956,6 @@ router.post('/favourite', function(req, res, next) {
                             result: "已经成功加入收藏夹!"
                         });
                     }
-                    return res.redirect('/controller/article');
                 });
             } else {
                 return res.json({
