@@ -1073,7 +1073,7 @@ router.post('/contactus', function(req, res, next) {
     };
 
     EmailSender.send({
-        to: "abysmli@gmail.com",
+        to: "info@allhaha.com",
         subject: 'Feedback from ' + feedback.name,
         template: 'email_template',
         content: {
@@ -1123,7 +1123,7 @@ router.post('/product_request', function(req, res, next) {
     };
 
     EmailSender.send({
-        to: "abysmli@gmail.com",
+        to: "info@allhaha.com",
         subject: 'Product Request from ' + request.name,
         template: 'email_template',
         content: {

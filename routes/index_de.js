@@ -1039,6 +1039,15 @@ router.get('/contactus', function(req, res, next) {
     });
 });
 
+router.get('/impressum', function(req, res, next) {
+    res.render('impressum_de', {
+        title: 'Impressum',
+        footer_bottom: true,
+        layout: 'layout_de',
+        user: req.user,
+    });
+});
+
 router.post('/contactus', function(req, res, next) {
     var feedback = {
         name: req.body.name,
@@ -1048,7 +1057,7 @@ router.post('/contactus', function(req, res, next) {
     };
 
     EmailSender.send({
-        to: "abysmli@gmail.com",
+        to: "info@allhaha.com",
         subject: 'Feedback from ' + feedback.name,
         template: 'email_template',
         content: {
@@ -1098,7 +1107,7 @@ router.post('/product_request', function(req, res, next) {
     };
 
     EmailSender.send({
-        to: "abysmli@gmail.com",
+        to: "info@allhaha.com",
         subject: 'Product Request from ' + request.name,
         template: 'email_template',
         content: {
