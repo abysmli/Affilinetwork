@@ -9,9 +9,9 @@ var app_setting = {
         publisherWebservicePassword: 'lZONYNI32ieYq8kMPqKS'
     },
     amazon_setting: {
-        AccessKeyId: 'AKIAIXMHRQX5VHGPA2AQ',
-        SecretAccessKey: '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',
-        AssociateTag: 'ba0f6-21'
+        AccessKeyId: 'AKIAIVOAWHV7T4HBZLOA',
+        SecretAccessKey: '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',
+        AssociateTag: 'allhaha-21'
     },
     email_setting: {
         service: 'hotmail',
