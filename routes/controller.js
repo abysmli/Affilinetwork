@@ -19,7 +19,7 @@ var Affilinet = new affilinet({
     publisherWebservicePassword: setting.affilinet_setting.publisherWebservicePassword
 });
 
-var prodAdv = aws.createProdAdvClient(setting.amazon_setting.AccessKeyId, setting.amazon_setting.SecretAccessKey, setting.amazon_setting.AssociateTag);
+var prodAdv = aws.createProdAdvClient(setting.amazon_setting.AccessKeyId, setting.amazon_setting.SecretAccessKey, setting.amazon_setting.AssociateTag, {host: "ecs.amazonaws.de", region: "DE"});
 
 /* GET users listing. */
 router.get('/', auth, function(req, res, next) {

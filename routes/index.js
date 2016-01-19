@@ -24,7 +24,7 @@ var EmailSender = new emailSender();
 var utils = require('../utils/utils.js');
 var Utils = new utils();
 
-var prodAdv = aws.createProdAdvClient(setting.amazon_setting.AccessKeyId, setting.amazon_setting.SecretAccessKey, setting.amazon_setting.AssociateTag);
+var prodAdv = aws.createProdAdvClient(setting.amazon_setting.AccessKeyId, setting.amazon_setting.SecretAccessKey, setting.amazon_setting.AssociateTag, {host: "ecs.amazonaws.de", region: "DE"});
 
 var Affilinet = new affilinet({
     publisherId: setting.affilinet_setting.publisherId,
