@@ -25,11 +25,11 @@ var app_setting = {
     smtp_setting: {
         host: 'ex.mail.ovh.net',
         port: 587,
-        secure: true, // use SSL
+        secure: 'true',
         auth: {
             user: 'info@allhaha.com',
             pass: 'LLHF!allhaha.com'
-        }
+        },
     },
     stormpath_setting: {
         API_KEY_ID: '2LRGAB800BP8WMKWV1I3277PN',
