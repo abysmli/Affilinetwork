@@ -76,7 +76,7 @@ router.get('/', function(req, res, next) {
                     ProductName: {
                         $first: "$Title"
                     },
-                    DescriptionCN: {
+                    Description: {
                         $first: "$Description"
                     },
                     Price: {
@@ -121,7 +121,7 @@ router.get('/', function(req, res, next) {
                             ProductName: {
                                 $first: "$Title"
                             },
-                            DescriptionCN: {
+                            Description: {
                                 $first: "$Description"
                             },
                             Price: {
@@ -179,7 +179,7 @@ router.get('/pagination', function(req, res, next) {
                         ProductName: {
                             $first: "$Title"
                         },
-                        DescriptionCN: {
+                        Description: {
                             $first: "$Description"
                         },
                         Price: {

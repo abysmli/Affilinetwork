@@ -826,8 +826,8 @@ router.get('/category', function(req, res, next) {
         category = "手机平板";
     } else if (category === 'makeup') {
         category = "化妆品";
-    } else if (category === 'medicine') {
-        category = "药品";
+    } else if (category === 'gesundheit') {
+        category = "健康保健";
     } else if (category === 'travel') {
         category = "旅游";
     } else if (category === 'coupon') {

@@ -10,7 +10,7 @@
                     <li class="active"><a href="/DE/category?category=electronics&page=<%= currentPage %>">Elektro&Computer</a></li>
                     <li class="active"><a href="/DE/category?category=handy_pad&page=<%= currentPage %>">Handy&Pad</a></li>
                     <li class="active"><a href="/DE/category?category=makeup&page=<%= currentPage %>">Kosmetik</a></li>
-                    <li class="active"><a href="/DE/category?category=medicine&page=<%= currentPage %>">Medikamente</a></li>
+                    <li class="active"><a href="/DE/category?category=gesundheit&page=<%= currentPage %>">Gesundheit</a></li>
                     <li class="active"><a href="/DE/category?category=travel&page=<%= currentPage %>">Reisen&Urlaub</a></li>
                     <li class="active"><a href="/DE/category?category=others&page=<%= currentPage %>">Andere</a></li>
                 </ol>
@@ -68,7 +68,7 @@
                         <div class="listing-item">
                             <div class="overlay-container">
                                 <img src="<%= product.Images %>" onerror="this.src= '/stylesheets/images/no-image.jpg';" />
-                                <a href="/product?product_id=<%= product.ProductId %>" class="overlay small">
+                                <a href="/DE/product?product_id=<%= product.ProductId %>" class="overlay small">
                                     <i class="fa fa-search-plus"></i>
                                     <span><%= product.Description %></span>
                                 </a>
@@ -108,7 +108,7 @@
                                         <option <% if(category=='Elektro&Computer') { %> selected='selected' <% } %>>Elektro&Computer</option>
                                         <option <% if(category=='Handy&Pad') { %> selected='selected' <% } %>>Handy&Pad</option>
                                         <option <% if(category=='Kosmetik') { %> selected='selected' <% } %>>Kosmetik</option>
-                                        <option <% if(category=='Medikamente') { %> selected='selected' <% } %> >Medikamente</option>
+                                        <option <% if(category=='Gesundheit') { %> selected='selected' <% } %> >Gesundheit</option>
                                         <option <% if(category=='Reisen&Urlaub') { %> selected='selected' <% } %> >Reisen&Urlaub</option>
                                         <option <% if(category=='Coupon') { %> selected='selected' <% } %> >Coupon</option>
                                         <option <% if(category=='Andere') { %> selected='selected' <% } %> >Andere</option>

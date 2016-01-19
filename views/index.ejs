@@ -10,7 +10,7 @@
                     <li class="active"><a href="/category?category=electronics&page=<%= currentPage %>">电子产品</a></li>
                     <li class="active"><a href="/category?category=handy_pad&page=<%= currentPage %>">手机平板</a></li>
                     <li class="active"><a href="/category?category=makeup&page=<%= currentPage %>">化妆品</a></li>
-                    <li class="active"><a href="/category?category=medicine&page=<%= currentPage %>">药品</a></li>
+                    <li class="active"><a href="/category?category=gesundheit&page=<%= currentPage %>">健康保健</a></li>
                     <li class="active"><a href="/category?category=travel&page=<%= currentPage %>">旅游</a></li>
                     <li class="active"><a href="/category?category=others&page=<%= currentPage %>">其他</a></li>
                 </ol>
@@ -92,8 +92,8 @@
                 <ul class="pagination"></ul>
             </div>
             <aside class="col-md-2">
-                <div class="siderbar">
-                    <div class="body clearfixed">
+
+                    <div class="block clearfixed">
                         <h3>筛选</h3>
                         <div class="separator"></div>
                         <div class="sorting-filters">
@@ -108,7 +108,7 @@
                                         <option <% if(category=='电子产品') { %> selected='selected' <% } %>>电子产品</option>
                                         <option <% if(category=='手机平板') { %> selected='selected' <% } %>>手机平板</option>
                                         <option <% if(category=='化妆品') { %> selected='selected' <% } %>>化妆品</option>
-                                        <option <% if(category=='药品') { %> selected='selected' <% } %> >药品</option>
+                                        <option <% if(category=='健康保健') { %> selected='selected' <% } %> >健康保健</option>
                                         <option <% if(category=='旅游') { %> selected='selected' <% } %> >旅游</option>
                                         <option <% if(category=='打折券') { %> selected='selected' <% } %> >打折券</option>
                                         <option <% if(category=='其他') { %> selected='selected' <% } %> >其他</option>
@@ -140,7 +140,7 @@
                             </form>
                         </div>
                     </div>
-                </div>
+
             </aside>
         </div>
     </div>
