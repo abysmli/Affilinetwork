@@ -15,12 +15,21 @@ var app_setting = {
     },
     email_setting: {
         service: 'hotmail',
-        from: 'service@Allhaha.com',
-        toAdmin: 'abysmli@gmail.com',
+        from: 'info@allhaha.com',
+        toAdmin: 'info@allhaha.com',
         auth: {
-            user: 'fei.minhao@hotmail.com',
-            pass: 'feifei2904401'
+            user: 'info@allhaha.com',
+            pass: 'LLHF!allhaha.com'
         },
+    },
+    smtp_setting: {
+        host: 'ex.mail.ovh.net',
+        port: 587,
+        secure: true, // use SSL
+        auth: {
+            user: 'info@allhaha.com',
+            pass: 'LLHF!allhaha.com'
+        }
     },
     stormpath_setting: {
         API_KEY_ID: '2LRGAB800BP8WMKWV1I3277PN',

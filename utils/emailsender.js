@@ -12,10 +12,7 @@ module.exports = (function() {
         var subject = data.subject;
         var content = data.content;
 
-        var transporter = nodemailer.createTransport({
-            service: setting.email_setting.service,
-            auth: setting.email_setting.auth
-        });
+        var transporter = nodemailer.createTransport(setting.smtp_setting);
 
         // Use fileSystem module to read template file
         fs.readFile(template, 'utf8', function(err, file) {
