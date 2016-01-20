@@ -28,6 +28,7 @@
             <th>Keywords</th>
             <th>Source</th>
             <% if(type == 'local') { %>
+                <th>Category</th>
                 <th>Translated</th>
                 <th>Delete</th>
             <% } else { %>
@@ -49,6 +50,7 @@
             <th>Keywords</th>
             <th>Source</th>
             <% if(type == 'local') { %>
+                <th>Category</th>
                 <th>Translated</th>
                 <th>Delete</th>
             <% } else { %>
@@ -98,6 +100,9 @@
                     <%= product.Source %>
                 </td>
                 <% if(type == 'local') { %>
+                    <td>
+                        <%= product.Category %>
+                    </td>
                     <td>
                         <% if (product.Tranlated) { %>
                         <span class="label label-primary">Translated</span>

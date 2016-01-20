@@ -4,19 +4,19 @@
             <div class="col-md-10">
                 <ol class="breadcrumb">
                     <li><i class="fa fa-th-large pr-10"></i>产品分类: </li>
-                    <li class="active"><a href="/category?category=clothes_shoes&page=<%= currentPage %>">服装鞋子</a></li>
-                    <li class="active"><a href="/category?category=food&page=<%= currentPage %>">食品饮食</a></li>
-                    <li class="active"><a href="/category?category=kitchen&page=<%= currentPage %>">厨房用具</a></li>
-                    <li class="active"><a href="/category?category=electronics&page=<%= currentPage %>">电子产品</a></li>
-                    <li class="active"><a href="/category?category=handy_pad&page=<%= currentPage %>">手机平板</a></li>
-                    <li class="active"><a href="/category?category=makeup&page=<%= currentPage %>">化妆品</a></li>
-                    <li class="active"><a href="/category?category=gesundheit&page=<%= currentPage %>">健康保健</a></li>
-                    <li class="active"><a href="/category?category=travel&page=<%= currentPage %>">旅游</a></li>
-                    <li class="active"><a href="/category?category=others&page=<%= currentPage %>">其他</a></li>
+                    <li class="active"><a href="/?category=服装鞋子">服装鞋子</a></li>
+                    <li class="active"><a href="/?category=食品饮食">食品饮食</a></li>
+                    <li class="active"><a href="/?category=厨房用具">厨房用具</a></li>
+                    <li class="active"><a href="/?category=电子产品">电子产品</a></li>
+                    <li class="active"><a href="/?category=母婴">母婴</a></li>
+                    <li class="active"><a href="/?category=化妆品">化妆品</a></li>
+                    <li class="active"><a href="/?category=健康保健">健康保健</a></li>
+                    <li class="active"><a href="/?category=旅游">旅游</a></li>
+                    <li class="active"><a href="/?category=其他">其他</a></li>
                 </ol>
             </div>
             <div class="col-md-2">
-                <form role="search" class="search-box" action="/search" method="post" style="margin: 0 !important;">
+                <form role="search" class="search-box" style="margin: 0 !important;">
                     <div class="has-feedback">
                         <input type="text" class="form-control" placeholder="搜索产品" name="search" style="-webkit-appearance: textfield; border-radius: 25px">
                         <i class="fa fa-search form-control-feedback"></i>
@@ -33,6 +33,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="main col-md-10">
+                <% if (mainPage) { %>
                 <h2 class="page-title">当前最热</h2>
                 <div class="separator-2"></div>
                 <div class="owl-carousel carousel-autoplay owl-theme col-xs-6">
@@ -60,6 +61,7 @@
                     <% }); %>
                 </div>
                 <div class="clearfix"></div>
+                <% } %>
                 <h2 class="page-title">折扣商品</h2>
                 <div class="separator-2"></div>
                 <div id="container" class="row">
@@ -92,12 +94,12 @@
                 <ul class="pagination"></ul>
             </div>
             <aside class="col-md-2">
-
+                <div class="siderbar">
                     <div class="block clearfixed">
                         <h3>筛选</h3>
                         <div class="separator"></div>
                         <div class="sorting-filters">
-                            <form role="form" action="/filter" method="post">
+                            <form role="form">
                                 <div class="form-group">
                                     <label>种类</label>
                                     <select class="form-control" name="category">
@@ -106,7 +108,7 @@
                                         <option <% if(category=='食品饮食') { %> selected='selected' <% } %>>食品饮食</option>
                                         <option <% if(category=='厨房用具') { %> selected='selected' <% } %>>厨房用具</option>
                                         <option <% if(category=='电子产品') { %> selected='selected' <% } %>>电子产品</option>
-                                        <option <% if(category=='手机平板') { %> selected='selected' <% } %>>手机平板</option>
+                                        <option <% if(category=='母婴') { %> selected='selected' <% } %>>母婴</option>
                                         <option <% if(category=='化妆品') { %> selected='selected' <% } %>>化妆品</option>
                                         <option <% if(category=='健康保健') { %> selected='selected' <% } %> >健康保健</option>
                                         <option <% if(category=='旅游') { %> selected='selected' <% } %> >旅游</option>
@@ -140,7 +142,7 @@
                             </form>
                         </div>
                     </div>
-
+                </div>
             </aside>
         </div>
     </div>
@@ -149,12 +151,6 @@
 <!-- section start -->
 <!-- ================ -->
 <script type="text/javascript">
-
-function test(pageNumber) {
-    var page = "#page-" + pageNumber;
-    $('.selection').hide()
-    $(page).show()
-}
 
 $(document).ready(function() {
     var $container = $('#container');
@@ -165,14 +161,13 @@ $(document).ready(function() {
             }
         });
     });
-    $('.siderbar').sticky({
-        topSpacing: 60
-    });
+
     $('.pagination').pagination({
-        items: <%= count %> ,
-        itemsOnPage: 30,
-        cssStyle: 'light-theme',
-        currentPage: <%= currentPage %>
+        pages: <%= pages %> ,
+        currentPage: <%= currentPage %>,
+        hrefTextPrefix: getURL(),
+        prevText: "上一页",
+        nextText: "下一页"
     });
 });
 

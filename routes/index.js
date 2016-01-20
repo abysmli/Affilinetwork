@@ -24,7 +24,10 @@ var EmailSender = new emailSender();
 var utils = require('../utils/utils.js');
 var Utils = new utils();
 
-var prodAdv = aws.createProdAdvClient(setting.amazon_setting.AccessKeyId, setting.amazon_setting.SecretAccessKey, setting.amazon_setting.AssociateTag, {host: "ecs.amazonaws.de", region: "DE"});
+var prodAdv = aws.createProdAdvClient(setting.amazon_setting.AccessKeyId, setting.amazon_setting.SecretAccessKey, setting.amazon_setting.AssociateTag, {
+    host: "ecs.amazonaws.de",
+    region: "DE"
+});
 
 var Affilinet = new affilinet({
     publisherId: setting.affilinet_setting.publisherId,
@@ -51,51 +54,99 @@ passport.use(new LocalStrategy(
     }
 ));
 
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
     var Utils = new utils();
     var page = req.query.page || 1;
-    Product.count({}, function(err, count) {
-        var pageColum = count / 50;
-        Product.aggregate(
-            [{
-                "$match": {
-                    EAN: {
-                        $ne: null
-                    }
-                },
+    var search = req.query.search || "";
+    var category = req.query.category || "";
+    var minprice = req.query.minprice || Number.NEGATIVE_INFINITY;
+    var maxprice = req.query.maxprice || Number.POSITIVE_INFINITY;
+    var sort = req.query.sort || "";
+    var mainPage = false;
+    var _category = category;
+    var ItemOnPage = 30;
+    if (category == "" || category == "所有") {
+        _category = {
+            $in: ["服装鞋子", "食品饮食", "厨房用具", "电子产品", "手机平板", "化妆品", "健康保健", "旅游", "其他"]
+        };
+    }
+
+    if (sort == '按价格由低到高') {
+        sort = {
+            Price: 1
+        };
+    } else if (sort == '按价格由高到低') {
+        sort = {
+            Price: -1
+        };
+    } else if (sort == '按热度') {
+        sort = {
+            SaleRank: -1
+        };
+    } else {
+        sort = {
+            updated_at: -1
+        };
+    }
+    var group = {
+        _id: "$EAN",
+        ProductId: {
+            $first: "$_id"
+        },
+        Images: {
+            $first: "$ProductImage"
+        },
+        ProductName: {
+            $first: "$TitleCN"
+        },
+        DescriptionCN: {
+            $first: "$DescriptionCN"
+        },
+        Price: {
+            $push: "$Price"
+        }
+    };
+    var matchQuery = {
+        $and: [{
+            EAN: {
+                $ne: 'null'
+            },
+            Price: {
+                $lte: Number(maxprice),
+                $gte: Number(minprice)
+            },
+            Category: _category,
+            $or: [{
+                Title: new RegExp(search, 'gi')
             }, {
-                "$group": {
-                    _id: "$EAN",
-                    ProductId: {
-                        $first: "$_id"
-                    },
-                    Images: {
-                        $first: "$ProductImage"
-                    },
-                    ProductName: {
-                        $first: "$TitleCN"
-                    },
-                    DescriptionCN: {
-                        $first: "$DescriptionCN"
-                    },
-                    Price: {
-                        $push: "$Price"
-                    },
-                }
+                Category: new RegExp(search, 'gi')
             }, {
-                "$skip": (page - 1) * 50,
-            }, {
-                "$limit": 50
-            }, {
-                "$sort": {
-                    updated_at: -1
-                }
-            }],
-            function(err, products) {
-                if (err != null) {
-                    next(err);
-                } else {
+                Keywords: new RegExp(search, 'gi')
+            }]
+        }]
+    };
+
+    Product.distinct("EAN", matchQuery, function(err, results) {
+        console.log(results.length);
+        var pages = Math.ceil(results.length / ItemOnPage);
+        Product.aggregate([{
+            "$match": matchQuery
+        }, {
+            "$group": group
+        }, {
+            "$skip": (page - 1) * ItemOnPage
+        }, {
+            "$limit": ItemOnPage
+        }, {
+            "$sort": sort
+        }], function(err, products) {
+            if (err != null) {
+                next(err);
+            } else {
+                if (page == 1 && search == "" && category == "" && minprice == Number.NEGATIVE_INFINITY && maxprice == Number.POSITIVE_INFINITY) {
+                    mainPage = true;
                     Product.aggregate([{
                         "$match": {
                             $and: [{
@@ -107,27 +158,9 @@ router.get('/', function(req, res, next) {
                                     $gte: 1
                                 }
                             }]
-
                         }
                     }, {
-                        "$group": {
-                            _id: "$EAN",
-                            ProductId: {
-                                $first: "$_id"
-                            },
-                            Images: {
-                                $first: "$ProductImage"
-                            },
-                            ProductName: {
-                                $first: "$TitleCN"
-                            },
-                            DescriptionCN: {
-                                $first: "$DescriptionCN"
-                            },
-                            Price: {
-                                $push: "$Price"
-                            }
-                        }
+                        "$group": group
                     }, {
                         "$sort": {
                             update_at: -1
@@ -136,8 +169,8 @@ router.get('/', function(req, res, next) {
                         res.render('index', {
                             title: 'Allhaha',
                             footer_bottom: false,
-                            count: count,
-                            pageColum: pageColum,
+                            mainPage: mainPage,
+                            pages: pages,
                             currentPage: page,
                             products: products,
                             hotproducts: hotproduct,
@@ -147,75 +180,23 @@ router.get('/', function(req, res, next) {
                             layout: 'layout'
                         });
                     });
-                    
+                } else {
+                    res.render('index', {
+                        title: 'Allhaha',
+                        footer_bottom: false,
+                        mainPage: mainPage,
+                        pages: pages,
+                        currentPage: page,
+                        products: products,
+                        category: '所有',
+                        sort: '按日期',
+                        user: req.user,
+                        layout: 'layout'
+                    });
                 }
-            });
-    });
-});
-
-router.get('/pagination', function(req, res, next) {
-    var page = req.query.page;
-    if (page == 1) {
-        res.redirect('/');
-    } else {
-        Product.count({}, function(err, count) {
-            var pageColum = count / 50;
-            Product.aggregate(
-                [{
-                    "$match": {
-                        EAN: {
-                            $ne: null
-                        }
-                    },
-                }, {
-                    "$group": {
-                        _id: "$EAN",
-                        ProductId: {
-                            $first: "$_id"
-                        },
-                        Images: {
-                            $first: "$ProductImage"
-                        },
-                        ProductName: {
-                            $first: "$TitleCN"
-                        },
-                        DescriptionCN: {
-                            $first: "$DescriptionCN"
-                        },
-                        Price: {
-                            $push: "$Price"
-                        },
-                    }
-                }, {
-                    "$skip": (page - 1) * 50,
-                }, {
-                    "$limit": 50
-                }, {
-                    "$sort": {
-                        updated_at: -1
-                    }
-                }],
-                function(err, products) {
-                    if (err != null) {
-                        next(err);
-                    } else {
-                        res.render('searchproduct', {
-                            title: 'Allhaha',
-                            footer_bottom: true,
-                            count: count,
-                            pageColum: pageColum,
-                            currentPage: page,
-                            products: products,
-                            category: '所有',
-                            sort: '按日期',
-                            user: req.user,
-                            layout: 'layout'
-                        });
-                    }
-                });
+            }
         });
-    }
-
+    });
 });
 
 router.post('/', passport.authenticate('stormpath', {
@@ -225,678 +206,6 @@ router.post('/', passport.authenticate('stormpath', {
 }), function(req, res, next) {
     res.redirect('/');
 });
-
-
-router.post('/filter', function(req, res, next) {
-    var category = req.body.category;
-    var minprice = req.body.minprice;
-    var maxprice = req.body.maxprice;
-    var sort = req.body.sort;
-    var page = req.query.page || 1;
-    if (minprice == '') {
-        minprice = Number.NEGATIVE_INFINITY;
-    }
-    if (maxprice == '') {
-        maxprice = Number.POSITIVE_INFINITY;
-    }
-    if (category == "所有") {
-        Product.count({}, function(err, count) {
-            var pageColum = count / 50;
-            if (sort == '按日期') {
-                Product.aggregate([{
-                        "$match": {
-                            "$and": [{
-                                EAN: {
-                                    $ne: null
-                                }
-                            }, {
-                                Price: {
-                                    $lte: Number(maxprice),
-                                    $gte: Number(minprice)
-                                }
-                            }]
-                        }
-                    }, {
-                        "$group": {
-                            _id: "$EAN",
-                            ProductId: {
-                                $first: "$_id"
-                            },
-                            Images: {
-                                $first: "$ProductImage"
-                            },
-                            ProductName: {
-                                $first: "$TitleCN"
-                            },
-                            Price: {
-                                $push: "$Price"
-                            }
-                        }
-                    }, {
-                        "$skip": (page - 1) * 50,
-                    }, {
-                        "$limit": 50
-                    }, {
-                        "$sort": {
-                            update_at: -1
-                        }
-                    }],
-                    function(err, products) {
-                        if (err != null) {
-                            next(err);
-                        } else {
-                            res.render('searchproduct', {
-                                title: 'Allhaha',
-                                footer_bottom: true,
-                                count: count,
-                                pageColum: pageColum,
-                                currentPage: page,
-                                products: products,
-                                category: category,
-                                sort: sort,
-                                user: req.user,
-                                layout: 'layout'
-                            });
-                        }
-
-                    });
-            } else if (sort == '按价格由低到高') {
-                Product.aggregate([{
-                        "$match": {
-                            "$and": [{
-                                EAN: {
-                                    $ne: null
-                                }
-                            }, {
-                                Price: {
-                                    $lte: Number(maxprice),
-                                    $gte: Number(minprice)
-                                }
-                            }]
-                        }
-                    }, {
-                        "$group": {
-                            _id: "$EAN",
-                            ProductId: {
-                                $first: "$_id"
-                            },
-                            Images: {
-                                $first: "$ProductImage"
-                            },
-                            ProductName: {
-                                $first: "$TitleCN"
-                            },
-                            Price: {
-                                $push: "$Price"
-                            }
-                        }
-                    }, {
-                        "$skip": (page - 1) * 50,
-                    }, {
-                        "$limit": 50
-                    }, {
-                        "$sort": {
-                            Price: 1
-                        }
-                    }],
-                    function(err, products) {
-                        if (err != null) {
-                            next(err);
-                        } else {
-                            res.render('searchproduct', {
-                                title: 'Allhaha',
-                                footer_bottom: true,
-                                count: count,
-                                pageColum: pageColum,
-                                currentPage: page,
-                                products: products,
-                                category: category,
-                                sort: sort,
-                                user: req.user,
-                                layout: 'layout'
-                            });
-                        }
-
-                    });
-            } else if (sort == '按价格由高到低') {
-                Product.aggregate([{
-                        "$match": {
-                            "$and": [{
-                                EAN: {
-                                    $ne: null
-                                }
-                            }, {
-                                Price: {
-                                    $lte: Number(maxprice),
-                                    $gte: Number(minprice)
-                                }
-                            }]
-                        }
-                    }, {
-                        "$group": {
-                            _id: "$EAN",
-                            ProductId: {
-                                $first: "$_id"
-                            },
-                            Images: {
-                                $first: "$ProductImage"
-                            },
-                            ProductName: {
-                                $first: "$TitleCN"
-                            },
-                            Price: {
-                                $push: "$Price"
-                            }
-                        }
-                    }, {
-                        "$skip": (page - 1) * 50,
-                    }, {
-                        "$limit": 50
-                    }, {
-                        "$sort": {
-                            Price: -1
-                        }
-                    }],
-                    function(err, products) {
-                        if (err != null) {
-                            next(err);
-                        } else {
-                            res.render('searchproduct', {
-                                title: 'Allhaha',
-                                footer_bottom: true,
-                                count: count,
-                                pageColum: pageColum,
-                                currentPage: page,
-                                products: products,
-                                category: category,
-                                sort: sort,
-                                user: req.user,
-                                layout: 'layout'
-                            });
-                        }
-                    });
-            } else if (sort == '按热度') {
-                Product.aggregate([{
-                        "$match": {
-                            "$and": [{
-                                EAN: {
-                                    $ne: null
-                                }
-                            }, {
-                                Price: {
-                                    $lte: Number(maxprice),
-                                    $gte: Number(minprice)
-                                }
-                            }]
-                        }
-                    }, {
-                        "$group": {
-                            _id: "$EAN",
-                            ProductId: {
-                                $first: "$_id"
-                            },
-                            Images: {
-                                $first: "$ProductImage"
-                            },
-                            ProductName: {
-                                $first: "$TitleCN"
-                            },
-                            Price: {
-                                $push: "$Price"
-                            }
-                        }
-                    }, {
-                        "$skip": (page - 1) * 50,
-                    }, {
-                        "$limit": 50
-                    }, {
-                        "$sort": {
-                            SaleRank: -1
-                        }
-                    }],
-                    function(err, products) {
-                        if (err != null) {
-                            next(err);
-                        } else {
-                            res.render('searchproduct', {
-                                title: 'Allhaha',
-                                footer_bottom: true,
-                                count: count,
-                                pageColum: pageColum,
-                                currentPage: page,
-                                products: products,
-                                category: category,
-                                sort: sort,
-                                user: req.user,
-                                layout: 'layout'
-                            });
-                        }
-                    });
-            }
-        });
-
-    } else {
-        Product.count({
-            Category: category
-        }, function(err, count) {
-            var pageColum = count / 50;
-            if (sort == '按日期') {
-                Product.aggregate([{
-                        "$match": {
-                            "$and": [{
-                                EAN: {
-                                    $ne: null
-                                }
-                            }, {
-                                Price: {
-                                    $lte: Number(maxprice),
-                                    $gte: Number(minprice)
-                                }
-                            }, {
-                                Category: {
-                                    $eq: category
-                                }
-                            }]
-                        }
-                    }, {
-                        "$group": {
-                            _id: "$EAN",
-                            ProductId: {
-                                $first: "$_id"
-                            },
-                            Images: {
-                                $first: "$ProductImage"
-                            },
-                            ProductName: {
-                                $first: "$TitleCN"
-                            },
-                            Price: {
-                                $push: "$Price"
-                            }
-                        }
-                    }, {
-                        "$skip": (page - 1) * 50,
-                    }, {
-                        "$limit": 50
-                    }, {
-                        "$sort": {
-                            update_at: -1
-                        }
-                    }],
-                    function(err, products) {
-                        if (err != null) {
-                            next(err);
-                        } else {
-                            res.render('searchproduct', {
-                                title: 'Allhaha',
-                                footer_bottom: true,
-                                count: count,
-                                pageColum: pageColum,
-                                currentPage: page,
-                                products: products,
-                                category: category,
-                                sort: sort,
-                                user: req.user,
-                                layout: 'layout'
-                            });
-                        }
-
-                    });
-            } else if (sort == '按价格由低到高') {
-                Product.aggregate([{
-                        "$match": {
-                            "$and": [{
-                                EAN: {
-                                    $ne: null
-                                }
-                            }, {
-                                Price: {
-                                    $lte: Number(maxprice),
-                                    $gte: Number(minprice)
-                                }
-                            }, {
-                                Category: {
-                                    $eq: category
-                                }
-                            }]
-                        }
-                    }, {
-                        "$group": {
-                            _id: "$EAN",
-                            ProductId: {
-                                $first: "$_id"
-                            },
-                            Images: {
-                                $first: "$ProductImage"
-                            },
-                            ProductName: {
-                                $first: "$TitleCN"
-                            },
-                            Price: {
-                                $push: "$Price"
-                            }
-                        }
-                    }, {
-                        "$skip": (page - 1) * 50,
-                    }, {
-                        "$limit": 50
-                    }, {
-                        "$sort": {
-                            Price: 1
-                        }
-                    }],
-                    function(err, products) {
-                        if (err != null) {
-                            next(err);
-                        } else {
-                            res.render('searchproduct', {
-                                title: 'Allhaha',
-                                footer_bottom: true,
-                                count: count,
-                                pageColum: pageColum,
-                                currentPage: page,
-                                products: products,
-                                category: category,
-                                sort: sort,
-                                user: req.user,
-                                layout: 'layout'
-                            });
-                        }
-
-                    });
-            } else if (sort == '按价格由高到低') {
-                Product.aggregate([{
-                        "$match": {
-                            "$and": [{
-                                EAN: {
-                                    $ne: null
-                                }
-                            }, {
-                                Price: {
-                                    $lte: Number(maxprice),
-                                    $gte: Number(minprice)
-                                }
-                            }, {
-                                Category: {
-                                    $eq: category
-                                }
-                            }]
-                        }
-                    }, {
-                        "$group": {
-                            _id: "$EAN",
-                            ProductId: {
-                                $first: "$_id"
-                            },
-                            Images: {
-                                $first: "$ProductImage"
-                            },
-                            ProductName: {
-                                $first: "$TitleCN"
-                            },
-                            Price: {
-                                $push: "$Price"
-                            }
-                        }
-                    }, {
-                        "$skip": (page - 1) * 50,
-                    }, {
-                        "$limit": 50
-                    }, {
-                        "$sort": {
-                            Price: -1
-                        }
-                    }],
-                    function(err, products) {
-                        if (err != null) {
-                            next(err);
-                        } else {
-                            res.render('searchproduct', {
-                                title: 'Allhaha',
-                                footer_bottom: true,
-                                count: count,
-                                pageColum: pageColum,
-                                currentPage: page,
-                                products: products,
-                                category: category,
-                                sort: sort,
-                                user: req.user,
-                                layout: 'layout'
-                            });
-                        }
-                    });
-            } else if (sort == '按热度') {
-                Product.aggregate([{
-                        "$match": {
-                            "$and": [{
-                                EAN: {
-                                    $ne: null
-                                }
-                            }, {
-                                Price: {
-                                    $lte: Number(maxprice),
-                                    $gte: Number(minprice)
-                                }
-                            }, {
-                                Category: {
-                                    $eq: category
-                                }
-                            }]
-                        }
-                    }, {
-                        "$group": {
-                            _id: "$EAN",
-                            ProductId: {
-                                $first: "$_id"
-                            },
-                            Images: {
-                                $first: "$ProductImage"
-                            },
-                            ProductName: {
-                                $first: "$TitleCN"
-                            },
-                            Price: {
-                                $push: "$Price"
-                            }
-                        }
-                    }, {
-                        "$skip": (page - 1) * 50,
-                    }, {
-                        "$limit": 50
-                    }, {
-                        "$sort": {
-                            SaleRank: -1
-                        }
-                    }],
-                    function(err, products) {
-                        if (err != null) {
-                            next(err);
-                        } else {
-                            res.render('searchproduct', {
-                                title: 'Allhaha',
-                                footer_bottom: true,
-                                count: count,
-                                pageColum: pageColum,
-                                currentPage: page,
-                                products: products,
-                                category: category,
-                                sort: sort,
-                                user: req.user,
-                                layout: 'layout'
-                            });
-                        }
-                    });
-            }
-        });
-    };
-});
-
-/*search the product from input*/
-router.post('/search', function(req, res, next) {
-    var search = req.body.search;
-    var page = req.body.page || 1;
-    var count = 0;
-    var query = {
-        $or: [{
-            Title: new RegExp(search, 'gi')
-        }, {
-            Category: new RegExp(search, 'gi')
-        }, {
-            Keywords: new RegExp(search, 'gi')
-        }]
-    };
-
-    Product.count(query, function(err, count) {
-        var pageColum = count / 50;
-        Product.aggregate([{
-            "$match": {
-                $and: [{
-                    EAN: {
-                        $ne: null
-                    },
-                    $or: [{
-                        Title: new RegExp(search, 'gi')
-                    }, {
-                        Category: new RegExp(search, 'gi')
-                    }, {
-                        Keywords: new RegExp(search, 'gi')
-                    }]
-
-                }]
-            }
-        }, {
-            "$group": {
-                _id: "$EAN",
-                ProductId: {
-                    $first: "$_id"
-                },
-                Images: {
-                    $first: "$ProductImage"
-                },
-                ProductName: {
-                    $first: "$TitleCN"
-                },
-                Price: {
-                    $push: "$Price"
-                }
-            }
-        }, {
-            "$skip": (page - 1) * 50
-        }, {
-            "$limit": 50
-        }, {
-            "$sort": {
-                update_at: -1
-            }
-        }], function(err, results) {
-            if (err != null) {
-                next(err);
-            } else {
-                res.render('searchproduct', {
-                    title: 'Allhaha',
-                    footer_bottom: true,
-                    count: count,
-                    pageColum: pageColum,
-                    currentPage: page,
-                    category: '所有',
-                    sort: '按日期',
-                    products: results,
-                    user: req.user,
-                    layout: 'layout'
-                });
-            }
-
-        });
-
-    });
-});
-
-router.get('/category', function(req, res, next) {
-    var category = req.query.category;
-    var page = req.query.page || 1;
-    if (category === 'clothes_shoes') {
-        category = "服装鞋子";
-    } else if (category === 'food') {
-        category = "食品饮食";
-    } else if (category === 'kitchen') {
-        category = "厨房用具";
-    } else if (category === 'electronics') {
-        category = "电子产品";
-    } else if (category === 'handy_pad') {
-        category = "手机平板";
-    } else if (category === 'makeup') {
-        category = "化妆品";
-    } else if (category === 'gesundheit') {
-        category = "健康保健";
-    } else if (category === 'travel') {
-        category = "旅游";
-    } else if (category === 'coupon') {
-        category = "打折券";
-    } else if (category === 'others') {
-        category = "其他";
-    }
-
-    Product.count({
-        Category: category
-    }, function(err, count) {
-        var pageColumn = count / 50;
-        Product.aggregate([{
-            "$match": {
-                $and: [{
-                    EAN: {
-                        $ne: null
-                    },
-                    Category: {
-                        $eq: category
-                    }
-                }]
-            }
-        }, {
-            "$group": {
-                _id: "$EAN",
-                ProductId: {
-                    $first: "$_id"
-                },
-                Images: {
-                    $first: "$ProductImage"
-                },
-                ProductName: {
-                    $first: "$TitleCN"
-                },
-                Price: {
-                    $push: "$Price"
-                }
-            }
-        }, {
-            "$skip": (page - 1) * 50,
-        }, {
-            "$limit": 50
-        }, {
-            "$sort": {
-                update_at: -1
-            }
-        }], function(err, products) {
-            if (err != null) {
-                next(err);
-            } else {
-                res.render('searchproduct', {
-                    title: 'Allhaha',
-                    footer_bottom: true,
-                    count: count,
-                    pageColum: pageColumn,
-                    currentPage: page,
-                    category: category,
-                    sort: '按日期',
-                    products: products,
-                    user: req.user,
-                    layout: 'layout'
-                });
-            }
-        });
-
-    });
-});
-
 
 router.get('/login', function(req, res, next) {
     res.render('userlogin/login', {
