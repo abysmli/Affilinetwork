@@ -232,7 +232,7 @@ router.get('/product', function(req, res, next) {
             else {
                 res.render('product_details_de', {
                     title: 'Details',
-                    footer_bottom: true,
+                    footer_bottom: false,
                     product: _product,
                     product_link: req.url,
                     products: _products,

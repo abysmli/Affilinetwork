@@ -237,7 +237,7 @@ router.get('/product', function(req, res, next) {
             else {
                 res.render('product_details', {
                     title: '德国打折商品, 产品描述',
-                    footer_bottom: true,
+                    footer_bottom: false,
                     product: _product,
                     product_link: req.url,
                     products: _products,
