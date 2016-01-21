@@ -1,5 +1,5 @@
 <div class="page-intro">
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
             <div class="col-md-10">
                 <ol class="breadcrumb">
@@ -43,11 +43,29 @@
                             <img src="<%= product.Images %>" />
                             <a href="/product?product_id=<%= product.ProductId %>" class="overlay small">
                                 <i class="fa fa-search-plus"></i>
-                                <span><%= product.DescriptionCN %></span>
+                                <span>
+                                    <% for (var l = product.DescriptionCN.length, i = 0; i < l; i++) { %>
+                                        <% desc = product.DescriptionCN[i]%>
+                                        <% if (desc !== "") { %>
+                                            <%= desc %>
+                                            <% break %>
+                                        <% } %>
+                                    <% } %>
+                                </span>
                             </a>
                         </div>
                         <div class="listing-item-body clearfix">
-                            <h3 class="title" style="font-weight: 300"><a href="/product?product_id=<%= product.ProductId %>"><%= product.ProductName %></a></h3>
+                            <h3 class="title" style="font-weight: 300">
+                                <a href="/product?product_id=<%= product.ProductId %>">
+                                    <% for (var l = product.ProductName.length, i = 0; i < l; i++) { %>
+                                        <% name = product.ProductName[i]%>
+                                        <% if (name !== "") { %>
+                                            <%= name %>
+                                            <% break %>
+                                        <% } %>
+                                    <% } %>
+                                </a>
+                            </h3>
                             <% if (product.Price.length == 1 || Math.min.apply(null, product.Price) == Math.max.apply(null, product.Price)) { %>
                             <span class="price" style="font-size: 20px"><%= product.Price[0].toString().replace(".", ",") %> €</span>
                             <% } else { %>
@@ -69,14 +87,32 @@
                     <div class="element col-lg-3 col-md-3 col-sm-6 col-xs-6 masonry-grid-item">
                         <div class="listing-item">
                             <div class="overlay-container">
-                                <img src="<%= product.Images %>" onerror="this.src= '/stylesheets/images/no-image.jpg';" />
+                                <img src="<%= product.Images %>" onerror="this.src= '/images/no-image.jpg';" />
                                 <a href="/product?product_id=<%= product.ProductId %>" class="overlay small">
                                     <i class="fa fa-search-plus"></i>
-                                    <span><%= product.DescriptionCN %></span>
+                                    <span>
+                                    <% for (var l = product.DescriptionCN.length, i = 0; i < l; i++) { %>
+                                        <% desc = product.DescriptionCN[i]%>
+                                        <% if (desc !== "") { %>
+                                            <%= desc %>
+                                            <% break %>
+                                        <% } %>
+                                    <% } %>
+                                    </span>
                                 </a>
                             </div>
                             <div class="listing-item-body clearfix">
-                                <h3 class="title" style="font-weight: 300"><a href="/product?product_id=<%= product.ProductId %>"><%= product.ProductName %></a></h3>
+                                <h3 class="title" style="font-weight: 300">
+                                    <a href="/product?product_id=<%= product.ProductId %>">
+                                    <% for (var l = product.ProductName.length, i = 0; i < l; i++) { %>
+                                        <% name = product.ProductName[i]%>
+                                        <% if (name !== "") { %>
+                                            <%= name %>
+                                            <% break %>
+                                        <% } %>
+                                    <% } %>
+                                    </a>
+                                </h3>
                                 <% if (product.Price.length == 1 || Math.min.apply(null, product.Price) == Math.max.apply(null, product.Price)) { %>
                                 <span class="price" style="font-size: 20px"><%= product.Price[0].toString().replace(".", ",") %> €</span>
                                 <% } else { %>
@@ -95,7 +131,7 @@
             </div>
             <aside class="col-md-2">
                 <div class="siderbar">
-                    <div class="block clearfixed">
+                    <div class="clearfixed">
                         <h3>筛选</h3>
                         <div class="separator"></div>
                         <div class="sorting-filters">

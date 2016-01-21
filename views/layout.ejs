@@ -49,7 +49,7 @@
         <script type="text/javascript" src="/javascripts/pretty-json-min.js"></script>
     </head>
     <% if(footer_bottom) { %>
-    <body class="no-trans" style="padding-bottom: 72px;">
+    <body class="no-trans" style="padding-bottom: 140px;">
         <% } else { %>
         <body class="no-trans">
             <% } %>
@@ -62,7 +62,7 @@
                 <!-- header-top start (Add "dark" class to .header-top in order to enable dark header-top e.g <div class="header-top dark">) -->
                 <!-- ================ -->
                 <div class="header-top">
-                    <div class="container">
+                    <div class="container-fluid">
                         <div class="row">
                             <div class="col-lg-6 col-md-6 col-xs-3 col-sm-6">
                                 <div class = "header-top-first clearfix">
@@ -117,7 +117,7 @@
                                             </ul>
                                             <% } else { %>
                                             <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i><%= user.username %></button>
-                                            <ul class="dropdown-menu dropdown-menu-left dropdown-animation">
+                                            <ul class="dropdown-menu dropdown-menu-right dropdown-animation">
                                                 <a class="btn btn-group btn-dark btn-sm" href="/favourite">查看收藏夹</a>
                                                 <span><p style="font-size: small"><a href="/logout">退出登录</a></p></span>
                                             </ul>
@@ -216,7 +216,7 @@
                 <% } else { %>
                 <div class="subfooter">
                     <% } %>
-                    <div class="container">
+                    <div class="container-fluid">
                         <div class="row">
                             <div class="col-md-7">
                                 <p>Copyright © 2015 Allhaha by <a target="_blank" href="/aboutus">Allhaha.com</a>. All Rights Reserved</p>

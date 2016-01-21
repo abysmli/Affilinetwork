@@ -32,10 +32,15 @@ File Description: Place here your custom CSS styles
   max-width: 70%;
   max-height: 200px;
   margin-top: 20px;
+  margin-bottom: 20px;
   margin-left: auto;
   margin-right: auto;
 }
 
 .image-box {
   background-color: #ffffff;
+}
+
+.subfooter {
+  z-index: 2000;
 }

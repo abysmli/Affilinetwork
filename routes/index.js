@@ -73,18 +73,22 @@ router.get('/', function(req, res, next) {
     }
     if (sort == '按价格由低到高') {
         sort = {
+            Tranlated: -1,
             Price: 1
         };
     } else if (sort == '按价格由高到低') {
         sort = {
+            Tranlated: -1,
             Price: -1
         };
     } else if (sort == '按热度') {
         sort = {
+            Tranlated: -1,
             SaleRank: -1
         };
     } else {
         sort = {
+            Tranlated: -1,
             updated_at: -1
         };
     }
@@ -97,10 +101,10 @@ router.get('/', function(req, res, next) {
             $first: "$ProductImage"
         },
         ProductName: {
-            $first: "$TitleCN"
+            $push: "$TitleCN"
         },
         DescriptionCN: {
-            $first: "$DescriptionCN"
+            $push: "$DescriptionCN"
         },
         Price: {
             $push: "$Price"
@@ -160,7 +164,8 @@ router.get('/', function(req, res, next) {
                         "$group": group
                     }, {
                         "$sort": {
-                            update_at: -1
+                            Tranlated: -1,
+                            SalesRank: -1                            
                         }
                     }], function(err, hotproduct) {
                         res.render('index', {
