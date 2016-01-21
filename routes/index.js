@@ -165,21 +165,34 @@ router.get('/', function(req, res, next) {
                     }, {
                         "$sort": {
                             Tranlated: -1,
-                            SalesRank: -1                            
+                            SalesRank: -1
                         }
-                    }], function(err, hotproduct) {
-                        res.render('index', {
-                            title: 'Allhaha',
-                            footer_bottom: false,
-                            mainPage: mainPage,
-                            pages: pages,
-                            currentPage: page,
-                            products: products,
-                            hotproducts: hotproduct,
-                            category: '所有',
-                            sort: '按日期',
-                            user: req.user,
-                            layout: 'layout'
+                    }], function(err, hotproducts) {
+                        hotproducts.forEach(function(hotproduct, index) {
+                            Product.find({
+                                EAN: hotproduct._id
+                            }, function(err, _hotproducts) {
+                                _hotproducts.forEach(function(_hotproduct, _index) {
+                                    hotproduct.ProductName.push(_hotproduct.TitleCN);
+                                    hotproduct.DescriptionCN.push(_hotproduct.DescriptionCN);
+                                    hotproduct.Price.push(_hotproduct.Price);
+                                    if ( hotproducts[hotproducts.length-1]._id == _hotproduct.EAN && _hotproducts.length - 1 == _index) {
+                                        res.render('index', {
+                                            title: 'Allhaha',
+                                            footer_bottom: false,
+                                            mainPage: mainPage,
+                                            pages: pages,
+                                            currentPage: page,
+                                            products: products,
+                                            hotproducts: hotproducts,
+                                            category: '所有',
+                                            sort: '按日期',
+                                            user: req.user,
+                                            layout: 'layout'
+                                        });
+                                    }
+                                });
+                            });
                         });
                     });
                 } else {
