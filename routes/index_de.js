@@ -24,7 +24,10 @@ var EmailSender = new emailSender();
 var utils = require('../utils/utils.js');
 var Utils = new utils();
 
-var prodAdv = aws.createProdAdvClient(setting.amazon_setting.AccessKeyId, setting.amazon_setting.SecretAccessKey, setting.amazon_setting.AssociateTag, {host: "ecs.amazonaws.de", region: "DE"});
+var prodAdv = aws.createProdAdvClient(setting.amazon_setting.AccessKeyId, setting.amazon_setting.SecretAccessKey, setting.amazon_setting.AssociateTag, {
+    host: "ecs.amazonaws.de",
+    region: "DE"
+});
 
 var Affilinet = new affilinet({
     publisherId: setting.affilinet_setting.publisherId,
@@ -68,7 +71,6 @@ router.get('/', function(req, res, next) {
             $in: ["服装鞋子", "食品饮食", "厨房用具", "电子产品", "手机平板", "化妆品", "健康保健", "旅游", "其他"]
         };
     }
-
     if (sort == 'Preis tief nach hoch') {
         sort = {
             Price: 1
@@ -97,7 +99,7 @@ router.get('/', function(req, res, next) {
         ProductName: {
             $first: "$Title"
         },
-        DescriptionCN: {
+        Description: {
             $first: "$Description"
         },
         Price: {
@@ -125,7 +127,6 @@ router.get('/', function(req, res, next) {
     };
 
     Product.distinct("EAN", matchQuery, function(err, results) {
-        console.log(results.length);
         var pages = Math.ceil(results.length / ItemOnPage);
         Product.aggregate([{
             "$match": matchQuery
@@ -173,7 +174,7 @@ router.get('/', function(req, res, next) {
                             category: 'Alle',
                             sort: 'Datum',
                             user: req.user,
-                            layout: 'layout'
+                            layout: 'layout_de'
                         });
                     });
                 } else {
@@ -187,7 +188,7 @@ router.get('/', function(req, res, next) {
                         category: 'Alle',
                         sort: 'Datum',
                         user: req.user,
-                        layout: 'layout'
+                        layout: 'layout_de'
                     });
                 }
             }

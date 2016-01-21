@@ -54,7 +54,6 @@ passport.use(new LocalStrategy(
     }
 ));
 
-
 /* GET home page. */
 router.get('/', function(req, res, next) {
     var Utils = new utils();
@@ -72,7 +71,6 @@ router.get('/', function(req, res, next) {
             $in: ["服装鞋子", "食品饮食", "厨房用具", "电子产品", "手机平板", "化妆品", "健康保健", "旅游", "其他"]
         };
     }
-
     if (sort == '按价格由低到高') {
         sort = {
             Price: 1
@@ -129,7 +127,6 @@ router.get('/', function(req, res, next) {
     };
 
     Product.distinct("EAN", matchQuery, function(err, results) {
-        console.log(results.length);
         var pages = Math.ceil(results.length / ItemOnPage);
         Product.aggregate([{
             "$match": matchQuery
