@@ -119,7 +119,7 @@ router.get('/', function(req, res, next) {
             },
             Category: _category,
             $or: [{
-                Title: new RegExp(search, 'gi')
+                TitleCN: new RegExp(search, 'gi')
             }, {
                 Category: new RegExp(search, 'gi')
             }, {

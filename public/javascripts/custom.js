@@ -62,6 +62,8 @@ function getURL() {
     var paginationHref = "";
     if (window.location.search == "") {
         paginationHref = "?page=";
+    } else if (window.location.search.substr(0,5) == "?page") {
+        paginationHref = "?page=";
     } else {
         var paginationHrefArray = window.location.search.split("&");
         if (paginationHrefArray[paginationHrefArray.length - 1].substr(0, 4) == "page") {
