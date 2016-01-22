@@ -121,6 +121,8 @@ router.get('/', function(req, res, next) {
             },
             Category: _category,
             $or: [{
+                Title: new RegExp(search, 'gi')
+            }, {
                 TitleCN: new RegExp(search, 'gi')
             }, {
                 Category: new RegExp(search, 'gi')
@@ -129,7 +131,6 @@ router.get('/', function(req, res, next) {
             }]
         }]
     };
-
     Product.distinct("EAN", matchQuery, function(err, results) {
         var pages = Math.ceil(results.length / ItemOnPage);
         Product.aggregate([{
@@ -170,23 +171,19 @@ router.get('/', function(req, res, next) {
                     }], function(err, hotproducts) {
                         var iterateNumber=0;
                         hotproducts.forEach(function(hotproduct, index) {
-                            console.log("1 | " + hotproduct._id);
                             Product.find({
                                 EAN: hotproduct._id
                             }).stream ()
-                            .on ("error", function (error) {
-
+                            .on ("error", function (err) {
+                                next(err);
                             })
                             .on ("data", function (_hotproduct) {
-                                console.log("2 | " + _hotproduct.EAN);
                                 hotproduct.ProductName.push(_hotproduct.TitleCN);
                                 hotproduct.DescriptionCN.push(_hotproduct.DescriptionCN);
                                 hotproduct.Price.push(_hotproduct.Price);
                             })
                             .on ("close", function () {
-                                
                                 if ( ++iterateNumber == hotproducts.length) {
-                                    console.log("BBBBBBBBBB");
                                     res.render('index', {
                                         title: 'Allhaha',
                                         footer_bottom: false,
@@ -200,8 +197,6 @@ router.get('/', function(req, res, next) {
                                         user: req.user,
                                         layout: 'layout'
                                     });
-                                } else {
-                                    console.log("AAAAAAAAA");
                                 }
                             });
                         });
@@ -236,7 +231,7 @@ router.post('/', passport.authenticate('stormpath', {
 router.get('/login', function(req, res, next) {
     res.render('userlogin/login', {
         title: '登录',
-        footer_bottom: true,
+        footer_bottom: !Utils.checkMobile(req),
         layout: 'layout',
         info: '用户名或密码错误, 请重新填写',
         user: req.user
@@ -261,7 +256,7 @@ router.get('/product', function(req, res, next) {
             else {
                 res.render('product_details', {
                     title: '德国打折商品, 产品描述',
-                    footer_bottom: false,
+                    footer_bottom: !Utils.checkMobile(req),
                     product: _product,
                     product_link: req.url,
                     products: _products,
@@ -318,7 +313,7 @@ router.get('/favourite', function(req, res, next) {
         }, function(err, products) {
             res.render('favourite', {
                 title: '用户收藏',
-                footer_bottom: true,
+                footer_bottom: !Utils.checkMobile(req),
                 products: products,
                 user: req.user
             });
@@ -354,7 +349,7 @@ router.get('/article_detail', function(req, res, next) {
         if (article) {
             res.render('article_details', {
                 title: "精彩的文章",
-                footer_bottom: true,
+                footer_bottom: !Utils.checkMobile(req),
                 article: article,
                 user: req.user
             });
@@ -384,7 +379,7 @@ router.get('/voucher', function(req, res, next) {
 router.get('/aboutus', function(req, res, next) {
     res.render('aboutus', {
         title: '关于我们',
-        footer_bottom: true,
+        footer_bottom: !Utils.checkMobile(req),
         layout: 'layout',
         user: req.user,
     });
@@ -393,7 +388,7 @@ router.get('/aboutus', function(req, res, next) {
 router.get('/contactus', function(req, res, next) {
     res.render('contactus', {
         title: '联系我们',
-        footer_bottom: true,
+        footer_bottom: !Utils.checkMobile(req),
         layout: 'layout',
         user: req.user,
     });
@@ -443,7 +438,7 @@ router.post('/contactus', function(req, res, next) {
 router.get('/product_request', function(req, res, next) {
     res.render('product_request', {
         title: '产品请求',
-        footer_bottom: true,
+        footer_bottom: !Utils.checkMobile(req),
         layout: 'layout',
         user: req.user,
     });

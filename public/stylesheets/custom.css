@@ -44,3 +44,19 @@ File Description: Place here your custom CSS styles
 .subfooter {
   z-index: 2000;
 }
+
+.gutschein {
+  z-index: -100;
+  position: absolute;
+  display: inline-block;
+}
+
+.gutschein-copy {
+  cursor: pointer;
+}
+
+.gutschein-text {
+  font-size: 18px;
+  font-weight: bold;
+  font-family: Arial, Helvetica, sans-serif;
+}

@@ -207,7 +207,7 @@ router.post('/', passport.authenticate('stormpath', {
 router.get('/login', function(req, res, next) {
     res.render('userlogin/login_de', {
         title: 'Anmelden',
-        footer_bottom: true,
+        footer_bottom: !Utils.checkMobile(req),
         layout: 'layout_de',
         info: 'Fehler beim Einloggen. Bitte geben Sie Benutzername und Password erneut ein.',
         user: req.user
@@ -232,7 +232,7 @@ router.get('/product', function(req, res, next) {
             else {
                 res.render('product_details_de', {
                     title: 'Details',
-                    footer_bottom: false,
+                    footer_bottom: !Utils.checkMobile(req),
                     product: _product,
                     product_link: req.url,
                     products: _products,
@@ -289,7 +289,7 @@ router.get('/favourite', function(req, res, next) {
         }, function(err, products) {
             res.render('favourite_de', {
                 title: 'Merkliste',
-                footer_bottom: true,
+                footer_bottom: !Utils.checkMobile(req),
                 layout: 'layout_de',
                 products: products,
                 user: req.user
@@ -331,7 +331,7 @@ router.get('/voucher', function(req, res, next) {
 router.get('/aboutus', function(req, res, next) {
     res.render('aboutus', {
         title: '关于我们',
-        footer_bottom: true,
+        footer_bottom: !Utils.checkMobile(req),
         layout: 'layout_de',
         user: req.user,
     });
@@ -340,7 +340,7 @@ router.get('/aboutus', function(req, res, next) {
 router.get('/contactus', function(req, res, next) {
     res.render('contact_de', {
         title: 'Kontakt',
-        footer_bottom: true,
+        footer_bottom: !Utils.checkMobile(req),
         layout: 'layout_de',
         user: req.user,
     });
@@ -349,7 +349,7 @@ router.get('/contactus', function(req, res, next) {
 router.get('/impressum', function(req, res, next) {
     res.render('impressum_de', {
         title: 'Impressum',
-        footer_bottom: true,
+        footer_bottom: !Utils.checkMobile(req),
         layout: 'layout_de',
         user: req.user,
     });
@@ -399,7 +399,7 @@ router.post('/contactus', function(req, res, next) {
 router.get('/product_request', function(req, res, next) {
     res.render('product_request_de', {
         title: 'Von Ihnen gesuchte Produkte',
-        footer_bottom: true,
+        footer_bottom: !Utils.checkMobile(req),
         layout: 'layout_de',
         user: req.user,
     });

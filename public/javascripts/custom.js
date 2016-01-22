@@ -62,7 +62,7 @@ function getURL() {
     var paginationHref = "";
     if (window.location.search == "") {
         paginationHref = "?page=";
-    } else if (window.location.search.substr(0,5) == "?page") {
+    } else if (window.location.search.substr(0, 5) == "?page") {
         paginationHref = "?page=";
     } else {
         var paginationHrefArray = window.location.search.split("&");
@@ -78,4 +78,12 @@ function getURL() {
         paginationHref += "page=";
     }
     return paginationHref;
+}
+
+function copyToClipboard(string) {
+    var $temp = $("<input>");
+    $("body").append($temp);
+    $temp.val(string).select();
+    document.execCommand("copy");
+    $temp.remove();
 }

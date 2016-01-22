@@ -50,7 +50,18 @@
 							</header>
 							<h3><%= voucher.DescriptionCN %></h3>
 							<hr/>
-							<p><%- voucher.IntegrationCodeCN %></p>
+							<div class="LinkContainer" style="visibility: hidden; height: 0px; width:0px;"><%- voucher.IntegrationCodeCN %></div>
+							<a class='btn btn-info' target='_class'>去看看</a>
+							<br>
+							<% if (voucher.Code !== "" ) { %>
+							<a class="btn btn-warning gutscheinButton">查看优惠码</a>
+							<div class="form-group gutschein">
+								<div class="input-group">
+									<input class="form-control gutschein-text" type="text" value="<%= voucher.Code %>">
+									<div class="input-group-addon gutschein-copy">复制</div>
+								</div>
+							</div>
+							<% } %>
 						</div>
 					</div>
 					<footer class="clearfix">
@@ -78,10 +89,38 @@
 
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
-
 	var jiathis_config={
 		data_track_clickback:true,
 		hideMore:false
 	}
-
+	$(document).ready(function(){
+		$.each($(".LinkContainer"), function(index){
+			var link = $(this).find("a").attr("href");
+			$(this).siblings("a.btn-info").attr("href", link);
+		});
+		$.each($(".gutschein"), function(index){
+			$(this).css({
+				"left": $(this).siblings("a.gutscheinButton").position().left,
+				"top": $(this).siblings("a.gutscheinButton").position().top+11,
+				"width": $(this).siblings("a.gutscheinButton").width()
+			});
+			var openFlag = true;
+			$(this).siblings("a.gutscheinButton").click(function(){
+				if (openFlag) {
+					$(this).siblings(".gutschein").animate({left: "+="+($(this).width()+25), width: "200px"}, 300, function() {
+						$(this).css({"z-index": 100});
+					});
+					openFlag = false;
+				} else {
+					$(this).siblings(".gutschein").css({"z-index": -100});
+					$(this).siblings(".gutschein").animate({left: "-="+($(this).width()+25), width: $(this).siblings("a.gutscheinButton").width()}, 300);
+					openFlag = true;
+				}
+			});
+			$(this).find(".gutschein-copy").click(function(){
+				copyToClipboard($(this).siblings('input').val());
+				Notify('success', "优惠券代码已经拷贝至剪切板!");
+			});
+		});
+	});
  </script>

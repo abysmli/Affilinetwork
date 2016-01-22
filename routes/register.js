@@ -3,11 +3,13 @@ var router = express.Router();
 var passport = require('passport');
 var setting = require('../setting');
 var client = require('../utils/stormpathClient');
+var utils = require('../utils/utils.js');
+var Utils = new utils();
 
 router.get('/', function(req, res, next) {
     res.render('userlogin/register', {
         title: '登入',
-        footer_bottom: true,
+        footer_bottom: !Utils.checkMobile(req),
         layout: 'layout',
         error: req.flash('error')[0]
     });
@@ -27,7 +29,7 @@ router.post('/', function(req, res, next) {
             if (err) {
                 return res.render('userlogin/error', {
                     title: '注册信息有误, 需重新填写',
-                    footer_bottom: true,
+                    footer_bottom: !Utils.checkMobile(req),
                     layout: 'layout',
                     info: err.userMessage
                 });
@@ -37,15 +39,6 @@ router.post('/', function(req, res, next) {
                 });
             }
         });
-    });
-});
-
-router.get('/DE', function(req, res, next) {
-    res.render('userlogin/register', {
-        title: '登入',
-        footer_bottom: true,
-        layout: 'layout',
-        error: req.flash('error')[0]
     });
 });
 

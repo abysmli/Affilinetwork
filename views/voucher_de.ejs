@@ -50,7 +50,18 @@
 							</header>
 							<h3><%= voucher.Description %></h3>
 							<hr/>
-							<p><%- voucher.IntegrationCode %></p>
+							<div class="LinkContainer" style="visibility: hidden; height: 0px; width:0px;"><%- voucher.IntegrationCodeCN %></div>
+							<a class='btn btn-info' target='_class'>Link</a>
+							<br>
+							<% if (voucher.Code !== "" ) { %>
+							<a class="btn btn-warning gutscheinButton">Gutschein</a>
+							<div class="form-group gutschein">
+								<div class="input-group">
+									<input class="form-control gutschein-text" type="text" value="<%= voucher.Code %>">
+									<div class="input-group-addon gutschein-copy">Kopieren</div>
+								</div>
+							</div>
+							<% } %>
 						</div>
 					</div>
 					<footer class="clearfix">
@@ -83,5 +94,34 @@
 		data_track_clickback:true,
 		hideMore:false
 	}
-
+	$(document).ready(function(){
+		$.each($(".LinkContainer"), function(index){
+			var link = $(this).find("a").attr("href");
+			$(this).siblings("a.btn-info").attr("href", link);
+		});
+		$.each($(".gutschein"), function(index){
+			$(this).css({
+				"left": $(this).siblings("a.gutscheinButton").position().left,
+				"top": $(this).siblings("a.gutscheinButton").position().top+11,
+				"width": $(this).siblings("a.gutscheinButton").width()
+			});
+			var openFlag = true;
+			$(this).siblings("a.gutscheinButton").click(function(){
+				if (openFlag) {
+					$(this).siblings(".gutschein").animate({left: "+="+($(this).width()+25), width: "220px"}, 300, function() {
+						$(this).css({"z-index": 100});
+					});
+					openFlag = false;
+				} else {
+					$(this).siblings(".gutschein").css({"z-index": -100});
+					$(this).siblings(".gutschein").animate({left: "-="+($(this).width()+25), width: $(this).siblings("a.gutscheinButton").width()}, 300);
+					openFlag = true;
+				}
+			});
+			$(this).find(".gutschein-copy").click(function(){
+				copyToClipboard($(this).siblings('input').val());
+				Notify('success', "Kopiert!");
+			});
+		});
+	});
  </script>
