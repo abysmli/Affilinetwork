@@ -168,30 +168,41 @@ router.get('/', function(req, res, next) {
                             SalesRank: -1
                         }
                     }], function(err, hotproducts) {
+                        var iterateNumber=0;
                         hotproducts.forEach(function(hotproduct, index) {
+                            console.log("1 | " + hotproduct._id);
                             Product.find({
                                 EAN: hotproduct._id
-                            }, function(err, _hotproducts) {
-                                _hotproducts.forEach(function(_hotproduct, _index) {
-                                    hotproduct.ProductName.push(_hotproduct.TitleCN);
-                                    hotproduct.DescriptionCN.push(_hotproduct.DescriptionCN);
-                                    hotproduct.Price.push(_hotproduct.Price);
-                                    if ( hotproducts[hotproducts.length-1]._id == _hotproduct.EAN && _hotproducts.length - 1 == _index) {
-                                        res.render('index', {
-                                            title: 'Allhaha',
-                                            footer_bottom: false,
-                                            mainPage: mainPage,
-                                            pages: pages,
-                                            currentPage: page,
-                                            products: products,
-                                            hotproducts: hotproducts,
-                                            category: '所有',
-                                            sort: '按日期',
-                                            user: req.user,
-                                            layout: 'layout'
-                                        });
-                                    }
-                                });
+                            }).stream ()
+                            .on ("error", function (error) {
+
+                            })
+                            .on ("data", function (_hotproduct) {
+                                console.log("2 | " + _hotproduct.EAN);
+                                hotproduct.ProductName.push(_hotproduct.TitleCN);
+                                hotproduct.DescriptionCN.push(_hotproduct.DescriptionCN);
+                                hotproduct.Price.push(_hotproduct.Price);
+                            })
+                            .on ("close", function () {
+                                
+                                if ( ++iterateNumber == hotproducts.length) {
+                                    console.log("BBBBBBBBBB");
+                                    res.render('index', {
+                                        title: 'Allhaha',
+                                        footer_bottom: false,
+                                        mainPage: mainPage,
+                                        pages: pages,
+                                        currentPage: page,
+                                        products: products,
+                                        hotproducts: hotproducts,
+                                        category: '所有',
+                                        sort: '按日期',
+                                        user: req.user,
+                                        layout: 'layout'
+                                    });
+                                } else {
+                                    console.log("AAAAAAAAA");
+                                }
                             });
                         });
                     });
