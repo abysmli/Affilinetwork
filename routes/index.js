@@ -56,7 +56,7 @@ router.get('/', function(req, res, next) {
     var Utils = new utils();
     var page = req.query.page || 1;
     Product.count({}, function(err, count) {
-        var pageColum = count / 50;
+        var pageColum = count / 10;
         Product.aggregate(
             [{
                 "$match": {
@@ -84,7 +84,7 @@ router.get('/', function(req, res, next) {
                     },
                 }
             }, {
-                "$skip": (page - 1) * 50,
+                "$skip": (page - 1) * 10,
             }, {
                 "$limit": 50
             }, {
@@ -159,7 +159,7 @@ router.get('/pagination', function(req, res, next) {
         res.redirect('/');
     } else {
         Product.count({}, function(err, count) {
-            var pageColum = count / 50;
+            var pageColum = count / 10;
             Product.aggregate(
                 [{
                     "$match": {
@@ -187,9 +187,9 @@ router.get('/pagination', function(req, res, next) {
                         },
                     }
                 }, {
-                    "$skip": (page - 1) * 50,
+                    "$skip": (page - 1) * 10,
                 }, {
-                    "$limit": 50
+                    "$limit": 10
                 }, {
                     "$sort": {
                         updated_at: -1
@@ -241,7 +241,7 @@ router.post('/filter', function(req, res, next) {
     }
     if (category == "所有") {
         Product.count({}, function(err, count) {
-            var pageColum = count / 50;
+            var pageColum = count / 30;
             if (sort == '按日期') {
                 Product.aggregate([{
                         "$match": {
