@@ -60,3 +60,7 @@ File Description: Place here your custom CSS styles
   font-weight: bold;
   font-family: Arial, Helvetica, sans-serif;
 }
+
+#logo {
+  width: 160px;
+}

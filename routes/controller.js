@@ -293,7 +293,6 @@ router.get('/product', auth, function(req, res, next) {
     } else {
         Product.count({}, function(err, count) {
             Product.find({}, null, {
-                limit: 500,
                 sort: {
                     updated_at: -1
                 }
