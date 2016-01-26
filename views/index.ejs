@@ -199,17 +199,11 @@ $(document).ready(function() {
     });
 
     $('.pagination').pagination({
-        items: <%= count %> ,
-        itemsOnPage: 10,
-        cssStyle: 'light-theme',
-        currentPage: <%= currentPage %>
-
         pages: <%= pages %> ,
         currentPage: <%= currentPage %>,
         hrefTextPrefix: getURL(),
         prevText: "上一页",
         nextText: "下一页"
-
     });
 });
 
