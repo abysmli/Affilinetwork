@@ -1,22 +1,22 @@
 <div class="page-intro">
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
             <div class="col-md-10">
                 <ol class="breadcrumb">
                     <li><i class="fa fa-th-large pr-10"></i>Kategorie: </li>
-                    <li class="active"><a href="/DE/category?category=clothes_shoes&page=<%= currentPage %>">Kleidung&Schuhe</a></li>
-                    <li class="active"><a href="/DE/category?category=food&page=<%= currentPage %>">Essen</a></li>
-                    <li class="active"><a href="/DE/category?category=kitchen&page=<%= currentPage %>">Küche</a></li>
-                    <li class="active"><a href="/DE/category?category=electronics&page=<%= currentPage %>">Elektro&Computer</a></li>
-                    <li class="active"><a href="/DE/category?category=handy_pad&page=<%= currentPage %>">Handy&Pad</a></li>
-                    <li class="active"><a href="/DE/category?category=makeup&page=<%= currentPage %>">Kosmetik</a></li>
-                    <li class="active"><a href="/DE/category?category=medicine&page=<%= currentPage %>">Medikamente</a></li>
-                    <li class="active"><a href="/DE/category?category=travel&page=<%= currentPage %>">Reisen&Urlaub</a></li>
-                    <li class="active"><a href="/DE/category?category=others&page=<%= currentPage %>">Andere</a></li>
+                    <li class="active"><a href="/DE/?category=服装鞋子">Kleidung&Schuhe</a></li>
+                    <li class="active"><a href="/DE/?category=食品饮食">Essen</a></li>
+                    <li class="active"><a href="/DE/?category=厨房用具">Küche</a></li>
+                    <li class="active"><a href="/DE/?category=电子产品">Elektro&Computer</a></li>
+                    <li class="active"><a href="/DE/?category=母婴">Mutter&Baby</a></li>
+                    <li class="active"><a href="/DE/?category=化妆品">Kosmetik</a></li>
+                    <li class="active"><a href="/DE/?category=健康保健">Gesundheit</a></li>
+                    <li class="active"><a href="/DE/?category=旅游">Reisen&Urlaub</a></li>
+                    <li class="active"><a href="/DE/?category=其他">Andere</a></li>
                 </ol>
             </div>
             <div class="col-md-2">
-                <form role="search" class="search-box" action="/DE/search" method="post" style="margin: 0 !important;">
+                <form role="search" class="search-box" style="margin: 0 !important;">
                     <div class="has-feedback">
                         <input type="text" class="form-control" placeholder="Suchen" name="search" style="-webkit-appearance: textfield; border-radius: 25px">
                         <i class="fa fa-search form-control-feedback"></i>
@@ -33,6 +33,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="main col-md-10">
+                <% if (mainPage) { %>
                 <h2 class="page-title">Features</h2>
                 <div class="separator-2"></div>
                 <div class="owl-carousel carousel-autoplay owl-theme col-xs-6">
@@ -46,7 +47,7 @@
                             </a>
                         </div>
                         <div class="listing-item-body clearfix">
-                            <h3 class="title" style="font-weight: 300"><a href="/product?product_id=<%= product.ProductId %>"><%= product.ProductName %></a></h3>
+                            <h3 class="title" style="font-weight: 300"><a href="/DE/product?product_id=<%= product.ProductId %>"><%= product.ProductName %></a></h3>
                             <% if (product.Price.length == 1 || Math.min.apply(null, product.Price) == Math.max.apply(null, product.Price)) { %>
                             <span class="price" style="font-size: 20px"><%= product.Price[0].toString().replace(".", ",") %> €</span>
                             <% } else { %>
@@ -60,6 +61,7 @@
                     <% }); %>
                 </div>
                 <div class="clearfix"></div>
+                <% } %>
                 <h2 class="page-title">Stark reduziert</h2>
                 <div class="separator-2"></div>
                 <div id="container" class="row">
@@ -67,21 +69,21 @@
                     <div class="element col-lg-3 col-md-3 col-sm-6 col-xs-6 masonry-grid-item">
                         <div class="listing-item">
                             <div class="overlay-container">
-                                <img src="<%= product.Images %>" onerror="this.src= '/stylesheets/images/no-image.jpg';" />
-                                <a href="/product?product_id=<%= product.ProductId %>" class="overlay small">
+                                <img src="<%= product.Images %>" onerror="this.src= '/images/no-image.jpg';" />
+                                <a href="/DE/product?product_id=<%= product.ProductId %>" class="overlay small">
                                     <i class="fa fa-search-plus"></i>
                                     <span><%= product.Description %></span>
                                 </a>
                             </div>
                             <div class="listing-item-body clearfix">
-                                <h3 class="title" style="font-weight: 300"><a href="/product?product_id=<%= product.ProductId %>"><%= product.ProductName %></a></h3>
+                                <h3 class="title" style="font-weight: 300"><a href="/DE/product?product_id=<%= product.ProductId %>"><%= product.ProductName %></a></h3>
                                 <% if (product.Price.length == 1 || Math.min.apply(null, product.Price) == Math.max.apply(null, product.Price)) { %>
                                 <span class="price" style="font-size: 20px"><%= product.Price[0].toString().replace(".", ",") %> €</span>
                                 <% } else { %>
                                 <span class="price" style="font-size: 20px"><%= Math.min.apply(null,product.Price).toString().replace(".", ",") %> - <%= Math.max.apply(null,product.Price).toString().replace(".", ",") %> €</span>
                                 <% } %>
                                 <div class="elements-list pull-right">
-                                    <a href="/product?product_id=<%= product.ProductId %>"><i class="fa fa-gift pr-10"></i>Öffnen</a>
+                                    <a href="/DE/product?product_id=<%= product.ProductId %>"><i class="fa fa-gift pr-10"></i>Öffnen</a>
                                 </div>
                             </div>
                         </div>
@@ -97,21 +99,21 @@
                         <h3>Filter</h3>
                         <div class="separator"></div>
                         <div class="sorting-filters">
-                            <form role="form" action="/DE/filter" method="post">
+                            <form role="form">
                                 <div class="form-group">
                                     <label>Kategorie</label>
                                     <select class="form-control" name="category">
-                                        <option <% if(category=='Alle') { %> selected='selected' <% } %>>Alle</option>
-                                        <option <% if(category=='Kleidung&Schuhe') { %> selected='selected' <% } %>>Kleidung&Schuhe</option>
-                                        <option <% if(category=='Essen') { %> selected='selected' <% } %>>Essen</option>
-                                        <option <% if(category=='Küche') { %> selected='selected' <% } %>>Küche</option>
-                                        <option <% if(category=='Elektro&Computer') { %> selected='selected' <% } %>>Elektro&Computer</option>
-                                        <option <% if(category=='Handy&Pad') { %> selected='selected' <% } %>>Handy&Pad</option>
-                                        <option <% if(category=='Kosmetik') { %> selected='selected' <% } %>>Kosmetik</option>
-                                        <option <% if(category=='Medikamente') { %> selected='selected' <% } %> >Medikamente</option>
-                                        <option <% if(category=='Reisen&Urlaub') { %> selected='selected' <% } %> >Reisen&Urlaub</option>
-                                        <option <% if(category=='Coupon') { %> selected='selected' <% } %> >Coupon</option>
-                                        <option <% if(category=='Andere') { %> selected='selected' <% } %> >Andere</option>
+                                        <option value="所有" <% if(category=='所有') { %> selected='selected' <% } %>>Alle</option>
+                                        <option value="服装鞋子" <% if(category=='服装鞋子') { %> selected='selected' <% } %>>Kleidung&Schuhe</option>
+                                        <option value="食品饮食" <% if(category=='食品饮食') { %> selected='selected' <% } %>>Essen</option>
+                                        <option value="厨房用具" <% if(category=='厨房用具') { %> selected='selected' <% } %>>Küche</option>
+                                        <option value="电子产品" <% if(category=='电子产品') { %> selected='selected' <% } %>>Elektro&Computer</option>
+                                        <option value="母婴" <% if(category=='母婴') { %> selected='selected' <% } %>>Mutter&Baby</option>
+                                        <option value="化妆品" <% if(category=='化妆品') { %> selected='selected' <% } %>>Kosmetik</option>
+                                        <option value="健康保健" <% if(category=='健康保健') { %> selected='selected' <% } %> >Gesundheit</option>
+                                        <option value="旅游" <% if(category=='旅游') { %> selected='selected' <% } %> >Reisen&Urlaub</option>
+                                        <option value="打折券" <% if(category=='打折券') { %> selected='selected' <% } %> >Coupon</option>
+                                        <option value="其他" <% if(category=='其他') { %> selected='selected' <% } %> >Andere</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
@@ -150,12 +152,6 @@
 <!-- ================ -->
 <script type="text/javascript">
 
-function test(pageNumber) {
-    var page = "#page-" + pageNumber;
-    $('.selection').hide()
-    $(page).show()
-}
-
 $(document).ready(function() {
     var $container = $('#container');
     $container.imagesLoaded(function() {
@@ -165,14 +161,13 @@ $(document).ready(function() {
             }
         });
     });
-    $('.siderbar').sticky({
-        topSpacing: 60
-    });
+
     $('.pagination').pagination({
-        items: <%= count %> ,
-        itemsOnPage: 30,
-        cssStyle: 'light-theme',
-        currentPage: <%= currentPage %>
+        pages: <%= pages %> ,
+        currentPage: <%= currentPage %>,
+        hrefTextPrefix: getURL(),
+        prevText: "Vorherige Seite",
+        nextText: "Nächste Seite "
     });
 });
 

@@ -1,5 +1,5 @@
 <div class="page-intro">
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
                 <ol class="breadcrumb">
@@ -14,7 +14,7 @@
 <!-- main-container start -->
 <!-- ================ -->
 <section class="main-container">
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
             <!-- main start -->
             <!-- ================ -->
@@ -45,9 +45,7 @@
                             </div>
                             <!-- Tab panes end-->
                             <hr/>
-                            <span class="price"><%= product.Price.toString().replace(".", ",") %>€</span>
                             <div class="elements-list pull-right clearfix">
-                                <a href="<%= product.URL %>"><span>Kaufen</span></a>
                                 <a id="add_favourite_button" href="#"><span>Merkliste</span></a>
                             </div>
                             <div class="clearfix">
@@ -55,17 +53,17 @@
                                     <tr>
                                         <td>Preis</td>
                                         <td>Verkäufer</td>
-                                        <td>Kliken</td>
+                                        <td>Link</td>
                                     </tr>
                                     <% products.forEach(function(product, index) { %>
                                     <tr>
                                         <td>
-                                            <%= product.Price.toString().replace(".", ",") %>
+                                            <%= product.Price.toString().replace(".", ",") %>€
                                         </td>
                                         <td>
                                             <%= product.ShopName %>
                                         </td>
-                                        <td><a href="<%= product.URL %>">Kaufen</a></td>
+                                        <td><a target="_blank" href="<%= product.URL %>">Link</a></td>
                                     </tr>
                                     <% }) %>
                                 </table>

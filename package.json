@@ -30,6 +30,7 @@
     "express-stormpath": "*",
     "mongoose-text-search": "*",
     "nodemailer": "*",
-    "xml2js": "*"
+    "xml2js": "*",
+    "mobile-detect": "*"
   }
 }

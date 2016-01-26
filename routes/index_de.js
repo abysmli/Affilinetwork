@@ -24,7 +24,10 @@ var EmailSender = new emailSender();
 var utils = require('../utils/utils.js');
 var Utils = new utils();
 
-var prodAdv = aws.createProdAdvClient(setting.amazon_setting.AccessKeyId, setting.amazon_setting.SecretAccessKey, setting.amazon_setting.AssociateTag, {host: "ecs.amazonaws.de", region: "DE"});
+var prodAdv = aws.createProdAdvClient(setting.amazon_setting.AccessKeyId, setting.amazon_setting.SecretAccessKey, setting.amazon_setting.AssociateTag, {
+    host: "ecs.amazonaws.de",
+    region: "DE"
+});
 
 var Affilinet = new affilinet({
     publisherId: setting.affilinet_setting.publisherId,
@@ -55,47 +58,92 @@ passport.use(new LocalStrategy(
 router.get('/', function(req, res, next) {
     var Utils = new utils();
     var page = req.query.page || 1;
-    Product.count({}, function(err, count) {
-        var pageColum = count / 50;
-        Product.aggregate(
-            [{
-                "$match": {
-                    EAN: {
-                        $ne: null
-                    }
-                },
+    var search = req.query.search || "";
+    var category = req.query.category || "";
+    var minprice = req.query.minprice || Number.NEGATIVE_INFINITY;
+    var maxprice = req.query.maxprice || Number.POSITIVE_INFINITY;
+    var sort = req.query.sort || "";
+    var mainPage = false;
+    var _category = category;
+    var ItemOnPage = 30;
+    if (category == "" || category == "所有") {
+        _category = {
+            $in: ["服装鞋子", "食品饮食", "厨房用具", "电子产品", "手机平板", "化妆品", "健康保健", "旅游", "其他"]
+        };
+    }
+    if (sort == 'Preis tief nach hoch') {
+        sort = {
+            Price: 1
+        };
+    } else if (sort == 'Preis hoch nach tief') {
+        sort = {
+            Price: -1
+        };
+    } else if (sort == 'Bewertung') {
+        sort = {
+            SaleRank: -1
+        };
+    } else {
+        sort = {
+            updated_at: -1
+        };
+    }
+    var group = {
+        _id: "$EAN",
+        ProductId: {
+            $first: "$_id"
+        },
+        Images: {
+            $first: "$ProductImage"
+        },
+        ProductName: {
+            $first: "$Title"
+        },
+        Description: {
+            $first: "$Description"
+        },
+        Price: {
+            $push: "$Price"
+        }
+    };
+    var matchQuery = {
+        $and: [{
+            EAN: {
+                $ne: 'null'
+            },
+            Price: {
+                $lte: Number(maxprice),
+                $gte: Number(minprice)
+            },
+            Category: _category,
+            $or: [{
+                Title: new RegExp(search, 'gi')
             }, {
-                "$group": {
-                    _id: "$EAN",
-                    ProductId: {
-                        $first: "$_id"
-                    },
-                    Images: {
-                        $first: "$ProductImage"
-                    },
-                    ProductName: {
-                        $first: "$Title"
-                    },
-                    DescriptionCN: {
-                        $first: "$Description"
-                    },
-                    Price: {
-                        $push: "$Price"
-                    },
-                }
+                Category: new RegExp(search, 'gi')
             }, {
-                "$skip": (page - 1) * 50,
-            }, {
-                "$limit": 50
-            }, {
-                "$sort": {
-                    updated_at: -1
-                }
-            }],
-            function(err, products) {
-                if (err != null) {
-                    next(err);
-                } else {
+                Keywords: new RegExp(search, 'gi')
+            }]
+        }]
+    };
+
+    Product.distinct("EAN", matchQuery, function(err, results) {
+        var pages = Math.ceil(results.length / ItemOnPage);
+        Product.aggregate([{
+            "$match": matchQuery
+        }, {
+            "$group": group
+        }, {
+            "$skip": (page - 1) * ItemOnPage
+        }, {
+            "$limit": ItemOnPage
+        }, {
+            "$sort": sort
+        }], function(err, products) {
+            if (err != null) {
+                next(err);
+            } else {
+                if (page == 1 && search == "" && category == "" && minprice == Number.NEGATIVE_INFINITY && maxprice == Number.POSITIVE_INFINITY) {
+                    mainPage = true;
                     Product.aggregate([{
                         "$match": {
                             $and: [{
@@ -107,27 +155,9 @@ router.get('/', function(req, res, next) {
                                     $gte: 1
                                 }
                             }]
-
                         }
                     }, {
-                        "$group": {
-                            _id: "$EAN",
-                            ProductId: {
-                                $first: "$_id"
-                            },
-                            Images: {
-                                $first: "$ProductImage"
-                            },
-                            ProductName: {
-                                $first: "$Title"
-                            },
-                            DescriptionCN: {
-                                $first: "$Description"
-                            },
-                            Price: {
-                                $push: "$Price"
-                            }
-                        }
+                        "$group": group
                     }, {
                         "$sort": {
                             update_at: -1
@@ -136,8 +166,8 @@ router.get('/', function(req, res, next) {
                         res.render('index_de', {
                             title: 'Allhaha',
                             footer_bottom: false,
-                            count: count,
-                            pageColum: pageColum,
+                            mainPage: mainPage,
+                            pages: pages,
                             currentPage: page,
                             products: products,
                             hotproducts: hotproduct,
@@ -147,75 +177,23 @@ router.get('/', function(req, res, next) {
                             layout: 'layout_de'
                         });
                     });
-                    
+                } else {
+                    res.render('index_de', {
+                        title: 'Allhaha',
+                        footer_bottom: false,
+                        mainPage: mainPage,
+                        pages: pages,
+                        currentPage: page,
+                        products: products,
+                        category: 'Alle',
+                        sort: 'Datum',
+                        user: req.user,
+                        layout: 'layout_de'
+                    });
                 }
-            });
-    });
-});
-
-router.get('/pagination', function(req, res, next) {
-    var page = req.query.page;
-    if (page == 1) {
-        res.redirect('/DE');
-    } else {
-        Product.count({}, function(err, count) {
-            var pageColum = count / 50;
-            Product.aggregate(
-                [{
-                    "$match": {
-                        EAN: {
-                            $ne: null
-                        }
-                    },
-                }, {
-                    "$group": {
-                        _id: "$EAN",
-                        ProductId: {
-                            $first: "$_id"
-                        },
-                        Images: {
-                            $first: "$ProductImage"
-                        },
-                        ProductName: {
-                            $first: "$Title"
-                        },
-                        DescriptionCN: {
-                            $first: "$Description"
-                        },
-                        Price: {
-                            $push: "$Price"
-                        },
-                    }
-                }, {
-                    "$skip": (page - 1) * 50,
-                }, {
-                    "$limit": 50
-                }, {
-                    "$sort": {
-                        updated_at: -1
-                    }
-                }],
-                function(err, products) {
-                    if (err != null) {
-                        next(err);
-                    } else {
-                        res.render('searchproduct_de', {
-                            title: 'Allhaha',
-                            footer_bottom: true,
-                            count: count,
-                            pageColum: pageColum,
-                            currentPage: page,
-                            products: products,
-                            category: 'Alle',
-                            sort: 'Datum',
-                            user: req.user,
-                            layout: 'layout_de'
-                        });
-                    }
-                });
+            }
         });
-    }
-
+    });
 });
 
 router.post('/', passport.authenticate('stormpath', {
@@ -226,681 +204,10 @@ router.post('/', passport.authenticate('stormpath', {
     res.redirect('/DE');
 });
 
-
-router.post('/filter', function(req, res, next) {
-    var category = req.body.category;
-    var minprice = req.body.minprice;
-    var maxprice = req.body.maxprice;
-    var sort = req.body.sort;
-    var page = req.query.page || 1;
-    if (minprice == '') {
-        minprice = Number.NEGATIVE_INFINITY;
-    }
-    if (maxprice == '') {
-        maxprice = Number.POSITIVE_INFINITY;
-    }
-    if (category == "Alle") {
-        Product.count({}, function(err, count) {
-            var pageColum = count / 50;
-            if (sort == 'Datum') {
-                Product.aggregate([{
-                        "$match": {
-                            "$and": [{
-                                EAN: {
-                                    $ne: null
-                                }
-                            }, {
-                                Price: {
-                                    $lte: Number(maxprice),
-                                    $gte: Number(minprice)
-                                }
-                            }]
-                        }
-                    }, {
-                        "$group": {
-                            _id: "$EAN",
-                            ProductId: {
-                                $first: "$_id"
-                            },
-                            Images: {
-                                $first: "$ProductImage"
-                            },
-                            ProductName: {
-                                $first: "$Title"
-                            },
-                            Price: {
-                                $push: "$Price"
-                            }
-                        }
-                    }, {
-                        "$skip": (page - 1) * 50,
-                    }, {
-                        "$limit": 50
-                    }, {
-                        "$sort": {
-                            update_at: -1
-                        }
-                    }],
-                    function(err, products) {
-                        if (err != null) {
-                            next(err);
-                        } else {
-                            res.render('searchproduct_de', {
-                                title: 'Allhaha',
-                                footer_bottom: true,
-                                count: count,
-                                pageColum: pageColum,
-                                currentPage: page,
-                                products: products,
-                                category: category,
-                                sort: sort,
-                                user: req.user,
-                                layout: 'layout_de'
-                            });
-                        }
-
-                    });
-            } else if (sort == 'Preis tief nach hoch') {
-                Product.aggregate([{
-                        "$match": {
-                            "$and": [{
-                                EAN: {
-                                    $ne: null
-                                }
-                            }, {
-                                Price: {
-                                    $lte: Number(maxprice),
-                                    $gte: Number(minprice)
-                                }
-                            }]
-                        }
-                    }, {
-                        "$group": {
-                            _id: "$EAN",
-                            ProductId: {
-                                $first: "$_id"
-                            },
-                            Images: {
-                                $first: "$ProductImage"
-                            },
-                            ProductName: {
-                                $first: "$Title"
-                            },
-                            Price: {
-                                $push: "$Price"
-                            }
-                        }
-                    }, {
-                        "$skip": (page - 1) * 50,
-                    }, {
-                        "$limit": 50
-                    }, {
-                        "$sort": {
-                            Price: 1
-                        }
-                    }],
-                    function(err, products) {
-                        if (err != null) {
-                            next(err);
-                        } else {
-                            res.render('searchproduct_de', {
-                                title: 'Allhaha',
-                                footer_bottom: true,
-                                count: count,
-                                pageColum: pageColum,
-                                currentPage: page,
-                                products: products,
-                                category: category,
-                                sort: sort,
-                                user: req.user,
-                                layout: 'layout_de'
-                            });
-                        }
-
-                    });
-            } else if (sort == 'Preis hoch nach tief') {
-                Product.aggregate([{
-                        "$match": {
-                            "$and": [{
-                                EAN: {
-                                    $ne: null
-                                }
-                            }, {
-                                Price: {
-                                    $lte: Number(maxprice),
-                                    $gte: Number(minprice)
-                                }
-                            }]
-                        }
-                    }, {
-                        "$group": {
-                            _id: "$EAN",
-                            ProductId: {
-                                $first: "$_id"
-                            },
-                            Images: {
-                                $first: "$ProductImage"
-                            },
-                            ProductName: {
-                                $first: "$Title"
-                            },
-                            Price: {
-                                $push: "$Price"
-                            }
-                        }
-                    }, {
-                        "$skip": (page - 1) * 50,
-                    }, {
-                        "$limit": 50
-                    }, {
-                        "$sort": {
-                            Price: -1
-                        }
-                    }],
-                    function(err, products) {
-                        if (err != null) {
-                            next(err);
-                        } else {
-                            res.render('searchproduct_de', {
-                                title: 'Allhaha',
-                                footer_bottom: true,
-                                count: count,
-                                pageColum: pageColum,
-                                currentPage: page,
-                                products: products,
-                                category: category,
-                                sort: sort,
-                                user: req.user,
-                                layout: 'layout_de'
-                            });
-                        }
-                    });
-            } else if (sort == 'Bewertung') {
-                Product.aggregate([{
-                        "$match": {
-                            "$and": [{
-                                EAN: {
-                                    $ne: null
-                                }
-                            }, {
-                                Price: {
-                                    $lte: Number(maxprice),
-                                    $gte: Number(minprice)
-                                }
-                            }]
-                        }
-                    }, {
-                        "$group": {
-                            _id: "$EAN",
-                            ProductId: {
-                                $first: "$_id"
-                            },
-                            Images: {
-                                $first: "$ProductImage"
-                            },
-                            ProductName: {
-                                $first: "$Title"
-                            },
-                            Price: {
-                                $push: "$Price"
-                            }
-                        }
-                    }, {
-                        "$skip": (page - 1) * 50,
-                    }, {
-                        "$limit": 50
-                    }, {
-                        "$sort": {
-                            SaleRank: -1
-                        }
-                    }],
-                    function(err, products) {
-                        if (err != null) {
-                            next(err);
-                        } else {
-                            res.render('searchproduct_de', {
-                                title: 'Allhaha',
-                                footer_bottom: true,
-                                count: count,
-                                pageColum: pageColum,
-                                currentPage: page,
-                                products: products,
-                                category: category,
-                                sort: sort,
-                                user: req.user,
-                                layout: 'layout_de'
-                            });
-                        }
-                    });
-            }
-        });
-
-    } else {
-        Product.count({
-            Category: category
-        }, function(err, count) {
-            var pageColum = count / 50;
-            if (sort == 'Datum') {
-                Product.aggregate([{
-                        "$match": {
-                            "$and": [{
-                                EAN: {
-                                    $ne: null
-                                }
-                            }, {
-                                Price: {
-                                    $lte: Number(maxprice),
-                                    $gte: Number(minprice)
-                                }
-                            }, {
-                                Category: {
-                                    $eq: category
-                                }
-                            }]
-                        }
-                    }, {
-                        "$group": {
-                            _id: "$EAN",
-                            ProductId: {
-                                $first: "$_id"
-                            },
-                            Images: {
-                                $first: "$ProductImage"
-                            },
-                            ProductName: {
-                                $first: "$Title"
-                            },
-                            Price: {
-                                $push: "$Price"
-                            }
-                        }
-                    }, {
-                        "$skip": (page - 1) * 50,
-                    }, {
-                        "$limit": 50
-                    }, {
-                        "$sort": {
-                            update_at: -1
-                        }
-                    }],
-                    function(err, products) {
-                        if (err != null) {
-                            next(err);
-                        } else {
-                            console.log(category);
-                            res.render('searchproduct_de', {
-                                title: 'Allhaha',
-                                footer_bottom: true,
-                                count: count,
-                                pageColum: pageColum,
-                                currentPage: page,
-                                products: products,
-                                category: category,
-                                sort: sort,
-                                user: req.user,
-                                layout: 'layout_de'
-                            });
-                        }
-
-                    });
-            } else if (sort == 'Preis tief nach hoch') {
-                Product.aggregate([{
-                        "$match": {
-                            "$and": [{
-                                EAN: {
-                                    $ne: null
-                                }
-                            }, {
-                                Price: {
-                                    $lte: Number(maxprice),
-                                    $gte: Number(minprice)
-                                }
-                            }, {
-                                Category: {
-                                    $eq: category
-                                }
-                            }]
-                        }
-                    }, {
-                        "$group": {
-                            _id: "$EAN",
-                            ProductId: {
-                                $first: "$_id"
-                            },
-                            Images: {
-                                $first: "$ProductImage"
-                            },
-                            ProductName: {
-                                $first: "$TitleCN"
-                            },
-                            Price: {
-                                $push: "$Price"
-                            }
-                        }
-                    }, {
-                        "$skip": (page - 1) * 50,
-                    }, {
-                        "$limit": 50
-                    }, {
-                        "$sort": {
-                            Price: 1
-                        }
-                    }],
-                    function(err, products) {
-                        if (err != null) {
-                            next(err);
-                        } else {
-                            res.render('searchproduct_de', {
-                                title: 'Allhaha',
-                                footer_bottom: true,
-                                count: count,
-                                pageColum: pageColum,
-                                currentPage: page,
-                                products: products,
-                                category: category,
-                                sort: sort,
-                                user: req.user,
-                                layout: 'layout_de'
-                            });
-                        }
-
-                    });
-            } else if (sort == 'Preis hoch nach tief') {
-                Product.aggregate([{
-                        "$match": {
-                            "$and": [{
-                                EAN: {
-                                    $ne: null
-                                }
-                            }, {
-                                Price: {
-                                    $lte: Number(maxprice),
-                                    $gte: Number(minprice)
-                                }
-                            }, {
-                                Category: {
-                                    $eq: category
-                                }
-                            }]
-                        }
-                    }, {
-                        "$group": {
-                            _id: "$EAN",
-                            ProductId: {
-                                $first: "$_id"
-                            },
-                            Images: {
-                                $first: "$ProductImage"
-                            },
-                            ProductName: {
-                                $first: "$Title"
-                            },
-                            Price: {
-                                $push: "$Price"
-                            }
-                        }
-                    }, {
-                        "$skip": (page - 1) * 50,
-                    }, {
-                        "$limit": 50
-                    }, {
-                        "$sort": {
-                            Price: -1
-                        }
-                    }],
-                    function(err, products) {
-                        if (err != null) {
-                            next(err);
-                        } else {
-                            res.render('searchproduct_de', {
-                                title: 'Allhaha',
-                                footer_bottom: true,
-                                count: count,
-                                pageColum: pageColum,
-                                currentPage: page,
-                                products: products,
-                                category: category,
-                                sort: sort,
-                                user: req.user,
-                                layout: 'layout_de'
-                            });
-                        }
-                    });
-            } else if (sort == 'Bewertung') {
-                Product.aggregate([{
-                        "$match": {
-                            "$and": [{
-                                EAN: {
-                                    $ne: null
-                                }
-                            }, {
-                                Price: {
-                                    $lte: Number(maxprice),
-                                    $gte: Number(minprice)
-                                }
-                            }, {
-                                Category: {
-                                    $eq: category
-                                }
-                            }]
-                        }
-                    }, {
-                        "$group": {
-                            _id: "$EAN",
-                            ProductId: {
-                                $first: "$_id"
-                            },
-                            Images: {
-                                $first: "$ProductImage"
-                            },
-                            ProductName: {
-                                $first: "$Title"
-                            },
-                            Price: {
-                                $push: "$Price"
-                            }
-                        }
-                    }, {
-                        "$skip": (page - 1) * 50,
-                    }, {
-                        "$limit": 50
-                    }, {
-                        "$sort": {
-                            SaleRank: -1
-                        }
-                    }],
-                    function(err, products) {
-                        if (err != null) {
-                            next(err);
-                        } else {
-                            res.render('searchproduct_de', {
-                                title: 'Allhaha',
-                                footer_bottom: true,
-                                count: count,
-                                pageColum: pageColum,
-                                currentPage: page,
-                                products: products,
-                                category: category,
-                                sort: sort,
-                                user: req.user,
-                                layout: 'layout_de'
-                            });
-                        }
-                    });
-            }
-        });
-    };
-});
-
-/*search the product from input*/
-router.post('/search', function(req, res, next) {
-    var search = req.body.search;
-    var page = req.body.page || 1;
-    var count = 0;
-    var query = {
-        $or: [{
-            Title: new RegExp(search, 'gi')
-        }, {
-            Category: new RegExp(search, 'gi')
-        }, {
-            Keywords: new RegExp(search, 'gi')
-        }]
-    };
-
-    Product.count(query, function(err, count) {
-        var pageColum = count / 50;
-        Product.aggregate([{
-            "$match": {
-                $and: [{
-                    EAN: {
-                        $ne: null
-                    },
-                    $or: [{
-                        Title: new RegExp(search, 'gi')
-                    }, {
-                        Category: new RegExp(search, 'gi')
-                    }, {
-                        Keywords: new RegExp(search, 'gi')
-                    }]
-
-                }]
-            }
-        }, {
-            "$group": {
-                _id: "$EAN",
-                ProductId: {
-                    $first: "$_id"
-                },
-                Images: {
-                    $first: "$ProductImage"
-                },
-                ProductName: {
-                    $first: "$Title"
-                },
-                Price: {
-                    $push: "$Price"
-                }
-            }
-        }, {
-            "$skip": (page - 1) * 50
-        }, {
-            "$limit": 50
-        }, {
-            "$sort": {
-                update_at: -1
-            }
-        }], function(err, results) {
-            if (err != null) {
-                next(err);
-            } else {
-                res.render('searchproduct_de', {
-                    title: 'Allhaha',
-                    footer_bottom: true,
-                    count: count,
-                    pageColum: pageColum,
-                    currentPage: page,
-                    category: 'Alle',
-                    sort: 'Datum',
-                    products: results,
-                    user: req.user,
-                    layout: 'layout_de'
-                });
-            }
-
-        });
-
-    });
-});
-
-router.get('/category', function(req, res, next) {
-    var category = req.query.category;
-    var page = req.query.page || 1;
-    if (category === 'clothes_shoes') {
-        category = "Kleidung&Schuhe";
-    } else if (category === 'food') {
-        category = "Essen";
-    } else if (category === 'kitchen') {
-        category = "Küche";
-    } else if (category === 'electronics') {
-        category = "Elektro&Computer";
-    } else if (category === 'handy_pad') {
-        category = "Handy&Pad";
-    } else if (category === 'makeup') {
-        category = "Kosmetik";
-    } else if (category === 'medicine') {
-        category = "Medikamente";
-    } else if (category === 'travel') {
-        category = "Reisen&Urlaub";
-    } else if (category === 'others') {
-        category = "Andere";
-    }
-
-    Product.count({
-        Category: category
-    }, function(err, count) {
-        var pageColumn = count / 50;
-        Product.aggregate([{
-            "$match": {
-                $and: [{
-                    EAN: {
-                        $ne: null
-                    },
-                    Category: {
-                        $eq: category
-                    }
-                }]
-            }
-        }, {
-            "$group": {
-                _id: "$EAN",
-                ProductId: {
-                    $first: "$_id"
-                },
-                Images: {
-                    $first: "$ProductImage"
-                },
-                ProductName: {
-                    $first: "$Title"
-                },
-                Price: {
-                    $push: "$Price"
-                }
-            }
-        }, {
-            "$skip": (page - 1) * 50,
-        }, {
-            "$limit": 50
-        }, {
-            "$sort": {
-                update_at: -1
-            }
-        }], function(err, products) {
-            if (err != null) {
-                next(err);
-            } else {
-                res.render('searchproduct_de', {
-                    title: 'Allhaha',
-                    footer_bottom: true,
-                    count: count,
-                    pageColum: pageColumn,
-                    currentPage: page,
-                    category: category,
-                    sort: 'Datum',
-                    products: products,
-                    user: req.user,
-                    layout: 'layout_de'
-                });
-            }
-        });
-
-    });
-});
-
-
 router.get('/login', function(req, res, next) {
     res.render('userlogin/login_de', {
         title: 'Anmelden',
-        footer_bottom: true,
+        footer_bottom: !Utils.checkMobile(req),
         layout: 'layout_de',
         info: 'Fehler beim Einloggen. Bitte geben Sie Benutzername und Password erneut ein.',
         user: req.user
@@ -925,7 +232,7 @@ router.get('/product', function(req, res, next) {
             else {
                 res.render('product_details_de', {
                     title: 'Details',
-                    footer_bottom: true,
+                    footer_bottom: !Utils.checkMobile(req),
                     product: _product,
                     product_link: req.url,
                     products: _products,
@@ -982,7 +289,7 @@ router.get('/favourite', function(req, res, next) {
         }, function(err, products) {
             res.render('favourite_de', {
                 title: 'Merkliste',
-                footer_bottom: true,
+                footer_bottom: !Utils.checkMobile(req),
                 layout: 'layout_de',
                 products: products,
                 user: req.user
@@ -1024,7 +331,7 @@ router.get('/voucher', function(req, res, next) {
 router.get('/aboutus', function(req, res, next) {
     res.render('aboutus', {
         title: '关于我们',
-        footer_bottom: true,
+        footer_bottom: !Utils.checkMobile(req),
         layout: 'layout_de',
         user: req.user,
     });
@@ -1033,7 +340,7 @@ router.get('/aboutus', function(req, res, next) {
 router.get('/contactus', function(req, res, next) {
     res.render('contact_de', {
         title: 'Kontakt',
-        footer_bottom: true,
+        footer_bottom: !Utils.checkMobile(req),
         layout: 'layout_de',
         user: req.user,
     });
@@ -1042,7 +349,7 @@ router.get('/contactus', function(req, res, next) {
 router.get('/impressum', function(req, res, next) {
     res.render('impressum_de', {
         title: 'Impressum',
-        footer_bottom: true,
+        footer_bottom: !Utils.checkMobile(req),
         layout: 'layout_de',
         user: req.user,
     });
@@ -1092,7 +399,7 @@ router.post('/contactus', function(req, res, next) {
 router.get('/product_request', function(req, res, next) {
     res.render('product_request_de', {
         title: 'Von Ihnen gesuchte Produkte',
-        footer_bottom: true,
+        footer_bottom: !Utils.checkMobile(req),
         layout: 'layout_de',
         user: req.user,
     });

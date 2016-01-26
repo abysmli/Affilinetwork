@@ -98,5 +98,15 @@ module.exports = (function() {
         return _products;
     }
 
+    _Class.prototype.checkMobile = function checkMobile(req) {
+        var MobileDetect = require('mobile-detect');
+        var md = new MobileDetect(req.headers['user-agent']);
+        var ismobile = false;
+        if ( md.mobile() ) {
+            ismobile = true;
+        }
+        return ismobile;
+    }
+
     return _Class;
 })();
