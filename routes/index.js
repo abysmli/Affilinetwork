@@ -55,6 +55,7 @@ passport.use(new LocalStrategy(
 router.get('/', function(req, res, next) {
     var Utils = new utils();
     var page = req.query.page || 1;
+<<<<<<< HEAD
     Product.count({}, function(err, count) {
         var pageColum = count / 10;
         Product.aggregate(
@@ -64,6 +65,68 @@ router.get('/', function(req, res, next) {
                         $ne: null
                     }
                 },
+=======
+    var search = req.query.search || "";
+    var category = req.query.category || "";
+    var minprice = req.query.minprice || Number.NEGATIVE_INFINITY;
+    var maxprice = req.query.maxprice || Number.POSITIVE_INFINITY;
+    var sort = req.query.sort || "";
+    var mainPage = false;
+    var _category = category;
+    var ItemOnPage = 30;
+    if (category == "" || category == "所有") {
+        _category = {
+            $in: ["服装鞋子", "食品饮食", "厨房用具", "电子产品", "手机平板", "化妆品", "健康保健", "旅游", "其他", "母婴"]
+        };
+    }
+    if (sort == '按价格由低到高') {
+        sort = {
+            Price: 1
+        };
+    } else if (sort == '按价格由高到低') {
+        sort = {
+            Price: -1
+        };
+    } else if (sort == '按热度') {
+        sort = {
+            SaleRank: -1
+        };
+    } else {
+        sort = {
+            updated_at: -1
+        };
+    }
+    var group = {
+        _id: "$EAN",
+        ProductId: {
+            $first: "$_id"
+        },
+        Images: {
+            $first: "$ProductImage"
+        },
+        ProductName: {
+            $push: "$TitleCN"
+        },
+        DescriptionCN: {
+            $push: "$DescriptionCN"
+        },
+        Price: {
+            $push: "$Price"
+        }
+    };
+    var matchQuery = {
+        $and: [{
+            EAN: {
+                $ne: 'null'
+            },
+            Price: {
+                $lte: Number(maxprice),
+                $gte: Number(minprice)
+            },
+            Category: _category,
+            $or: [{
+                Title: new RegExp(search, 'gi')
+>>>>>>> origin/master
             }, {
                 "$group": {
                     _id: "$EAN",
@@ -130,6 +193,7 @@ router.get('/', function(req, res, next) {
                         }
                     }, {
                         "$sort": {
+<<<<<<< HEAD
                             update_at: -1
                         }
                     }], function(err, hotproduct) {
@@ -145,6 +209,41 @@ router.get('/', function(req, res, next) {
                             sort: '按日期',
                             user: req.user,
                             layout: 'layout'
+=======
+                            SalesRank: -1
+                        }
+                    }], function(err, hotproducts) {
+                        var iterateNumber=0;
+                        hotproducts.forEach(function(hotproduct, index) {
+                            Product.find({
+                                EAN: hotproduct._id
+                            }).stream ()
+                            .on ("error", function (err) {
+                                next(err);
+                            })
+                            .on ("data", function (_hotproduct) {
+                                hotproduct.ProductName.push(_hotproduct.TitleCN);
+                                hotproduct.DescriptionCN.push(_hotproduct.DescriptionCN);
+                                hotproduct.Price.push(_hotproduct.Price);
+                            })
+                            .on ("close", function () {
+                                if ( ++iterateNumber == hotproducts.length) {
+                                    res.render('index', {
+                                        title: 'Allhaha',
+                                        footer_bottom: false,
+                                        mainPage: mainPage,
+                                        pages: pages,
+                                        currentPage: page,
+                                        products: products,
+                                        hotproducts: hotproducts,
+                                        category: '所有',
+                                        sort: '按日期',
+                                        user: req.user,
+                                        layout: 'layout'
+                                    });
+                                }
+                            });
+>>>>>>> origin/master
                         });
                     });
                     
@@ -1055,7 +1154,7 @@ router.get('/aboutus', function(req, res, next) {
     });
 });
 
-router.get('/contactus', function(req, res, next) {
+router.get('/contact', function(req, res, next) {
     res.render('contactus', {
         title: '联系我们',
         footer_bottom: true,
@@ -1064,7 +1163,7 @@ router.get('/contactus', function(req, res, next) {
     });
 });
 
-router.post('/contactus', function(req, res, next) {
+router.post('/contact', function(req, res, next) {
     var feedback = {
         name: req.body.name,
         email: req.body.email,

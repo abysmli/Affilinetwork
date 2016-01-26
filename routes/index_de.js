@@ -68,7 +68,7 @@ router.get('/', function(req, res, next) {
     var ItemOnPage = 30;
     if (category == "" || category == "所有") {
         _category = {
-            $in: ["服装鞋子", "食品饮食", "厨房用具", "电子产品", "手机平板", "化妆品", "健康保健", "旅游", "其他"]
+            $in: ["服装鞋子", "食品饮食", "厨房用具", "电子产品", "手机平板", "化妆品", "健康保健", "旅游", "其他", "母婴"]
         };
     }
     if (sort == 'Preis tief nach hoch') {
@@ -337,7 +337,7 @@ router.get('/aboutus', function(req, res, next) {
     });
 });
 
-router.get('/contactus', function(req, res, next) {
+router.get('/kontakt', function(req, res, next) {
     res.render('contact_de', {
         title: 'Kontakt',
         footer_bottom: !Utils.checkMobile(req),
@@ -355,7 +355,7 @@ router.get('/impressum', function(req, res, next) {
     });
 });
 
-router.post('/contactus', function(req, res, next) {
+router.post('/kontakt', function(req, res, next) {
     var feedback = {
         name: req.body.name,
         email: req.body.email,

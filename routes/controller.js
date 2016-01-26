@@ -19,7 +19,10 @@ var Affilinet = new affilinet({
     publisherWebservicePassword: setting.affilinet_setting.publisherWebservicePassword
 });
 
-var prodAdv = aws.createProdAdvClient(setting.amazon_setting.AccessKeyId, setting.amazon_setting.SecretAccessKey, setting.amazon_setting.AssociateTag, {host: "ecs.amazonaws.de", region: "DE"});
+var prodAdv = aws.createProdAdvClient(setting.amazon_setting.AccessKeyId, setting.amazon_setting.SecretAccessKey, setting.amazon_setting.AssociateTag, {
+    host: "ecs.amazonaws.de",
+    region: "DE"
+});
 
 /* GET users listing. */
 router.get('/', auth, function(req, res, next) {
@@ -291,9 +294,15 @@ router.get('/product', auth, function(req, res, next) {
             }
         });
     } else {
-        Product.count({}, function(err, count) {
-            Product.find({}, null, {
-                limit: 500,
+        var query = {};
+        if (req.query.translated == "true") {
+            query = {
+                Tranlated: true
+            }
+        }
+        Product.count(query, function(err, count) {
+
+            Product.find(query, null, {
                 sort: {
                     updated_at: -1
                 }
