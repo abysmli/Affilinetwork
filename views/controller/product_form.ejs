@@ -65,7 +65,7 @@
             </div>
             <div class="form-group">
                 <label for="EAN">EAN</label>
-                <input type="text" class="form-control" id="EAN" name="EAN" value="<%= parseInt(product.EAN) || '' %>" placeholder="EAN">
+                <input type="text" class="form-control" id="EAN" name="EAN" value="" placeholder="EAN">
             </div>
             <div class="form-group">
                 <label for="ProductId">ProductId (Affilinet Identification Number)</label>
@@ -124,4 +124,9 @@
 </div>
 <script>
     $("#product_page").addClass("active");
+    $(document).ready(function(){
+        var _ean = "<%= product.EAN %>";
+        _ean = _ean.substr(_ean.length - 13);
+        $("#EAN").val(_ean);
+    });
 </script>

@@ -48,138 +48,132 @@
         <!-- Pretty JSON -->
         <script type="text/javascript" src="/javascripts/pretty-json-min.js"></script>
     </head>
-    <% if(footer_bottom) { %>
-    <body class="no-trans" style="padding-bottom: 140px;">
-        <% } else { %>
-        <body class="no-trans">
-            <% } %>
-            <!-- scrollToTop -->
+    <% if(footer_bottom) { %><body class="no-trans" style="padding-bottom: 140px;"><% } else { %><body class="no-trans"><% } %>
+        <!-- scrollToTop -->
+        <!-- ================ -->
+        <div class="scrollToTop"><i class="icon-up-open-big"></i></div>
+        <!-- page wrapper start -->
+        <!-- ================ -->
+        <div class="page-wrapper">
+            <!-- header-top start (Add "dark" class to .header-top in order to enable dark header-top e.g <div class="header-top dark">) -->
             <!-- ================ -->
-            <div class="scrollToTop"><i class="icon-up-open-big"></i></div>
-            <!-- page wrapper start -->
-            <!-- ================ -->
-            <div class="page-wrapper">
-                <!-- header-top start (Add "dark" class to .header-top in order to enable dark header-top e.g <div class="header-top dark">) -->
-                <!-- ================ -->
-                <div class="header-top">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
-                                <div class = "header-top-first clearfix">
-                                    <ul class = "social-links clearfix">
-                                        <li ><a class="cn_button" href="/"><i>CN</i></a></li>
-                                        <li ><a class="de_button" href="/DE/"><i>DE</i></a></li>
-                                    </ul>
-                                </div>
+            <div class="header-top">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
+                            <div class = "header-top-first clearfix">
+                                <ul class = "social-links clearfix">
+                                    <li ><a class="cn_button" href="/"><i>CN</i></a></li>
+                                    <li ><a class="de_button" href="/DE/"><i>DE</i></a></li>
+                                </ul>
                             </div>
-                            <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
-                                <!-- header-top-second start -->
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
+                            <!-- header-top-second start -->
+                            <!-- ================ -->
+                            <div id="header-top-second" class="clearfix">
+                                <!-- header top dropdowns start -->
                                 <!-- ================ -->
-                                <div id="header-top-second" class="clearfix">
-                                    <!-- header top dropdowns start -->
-                                    <!-- ================ -->
-                                    <div class="header-top-dropdown">
-                                        <div class="btn-group dropdown">
-                                            <% if(typeof user == 'undefined' ) { %>
-                                            <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i>登录</button>
-                                            <ul class="dropdown-menu dropdown-menu-right dropdown-animation">
-                                                <li>
-                                                    <form class="login-form" action="/" method="post">
-                                                        <div class="form-group has-feedback">
-                                                            <label class="control-label">用户名</label>
-                                                            <input name="username" type="text" class="form-control" placeholder="">
-                                                            <i class="fa fa-user form-control-feedback"></i>
-                                                        </div>
-                                                        <div class="form-group has-feedback">
-                                                            <label class="control-label">密码</label>
-                                                            <input name="password" type="password" class="form-control" placeholder="">
-                                                            <i class="fa fa-lock form-control-feedback"></i>
-                                                        </div>
-                                                        <button type="submit" class="btn btn-group btn-dark btn-sm">登入</button>
-                                                        <span>or</span>
-                                                        <a href="/register" role="button" class="btn btn-group btn-default btn-sm">点这里注册</a>
-                                                        <ul>
-                                                            <li><a href="/password_reset">忘记密码?</a></li>
-                                                        </ul>
-                                                    </form>
-                                                </li>
-                                            </ul>
-                                            <% } else { %>
-                                            <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i><%= user.username %></button>
-                                            <ul class="dropdown-menu dropdown-menu-right dropdown-animation">
-                                                <a class="btn btn-group btn-dark btn-sm" href="/favourite">查看收藏夹</a>
-                                                <span><p style="font-size: small"><a href="/logout">退出登录</a></p></span>
-                                            </ul>
-                                            <% } %>
-                                        </div>
+                                <div class="header-top-dropdown">
+                                    <div class="btn-group dropdown">
+                                        <% if(typeof user == 'undefined' ) { %>
+                                        <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i>登录</button>
+                                        <ul class="dropdown-menu dropdown-menu-right dropdown-animation">
+                                            <li>
+                                                <form class="login-form" action="/" method="post">
+                                                    <div class="form-group has-feedback">
+                                                        <label class="control-label">用户名</label>
+                                                        <input name="username" type="text" class="form-control" placeholder="">
+                                                        <i class="fa fa-user form-control-feedback"></i>
+                                                    </div>
+                                                    <div class="form-group has-feedback">
+                                                        <label class="control-label">密码</label>
+                                                        <input name="password" type="password" class="form-control" placeholder="">
+                                                        <i class="fa fa-lock form-control-feedback"></i>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-group btn-dark btn-sm">登入</button>
+                                                    <span>or</span>
+                                                    <a href="/register" role="button" class="btn btn-group btn-default btn-sm">点这里注册</a>
+                                                    <ul>
+                                                        <li><a href="/password_reset">忘记密码?</a></li>
+                                                    </ul>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                        <% } else { %>
+                                        <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i><%= user.username %></button>
+                                        <ul class="dropdown-menu dropdown-menu-right dropdown-animation">
+                                            <a class="btn btn-group btn-dark btn-sm" href="/favourite">查看收藏夹</a>
+                                            <span><p style="font-size: small"><a href="/logout">退出登录</a></p></span>
+                                        </ul>
+                                        <% } %>
                                     </div>
-                                    <!--  header top dropdowns end -->
                                 </div>
-                                <!-- header-top-second end -->
+                                <!--  header top dropdowns end -->
                             </div>
-                            
+                            <!-- header-top-second end -->
                         </div>
                     </div>
                 </div>
-                <header class="header clearfix">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <!-- header-left start -->
-                                <!-- ================ -->
-                                <div class="header-left clearfix">
-                                    <!-- logo -->
-                                    <div class="logo">
-                                        <a href="/"><img id="logo" src="/images/logo.png" alt="iDea"></a>
-                                    </div>
-                                    <!-- name-and-slogan -->
-                                    <div class="site-slogan">
-                                        德国海外商品订购. 可以更简单.
-                                    </div>
+            </div>
+            <header class="header clearfix">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <!-- header-left start -->
+                            <!-- ================ -->
+                            <div class="header-left clearfix">
+                                <!-- logo -->
+                                <div class="logo">
+                                    <a href="/"><img id="logo" src="/images/logo.png" alt="iDea"></a>
                                 </div>
-                                <!-- header-left end -->
+                                <!-- name-and-slogan -->
+                                <div class="site-slogan">
+                                    德国海外商品订购. 可以更简单.
+                                </div>
                             </div>
-                            <div class="col-md-9">
-                                <!-- header-right start -->
+                            <!-- header-left end -->
+                        </div>
+                        <div class="col-md-9">
+                            <!-- header-right start -->
+                            <!-- ================ -->
+                            <div class="header-right clearfix">
+                                <!-- main-navigation start -->
                                 <!-- ================ -->
-                                <div class="header-right clearfix">
-                                    <!-- main-navigation start -->
+                                <div class="main-navigation animated">
+                                    <!-- navbar start -->
                                     <!-- ================ -->
-                                    <div class="main-navigation animated">
-                                        <!-- navbar start -->
-                                        <!-- ================ -->
-                                        <nav class="navbar navbar-default" role="navigation">
-                                            <div class="container-fluid">
-                                                <!-- Toggle get grouped for better mobile display -->
-                                                <div class="navbar-header">
-                                                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
-                                                    <span class="sr-only">Toggle navigation</span>
-                                                    <span class="icon-bar"></span>
-                                                    <span class="icon-bar"></span>
-                                                    <span class="icon-bar"></span>
-                                                    </button>
-                                                </div>
-                                                <!-- Collect the nav links, forms, and other content for toggling -->
-                                                <div class="collapse navbar-collapse scrollspy smooth-scroll" id="navbar-collapse-1">
-                                                    <ul class="nav navbar-nav navbar-right">
-                                                        <li><a href="/">首页</a></li>
-                                                        <li><a href="/voucher">折扣券</a></li>
-                                                        <li><a href="/article">精彩文章</a></li>
-                                                    </ul>
-                                                </div>
+                                    <nav class="navbar navbar-default" role="navigation">
+                                        <div class="container-fluid">
+                                            <!-- Toggle get grouped for better mobile display -->
+                                            <div class="navbar-header">
+                                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
+                                                <span class="sr-only">Toggle navigation</span>
+                                                <span class="icon-bar"></span>
+                                                <span class="icon-bar"></span>
+                                                <span class="icon-bar"></span>
+                                                </button>
                                             </div>
-                                        </nav>
-                                        <!-- navbar end -->
-                                    </div>
-                                    <!-- main-navigation end -->
+                                            <!-- Collect the nav links, forms, and other content for toggling -->
+                                            <div class="collapse navbar-collapse scrollspy smooth-scroll" id="navbar-collapse-1">
+                                                <ul class="nav navbar-nav navbar-right">
+                                                    <li><a href="/">首页</a></li>
+                                                    <li><a href="/voucher">折扣券</a></li>
+                                                    <li><a href="/article">精彩文章</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </nav>
+                                    <!-- navbar end -->
                                 </div>
-                                <!-- header-right end -->
+                                <!-- main-navigation end -->
                             </div>
+                            <!-- header-right end -->
                         </div>
                     </div>
-                    <!-- main-navigation end -->
-                </header>
-            </div>
+                </div>
+                <!-- main-navigation end -->
+            </header>
             <div class="modal fade" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="regionModalLabel" aria-hidden="true" id="regionModal" >
                 <div class="modal-dialog modal-sm">
                     <div class="modal-content">
@@ -200,70 +194,67 @@
                 </div>
             </div>
             <%- body %>
-            <% if(footer_bottom) { %>
-            <div class="subfooter" style="position: fixed; width: 100%; bottom: 0px;">
-                <% } else { %>
-                <div class="subfooter">
-                    <% } %>
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-md-7">
-                                <p>Copyright © 2015 Allhaha by <a target="_blank" href="/aboutus">Allhaha.com</a>. All Rights Reserved</p>
-                            </div>
-                            <div class="col-md-5">
-                                <nav class="navbar navbar-default" role="navigation">
-                                    <!-- Toggle get grouped for better mobile display -->
-                                    <div class="navbar-header">
-                                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-2">
-                                        <span class="sr-only">Toggle navigation</span>
-                                        <span class="icon-bar"></span>
-                                        <span class="icon-bar"></span>
-                                        <span class="icon-bar"></span>
-                                        </button>
-                                    </div>
-                                    <div class="collapse navbar-collapse" id="navbar-collapse-2">
-                                        <ul class="nav navbar-nav">
-                                            <li><a href="/product_request" target="_blank">产品请求</a></li>
-                                            <li><a href="/contactus" target="_blank">联系我们</a></li>
-                                        </ul>
-                                    </div>
-                                </nav>
-                            </div>
+            <% if(footer_bottom) { %><div class="subfooter" style="position: fixed; width: 100%; bottom: 0px;"><% } else { %>\<div class="subfooter"><% } %>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-7">
+                            <p>Copyright © 2015 Allhaha by <a target="_blank" href="/aboutus">Allhaha.com</a>. All Rights Reserved</p>
+                        </div>
+                        <div class="col-md-5">
+                            <nav class="navbar navbar-default" role="navigation">
+                                <!-- Toggle get grouped for better mobile display -->
+                                <div class="navbar-header">
+                                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-2">
+                                    <span class="sr-only">Toggle navigation</span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    </button>
+                                </div>
+                                <div class="collapse navbar-collapse" id="navbar-collapse-2">
+                                    <ul class="nav navbar-nav">
+                                        <li><a href="/product_request" target="_blank">产品请求</a></li>
+                                        <li><a href="/contact" target="_blank">联系我们</a></li>
+                                    </ul>
+                                </div>
+                            </nav>
                         </div>
                     </div>
-                    <!-- .subfooter end -->
                 </div>
-                <!-- JavaScript files placed at the end of the document so the pages load faster
-                ================================================== -->
-                <!-- Jquery and Bootstap core js files -->
-                <script type="text/javascript" src="/javascripts/bootstrap.min.js"></script>
-                <!-- Modernizr javascript -->
-                <script type="text/javascript" src="/plugins/modernizr.js"></script>
-                <!-- Isotope javascript -->
-                <script type="text/javascript" src="/plugins/isotope/isotope.pkgd.min.js"></script>
-                <!-- Owl carousel javascript -->
-                <script type="text/javascript" src="/plugins/owl-carousel/owl.carousel.js"></script>
-                <!-- Magnific Popup javascript -->
-                <script type="text/javascript" src="/plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
-                <!-- Appear javascript -->
-                <script type="text/javascript" src="/plugins/jquery.appear.js"></script>
-                <!-- Count To javascript -->
-                <script type="text/javascript" src="/plugins/jquery.countTo.js"></script>
-                <!-- Parallax javascript -->
-                <script type="text/javascript" src="/plugins/jquery.parallax-1.1.3.js"></script>
-                <!-- Contact form -->
-                <script type="text/javascript" src="/plugins/jquery.validate.js"></script>
-                <!-- Initialization of Plugins -->
-                <script type="text/javascript" src="/javascripts/template.js"></script>
-                <!-- Messg Plugin -->
-                <script type="text/javascript" src="/plugins/lobibox/js/lobibox.min.js"></script>
-                <!-- JiaThis Button -->
-                <script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=2071436" charset="utf-8"></script>
-                <!-- Google Maps javascript -->
-                <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&amp;sensor=false"></script>
-                <script type="text/javascript" src="/javascripts/google.map.config.js"></script>
-                <!-- Custom Scripts -->
-                <script type="text/javascript" src="/javascripts/custom.js"></script>
-                <script type="text/javascript" src="/javascripts/set_language.js"></script>
-            </body>
-        </html>
+                    <!-- .subfooter end -->
+            </div>
+        </div>
+        <!-- JavaScript files placed at the end of the document so the pages load faster
+        ================================================== -->
+        <!-- Jquery and Bootstap core js files -->
+        <script type="text/javascript" src="/javascripts/bootstrap.min.js"></script>
+        <!-- Modernizr javascript -->
+        <script type="text/javascript" src="/plugins/modernizr.js"></script>
+        <!-- Isotope javascript -->
+        <script type="text/javascript" src="/plugins/isotope/isotope.pkgd.min.js"></script>
+        <!-- Owl carousel javascript -->
+        <script type="text/javascript" src="/plugins/owl-carousel/owl.carousel.js"></script>
+        <!-- Magnific Popup javascript -->
+        <script type="text/javascript" src="/plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+        <!-- Appear javascript -->
+        <script type="text/javascript" src="/plugins/jquery.appear.js"></script>
+        <!-- Count To javascript -->
+        <script type="text/javascript" src="/plugins/jquery.countTo.js"></script>
+        <!-- Parallax javascript -->
+        <script type="text/javascript" src="/plugins/jquery.parallax-1.1.3.js"></script>
+        <!-- Contact form -->
+        <script type="text/javascript" src="/plugins/jquery.validate.js"></script>
+        <!-- Initialization of Plugins -->
+        <script type="text/javascript" src="/javascripts/template.js"></script>
+        <!-- Messg Plugin -->
+        <script type="text/javascript" src="/plugins/lobibox/js/lobibox.min.js"></script>
+        <!-- JiaThis Button -->
+        <script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=2071436" charset="utf-8"></script>
+        <!-- Google Maps javascript -->
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&amp;sensor=false"></script>
+        <script type="text/javascript" src="/javascripts/google.map.config.js"></script>
+        <!-- Custom Scripts -->
+        <script type="text/javascript" src="/javascripts/custom.js"></script>
+        <script type="text/javascript" src="/javascripts/set_language.js"></script>
+    </body>
+</html>

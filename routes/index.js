@@ -380,7 +380,7 @@ router.get('/aboutus', function(req, res, next) {
     });
 });
 
-router.get('/contactus', function(req, res, next) {
+router.get('/contact', function(req, res, next) {
     res.render('contactus', {
         title: '联系我们',
         footer_bottom: !Utils.checkMobile(req),
@@ -389,7 +389,7 @@ router.get('/contactus', function(req, res, next) {
     });
 });
 
-router.post('/contactus', function(req, res, next) {
+router.post('/contact', function(req, res, next) {
     var feedback = {
         name: req.body.name,
         email: req.body.email,

@@ -337,7 +337,7 @@ router.get('/aboutus', function(req, res, next) {
     });
 });
 
-router.get('/contactus', function(req, res, next) {
+router.get('/kontakt', function(req, res, next) {
     res.render('contact_de', {
         title: 'Kontakt',
         footer_bottom: !Utils.checkMobile(req),
@@ -355,7 +355,7 @@ router.get('/impressum', function(req, res, next) {
     });
 });
 
-router.post('/contactus', function(req, res, next) {
+router.post('/kontakt', function(req, res, next) {
     var feedback = {
         name: req.body.name,
         email: req.body.email,

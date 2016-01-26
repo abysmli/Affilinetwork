@@ -10,57 +10,62 @@ File Description: Place here your custom CSS styles
 */
 
 .modal {
-  text-align: center;
-  padding: 0!important;
+    text-align: center;
+    padding: 0!important;
 }
 
 .modal:before {
-  content: '';
-  display: inline-block;
-  height: 100%;
-  vertical-align: middle;
-  margin-right: -4px;
+    content: '';
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+    margin-right: -4px;
 }
 
 .modal-dialog {
-  display: inline-block;
-  text-align: left;
-  vertical-align: middle;
+    display: inline-block;
+    text-align: left;
+    vertical-align: middle;
 }
 
 .overlay-container img {
-  max-width: 100%;
-  max-height: 200px;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  margin-left: auto;
-  margin-right: auto;
+    max-width: 100%;
+    max-height: 200px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .image-box {
-  background-color: #ffffff;
+    background-color: #ffffff;
 }
 
 .subfooter {
-  z-index: 2000;
+    z-index: 2000;
 }
 
 .gutschein {
-  z-index: -100;
-  position: absolute;
-  display: inline-block;
+    z-index: -100;
+    position: absolute;
+    display: inline-block;
 }
 
 .gutschein-copy {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .gutschein-text {
-  font-size: 18px;
-  font-weight: bold;
-  font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 #logo {
-  width: 160px;
+    width: 160px;
 }
+
+.modal-backdrop {
+    opacity: 0.8 !important;
+}
+
