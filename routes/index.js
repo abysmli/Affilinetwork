@@ -108,6 +108,7 @@ router.get('/', function(req, res, next) {
     };
     var matchQuery = {
         $and: [{
+            Tranlated: true,
             EAN: {
                 $ne: 'null'
             },
@@ -143,73 +144,92 @@ router.get('/', function(req, res, next) {
             if (err != null) {
                 next(err);
             } else {
-                if (page == 1 && search == "" && category == "" && minprice == Number.NEGATIVE_INFINITY && maxprice == Number.POSITIVE_INFINITY) {
-                    mainPage = true;
-                    Product.aggregate([{
-                        "$match": {
-                            $and: [{
-                                EAN: {
-                                    $ne: 'null'
-                                },
-                                SalesRank: {
-                                    $lte: 15,
-                                    $gte: 1
-                                }
-                            }]
-                        }
-                    }, {
-                        "$group": group
-                    }, {
-                        "$sort": {
-                            SalesRank: -1
-                        }
-                    }], function(err, hotproducts) {
-                        var iterateNumber = 0;
-                        hotproducts.forEach(function(hotproduct, index) {
-                            Product.find({
-                                    EAN: hotproduct._id
-                                }).stream()
-                                .on("error", function(err) {
-                                    next(err);
-                                })
-                                .on("data", function(_hotproduct) {
-                                    hotproduct.ProductName.push(_hotproduct.TitleCN);
-                                    hotproduct.DescriptionCN.push(_hotproduct.DescriptionCN);
-                                    hotproduct.Price.push(_hotproduct.Price);
-                                })
-                                .on("close", function() {
-                                    if (++iterateNumber == hotproducts.length) {
-                                        res.render('index', {
-                                            title: 'Allhaha',
-                                            footer_bottom: false,
-                                            mainPage: mainPage,
-                                            pages: pages,
-                                            currentPage: page,
-                                            products: products,
-                                            hotproducts: hotproducts,
-                                            category: '所有',
-                                            sort: '按日期',
-                                            user: req.user,
-                                            layout: 'layout'
+                var iterateNum = 0;
+                products.forEach(function(product, index) {
+                    Product.find({
+                            EAN: product._id
+                        }).stream()
+                        .on("error", function(err) {
+                            next(err);
+                        })
+                        .on("data", function(_product) {
+                            product.ProductName.push(_product.TitleCN);
+                            product.DescriptionCN.push(_product.DescriptionCN);
+                            product.Price.push(_product.Price);
+                        })
+                        .on("close", function() {
+                            if (++iterateNum == products.length) {
+                                if (page == 1 && search == "" && category == "" && minprice == Number.NEGATIVE_INFINITY && maxprice == Number.POSITIVE_INFINITY) {
+                                    mainPage = true;
+                                    Product.aggregate([{
+                                        "$match": {
+                                            $and: [{
+                                                Tranlated: true,
+                                                EAN: {
+                                                    $ne: 'null'
+                                                },
+                                                SalesRank: {
+                                                    $lte: 15,
+                                                    $gte: 1
+                                                }
+                                            }]
+                                        }
+                                    }, {
+                                        "$group": group
+                                    }, {
+                                        "$sort": {
+                                            SalesRank: -1
+                                        }
+                                    }], function(err, hotproducts) {
+                                        var iterateNumber = 0;
+                                        hotproducts.forEach(function(hotproduct, index) {
+                                            Product.find({
+                                                    EAN: hotproduct._id
+                                                }).stream()
+                                                .on("error", function(err) {
+                                                    next(err);
+                                                })
+                                                .on("data", function(_hotproduct) {
+                                                    hotproduct.ProductName.push(_hotproduct.TitleCN);
+                                                    hotproduct.DescriptionCN.push(_hotproduct.DescriptionCN);
+                                                    hotproduct.Price.push(_hotproduct.Price);
+                                                })
+                                                .on("close", function() {
+                                                    if (++iterateNumber == hotproducts.length) {
+                                                        res.render('index', {
+                                                            title: 'Allhaha',
+                                                            footer_bottom: false,
+                                                            mainPage: mainPage,
+                                                            pages: pages,
+                                                            currentPage: page,
+                                                            products: products,
+                                                            hotproducts: hotproducts,
+                                                            category: '所有',
+                                                            sort: '按日期',
+                                                            user: req.user,
+                                                            layout: 'layout'
+                                                        });
+                                                    }
+                                                });
                                         });
-                                    }
-                                });
+                                    });
+                                } else {
+                                    res.render('index', {
+                                        title: 'Allhaha',
+                                        footer_bottom: false,
+                                        mainPage: mainPage,
+                                        pages: pages,
+                                        currentPage: page,
+                                        products: products,
+                                        category: '所有',
+                                        sort: '按日期',
+                                        user: req.user,
+                                        layout: 'layout'
+                                    });
+                                }
+                            }
                         });
-                    });
-                } else {
-                    res.render('index', {
-                        title: 'Allhaha',
-                        footer_bottom: false,
-                        mainPage: mainPage,
-                        pages: pages,
-                        currentPage: page,
-                        products: products,
-                        category: '所有',
-                        sort: '按日期',
-                        user: req.user,
-                        layout: 'layout'
-                    });
-                }
+                });
             }
         });
     });
