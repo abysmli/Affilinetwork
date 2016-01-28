@@ -28,7 +28,7 @@
                 <a href="/controller/article/edit?id=<%= article._id %>"><%= article.Title %></a>
             </td>
             <td>
-                <a href="/controller/article/edit?id=<%= article._id %>"><img src="<%- article.Image %>" onerror="this.src= '/images/no-image.jpg';" style="max-width: 100px; max-height: 100px"></a>
+                <a href="/controller/article/edit?id=<%= article._id %>"><img class="lazy" data-original="<%- article.Image %>" onerror="this.src= '/images/no-image.jpg';" style="max-width: 100px; max-height: 100px"></a>
             </td>
             <td>
                 <div class="article_content">
@@ -48,6 +48,7 @@
 
 <script>
     $(document).ready(function() {
+        $("img.lazy").lazyload();
         var dt = $('#article_table').DataTable({
             lengthMenu: [
                 [10, 25, 50, -1],

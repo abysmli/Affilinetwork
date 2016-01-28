@@ -22,7 +22,7 @@
             <th>Brand</th>
             <th>Price</th>
             <th>URL</th>
-            <th>ProductID</th>
+            <th>Date</th>
             <th>EAN</th>
             <th>ASIN</th>
             <th>Keywords</th>
@@ -44,7 +44,7 @@
             <th>Brand</th>
             <th>Price</th>
             <th>URL</th>
-            <th>ProductID</th>
+            <th>Date</th>
             <th>EAN</th>
             <th>ASIN</th>
             <th>Keywords</th>
@@ -64,9 +64,9 @@
             <tr>
                 <td>
                     <% if (type != "local") { %>
-                        <img src="<%= product.ProductImage %>" style="max-width: 100px; max-height: 100px" onerror="this.src= '/images/no-image.jpg';">
+                        <img class="lazy" data-original="<%= product.ProductImage %>" style="max-width: 100px; max-height: 100px" onerror="this.src= '/images/no-image.jpg';">
                     <% } else { %>
-                        <a href="/controller/product/edit?id=<%= product._id %>"><img src="<%= product.ProductImage %>" onerror="this.src= '/images/no-image.jpg';" style="max-width: 100px; max-height: 100px"></a>
+                        <a href="/controller/product/edit?id=<%= product._id %>"><img class="lazy" data-original="<%= product.ProductImage %>" onerror="this.src= '/images/no-image.jpg';" style="max-width: 100px; max-height: 100px"></a>
                     <% } %>
                 </td>
                 <td>
@@ -85,7 +85,7 @@
                     <a href="<%= product.URL %>">Link</a>
                 </td>
                 <td>
-                    <%= product.ProductId %>
+                    <%= product.updated_at %>
                 </td>
                 <td>
                     <%= product.EAN %>
@@ -176,6 +176,8 @@
 <script>
     $(document).ready(function() {
 
+        $("img.lazy").lazyload();
+
         $("#product_page").addClass("active");
 
         var search_selector = "EAN";
@@ -187,9 +189,6 @@
             lengthMenu: [
                 [10, 25, 50, -1],
                 [10, 25, 50, "All"]
-            ],
-            order: [
-                [1, "asc"]
             ]
         });
 
@@ -200,28 +199,30 @@
         });
 
         $('#sync_button').click(function(event) {
-            $('#done_button').hide();
-            $('#myModalLabel').text('Synchronizing');
-            $('#processing_modal').modal({
-                backdrop: 'static',
-                keyboard: false
-            });
-            socket.emit('sync', {
-                shopid: "<%= shopid %>",
-                categoryid: "<%= categoryid %>",
-                type: "<%= type %>",
-                <% if (type == "search") { %>
-                query: "<%= query %>",
-                fq: "<%= fq %>",
-                <% } %>
-            });
-            socket.on('sync_process', function(data) {
-                setProgressBar(data.currentpage / data.totalpage);
-            });
-            socket.on('sync_finished', function(data) {
-                $("#progress_bar").html("Synchronizing finished! More than " + data.count + " Products added in Database.");
-                $('#done_button').fadeIn();
-            });
+            if (confirm('Synchronize All products?！')) {
+                $('#done_button').hide();
+                $('#myModalLabel').text('Synchronizing');
+                $('#processing_modal').modal({
+                    backdrop: 'static',
+                    keyboard: false
+                });
+                socket.emit('sync', {
+                    shopid: "<%= shopid %>",
+                    categoryid: "<%= categoryid %>",
+                    type: "<%= type %>",
+                    <% if (type == "search") { %>
+                    query: "<%= query %>",
+                    fq: "<%= fq %>",
+                    <% } %>
+                });
+                socket.on('sync_process', function(data) {
+                    setProgressBar(data.currentpage / data.totalpage);
+                });
+                socket.on('sync_finished', function(data) {
+                    $("#progress_bar").html("Synchronizing finished! More than " + data.count + " Products added in Database.");
+                    $('#done_button').fadeIn();
+                });
+            }
         });
 
         $('#update_button').click(function(event) {

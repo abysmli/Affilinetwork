@@ -69,7 +69,7 @@
         <tr>
             <% if(type == 'local') { %>
             <th>
-                <a href="/controller/voucher/edit?id=<%= voucher._id %>"><img src="<%- voucher.Image %>" onerror="this.src= '/images/no-image.jpg';" style="max-width: 100px; max-height: 100px"></a>
+                <a href="/controller/voucher/edit?id=<%= voucher._id %>"><img data-original="lazy" src="<%- voucher.Image %>" onerror="this.src= '/images/no-image.jpg';" style="max-width: 100px; max-height: 100px"></a>
             </th>
             <% } %>
             <td>
@@ -137,6 +137,7 @@
 </table>
 
 <script>
+    $("img.lazy").lazyload();
 	var dt = $('#voucher_table').DataTable({
 		lengthMenu: [
 			[10, 25, 50, -1],
@@ -145,13 +146,13 @@
 		stateSave: true
 	});
 
+    $("#voucher_page").addClass("active");
+
     $("#remove_all").click(function(event) {
         if (!confirm('Remove All products?！')) {
             event.preventDefault();
         }
     });
-
-	$("#voucher_page").addClass("active");
 
     $('tbody').on('click','button.inte_button',function() {
 		var that = $(this);

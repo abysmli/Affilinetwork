@@ -4,15 +4,15 @@
             <div class="col-md-10">
                 <ol class="breadcrumb">
                     <li><i class="fa fa-th-large pr-10"></i>Kategorie: </li>
-                    <li class="active"><a href="/DE/?category=服装鞋子">Kleidung&Schuhe</a></li>
-                    <li class="active"><a href="/DE/?category=食品饮食">Essen</a></li>
-                    <li class="active"><a href="/DE/?category=厨房用具">Küche</a></li>
-                    <li class="active"><a href="/DE/?category=电子产品">Elektro&Computer</a></li>
-                    <li class="active"><a href="/DE/?category=母婴">Mutter&Baby</a></li>
-                    <li class="active"><a href="/DE/?category=化妆品">Kosmetik</a></li>
-                    <li class="active"><a href="/DE/?category=健康保健">Gesundheit</a></li>
-                    <li class="active"><a href="/DE/?category=旅游">Reisen&Urlaub</a></li>
-                    <li class="active"><a href="/DE/?category=其他">Andere</a></li>
+                    <li class="active"><a href="/de/?category=服装鞋子">Kleidung&Schuhe</a></li>
+                    <li class="active"><a href="/de/?category=食品饮食">Essen</a></li>
+                    <li class="active"><a href="/de/?category=厨房用具">Küche</a></li>
+                    <li class="active"><a href="/de/?category=电子产品">Elektro&Computer</a></li>
+                    <li class="active"><a href="/de/?category=母婴">Mutter&Baby</a></li>
+                    <li class="active"><a href="/de/?category=化妆品">Kosmetik</a></li>
+                    <li class="active"><a href="/de/?category=健康保健">Gesundheit</a></li>
+                    <li class="active"><a href="/de/?category=旅游">Reisen&Urlaub</a></li>
+                    <li class="active"><a href="/de/?category=其他">Andere</a></li>
                 </ol>
             </div>
             <div class="col-md-2">
@@ -34,27 +34,27 @@
         <div class="row">
             <div class="main col-md-10">
                 <% if (mainPage) { %>
-                <h2 class="page-title">Angebote</h2>
+                <h2 class="page-title">Top Angebote</h2>
                 <div class="separator-2"></div>
                 <div class="owl-carousel carousel-autoplay owl-theme col-xs-6">
                     <% hotproducts.forEach(function(product, index) { %>
                     <div class="image-box">
                         <div class="overlay-container">
                             <img src="<%= product.Images %>" />
-                            <a href="/DE/product?product_id=<%= product.ProductId %>" class="overlay small">
+                            <a href="/de/product?product_id=<%= product.ProductId %>" class="overlay small">
                                 <i class="fa fa-search-plus"></i>
                                 <span><%= product.Description %></span>
                             </a>
                         </div>
                         <div class="listing-item-body clearfix">
-                            <h3 class="title" style="font-weight: 300"><a href="/DE/product?product_id=<%= product.ProductId %>"><%= product.ProductName %></a></h3>
+                            <h3 class="title" style="font-weight: 300"><a href="/de/product?product_id=<%= product.ProductId %>"><%= product.ProductName %></a></h3>
                             <% if (product.Price.length == 1 || Math.min.apply(null, product.Price) == Math.max.apply(null, product.Price)) { %>
                             <span class="price" style="font-size: 20px"><%= product.Price[0].toString().replace(".", ",") %> €</span>
                             <% } else { %>
                             <span class="price" style="font-size: 20px"><%= Math.min.apply(null,product.Price).toString().replace(".", ",") %> - <%= Math.max.apply(null,product.Price).toString().replace(".", ",") %> €</span>
                             <% } %>
                             <div class="elements-list pull-right">
-                                <a href="/DE/product?product_id=<%= product.ProductId %>"><i class="fa fa-gift pr-10"></i>Öffnen</a>
+                                <a href="/de/product?product_id=<%= product.ProductId %>"><i class="fa fa-gift pr-10"></i>Öffnen</a>
                             </div>
                         </div>
                     </div>
@@ -62,28 +62,28 @@
                 </div>
                 <div class="clearfix"></div>
                 <% } %>
-                <h2 class="page-title">Stark reduziert</h2>
+                <h2 class="page-title">Produkte</h2>
                 <div class="separator-2"></div>
                 <div id="container" class="row">
                     <% products.forEach(function(product, index) { %>
                     <div class="element col-lg-3 col-md-3 col-sm-6 col-xs-6 masonry-grid-item">
                         <div class="listing-item">
                             <div class="overlay-container">
-                                <img src="<%= product.Images %>" onerror="this.src= '/images/no-image.jpg';" />
-                                <a href="/DE/product?product_id=<%= product.ProductId %>" class="overlay small">
+                                <img class="lazy" data-original="<%= product.Images %>" onerror="this.src= '/images/no-image.jpg';" />
+                                <a href="/de/product?product_id=<%= product.ProductId %>" class="overlay small">
                                     <i class="fa fa-search-plus"></i>
                                     <span><%= product.Description %></span>
                                 </a>
                             </div>
                             <div class="listing-item-body clearfix">
-                                <h3 class="title" style="font-weight: 300"><a href="/DE/product?product_id=<%= product.ProductId %>"><%= product.ProductName %></a></h3>
+                                <h3 class="title" style="font-weight: 300"><a href="/de/product?product_id=<%= product.ProductId %>"><%= product.ProductName %></a></h3>
                                 <% if (product.Price.length == 1 || Math.min.apply(null, product.Price) == Math.max.apply(null, product.Price)) { %>
                                 <span class="price" style="font-size: 20px"><%= product.Price[0].toString().replace(".", ",") %> €</span>
                                 <% } else { %>
                                 <span class="price" style="font-size: 20px"><%= Math.min.apply(null,product.Price).toString().replace(".", ",") %> - <%= Math.max.apply(null,product.Price).toString().replace(".", ",") %> €</span>
                                 <% } %>
                                 <div class="elements-list pull-right">
-                                    <a href="/DE/product?product_id=<%= product.ProductId %>"><i class="fa fa-gift pr-10"></i>Öffnen</a>
+                                    <a href="/de/product?product_id=<%= product.ProductId %>"><i class="fa fa-gift pr-10"></i>Öffnen</a>
                                 </div>
                             </div>
                         </div>
@@ -151,8 +151,10 @@
 <!-- section start -->
 <!-- ================ -->
 <script type="text/javascript">
-
 $(document).ready(function() {
+    $("img.lazy").lazyload({
+        effect : "fadeIn"
+    });
     var $container = $('#container');
     $container.imagesLoaded(function() {
         $container.isotope({

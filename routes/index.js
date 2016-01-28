@@ -197,7 +197,7 @@ router.get('/', function(req, res, next) {
                                                 .on("close", function() {
                                                     if (++iterateNumber == hotproducts.length) {
                                                         res.render('index', {
-                                                            title: 'Allhaha',
+                                                            title: 'Allhaha 欧哈哈 - 德国商品比价 - 优惠券',
                                                             footer_bottom: false,
                                                             mainPage: mainPage,
                                                             pages: pages,
@@ -215,7 +215,7 @@ router.get('/', function(req, res, next) {
                                     });
                                 } else {
                                     res.render('index', {
-                                        title: 'Allhaha',
+                                        title: 'Allhaha 欧哈哈 - 德国商品比价 - 优惠券',
                                         footer_bottom: false,
                                         mainPage: mainPage,
                                         pages: pages,

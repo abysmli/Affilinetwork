@@ -87,7 +87,7 @@
                     <div class="element col-lg-3 col-md-3 col-sm-6 col-xs-6 masonry-grid-item">
                         <div class="listing-item">
                             <div class="overlay-container">
-                                <img src="<%= product.Images %>" onerror="this.src= '/images/no-image.jpg';" />
+                                <img class="lazy" data-original="<%= product.Images %>" onerror="this.src= '/images/no-image.jpg';" />
                                 <a href="/product?product_id=<%= product.ProductId %>" class="overlay small">
                                     <i class="fa fa-search-plus"></i>
                                     <span>
@@ -187,8 +187,10 @@
 <!-- section start -->
 <!-- ================ -->
 <script type="text/javascript">
-
 $(document).ready(function() {
+    $("img.lazy").lazyload({
+        effect : "fadeIn"
+    });
     var $container = $('#container');
     $container.imagesLoaded(function() {
         $container.isotope({

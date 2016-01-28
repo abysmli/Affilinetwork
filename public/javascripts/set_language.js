@@ -8,7 +8,7 @@ $(document).ready(function() {
     }
     $(".de_button").click(function(){
     	localStorage.region = "de";
-    	window.location.replace("/DE");
+    	window.location.replace("/de");
     });
     $(".cn_button").click(function(){
     	localStorage.region = "cn";

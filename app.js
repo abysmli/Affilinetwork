@@ -63,12 +63,12 @@ app.use(passport.session());
 app.use(flash());
 
 app.use('/', routes);
-app.use('/DE', routes_de)
+app.use('/de', routes_de)
 app.use('/controller', controller);
 app.use('/register', register);
-app.use('/DE/register', register_de);
+app.use('/de/register', register_de);
 app.use('/password_reset', passwordreset);
-app.use('/DE/password_reset', passwordreset_de);
+app.use('/de/password_reset', passwordreset_de);
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {

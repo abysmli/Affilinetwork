@@ -17,7 +17,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- Favicon -->
         <link rel="start" href="http://allhaha.com/"/>
-        <link rel="copyright" href="http://allhaha.com/DE/impressum/"/>
+        <link rel="copyright" href="http://allhaha.com/de/impressum/"/>
         
         <!-- Favicon -->
         <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon">
@@ -44,8 +44,8 @@
         <!-- Custom css -->
         <link href="/stylesheets/custom.css" rel="stylesheet">
         <script type="text/javascript" src="/javascripts/google-analytics-tracking.js"></script>
-        <script type="text/javascript" src="/javascripts/check_language.js"></script>
         <script type="text/javascript" src="/javascripts/jquery-2.1.3.min.js"></script>
+        <script type="text/javascript" src="/javascripts/check_language.js"></script>
         <script type="text/javascript" src="/javascripts/imagesloaded.pkgd.js"></script>
         <script type="text/javascript" src="/javascripts/jquery.sticky.js"></script>
         <script type="text/javascript" src="/javascripts/jquery.simplePagination.js"></script>
@@ -76,7 +76,7 @@
                                 <div class = "header-top-first clearfix">
                                     <ul class = "social-links clearfix">
                                         <li ><a class="cn_button" href="/"><i>CN</i></a></li>
-                                        <li ><a class="de_button" href="/DE/"><i>DE</i></a></li>
+                                        <li ><a class="de_button" href="/de/"><i>DE</i></a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -92,7 +92,7 @@
                                             <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i>Login</button>
                                             <ul class="dropdown-menu dropdown-menu-right dropdown-animation">
                                                 <li>
-                                                    <form class="login-form" action="/DE" method="post">
+                                                    <form class="login-form" action="/de" method="post">
                                                         <div class="form-group has-feedback">
                                                             <label class="control-label">Benutzername</label>
                                                             <input name="username" type="text" class="form-control" placeholder="">
@@ -105,9 +105,9 @@
                                                         </div>
                                                         <button type="submit" class="btn btn-group btn-dark btn-sm">Login</button>
                                                         <span>or</span>
-                                                        <a href="/DE/register" role="button" class="btn btn-group btn-default btn-sm">Anmelden</a>
+                                                        <a href="/de/register" role="button" class="btn btn-group btn-default btn-sm">Anmelden</a>
                                                         <ul>
-                                                            <li><a href="/DE/password_reset">Password vergessen?</a></li>
+                                                            <li><a href="/de/password_reset">Password vergessen?</a></li>
                                                         </ul>
                                                     </form>
                                                 </li>
@@ -115,8 +115,8 @@
                                             <% } else { %>
                                             <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i><%= user.username %></button>
                                             <ul class="dropdown-menu dropdown-menu-right dropdown-animation">
-                                                <a class="btn btn-group btn-dark btn-sm" href="/DE/favourite">Merkliste</a>
-                                                <span><p style="font-size: small"><a href="/DE/logout">Logout</a></p></span>
+                                                <a class="btn btn-group btn-dark btn-sm" href="/de/favourite">Merkliste</a>
+                                                <span><p style="font-size: small"><a href="/de/logout">Logout</a></p></span>
                                             </ul>
                                             <% } %>
                                         </div>
@@ -137,7 +137,7 @@
                                 <div class="header-left clearfix">
                                     <!-- logo -->
                                     <div class="logo">
-                                        <a href="/DE"><img id="logo" src="/images/logo.png" alt="iDea"></a>
+                                        <a href="/de"><img id="logo" src="/images/logo.png" alt="iDea"></a>
                                     </div>
                                     <!-- name-and-slogan -->
                                     <div class="site-slogan">
@@ -169,8 +169,8 @@
                                                 <!-- Collect the nav links, forms, and other content for toggling -->
                                                 <div class="collapse navbar-collapse scrollspy smooth-scroll" id="navbar-collapse-1">
                                                     <ul class="nav navbar-nav navbar-right">
-                                                        <li><a href="/DE">Home</a></li>
-                                                        <li><a href="/DE/voucher">Gutscheine</a></li>
+                                                        <li><a href="/de">Home</a></li>
+                                                        <li><a href="/de/voucher">Gutscheine</a></li>
                                                     </ul>
                                                 </div>
                                             </div>
@@ -229,9 +229,9 @@
                                     </div>
                                     <div class="collapse navbar-collapse" id="navbar-collapse-2">
                                         <ul class="nav navbar-nav">
-                                            <li><a href="/DE/product_request" target="_blank">Produkte nicht gefunden? Hier melden!</a></li>
-                                            <li><a href="/DE/kontakt" target="_blank">Kontakt</a></li>
-                                            <li><a href="/DE/impressum" target="_blank">Impressum</a></li>
+                                            <li><a href="/de/product_request" target="_blank">Produkte nicht gefunden? Hier melden!</a></li>
+                                            <li><a href="/de/kontakt" target="_blank">Kontakt</a></li>
+                                            <li><a href="/de/impressum" target="_blank">Impressum</a></li>
                                         </ul>
                                     </div>
                                 </nav>
@@ -252,6 +252,8 @@
                 <script type="text/javascript" src="/plugins/owl-carousel/owl.carousel.js"></script>
                 <!-- Magnific Popup javascript -->
                 <script type="text/javascript" src="/plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+                <!-- jQuery Lazy Load -->
+                <script type="text/javascript" src="/plugins/jquery.lazyload.js"></script>
                 <!-- Appear javascript -->
                 <script type="text/javascript" src="/plugins/jquery.appear.js"></script>
                 <!-- Count To javascript -->
@@ -266,11 +268,11 @@
                 <script type="text/javascript" src="/plugins/lobibox/js/lobibox.min.js"></script>
                 <!-- JiaThis Button -->
                 <script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=2071436" charset="utf-8"></script>
-                <!-- Google Maps javascript -->
+                <!-- Google Maps javascript 
                 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&amp;sensor=false"></script>
                 <script type="text/javascript" src="/javascripts/google.map.config.js"></script>
+                -->
                 <!-- Custom Scripts -->
                 <script type="text/javascript" src="/javascripts/custom.js"></script>
-                <script type="text/javascript" src="/javascripts/set_language.js"></script>
             </body>
         </html>

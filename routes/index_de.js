@@ -164,7 +164,7 @@ router.get('/', function(req, res, next) {
                         }
                     }], function(err, hotproduct) {
                         res.render('index_de', {
-                            title: 'Allhaha',
+                            title: 'Allhaha - Preisvergleich und Gutscheine',
                             footer_bottom: false,
                             mainPage: mainPage,
                             pages: pages,
@@ -179,7 +179,7 @@ router.get('/', function(req, res, next) {
                     });
                 } else {
                     res.render('index_de', {
-                        title: 'Allhaha',
+                        title: 'Allhaha - Preisvergleich und Gutscheine',
                         footer_bottom: false,
                         mainPage: mainPage,
                         pages: pages,
@@ -197,11 +197,11 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/', passport.authenticate('stormpath', {
-    failureRedirect: '/DE/login',
+    failureRedirect: '/de/login',
     layout: 'layout_de',
     title: 'Fehler beim Einloggen'
 }), function(req, res, next) {
-    res.redirect('/DE');
+    res.redirect('/de');
 });
 
 router.get('/login', function(req, res, next) {
@@ -217,7 +217,7 @@ router.get('/login', function(req, res, next) {
 //logout
 router.get('/logout', function(req, res, next) {
     req.logout();
-    res.redirect('/DE');
+    res.redirect('/de');
 });
 
 router.get('/product', function(req, res, next) {
@@ -305,7 +305,7 @@ router.get('/favourite/remove', function(req, res, next) {
     }, function(err, feedback) {
         if (err != null) next(err);
         else {
-            return res.redirect('/DE/favourite');
+            return res.redirect('/de/favourite');
         }
     });
 });
@@ -392,7 +392,7 @@ router.post('/kontakt', function(req, res, next) {
     });
 
     new Feedback(feedback).save(function(err, todo, count) {
-        res.redirect('/DE');
+        res.redirect('/de');
     });
 });
 
