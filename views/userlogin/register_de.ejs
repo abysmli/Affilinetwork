@@ -61,15 +61,15 @@
 $(document).ready(function() {
     $("#form").submit(function(e) {
         if ($("#username_input").val() == "") {
-            alert("请正确输入用户名");
+            alert("Geben Sie bitte einen Benutzername ein!");
             e.preventDefault();
         }
         if ($("#password_input").val() == "") {
-            alert("请正确输入密码");
+            alert("Geben Sie bitte Password ein!");
             e.preventDefault();
         }
         if ($("#email_input").val() == "") {
-            alert("请输入邮箱");
+            alert("Geben Sie bitte Email ein!");
             e.preventDefault();
         }
     });
