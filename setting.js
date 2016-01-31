@@ -32,9 +32,9 @@ var app_setting = {
         },
     },
     stormpath_setting: {
-        API_KEY_ID: '2LRGAB800BP8WMKWV1I3277PN',
-        API_KEY_SECRET: 'NOVcvA4m/i+0gl6DwQNydRkkdFY1qV7qNx8HUcNxlyc',
-        APP_HREF: 'https://api.stormpath.com/v1/applications/1B6KeDZJevx5CHhqQn6jdl',
+        API_KEY_ID: 'QJWQFIHBVUVIL0NZTJDF7YUXX',
+        API_KEY_SECRET: 'NTQ28aiqQgkTmHtGXoZqTCj1TGF619qWoHP373HoE+w',
+        APP_HREF: 'https://api.stormpath.com/v1/accounts/4zU6xFhGMrpcfUgaeR07E2',
     }
 };
 
