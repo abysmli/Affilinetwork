@@ -31,6 +31,7 @@
             <div class="form-group">
                 <label for="Category">Category</label>
                 <select name="Category">
+                    <option <% if(product.Category=='null') { %> selected='selected' <% } %> >null</option>
                     <option <% if(product.Category=='服装鞋子') { %> selected='selected' <% } %>>服装鞋子</option>
                     <option <% if(product.Category=='食品饮食') { %> selected='selected' <% } %>>食品饮食</option>
                     <option <% if(product.Category=='厨房用具') { %> selected='selected' <% } %>>厨房用具</option>
@@ -41,7 +42,6 @@
                     <option <% if(product.Category=='旅游') { %> selected='selected' <% } %> >旅游</option>
                     <option <% if(product.Category=='打折券') { %> selected='selected' <% } %> >打折券</option>
                     <option <% if(product.Category=='其他') { %> selected='selected' <% } %> >其他</option>
-                    <option <% if(product.Category=='null') { %> selected='selected' <% } %> >null</option>
                 </select>
             </div>
             <div class="form-group">
