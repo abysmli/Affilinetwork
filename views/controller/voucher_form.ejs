@@ -60,7 +60,8 @@
                 <input type="hidden" class="form-control" id="IntegrationCode" name="IntegrationCode" value="<%= voucher.IntegrationCode || '' %>" placeholder="IntegrationCode">
             </div>
             <% } %>
-            <div class="form-group">
+
+<!--             <div class="form-group">
                 <label for="IntegrationCodeCN">IntegrationCodeCN</label>
                 <div id="full-toolbar" class="toolbar">
                     <span class="ql-format-group">
@@ -181,7 +182,8 @@
                     </span>
                 </div>
                 <div id="full-editor" class="editor" style="min-height: 250px; border: 1px solid #D8D8D8;"><%- voucher.IntegrationCodeCN %></div>
-            </div>
+            </div> -->
+
             <hr/>
             <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-share-alt"></span> <%= title %></button>
         </form>
@@ -206,22 +208,22 @@
 
         $('#voucher_form').submit(function(event) {
             var data = {
-                IntegrationCodeCN: fullEditor.getHTML(),
+                //IntegrationCodeCN: fullEditor.getHTML(),
                 Image: JSON.stringify(_image)
             };
             post(data, "voucher_form");
         });
 
         // Initialize editor with custom theme and modules
-        var fullEditor = new Quill('#full-editor', {
-            modules: {
-                'toolbar': {
-                    container: '#full-toolbar'
-                },
-                'image-tooltip': true,
-                'link-tooltip': true
-            },
-            theme: 'snow'
-        });
+        // var fullEditor = new Quill('#full-editor', {
+        //     modules: {
+        //         'toolbar': {
+        //             container: '#full-toolbar'
+        //         },
+        //         'image-tooltip': true,
+        //         'link-tooltip': true
+        //     },
+        //     theme: 'snow'
+        // });
     });
 </script>

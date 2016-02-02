@@ -142,27 +142,43 @@ router.get('/', function(req, res, next) {
             if (err != null) {
                 next(err);
             } else {
-                if (page == 1 && search == "" && category == "" && minprice == Number.NEGATIVE_INFINITY && maxprice == Number.POSITIVE_INFINITY) {
-                    mainPage = true;
-                    Product.aggregate([{
-                        "$match": {
-                            $and: [{
-                                EAN: {
-                                    $ne: 'null'
-                                },
-                                SalesRank: {
-                                    $lte: 15,
-                                    $gte: 1
-                                }
-                            }]
-                        }
-                    }, {
-                        "$group": group
-                    }, {
-                        "$sort": {
-                            update_at: -1
-                        }
-                    }], function(err, hotproduct) {
+                if (products.length != 0) {
+                    if (page == 1 && search == "" && category == "" && minprice == Number.NEGATIVE_INFINITY && maxprice == Number.POSITIVE_INFINITY) {
+                        mainPage = true;
+                        Product.aggregate([{
+                            "$match": {
+                                $and: [{
+                                    EAN: {
+                                        $ne: 'null'
+                                    },
+                                    SalesRank: {
+                                        $lte: 15,
+                                        $gte: 1
+                                    }
+                                }]
+                            }
+                        }, {
+                            "$group": group
+                        }, {
+                            "$sort": {
+                                update_at: -1
+                            }
+                        }], function(err, hotproduct) {
+                            res.render('index_de', {
+                                title: 'Allhaha - Preisvergleich und Gutscheine',
+                                footer_bottom: false,
+                                mainPage: mainPage,
+                                pages: pages,
+                                currentPage: page,
+                                products: products,
+                                hotproducts: hotproduct,
+                                category: 'Alle',
+                                sort: 'Datum',
+                                user: req.user,
+                                layout: 'layout_de'
+                            });
+                        });
+                    } else {
                         res.render('index_de', {
                             title: 'Allhaha - Preisvergleich und Gutscheine',
                             footer_bottom: false,
@@ -170,27 +186,47 @@ router.get('/', function(req, res, next) {
                             pages: pages,
                             currentPage: page,
                             products: products,
-                            hotproducts: hotproduct,
                             category: 'Alle',
                             sort: 'Datum',
                             user: req.user,
                             layout: 'layout_de'
                         });
-                    });
+                    }
                 } else {
-                    res.render('index_de', {
-                        title: 'Allhaha - Preisvergleich und Gutscheine',
-                        footer_bottom: false,
-                        mainPage: mainPage,
-                        pages: pages,
-                        currentPage: page,
-                        products: products,
-                        category: 'Alle',
-                        sort: 'Datum',
-                        user: req.user,
+                    res.render('notfound_de', {
+                        title: 'Produkte nicht gefunden',
+                        footer_bottom: !Utils.checkMobile(req),
                         layout: 'layout_de'
                     });
                 }
+            }
+        });
+    });
+});
+
+router.get('/product', function(req, res, next) {
+    var query = Product.where({
+        _id: req.query.product_id,
+    });
+    query.findOne(function(err, _product) {
+        Product.find({
+            EAN: _product.EAN
+        }, null, {
+            sort: {
+                Price: 1
+            }
+        }, function(err, _products) {
+            if (err != null) next(err);
+            else {
+                res.render('product_details_de', {
+                    title: 'Details',
+                    footer_bottom: !Utils.checkMobile(req),
+                    product: _product,
+                    product_link: req.url,
+                    products: _products,
+                    layout: '/layout_de',
+                    user: req.user
+                });
             }
         });
     });
@@ -218,30 +254,6 @@ router.get('/login', function(req, res, next) {
 router.get('/logout', function(req, res, next) {
     req.logout();
     res.redirect('/de');
-});
-
-router.get('/product', function(req, res, next) {
-    var query = Product.where({
-        _id: req.query.product_id,
-    });
-    query.findOne(function(err, _product) {
-        Product.find({
-            EAN: _product.EAN
-        }, null, function(err, _products) {
-            if (err != null) next(err);
-            else {
-                res.render('product_details_de', {
-                    title: 'Details',
-                    footer_bottom: !Utils.checkMobile(req),
-                    product: _product,
-                    product_link: req.url,
-                    products: _products,
-                    layout: '/layout_de',
-                    user: req.user
-                });
-            }
-        });
-    });
 });
 
 router.post('/favourite', function(req, res, next) {

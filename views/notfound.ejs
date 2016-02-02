@@ -6,7 +6,7 @@
 			<div class="col-md-12">
 				<ol class="breadcrumb">
 					<li><i class="fa fa-home pr-10"></i><a href="/">首页</a></li>
-					<li class="active">错误 <%= error.status %></li>
+					<li class="active">错误</li>
 				</ol>
 			</div>
 		</div>
@@ -21,12 +21,12 @@
 			<!-- main start -->
 			<!-- ================ -->
 			<div class="main col-md-12">
-				<h3 class="title"><%= error.message %></h3>
-				<br>
-				<div id="error_block"></div>
-				<br>
-				<button class="btn btn-success btn-sm" onclick="window.history.back()">返回上一页</button>
-				<hr/>
+				<div class="col-md-6 col-md-offset-3">
+					<h3 class="title">不好意思，没有找到您需要的产品！请联系我们，我们会尽快添加您所需要的产品！</h3>
+					<a class="btn btn-warning" href="/product_request">请求产品</a>
+					<button class="btn btn-success" onclick="window.history.back()">返回上一页</button>
+					<hr/>
+				</div>
 				<form role="search" action="/" class="col-md-6 col-md-offset-3">
 					<div class="form-group has-feedback">
 						<input type="text" class="form-control" placeholder="搜索产品" name="search" >
@@ -38,10 +38,3 @@
 		</div>
 	</div>
 </section>
-
-<script>
-	var node = new PrettyJSON.view.Node({
-		el: $('#error_block'),
-		data: JSON.parse('<%- JSON.stringify(error) %>')
-	});
-</script>

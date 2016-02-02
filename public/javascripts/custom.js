@@ -7,7 +7,6 @@
  * License URI:http://support.wrapbootstrap.com/
  * File Description: Place here your custom scripts
  */
-
 function sendAjax(url, data, success, error) {
     $.ajax({
         url: url,
@@ -86,4 +85,8 @@ function copyToClipboard(string) {
     $temp.val(string).select();
     document.execCommand("copy");
     $temp.remove();
+}
+
+function getCurrencyExchange(cb) {
+    $.get("currencyExchange", cb);
 }

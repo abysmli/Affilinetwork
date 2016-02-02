@@ -31,6 +31,7 @@
     "mongoose-text-search": "*",
     "nodemailer": "*",
     "xml2js": "*",
-    "mobile-detect": "*"
+    "mobile-detect": "*",
+    "async": "*"
   }
 }

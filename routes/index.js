@@ -145,90 +145,126 @@ router.get('/', function(req, res, next) {
                 next(err);
             } else {
                 var iterateNum = 0;
-                products.forEach(function(product, index) {
-                    Product.find({
-                            EAN: product._id
-                        }).stream()
-                        .on("error", function(err) {
-                            next(err);
-                        })
-                        .on("data", function(_product) {
-                            product.ProductName.push(_product.TitleCN);
-                            product.DescriptionCN.push(_product.DescriptionCN);
-                            product.Price.push(_product.Price);
-                        })
-                        .on("close", function() {
-                            if (++iterateNum == products.length) {
-                                if (page == 1 && search == "" && category == "" && minprice == Number.NEGATIVE_INFINITY && maxprice == Number.POSITIVE_INFINITY) {
-                                    mainPage = true;
-                                    Product.aggregate([{
-                                        "$match": {
-                                            $and: [{
-                                                Tranlated: true,
-                                                EAN: {
-                                                    $ne: 'null'
-                                                },
-                                                SalesRank: {
-                                                    $lte: 15,
-                                                    $gte: 1
-                                                }
-                                            }]
-                                        }
-                                    }, {
-                                        "$group": group
-                                    }, {
-                                        "$sort": {
-                                            SalesRank: -1
-                                        }
-                                    }], function(err, hotproducts) {
-                                        var iterateNumber = 0;
-                                        hotproducts.forEach(function(hotproduct, index) {
-                                            Product.find({
-                                                    EAN: hotproduct._id
-                                                }).stream()
-                                                .on("error", function(err) {
-                                                    next(err);
-                                                })
-                                                .on("data", function(_hotproduct) {
-                                                    hotproduct.ProductName.push(_hotproduct.TitleCN);
-                                                    hotproduct.DescriptionCN.push(_hotproduct.DescriptionCN);
-                                                    hotproduct.Price.push(_hotproduct.Price);
-                                                })
-                                                .on("close", function() {
-                                                    if (++iterateNumber == hotproducts.length) {
-                                                        res.render('index', {
-                                                            title: 'Allhaha 欧哈哈德国优选购物 － 商品比价 － 优惠券',
-                                                            footer_bottom: false,
-                                                            mainPage: mainPage,
-                                                            pages: pages,
-                                                            currentPage: page,
-                                                            products: products,
-                                                            hotproducts: hotproducts,
-                                                            category: '所有',
-                                                            sort: '按日期',
-                                                            user: req.user,
-                                                            layout: 'layout'
-                                                        });
+                if (products.length != 0) {
+                    products.forEach(function(product, index) {
+                        Product.find({
+                                EAN: product._id
+                            }).stream()
+                            .on("error", function(err) {
+                                next(err);
+                            })
+                            .on("data", function(_product) {
+                                product.ProductName.push(_product.TitleCN);
+                                product.DescriptionCN.push(_product.DescriptionCN);
+                                product.Price.push(_product.Price);
+                            })
+                            .on("close", function() {
+                                if (++iterateNum == products.length) {
+                                    if (page == 1 && search == "" && category == "" && minprice == Number.NEGATIVE_INFINITY && maxprice == Number.POSITIVE_INFINITY) {
+                                        mainPage = true;
+                                        Product.aggregate([{
+                                            "$match": {
+                                                $and: [{
+                                                    Tranlated: true,
+                                                    EAN: {
+                                                        $ne: 'null'
+                                                    },
+                                                    SalesRank: {
+                                                        $lte: 15,
+                                                        $gte: 1
                                                     }
-                                                });
+                                                }]
+                                            }
+                                        }, {
+                                            "$group": group
+                                        }, {
+                                            "$sort": {
+                                                SalesRank: -1
+                                            }
+                                        }], function(err, hotproducts) {
+                                            var iterateNumber = 0;
+                                            hotproducts.forEach(function(hotproduct, index) {
+                                                Product.find({
+                                                        EAN: hotproduct._id
+                                                    }).stream()
+                                                    .on("error", function(err) {
+                                                        next(err);
+                                                    })
+                                                    .on("data", function(_hotproduct) {
+                                                        hotproduct.ProductName.push(_hotproduct.TitleCN);
+                                                        hotproduct.DescriptionCN.push(_hotproduct.DescriptionCN);
+                                                        hotproduct.Price.push(_hotproduct.Price);
+                                                    })
+                                                    .on("close", function() {
+                                                        if (++iterateNumber == hotproducts.length) {
+                                                            res.render('index', {
+                                                                title: 'Allhaha 欧哈哈德国优选购物 － 商品比价 － 优惠券',
+                                                                footer_bottom: false,
+                                                                mainPage: mainPage,
+                                                                pages: pages,
+                                                                currentPage: page,
+                                                                products: products,
+                                                                hotproducts: hotproducts,
+                                                                category: '所有',
+                                                                sort: '按日期',
+                                                                user: req.user,
+                                                                layout: 'layout'
+                                                            });
+                                                        }
+                                                    });
+                                            });
                                         });
-                                    });
-                                } else {
-                                    res.render('index', {
-                                        title: 'Allhaha 欧哈哈德国优选购物 － 商品比价 － 优惠券',
-                                        footer_bottom: false,
-                                        mainPage: mainPage,
-                                        pages: pages,
-                                        currentPage: page,
-                                        products: products,
-                                        category: '所有',
-                                        sort: '按日期',
-                                        user: req.user,
-                                        layout: 'layout'
-                                    });
+                                    } else {
+                                        res.render('index', {
+                                            title: 'Allhaha.com 德国欧哈哈精品购物网 - 商品比价 - 优惠券',
+                                            footer_bottom: false,
+                                            mainPage: mainPage,
+                                            pages: pages,
+                                            currentPage: page,
+                                            products: products,
+                                            category: '所有',
+                                            sort: '按日期',
+                                            user: req.user,
+                                            layout: 'layout'
+                                        });
+                                    }
                                 }
-                            }
-                        });
+                            });
+                    });
+                } else {
+                    res.render('notfound', {
+                        title: '没有找到您需要的产品',
+                        footer_bottom: !Utils.checkMobile(req),
+                        layout: 'layout'
+                    });
+                }
+            }
+        });
+    });
+});
+
+router.get('/product', function(req, res, next) {
+    var query = Product.where({
+        _id: req.query.product_id,
+    });
+    query.findOne(function(err, _product) {
+        Product.find({
+            EAN: _product.EAN
+        }, null, {
+            sort: {
+                Price: 1
+            }
+        }, function(err, _products) {
+            if (err != null) next(err);
+            else {
+                res.render('product_details', {
+                    title: '德国打折商品, 产品描述',
+                    footer_bottom: !Utils.checkMobile(req),
+                    product: _product,
+                    product_link: req.url,
+                    products: _products,
+                    layout: '/layout',
+                    user: req.user
                 });
             }
         });
@@ -257,30 +293,6 @@ router.get('/login', function(req, res, next) {
 router.get('/logout', function(req, res, next) {
     req.logout();
     res.redirect('/');
-});
-
-router.get('/product', function(req, res, next) {
-    var query = Product.where({
-        _id: req.query.product_id,
-    });
-    query.findOne(function(err, _product) {
-        Product.find({
-            EAN: _product.EAN
-        }, null, function(err, _products) {
-            if (err != null) next(err);
-            else {
-                res.render('product_details', {
-                    title: '德国打折商品, 产品描述',
-                    footer_bottom: !Utils.checkMobile(req),
-                    product: _product,
-                    product_link: req.url,
-                    products: _products,
-                    layout: '/layout',
-                    user: req.user
-                });
-            }
-        });
-    });
 });
 
 router.post('/favourite', function(req, res, next) {
@@ -497,6 +509,57 @@ router.post('/product_request', function(req, res, next) {
 
     new Request(request).save(function(err, todo, count) {
         res.redirect('/');
+    });
+});
+
+router.get('/ean', function(req, res, next) {
+    var query = {};
+    query.FQ = "EAN:" + req.query.value;
+    Affilinet.searchProducts(query, function(err, response, results) {
+        if (!err && response.statusCode == 200) {
+            var counter = results.ProductsSummary.TotalRecords;
+            var products = Utils.ToLocalProducts(results.Products, "affilinet");
+            query.FQ = "EAN:0" + req.query.value;
+            Affilinet.searchProducts(query, function(err, response, results) {
+                if (!err && response.statusCode == 200) {
+                    counter = parseInt(counter) + parseInt(results.ProductsSummary.TotalRecords);
+                    var _product = Utils.ToLocalProducts(results.Products, "affilinet");
+                    if (!Utils.isEmptyObject(_product)) {
+                        counter = parseInt(counter) + 1;
+                        products = products.concat(_product);
+                    }
+                    prodAdv.call("ItemLookup", {
+                        ItemId: req.query.value,
+                        IdType: "EAN",
+                        SearchIndex: "All",
+                        ResponseGroup: "Medium"
+                    }, function(err, product) {
+                        if (!err) {
+                            var _product = Utils.fromAmazonToLocalProduct(product.Items.Item);
+                            if (!Utils.isEmptyObject(_product)) {
+                                counter = parseInt(counter) + 1;
+                                products.push(_product);
+                            }
+                            res.json(products);
+                        } else {
+                            res.send(err);
+                        }
+                    });
+                } else {
+                    res.send(err);
+                }
+            });
+        } else {
+            res.send(err);
+        }
+    });
+});
+
+router.get('/currencyExchange', function(req, res, next) {
+    request({
+        url: "https://www.exchangerate-api.com/EUR/CNY?k=2d8c6e862f92ff48d10fa915"
+    }, function(err, response, data) {
+        res.send(data);
     });
 });
 

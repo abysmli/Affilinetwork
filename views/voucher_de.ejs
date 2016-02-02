@@ -12,7 +12,38 @@
 		</div>
 	</div>
 </div>
-<!-- page-intro end -->
+<!-- Modal -->
+<div class="modal fade" id="gutscheinModal" tabindex="2" role="dialog" aria-labelledby="gutscheinModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				<h4 class="modal-title" id="gutscheinModalLabel">Gutschein Anzeigen</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-8 col-md-offset-2">
+						<a class="btn btn-primary btn-lg btn-hvr hvr-bounce-to-bottom gutscheinButton">Gutschein Anzeigen</a>
+						<div class="form-group gutschein">
+							<div class="input-group">
+								<input class="form-control gutschein-text" type="text" value="">
+								<div class="input-group-addon gutschein-copy">Kopieren</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<br/>
+				<br/>
+				<p id="gutschein-content"></p>
+				<hr/>
+				<a id="gutscheinGo" class='btn btn-info' target='_class'>Go</a>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-sm btn-dark" data-dismiss="modal">Schließen</button>
+			</div>
+		</div>
+	</div>
+</div>
 <!-- main-container start -->
 <!-- ================ -->
 <section class="main-container">
@@ -48,19 +79,13 @@
 								<h2 class="title"><%= voucher.Program %></h2>
 								<div class="submitted"><i class="fa fa-user pr-5"></i> by <a href="#">Empfehlung von Allhaha</a></div>
 							</header>
-							<h3><%= voucher.Description %></h3>
+							<h3 id="voucherDesc"><%= voucher.Description %></h3>
 							<hr/>
-							<div class="LinkContainer" style="visibility: hidden; height: 0px; width:0px;"><%- voucher.IntegrationCodeCN %></div>
-							<a class='btn btn-info' target='_class'>Link</a>
-							<br>
+							<div class="LinkContainer" style="visibility: hidden; height: 0px; width:0px;"><%- voucher.IntegrationCode %></div>
 							<% if (voucher.Code !== "" ) { %>
-							<a class="btn btn-warning gutscheinButton">Gutschein</a>
-							<div class="form-group gutschein">
-								<div class="input-group">
-									<input class="form-control gutschein-text" type="text" value="<%= voucher.Code %>">
-									<div class="input-group-addon gutschein-copy">Kopieren</div>
-								</div>
-							</div>
+							<a class='btn btn-info seegutschein' data-toggle="modal" data-target="#gutscheinModal" onclick="openModal('<%= voucher.Code %>', this)">Gutschein</a>
+							<% } else { %>
+							<a class='btn btn-info nogutschein' target='_class'>Link</a>
 							<% } %>
 						</div>
 					</div>
@@ -89,39 +114,43 @@
 
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
-
 	var jiathis_config={
 		data_track_clickback:true,
 		hideMore:false
 	}
-	$(document).ready(function(){
-		$.each($(".LinkContainer"), function(index){
-			var link = $(this).find("a").attr("href");
-			$(this).siblings("a.btn-info").attr("href", link);
+	var openFlag = true;
+	$(document).ready(function() {
+		$(".gutschein-copy").click(function() {
+			copyToClipboard($(".gutschein-text").val());
+			Notify('success', "Kopiert!");
 		});
-		$.each($(".gutschein"), function(index){
-			$(this).css({
-				"left": $(this).siblings("a.gutscheinButton").position().left,
-				"top": $(this).siblings("a.gutscheinButton").position().top+11,
-				"width": $(this).siblings("a.gutscheinButton").width()
-			});
-			var openFlag = true;
-			$(this).siblings("a.gutscheinButton").click(function(){
-				if (openFlag) {
-					$(this).siblings(".gutschein").animate({left: "+="+($(this).width()+25), width: "220px"}, 300, function() {
-						$(this).css({"z-index": 100});
-					});
-					openFlag = false;
-				} else {
-					$(this).siblings(".gutschein").css({"z-index": -100});
-					$(this).siblings(".gutschein").animate({left: "-="+($(this).width()+25), width: $(this).siblings("a.gutscheinButton").width()}, 300);
-					openFlag = true;
-				}
-			});
-			$(this).find(".gutschein-copy").click(function(){
-				copyToClipboard($(this).siblings('input').val());
-				Notify('success', "Kopiert!");
-			});
+
+		$.each($(".LinkContainer"), function(index) {
+			var link = $(this).find("a").attr("href");
+			$(this).siblings("a.nogutschein").attr("href", link);
+			$(this).siblings("a.seegutschein").attr("link", link);
+		});
+
+		$(".gutscheinButton").click(function(){
+			if (openFlag) {
+				$(".gutschein").animate({top: "+="+ 40 }, 100);
+				openFlag = false;
+			} else {
+				$(".gutschein").animate({top: "-="+ 40}, 100);
+				openFlag = true;
+			}
 		});
 	});
- </script>
+
+	function openModal(voucherCode, that) {
+		openFlag = true;
+		$(".gutschein-text").val(voucherCode);
+		$("#gutschein-content").text($(that).siblings("h3#voucherDesc").text());
+		$("#gutscheinGo").attr("href", $(that).attr("link"));
+		$(".gutschein").css({
+			"left": "10%",
+			"top": 30,
+			"width": "80%"
+		});
+	}
+</script>

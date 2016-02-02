@@ -10,7 +10,7 @@
         <title><%= title %></title>
         <meta name="author" content="liyuan&feiminghao">
         <meta name="robots" content="index, follow"/>
-        <meta name="description" content="超过9000家网店，9百万款折扣产品和上万张折扣券以及最专业的热品导购，尽在Allhaha.com一站式的海淘比价网站">
+        <meta name="description" content="从德国超过9000家网店，9百万款产品中为您精选热门商品报价，提供海量折扣优惠券以及最专业的热品导购、转运公司、代购买手信息，尽在Allhaha.com一站式海淘比价网站。">
         <meta name="keywords" content="打折,折扣券,比价,商品,海购,德国,欧洲,文章,导购,海淘,电商,服装,鞋子,食品,饮食,厨房,电子,电子产品,母婴,化妆品,健康,保健,旅游,Kaufberatung,Preisvergleich,Angebote,sparen,Kleidung,Schuhe,Essen,Küche,Elektro,Computer,Mutter,Baby,Kosmetik,Gesundheit,Reisen,Urlaub">
 
         <!-- Mobile Meta -->
@@ -31,11 +31,13 @@
         <!-- Fontello CSS -->
         <link href="/fonts/fontello/css/fontello.css" rel="stylesheet">
         <!-- Plugins -->
+        <link href="/stylesheets/animations.css" rel="stylesheet">
         <link href="/plugins/magnific-popup/magnific-popup.css" rel="stylesheet">
         <link href="/stylesheets/animations.css" rel="stylesheet">
         <link href="/plugins/owl-carousel/owl.carousel.css" rel="stylesheet">
         <link href="/stylesheets/style.css" rel="stylesheet">
         <link href="/plugins/lobibox/css/Lobibox.min.css" rel="stylesheet">
+        <link href="/plugins/hover/hover-min.css" rel="stylesheet">
         <!-- iDea core CSS file -->
         <link href="/stylesheets/style.css" rel="stylesheet">
         <!-- Color Scheme (In order to change the color scheme, replace the red.css with the color scheme that you prefer)-->
@@ -70,10 +72,11 @@
                     <div class="row">
                         <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
                             <div class = "header-top-first clearfix">
-                                <ul class = "social-links clearfix">
+                                <ul class = "social-links" style="display: inline-block;">
                                     <li><a class="cn_button" href="/"><i>CN</i></a></li>
                                     <li><a class="de_button" href="/de/"><i>DE</i></a></li>
                                 </ul>
+                                <p style="display: inline-block; margin: 0;"><i id="currency"></i></p>
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
@@ -232,6 +235,13 @@
                 <!-- .subfooter end -->
             </div>
         </div>
+        <script>
+        $(document).ready(function(){
+            getCurrencyExchange(function(data){
+                $("#currency").text("当前汇率：" + data.substr(0, 4));
+            });
+        });
+        </script>
         <!-- JavaScript files placed at the end of the document so the pages load faster
         ================================================== -->
         <!-- Jquery and Bootstap core js files -->
