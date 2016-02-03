@@ -23,7 +23,7 @@
                 <!-- ================ -->
                 <% for (var l = products.length, i = 0; i < l; i++) { %>
                     <% product = products[i]%>
-                    <% if (product.TitleCN !== "") { %>
+                    <% if (product.TitleCN !== "" && product.TitleCN !== undefined) { %>
                         <h1 class="page-title margin-top-clear"><%= product.TitleCN %></h1>
                         <% break %>
                     <% } %>
@@ -91,7 +91,7 @@
                                             <div class="tab-pane fade in active" id="h2tab1">
                                                 <% for (var l = products.length, i = 0; i < l; i++) { %>
                                                     <% product = products[i]%>
-                                                    <% if (product.TitleCN !== "") { %>
+                                                    <% if (product.TitleCN !== "" && product.TitleCN !== undefined) { %>
                                                         <h4 class="title"><%= product.TitleCN %></h4>
                                                         <p>
                                                             <%= product.DescriptionCN %>

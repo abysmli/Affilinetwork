@@ -250,7 +250,6 @@ router.get('/product', function(req, res, next) {
     query.findOne(function(err, _product) {
         Product.find({
             EAN: _product.EAN,
-            Tranlated: true
         }, null, {
             sort: {
                 Price: 1
