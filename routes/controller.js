@@ -545,6 +545,7 @@ router.post('/product/auto_add', auth, function(req, res, next) {
                                 delete product['Tranlated'];
                                 delete product['DescriptionCN'];
                                 delete product['TitleCN'];
+                                product.Category = "null";
                                 product.EAN = product.EAN.substr(product.EAN.length - 13);
                                 if (product.Source == "Affilinet") {
                                     Product.update({ ProductId: product.ProductId }, product, { upsert: true }, function (err, raw) {

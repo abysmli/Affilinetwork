@@ -249,7 +249,8 @@ router.get('/product', function(req, res, next) {
     });
     query.findOne(function(err, _product) {
         Product.find({
-            EAN: _product.EAN
+            EAN: _product.EAN,
+            Tranlated: true
         }, null, {
             sort: {
                 Price: 1
@@ -387,20 +388,53 @@ router.get('/article_detail', function(req, res, next) {
 });
 
 router.get('/voucher', function(req, res, next) {
-    Voucher.find({
-        EndDate: {
-            $gte: new Date()
-        }
-    }).sort({
-        updated_at: -1
-    }).exec(function(err, vouchers) {
-        res.render('voucher', {
-            title: '折扣券',
-            footer_bottom: false,
-            vouchers: vouchers,
-            user: req.user
+    var modal = false,
+        gutscheinCode = "",
+        voucherContent = "";
+    if (req.query.id != undefined) {
+        Voucher.findOne({
+            Id: req.query.id
+        }, function(err, voucher) {
+            modal = true;
+            gutscheinCode = voucher.Code;
+            voucherContent = voucher.DescriptionCN;
+            Voucher.find({
+                EndDate: {
+                    $gte: new Date()
+                }
+            }).sort({
+                updated_at: -1
+            }).exec(function(err, vouchers) {
+                res.render('voucher', {
+                    title: '折扣券',
+                    footer_bottom: false,
+                    vouchers: vouchers,
+                    modal: modal,
+                    gutscheinCode: gutscheinCode,
+                    voucherContent: voucherContent,
+                    user: req.user
+                });
+            });
         });
-    });
+    } else {
+        Voucher.find({
+            EndDate: {
+                $gte: new Date()
+            }
+        }).sort({
+            updated_at: -1
+        }).exec(function(err, vouchers) {
+            res.render('voucher', {
+                title: '折扣券',
+                footer_bottom: false,
+                vouchers: vouchers,
+                modal: modal,
+                gutscheinCode: gutscheinCode,
+                voucherContent: voucherContent,
+                user: req.user
+            });
+        });
+    }
 });
 
 router.get('/aboutus', function(req, res, next) {

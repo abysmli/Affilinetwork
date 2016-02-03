@@ -12,6 +12,7 @@
 		</div>
 	</div>
 </div>
+<% if (modal) { %>
 <!-- Modal -->
 <div class="modal fade" id="gutscheinModal" tabindex="2" role="dialog" aria-labelledby="gutscheinModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
@@ -26,7 +27,7 @@
 						<a class="btn btn-primary btn-lg btn-hvr hvr-bounce-to-bottom gutscheinButton">查看优惠码</a>
 						<div class="form-group gutschein">
 							<div class="input-group">
-								<input class="form-control gutschein-text" type="text" value="">
+								<input class="form-control gutschein-text" type="text" value="<%= gutscheinCode %>">
 								<div class="input-group-addon gutschein-copy">复制</div>
 							</div>
 						</div>
@@ -34,9 +35,7 @@
 				</div>
 				<br/>
 				<br/>
-				<p id="gutschein-content"></p>
-				<hr/>
-				<a id="gutscheinGo" class='btn btn-info' target='_class'>去逛逛</a>
+				<p id="gutschein-content"><%= voucherContent %></p>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-sm btn-dark" data-dismiss="modal">关闭</button>
@@ -44,6 +43,22 @@
 		</div>
 	</div>
 </div>
+<script>
+	var openFlag = true;
+	$(document).ready(function(){
+		openModal();
+	});
+	function openModal() {
+		openFlag = true;
+		$(".gutschein").css({
+			"left": "10%",
+			"top": 30,
+			"width": "80%"
+		});
+		$('#gutscheinModal').modal('show');
+	}
+</script>
+<% } %>
 <!-- main-container start -->
 <!-- ================ -->
 <section class="main-container">
@@ -83,9 +98,9 @@
 							<hr/>
 							<div class="LinkContainer" style="visibility: hidden; height: 0px; width:0px;"><%- voucher.IntegrationCode %></div>
 							<% if (voucher.Code !== "" ) { %>
-							<a class='btn btn-info seegutschein' data-toggle="modal" data-target="#gutscheinModal" onclick="openModal('<%= voucher.Code %>', this)">优惠券</a>
+							<a class='btn btn-info' onclick="window.open('?id=<%= voucher.Id %>','_blank');window.open(this.href,'_self');openModal('<%= voucher.Code %>', this)">优惠券</a>
 							<% } else { %>
-							<a class='btn btn-info nogutschein' target='_class'>去看看</a>
+							<a class='btn btn-info' target='_class'>去看看</a>
 							<% } %>
 						</div>
 					</div>
@@ -118,7 +133,6 @@
 		data_track_clickback:true,
 		hideMore:false
 	}
-	var openFlag = true;
 	$(document).ready(function() {
 		$(".gutschein-copy").click(function() {
 			copyToClipboard($(".gutschein-text").val());
@@ -127,8 +141,8 @@
 
 		$.each($(".LinkContainer"), function(index) {
 			var link = $(this).find("a").attr("href");
-			$(this).siblings("a.nogutschein").attr("href", link);
-			$(this).siblings("a.seegutschein").attr("link", link);
+			$(this).siblings("a").attr("href", link);
+			$(this).siblings("a").attr("link", link);
 		});
 
 		$(".gutscheinButton").click(function(){
@@ -141,16 +155,4 @@
 			}
 		});
 	});
-
-	function openModal(voucherCode, that) {
-		openFlag = true;
-		$(".gutschein-text").val(voucherCode);
-		$("#gutschein-content").text($(that).siblings("h3#voucherDesc").text());
-		$("#gutscheinGo").attr("href", $(that).attr("link"));
-		$(".gutschein").css({
-			"left": "10%",
-			"top": 30,
-			"width": "80%"
-		});
-	}
 </script>
