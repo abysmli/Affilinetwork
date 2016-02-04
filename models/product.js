@@ -21,7 +21,7 @@ var ProductSchema = new mongoose.Schema({
     Title: String,
     TitleCN: String,
     ShopName: String,
-    Category: String,
+    Category: { type: String, default: "null" },
     LastProductChange: String,
     DeliveryTime: String,
     Keywords: String,
