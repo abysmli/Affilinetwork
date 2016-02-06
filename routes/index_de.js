@@ -68,7 +68,7 @@ router.get('/', function(req, res, next) {
     var ItemOnPage = 30;
     if (category == "" || category == "所有") {
         _category = {
-            $in: ["服装鞋子", "食品饮食", "厨房用具", "电子产品", "手机平板", "化妆品", "健康保健", "旅游", "其他", "小家电", "钟表手饰", "办公", "母婴", "null"]
+            $in: ["服装鞋子", "食品饮食", "厨房用具", "电子产品", "手机平板", "化妆品", "健康保健", "旅游", "其他", "小家电", "钟表手饰", "办公", "母婴", "null", undefined]
         };
     }
     if (sort == 'Preis tief nach hoch') {
