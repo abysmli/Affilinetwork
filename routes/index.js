@@ -598,10 +598,10 @@ router.get('/currencyExchange', function(req, res, next) {
 
 router.get('/test', function(req, res, next) {
     prodAdv.call("ItemLookup", {
-        ItemId: "6901443077427",
+        ItemId: "4011143454014",
         IdType: "EAN",
         SearchIndex: "All",
-        ResponseGroup: "OfferSummary"
+        ResponseGroup: "Large"
     }, function(err, product) {
         if (!err) {
             var _product = Utils.fromAmazonToLocalProduct(product.Items.Item);
