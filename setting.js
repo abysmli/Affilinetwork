@@ -4,9 +4,9 @@ var app_setting = {
     username: 'LLHF',
     password: 'LLHF!allhaha',
     affilinet_setting: {
-        publisherId: '512499',
-        productWebservicePassword: 'FaI69alVX0eZ4i28TnIq',
-        publisherWebservicePassword: 'lZONYNI32ieYq8kMPqKS'
+        publisherId: '760068',
+        productWebservicePassword: 'YXysbEHNzfKCyFhAyESb',
+        publisherWebservicePassword: 'M10iuaVZB1VyJk8O42hV'
     },
     amazon_setting: {
         AccessKeyId: 'AKIAIVOAWHV7T4HBZLOA',
