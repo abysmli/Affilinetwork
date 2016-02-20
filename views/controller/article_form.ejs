@@ -46,8 +46,9 @@
 		$("#article_page").addClass("active");
 
 		$('#article_form').submit(function(event) {
+
 			var data = {
-				Content_pre: $('#summernote').code().replace(/<\/?[^>]+(>|$)/g, ""),
+				Content_pre: $('#summernote').summernote('code').replace(/<\/?[^>]+(>|$)/g, ""),
 				Content: $('#summernote').summernote('code'),
 				Image: JSON.stringify(_image)
 			};
