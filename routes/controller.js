@@ -538,32 +538,34 @@ router.post('/product/auto_add', auth, function(req, res, next) {
                                 products.push(_product);
                             }
                             var update_count = 0;
-                            products.forEach(function(product, index) {
-                                delete product['SalesRank'];
-                                delete product['Category'];
-                                delete product['Keywords'];
-                                delete product['Tranlated'];
-                                delete product['DescriptionCN'];
-                                delete product['TitleCN'];
-                                product.EAN = product.EAN.substr(product.EAN.length - 13);
-                                if (product.Source == "Affilinet") {
-                                    Product.update({ ProductId: product.ProductId }, product, { upsert: true }, function (err, raw) {
-                                        if (err) return next(err);
-                                        console.log("Affilinet: " + update_count);
-                                        if (++update_count == products.length) {
-                                            res.json({count: update_count});
-                                        }
-                                    });
-                                } else if (product.Source == "Amazon") {
-                                    Product.update({ ASIN: product.ASIN }, product, { upsert: true }, function (err, raw) {
-                                        if (err) return next(err);
-                                        console.log("Amazon: " + update_count);
-                                        if (++update_count == products.length) {
-                                            res.json({count: update_count});
-                                        }
-                                    });
-                                }
-                            });
+                            if (products.length != 0 ) {
+                                products.forEach(function(product, index) {
+                                    delete product['SalesRank'];
+                                    delete product['Category'];
+                                    delete product['Keywords'];
+                                    delete product['Tranlated'];
+                                    delete product['DescriptionCN'];
+                                    delete product['TitleCN'];
+                                    product.EAN = product.EAN.substr(product.EAN.length - 13);
+                                    if (product.Source == "Affilinet") {
+                                        Product.update({ ProductId: product.ProductId }, product, { upsert: true }, function (err, raw) {
+                                            if (err) return next(err);
+                                            if (++update_count == products.length) {
+                                                res.json({count: update_count});
+                                            }
+                                        });
+                                    } else if (product.Source == "Amazon") {
+                                        Product.update({ ASIN: product.ASIN }, product, { upsert: true }, function (err, raw) {
+                                            if (err) return next(err);
+                                            if (++update_count == products.length) {
+                                                res.json({count: update_count});
+                                            }
+                                        });
+                                    }
+                                });
+                            } else {
+                                res.json({count: 0});
+                            }
                         } else {
                             next(err);
                         }
