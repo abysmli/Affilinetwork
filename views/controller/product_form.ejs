@@ -3,7 +3,7 @@
 </div>
 <div class="row">
     <div class="col-md-12">
-        <form method="post">
+        <form method="post" id="product_form">
             <div class="form-group">
                 <label for="Source">Source</label>
                 <input type="text" class="form-control" id="Source" name="Source" value="<%= product.Source || "Manual" %>" placeholder="Source" readonly>
@@ -26,7 +26,7 @@
             </div>
             <div class="form-group">
                 <label for="DescriptionCN">中文详细</label>
-                <textarea rows="5" class="form-control" id="DescriptionCN" name="DescriptionCN" placeholder="中文详细"><%= product.DescriptionCN || '' %></textarea>
+                <div id="summernote"><%- product.DescriptionCN %></div>
             </div>
             <div class="form-group">
                 <label for="Category">Category</label>
@@ -132,5 +132,19 @@
         var _ean = "<%= product.EAN %>";
         _ean = _ean.substr(_ean.length - 13);
         $("#EAN").val(_ean);
+
+        $('#summernote').summernote({
+            height: 500,                 // set editor height
+            minHeight: null,             // set minimum height of editor
+            maxHeight: null,             // set maximum height of editor
+        });
+
+        $('#product_form').submit(function(event) {
+            var data = {
+                DescriptionCN: $('#summernote').summernote('code')
+            };
+            post(data, "product_form");
+        });
     });
+
 </script>

@@ -19,7 +19,9 @@
         <tr>
             <th>Image</th>
             <th>Title</th>
+            <% if(type == 'local') { %>
             <th>TitleCN</th>
+            <% } %>
             <th>Brand</th>
             <th>Price</th>
             <th>URL</th>
@@ -43,7 +45,9 @@
         <tr>
             <th>Image</th>
             <th>Title</th>
+            <% if(type == 'local') { %>
             <th>TitleCN</th>
+            <% } %>
             <th>Brand</th>
             <th>Price</th>
             <th>URL</th>
@@ -77,9 +81,11 @@
                 <td>
                     <%= product.Title %>
                 </td>
+                <% if(type == 'local') { %>
                 <td>
                     <%= product.TitleCN %>
                 </td>
+                <% } %>
                 <td>
                     <%= product.Brand %>
                 </td>
