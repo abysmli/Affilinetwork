@@ -15,6 +15,10 @@
             <% } %>
             <th>ID</th>
             <th>Program</th>
+            <% if(type == 'local') { %>
+            <th>Title</th>
+            <th>TitleCN</th>
+            <% } %>
             <th>Code</th>
             <th>Description</th>
             <% if(type == 'local') { %>
@@ -43,6 +47,10 @@
             <% } %>
             <th>ID</th>
             <th>Program</th>
+            <% if(type == 'local') { %>
+            <th>Title</th>
+            <th>TitleCN</th>
+            <% } %>
             <th>Code</th>
             <th>Description</th>
             <% if(type == 'local') { %>
@@ -78,6 +86,14 @@
             <td>
                 <%= voucher.Program %>
             </td>
+            <% if(type == 'local') { %>
+            <th>
+                <%= voucher.Title %>
+            </th>
+            <th>
+                <%= voucher.TitleCN %>
+            </th>
+            <% } %>
             <td>
             	<%= voucher.Code %>
             </td>

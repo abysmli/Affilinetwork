@@ -30,14 +30,20 @@
 						<img src="<%= product.ProductImage %>" alt="">
 						<div class="overlay">
 							<div class="overlay-links">
-								<a href="/product?product_id=<%= product._id %>"><i class="fa fa-search-plus"></i></a>
-								<a href="/favourite/remove?ean=<%= product.EAN %>"><i class="fa fa-trash"></i></a>
+								<a href="/de/product?product_id=<%= product.ProductId %>"><i class="fa fa-search-plus"></i></a>
+								<a href="/de/favourite/remove?ean=<%= product._id %>"><i class="fa fa-trash"></i></a>
 							</div>
 						</div>
 					</div>
-					<h3><a href="portfolio-item.html"><%= product.Title %></a></h3>
-					<p><%= product.Price %> €</p>
-					<a href="/product?product_id=<%= product._id %>" class="btn btn-default">Mehr</a>
+					<h3><a href="/de/product?product_id=<%= product.ProductId %>"><%= product.Title %></a></h3>
+					<p>
+						<% if (product.Price.length == 1 || Math.min.apply(null, product.Price) == Math.max.apply(null, product.Price)) { %>
+	                    <span class="price" style="font-size: 20px"><%= product.Price[0].toString().replace(".", ",") %> €</span>
+	                    <% } else { %>
+	                    <span class="price" style="font-size: 20px"><%= Math.min.apply(null,product.Price).toString().replace(".", ",") %> - <%= Math.max.apply(null,product.Price).toString().replace(".", ",") %> €</span>
+	                    <% } %>
+                    </p>
+					<a href="/de/product?product_id=<%= product.ProductId %>" class="btn btn-default">Mehr</a>
 				</div>
 			</div>
 			<% }) %>

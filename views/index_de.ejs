@@ -4,18 +4,18 @@
             <div class="col-md-10">
                 <ol class="breadcrumb">
                     <li><i class="fa fa-th-large pr-10"></i>Kategorie: </li>
-                    <li class="active"><a href="/de/?category=服装鞋子">Kleidung&Schuhe</a></li>
-                    <li class="active"><a href="/de/?category=食品饮食">Lebensmittel</a></li>
-                    <li class="active"><a href="/de/?category=厨房用具">Küche</a></li>
-                    <li class="active"><a href="/de/?category=电子产品">Elektro&Computer</a></li>
-                    <li class="active"><a href="/de/?category=母婴">Spielzeug&Baby</a></li>
-                    <li class="active"><a href="/de/?category=化妆品">Kosmetik</a></li>
-                    <li class="active"><a href="/de/?category=健康保健">Gesundheit</a></li>
-                    <li class="active"><a href="/de/?category=旅游">Sport&Freizeit</a></li>
-                    <li class="active"><a href="/de/?category=小家电">Haushalt</a></li>
-                    <li class="active"><a href="/de/?category=钟表手饰">Schmuck&Uhren</a></li>
-                    <li class="active"><a href="/de/?category=办公">Bürobedarf</a></li>
-                    <li class="active"><a href="/de/?category=其他">Andere</a></li>
+                    <li class="active"><a href="/de/?category=clothing_shoes">Kleidung&Schuhe</a></li>
+                    <li class="active"><a href="/de/?category=food">Lebensmittel</a></li>
+                    <li class="active"><a href="/de/?category=kitchenware">Küche</a></li>
+                    <li class="active"><a href="/de/?category=electronic_product">Elektro&Computer</a></li>
+                    <li class="active"><a href="/de/?category=maternal">Spielzeug&Baby</a></li>
+                    <li class="active"><a href="/de/?category=cosmetic">Kosmetik</a></li>
+                    <li class="active"><a href="/de/?category=health">Gesundheit</a></li>
+                    <li class="active"><a href="/de/?category=tourism">Sport&Freizeit</a></li>
+                    <li class="active"><a href="/de/?category=home_appliances">Haushalt</a></li>
+                    <li class="active"><a href="/de/?category=jewelry_watches">Schmuck&Uhren</a></li>
+                    <li class="active"><a href="/de/?category=office">Bürobedarf</a></li>
+                    <li class="active"><a href="/de/?category=other">Andere</a></li>
                 </ol>
             </div>
             <div class="col-md-2">
@@ -106,37 +106,50 @@
                                 <div class="form-group">
                                     <label>Kategorie</label>
                                     <select class="form-control" name="category">
-                                        <option value="所有" <% if(category=='所有') { %> selected='selected' <% } %>>Alle</option>
-                                        <option value="服装鞋子" <% if(category=='服装鞋子') { %> selected='selected' <% } %>>Kleidung&Schuhe</option>
-                                        <option value="食品饮食" <% if(category=='食品饮食') { %> selected='selected' <% } %>>Essen</option>
-                                        <option value="厨房用具" <% if(category=='厨房用具') { %> selected='selected' <% } %>>Küche</option>
-                                        <option value="电子产品" <% if(category=='电子产品') { %> selected='selected' <% } %>>Elektro&Computer</option>
-                                        <option value="母婴" <% if(category=='母婴') { %> selected='selected' <% } %>>Mutter&Baby</option>
-                                        <option value="化妆品" <% if(category=='化妆品') { %> selected='selected' <% } %>>Kosmetik</option>
-                                        <option value="健康保健" <% if(category=='健康保健') { %> selected='selected' <% } %> >Gesundheit</option>
-                                        <option value="旅游" <% if(category=='旅游') { %> selected='selected' <% } %> >Reisen&Urlaub</option>
-                                        <option value="打折券" <% if(category=='打折券') { %> selected='selected' <% } %> >Gutscheine</option>
-                                        <option value="其他" <% if(category=='其他') { %> selected='selected' <% } %> >Andere</option>
+                                        <option value="all" <% if(category=='all') { %> selected='selected' <% } %>>Alle</option>
+                                        <option value="clothing_shoes" <% if(category=='服装鞋子') { %> selected='selected' <% } %>>Kleidung&Schuhe</option>
+                                        <option value="food" <% if(category=='食品饮食') { %> selected='selected' <% } %>>Lebensmittel</option>
+                                        <option value="kitchenware" <% if(category=='厨房用具') { %> selected='selected' <% } %>>Küche</option>
+                                        <option value="electronic_product" <% if(category=='电子产品') { %> selected='selected' <% } %>>Elektro&Computer</option>
+                                        <option value="maternal" <% if(category=='母婴') { %> selected='selected' <% } %>>Spielzeug&Baby</option>
+                                        <option value="cosmetic" <% if(category=='化妆品') { %> selected='selected' <% } %>>Kosmetik</option>
+                                        <option value="health" <% if(category=='健康保健') { %> selected='selected' <% } %> >Gesundheit</option>
+                                        <option value="tourism" <% if(category=='旅游') { %> selected='selected' <% } %> >Sport&Freizeit</option>
+                                        <option value="home_appliances" <% if(category=='打折券') { %> selected='selected' <% } %> >Haushalt</option>
+                                        <option value="jewelry_watches" <% if(category=='打折券') { %> selected='selected' <% } %> >Schmuck&Uhren</option>
+                                        <option value="office" <% if(category=='打折券') { %> selected='selected' <% } %> >Bürobedarf</option>
+                                        <option value="other" <% if(category=='其他') { %> selected='selected' <% } %> >Andere</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label>Preis</label>
+                                    <label>Preis (€)</label>
                                     <div class="row grid-space-10">
                                         <div class="col-sm-6">
-                                            <input type="text" name="minprice" class="form-control" placeholder='min'>
+                                            <input type="text" name="minprice" class="form-control" placeholder='Min' value="<%= minprice %>">
                                         </div>
                                         <div class="col-sm-6">
-                                            <input type="text" name="maxprice" class="form-control col-xs-6" placeholder='max'>
+                                            <input type="text" name="maxprice" class="form-control col-xs-6" placeholder='Max' value="<%= maxprice %>">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label>Soriteren nach</label>
                                     <select class="form-control" name="sort">
-                                        <option <% if(sort=='Datum') { %> selected='selected' <% } %>>Datum</option>
-                                        <option <% if(sort=='Preis tief nach hoch') { %> selected='selected' <% } %>>Preis tief nach hoch</option>
-                                        <option <% if(sort=='Preis hoch nach tief') { %> selected='selected' <% } %>>Preis hoch nach tief</option>
-                                        <option <% if(sort=='Bewertung') { %> selected='selected' <% } %>>Bewertung</option>
+                                        <option value="date" <% if(sort=='date') { %> selected='selected' <% } %>>Datum</option>
+                                        <option value="price_asc" <% if(sort=='price_asc') { %> selected='selected' <% } %>>Preis tief nach hoch</option>
+                                        <option value="price_desc" <% if(sort=='price_desc') { %> selected='selected' <% } %>>Preis hoch nach tief</option>
+                                        <option value="rank" <% if(sort=='rank') { %> selected='selected' <% } %>>Bewertung</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Marke</label>
+                                    <select class="form-control" name="brand">
+                                        <option value="all" <% if(brand=='all') { %> selected='selected' <% } %>>All</option>
+                                        <% brands.forEach(function(_brand, index) { %>
+                                            <% if (_brand._id != "" && _brand._id != "unbekannt" && _brand._id != null) { %>
+                                                <option value="<%= _brand._id %>" <% if(brand==_brand._id) { %> selected='selected' <% } %>><%= _brand._id %> (<%= _brand.Sum %>)</option>
+                                            <% } %>
+                                        <% }) %>
                                     </select>
                                 </div>
                                 <div class="form-group">

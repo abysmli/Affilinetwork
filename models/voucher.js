@@ -6,6 +6,8 @@ var Voucherschema = new mongoose.Schema({
 	Id: String,
     ProgramId: String,
     Program: String,
+    Title: String,
+    TitleCN:String,
     Code: String,
     Description: String,
     IntegrationCode: String,

@@ -63,30 +63,22 @@ router.get('/', function(req, res, next) {
     var minprice = req.query.minprice || Number.NEGATIVE_INFINITY;
     var maxprice = req.query.maxprice || Number.POSITIVE_INFINITY;
     var sort = req.query.sort || "";
+    var brand = req.query.brand || "";
     var mainPage = false;
-    var _category = category;
+    var _category = Utils.urlToCategory(category);
+    var _sort = {};
+    var _brand = brand;
     var ItemOnPage = 30;
-    if (category == "" || category == "所有") {
-        _category = {
-            $in: ["服装鞋子", "食品饮食", "厨房用具", "电子产品", "手机平板", "化妆品", "健康保健", "旅游", "其他", "母婴", "小家电", "钟表手饰", "办公", "null"]
-        };
-    }
-    if (sort == '按价格由低到高') {
-        sort = {
-            Price: 1
-        };
-    } else if (sort == '按价格由高到低') {
-        sort = {
-            Price: -1
-        };
-    } else if (sort == '按热度') {
-        sort = {
-            SaleRank: -1
-        };
+    if (category == "" || category == "all") _category = { $exists: true };
+    if (brand == "" || brand == "all") _brand = { $exists: true };
+    if (sort == 'price_asc') {
+        _sort = { Price: 1 };
+    } else if (sort == 'price_desc') {
+        _sort = { Price: -1 };
+    } else if (sort == 'rank') {
+        _sort = { SaleRank: -1 };
     } else {
-        sort = {
-            updated_at: -1
-        };
+        _sort = { updated_at: -1 };
     }
     var group = {
         _id: "$EAN",
@@ -117,6 +109,7 @@ router.get('/', function(req, res, next) {
                 $gte: Number(minprice)
             },
             Category: _category,
+            Brand: _brand,
             $or: [{
                 Title: new RegExp(search, 'gi')
             }, {
@@ -128,117 +121,140 @@ router.get('/', function(req, res, next) {
             }]
         }]
     };
-    Product.distinct("EAN", matchQuery, function(err, results) {
-        var pages = Math.ceil(results.length / ItemOnPage);
-        Product.aggregate([{
-            "$match": matchQuery
-        }, {
-            "$group": group
-        }, {
-            "$skip": (page - 1) * ItemOnPage
-        }, {
-            "$limit": ItemOnPage
-        }, {
-            "$sort": sort
-        }], function(err, products) {
-            if (err != null) {
-                next(err);
-            } else {
-                var iterateNum = 0;
-                if (products.length != 0) {
-                    products.forEach(function(product, index) {
-                        Product.find({
-                                EAN: product._id
-                            }).stream()
-                            .on("error", function(err) {
-                                next(err);
-                            })
-                            .on("data", function(_product) {
-                                product.ProductName.push(_product.TitleCN);
-                                product.DescriptionCN.push(_product.DescriptionCN);
-                                product.Price.push(_product.Price);
-                            })
-                            .on("close", function() {
-                                if (++iterateNum == products.length) {
-                                    if (page == 1 && search == "" && category == "" && minprice == Number.NEGATIVE_INFINITY && maxprice == Number.POSITIVE_INFINITY) {
-                                        mainPage = true;
-                                        Product.aggregate([{
-                                            "$match": {
-                                                $and: [{
-                                                    Tranlated: true,
-                                                    EAN: {
-                                                        $ne: 'null'
-                                                    },
-                                                    SalesRank: {
-                                                        $lte: 15,
-                                                        $gte: 1
-                                                    }
-                                                }]
-                                            }
-                                        }, {
-                                            "$group": group
-                                        }, {
-                                            "$sort": {
-                                                SalesRank: -1
-                                            }
-                                        }], function(err, hotproducts) {
-                                            var iterateNumber = 0;
-                                            hotproducts.forEach(function(hotproduct, index) {
-                                                Product.find({
-                                                        EAN: hotproduct._id
-                                                    }).stream()
-                                                    .on("error", function(err) {
-                                                        next(err);
-                                                    })
-                                                    .on("data", function(_hotproduct) {
-                                                        hotproduct.ProductName.push(_hotproduct.TitleCN);
-                                                        hotproduct.DescriptionCN.push(_hotproduct.DescriptionCN);
-                                                        hotproduct.Price.push(_hotproduct.Price);
-                                                    })
-                                                    .on("close", function() {
-                                                        if (++iterateNumber == hotproducts.length) {
-                                                            res.render('index', {
-                                                                title: 'Allhaha 欧哈哈德国优选购物 － 商品比价 － 优惠券',
-                                                                footer_bottom: false,
-                                                                mainPage: mainPage,
-                                                                pages: pages,
-                                                                currentPage: page,
-                                                                products: products,
-                                                                hotproducts: hotproducts,
-                                                                category: '所有',
-                                                                sort: '按日期',
-                                                                user: req.user,
-                                                                layout: 'layout'
-                                                            });
-                                                        }
-                                                    });
-                                            });
-                                        });
-                                    } else {
-                                        res.render('index', {
-                                            title: 'Allhaha.com 德国欧哈哈精品购物网 - 商品比价 - 优惠券',
-                                            footer_bottom: false,
-                                            mainPage: mainPage,
-                                            pages: pages,
-                                            currentPage: page,
-                                            products: products,
-                                            category: '所有',
-                                            sort: '按日期',
-                                            user: req.user,
-                                            layout: 'layout'
-                                        });
-                                    }
-                                }
-                            });
-                    });
+    Product.aggregate([{
+        "$match": matchQuery
+    }, {
+        "$group": {
+            _id: "$Brand",
+            Sum: {
+                $sum: 1
+            },
+        }
+    }, {
+        "$sort": {
+            "_id": 1
+        }
+    }], function(err, brands) {      
+        Product.distinct("EAN", matchQuery, function(err, results) {
+            var pages = Math.ceil(results.length / ItemOnPage);
+            Product.aggregate([{
+                "$match": matchQuery
+            }, {
+                "$group": group
+            }, {
+                "$sort": _sort
+            }, {
+                "$skip": (page - 1) * ItemOnPage
+            }, {
+                "$limit": ItemOnPage
+            }], function(err, products) {
+                if (err != null) {
+                    next(err);
                 } else {
-                    res.render('notfound', {
-                        title: '没有找到您需要的产品',
-                        footer_bottom: !Utils.checkMobile(req),
-                        layout: 'layout'
-                    });
+                    var iterateNum = 0;
+                    if (products.length != 0) {
+                        products.forEach(function(product, index) {
+                            Product.find({
+                                    EAN: product._id
+                                }).stream()
+                                .on("error", function(err) {
+                                    next(err);
+                                })
+                                .on("data", function(_product) {
+                                    product.ProductName.push(_product.TitleCN);
+                                    product.DescriptionCN.push(_product.DescriptionCN);
+                                    product.Price.push(_product.Price);
+                                })
+                                .on("close", function() {
+                                    if (++iterateNum == products.length) {
+                                        if (page == 1 && search == "" && category == "" && minprice == Number.NEGATIVE_INFINITY && maxprice == Number.POSITIVE_INFINITY) {
+                                            mainPage = true;
+                                            Product.aggregate([{
+                                                "$match": {
+                                                    $and: [{
+                                                        Tranlated: true,
+                                                        EAN: {
+                                                            $ne: 'null'
+                                                        },
+                                                        SalesRank: {
+                                                            $lte: 15,
+                                                            $gte: 1
+                                                        }
+                                                    }]
+                                                }
+                                            }, {
+                                                "$group": group
+                                            }, {
+                                                "$sort": {
+                                                    SalesRank: -1
+                                                }
+                                            }], function(err, hotproducts) {
+                                                var iterateNumber = 0;
+                                                hotproducts.forEach(function(hotproduct, index) {
+                                                    Product.find({
+                                                            EAN: hotproduct._id
+                                                        }).stream()
+                                                        .on("error", function(err) {
+                                                            next(err);
+                                                        })
+                                                        .on("data", function(_hotproduct) {
+                                                            hotproduct.ProductName.push(_hotproduct.TitleCN);
+                                                            hotproduct.DescriptionCN.push(_hotproduct.DescriptionCN);
+                                                            hotproduct.Price.push(_hotproduct.Price);
+                                                        })
+                                                        .on("close", function() {
+                                                            if (++iterateNumber == hotproducts.length) {
+                                                                res.render('index', {
+                                                                    title: 'Allhaha 欧哈哈德国优选购物 － 商品比价 － 优惠券',
+                                                                    footer_bottom: false,
+                                                                    mainPage: mainPage,
+                                                                    pages: pages,
+                                                                    currentPage: page,
+                                                                    products: products,
+                                                                    hotproducts: hotproducts,
+                                                                    category: Utils.urlToCategory(category),
+                                                                    minprice: req.query.minprice || "",
+                                                                    maxprice: req.query.maxprice || "",
+                                                                    brand: brand,
+                                                                    brands: brands,
+                                                                    sort: sort,
+                                                                    user: req.user,
+                                                                    layout: 'layout'
+                                                                });
+                                                            }
+                                                        });
+                                                });
+                                            });
+                                        } else {
+                                            res.render('index', {
+                                                title: 'Allhaha.com 德国欧哈哈精品购物网 - 商品比价 - 优惠券',
+                                                footer_bottom: false,
+                                                mainPage: mainPage,
+                                                pages: pages,
+                                                currentPage: page,
+                                                products: products,
+                                                category: Utils.urlToCategory(category),
+                                                minprice: req.query.minprice || "",
+                                                maxprice: req.query.maxprice || "",
+                                                brand: brand,
+                                                brands: brands,
+                                                sort: sort,
+                                                user: req.user,
+                                                layout: 'layout'
+                                            });
+                                        }
+                                    }
+                                });
+                        });
+                    } else {
+                        res.render('notfound', {
+                            title: '没有找到您需要的产品',
+                            footer_bottom: !Utils.checkMobile(req),
+                            layout: 'layout'
+                        });
+                    }
                 }
-            }
+            });
         });
     });
 });
@@ -258,7 +274,7 @@ router.get('/product', function(req, res, next) {
             if (err != null) next(err);
             else {
                 res.render('product_details', {
-                    title: '德国打折商品, 产品描述',
+                    title: _product.TitleCN,
                     footer_bottom: !Utils.checkMobile(req),
                     product: _product,
                     product_link: req.url,
@@ -333,11 +349,34 @@ router.get('/favourite', function(req, res, next) {
         favourites.forEach(function(favourite) {
             productEANs.push(favourite.ProductEAN);
         });
-        Product.find({
-            'EAN': {
+        var group = {
+            _id: "$EAN",
+            ProductId: {
+                $first: "$_id"
+            },
+            ProductImage: {
+                $first: "$ProductImage"
+            },
+            TitleCN: {
+                $first: "$TitleCN"
+            },
+            DescriptionCN: {
+                $first: "$DescriptionCN"
+            },
+            Price: {
+                $push: "$Price"
+            }
+        };
+        var matchQuery = {
+            EAN: {
                 $in: productEANs
             }
-        }, function(err, products) {
+        };
+        Product.aggregate([{
+            "$match": matchQuery
+        }, {
+            "$group": group
+        }], function(err, products) {
             res.render('favourite', {
                 title: '用户收藏',
                 footer_bottom: !Utils.checkMobile(req),
@@ -375,7 +414,7 @@ router.get('/article_detail', function(req, res, next) {
     Article.findById(req.query.id, function(err, article) {
         if (article) {
             res.render('article_details', {
-                title: "精彩的文章",
+                title: article.Title,
                 footer_bottom: !Utils.checkMobile(req),
                 article: article,
                 user: req.user
@@ -387,53 +426,68 @@ router.get('/article_detail', function(req, res, next) {
 });
 
 router.get('/voucher', function(req, res, next) {
+    var page = req.query.page || 1;
+    var ItemOnPage = 10;
     var modal = false,
         gutscheinCode = "",
         voucherContent = "";
-    if (req.query.id != undefined) {
-        Voucher.findOne({
-            Id: req.query.id
-        }, function(err, voucher) {
-            modal = true;
-            gutscheinCode = voucher.Code;
-            voucherContent = voucher.DescriptionCN;
+    Voucher.count({
+        EndDate: {
+            $gte: new Date()
+        }
+    }, function(err, count) {
+        var pages = Math.ceil(count / ItemOnPage);
+        if (req.query.id != undefined) {
+            Voucher.findOne({
+                Id: req.query.id
+            }, function(err, voucher) {
+                modal = true;
+                gutscheinCode = voucher.Code;
+                voucherContent = voucher.DescriptionCN;
+                Voucher.find({
+                    EndDate: {
+                        $gte: new Date()
+                    }
+                }).sort({
+                    updated_at: -1
+                }).exec(function(err, vouchers) {
+                    res.render('voucher', {
+                        title: '折扣券',
+                        footer_bottom: false,
+                        vouchers: vouchers,
+                        modal: modal,
+                        pages: pages,
+                        currentPage: page,
+                        gutscheinCode: gutscheinCode,
+                        voucherContent: voucherContent,
+                        user: req.user
+                    });
+                });
+            });
+        } else {
             Voucher.find({
                 EndDate: {
                     $gte: new Date()
                 }
             }).sort({
                 updated_at: -1
-            }).exec(function(err, vouchers) {
+            }).skip((page - 1) * ItemOnPage)
+            .limit(ItemOnPage)
+            .exec(function(err, vouchers) {
                 res.render('voucher', {
                     title: '折扣券',
                     footer_bottom: false,
                     vouchers: vouchers,
                     modal: modal,
+                    pages: pages,
+                    currentPage: page,
                     gutscheinCode: gutscheinCode,
                     voucherContent: voucherContent,
                     user: req.user
                 });
             });
-        });
-    } else {
-        Voucher.find({
-            EndDate: {
-                $gte: new Date()
-            }
-        }).sort({
-            updated_at: -1
-        }).exec(function(err, vouchers) {
-            res.render('voucher', {
-                title: '折扣券',
-                footer_bottom: false,
-                vouchers: vouchers,
-                modal: modal,
-                gutscheinCode: gutscheinCode,
-                voucherContent: voucherContent,
-                user: req.user
-            });
-        });
-    }
+        }
+    });
 });
 
 router.get('/aboutus', function(req, res, next) {
@@ -597,18 +651,37 @@ router.get('/currencyExchange', function(req, res, next) {
 });
 
 router.get('/test', function(req, res, next) {
-    prodAdv.call("ItemLookup", {
-        ItemId: "4011143454014",
-        IdType: "EAN",
-        SearchIndex: "All",
-        ResponseGroup: "Large"
-    }, function(err, product) {
-        if (!err) {
-            var _product = Utils.fromAmazonToLocalProduct(product.Items.Item);
-            res.json(product);
-        } else {
-            res.send(err);
+    // prodAdv.call("ItemLookup", {
+    //     ItemId: "4011143454014",
+    //     IdType: "EAN",
+    //     SearchIndex: "All",
+    //     ResponseGroup: "Large"
+    // }, function(err, product) {
+    //     if (!err) {
+    //         var _product = Utils.fromAmazonToLocalProduct(product.Items.Item);
+    //         res.json(product);
+    //     } else {
+    //         res.send(err);
+    //     }
+    // });
+
+    Product.aggregate([{
+        "$match": {
+            Tranlated: true
         }
+    }, {
+        "$group": {
+            _id: "$Brand",
+            Sum: {
+                $sum: 1
+            },
+        }
+    }, {
+        "$sort": {
+            _id: 1
+        }
+    }], function(err, brands) {
+        res.json(brands);
     });
 });
 

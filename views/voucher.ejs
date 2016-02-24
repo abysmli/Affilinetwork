@@ -12,6 +12,113 @@
 		</div>
 	</div>
 </div>
+<!-- main-container start -->
+<!-- ================ -->
+<section class="main-container">
+	<div class="container-fluid">
+		<div class="row">
+			<!-- main start -->
+			<!-- ================ -->
+			<div class="main col-md-12">
+				<!-- page-title start -->
+				<!-- ================ -->
+				<h1 class="page-title">折扣券</h1>
+				<div class="separator-2"></div>
+				<p class="lead">这里是各大网站的打折券和折扣信息 <br class="hidden-sm hidden-xs"> 千万不要错过哦!</p>
+				<!-- page-title end -->
+				<!-- blogpost start -->
+				<% vouchers.forEach(function(voucher) { %>
+				<article class="clearfix blogpost">
+					<div class="overlay-container">
+						<img src="<%- voucher.Image %>" alt="">
+						<div class="overlay">
+							<div class="overlay-links">
+								<a href="<%- voucher.Image %>" class="popup-img-single"><i class="fa fa-search-plus"></i></a>
+							</div>
+						</div>
+					</div>
+					<div class="blogpost-body">
+						<div class="post-info">
+							<span class="day"><%= voucher.updated_at.getDate() %></span>
+							<span class="month"><%= voucher.updated_at.getMonth() + 1 %> <%= voucher.updated_at.getFullYear() %></span>
+						</div>
+						<div class="blogpost-content">
+							<header>
+								<h2 class="title"><%= voucher.TitleCN %></h2>
+								<div class="submitted"><i class="fa fa-user pr-5"></i> by <a href="#">Allhaha网推荐</a></div>
+							</header>
+							<h3 id="voucherDesc"><%= voucher.DescriptionCN %></h3>
+							<hr/>
+							<div class="LinkContainer" style="position: fixed; visibility: hidden; height: 0px; width:0px;"><%- voucher.IntegrationCode %></div>
+							<% if (voucher.Code !== "" ) { %>
+							<a class='btn btn-info' onclick="window.open('?page=<%= currentPage %>&id=<%= voucher.Id %>','_blank');window.open(this.href,'_self');openModal('<%= voucher.Code %>', this)">优惠券</a>
+							<% } else { %>
+							<a class='btn btn-info' target='_class'>去看看</a>
+							<% } %>
+						</div>
+					</div>
+					<footer class="clearfix">
+						<ul class="links pull-right">
+							<!-- JiaThis Button BEGIN -->
+							<div class="jiathis_style_32x32">
+								<a class="jiathis_button_tsina"></a>
+								<a class="jiathis_button_weixin"></a>
+								<a class="jiathis_button_renren"></a>
+								<a class="jiathis_button_email"></a>
+								<a class="jiathis_button_tqq"></a>
+								<a class="jiathis_button_qzone"></a>
+							</div>
+						</ul>
+					</footer>
+				</article>
+				<% }) %>
+				<div class="clearfix"></div>
+                <ul class="pagination"></ul>
+				<!-- blogpost end -->
+			</div>
+			<!-- main end -->
+		</div>
+	</div>
+</section>
+<!-- main-container end -->
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+	var jiathis_config={
+		data_track_clickback:true,
+		hideMore:false
+	}
+	$(document).ready(function() {
+		$(".gutschein-copy").click(function() {
+			copyToClipboard($(".gutschein-text").val());
+			Notify('success', "优惠券代码已经拷贝至剪切板!");
+		});
+
+		$.each($(".LinkContainer"), function(index) {
+			var link = $(this).find("a").attr("href");
+			$(this).siblings("a").attr("href", link);
+			$(this).siblings("a").attr("link", link);
+		});
+
+		$(".gutscheinButton").click(function(){
+			if (openFlag) {
+				$(".gutschein").animate({top: "+="+ 40 }, 100);
+				openFlag = false;
+			} else {
+				$(".gutschein").animate({top: "-="+ 40}, 100);
+				openFlag = true;
+			}
+		});
+	});
+	$('.pagination').pagination({
+        pages: <%= pages %> ,
+        currentPage: <%= currentPage %>,
+        hrefTextPrefix: "/voucher?page=",
+        prevText: "上一页",
+        nextText: "下一页"
+    });
+</script>
+
 <% if (modal) { %>
 <!-- Modal -->
 <div class="modal fade" id="gutscheinModal" tabindex="2" role="dialog" aria-labelledby="gutscheinModalLabel" aria-hidden="true">
@@ -59,100 +166,5 @@
 	}
 </script>
 <% } %>
-<!-- main-container start -->
-<!-- ================ -->
-<section class="main-container">
-	<div class="container-fluid">
-		<div class="row">
-			<!-- main start -->
-			<!-- ================ -->
-			<div class="main col-md-12">
-				<!-- page-title start -->
-				<!-- ================ -->
-				<h1 class="page-title">折扣券</h1>
-				<div class="separator-2"></div>
-				<p class="lead">这里是各大网站的打折券和折扣信息 <br class="hidden-sm hidden-xs"> 千万不要错过哦!</p>
-				<!-- page-title end -->
-				<!-- blogpost start -->
-				<% vouchers.forEach(function(voucher) { %>
-				<article class="clearfix blogpost object-non-visible" data-animation-effect="fadeInUpSmall" data-effect-delay="200">
-					<div class="overlay-container">
-						<img src="<%- voucher.Image %>" alt="">
-						<div class="overlay">
-							<div class="overlay-links">
-								<a href="<%- voucher.Image %>" class="popup-img-single"><i class="fa fa-search-plus"></i></a>
-							</div>
-						</div>
-					</div>
-					<div class="blogpost-body">
-						<div class="post-info">
-							<span class="day"><%= voucher.updated_at.getDate() %></span>
-							<span class="month"><%= voucher.updated_at.getMonth() + 1 %> <%= voucher.updated_at.getFullYear() %></span>
-						</div>
-						<div class="blogpost-content">
-							<header>
-								<h2 class="title"><%= voucher.Program %></h2>
-								<div class="submitted"><i class="fa fa-user pr-5"></i> by <a href="#">Allhaha网推荐</a></div>
-							</header>
-							<h3 id="voucherDesc"><%= voucher.DescriptionCN %></h3>
-							<hr/>
-							<div class="LinkContainer" style="visibility: hidden; height: 0px; width:0px;"><%- voucher.IntegrationCode %></div>
-							<% if (voucher.Code !== "" ) { %>
-							<a class='btn btn-info' onclick="window.open('?id=<%= voucher.Id %>','_blank');window.open(this.href,'_self');openModal('<%= voucher.Code %>', this)">优惠券</a>
-							<% } else { %>
-							<a class='btn btn-info' target='_class'>去看看</a>
-							<% } %>
-						</div>
-					</div>
-					<footer class="clearfix">
-						<ul class="links pull-right">
-							<!-- JiaThis Button BEGIN -->
-							<div class="jiathis_style_32x32">
-								<a class="jiathis_button_tsina"></a>
-								<a class="jiathis_button_weixin"></a>
-								<a class="jiathis_button_renren"></a>
-								<a class="jiathis_button_email"></a>
-								<a class="jiathis_button_tqq"></a>
-								<a class="jiathis_button_qzone"></a>
-							</div>
-						</ul>
-					</footer>
-				</article>
-				<% }) %>
-				<!-- blogpost end -->
-			</div>
-			<!-- main end -->
-		</div>
-	</div>
-</section>
-<!-- main-container end -->
 
-<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
-<script type="text/javascript">
-	var jiathis_config={
-		data_track_clickback:true,
-		hideMore:false
-	}
-	$(document).ready(function() {
-		$(".gutschein-copy").click(function() {
-			copyToClipboard($(".gutschein-text").val());
-			Notify('success', "优惠券代码已经拷贝至剪切板!");
-		});
-
-		$.each($(".LinkContainer"), function(index) {
-			var link = $(this).find("a").attr("href");
-			$(this).siblings("a").attr("href", link);
-			$(this).siblings("a").attr("link", link);
-		});
-
-		$(".gutscheinButton").click(function(){
-			if (openFlag) {
-				$(".gutschein").animate({top: "+="+ 40 }, 100);
-				openFlag = false;
-			} else {
-				$(".gutschein").animate({top: "-="+ 40}, 100);
-				openFlag = true;
-			}
-		});
-	});
-</script>
+<!-- <article class="clearfix blogpost object-non-visible" data-animation-effect="fadeInUpSmall" data-effect-delay="200"> -->

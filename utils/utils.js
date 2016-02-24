@@ -108,5 +108,35 @@ module.exports = (function() {
         return ismobile;
     }
 
+    _Class.prototype.urlToCategory = function urlToCategory(url) {
+        if ( url == "clothing_shoes") {
+            return "服装鞋子";
+        } else if ( url == "food") {
+            return "食品饮食";
+        } else if ( url == "kitchenware") {
+            return "厨房用具";
+        } else if ( url == "electronic_product") {
+            return "电子产品";
+        } else if ( url == "maternal") {
+            return "母婴";
+        } else if ( url == "cosmetic") {
+            return "化妆品";
+        } else if ( url == "health") {
+            return "健康保健";
+        } else if ( url == "tourism") {
+            return "旅游";
+        } else if ( url == "home_appliances") {
+            return "小家电";
+        } else if ( url == "jewelry_watches") {
+            return "钟表手饰";
+        } else if ( url == "office") {
+            return "办公";
+        } else if ( url == "other") {
+            return "其他";
+        } else {
+            return url;
+        }
+    }
+
     return _Class;
 })();

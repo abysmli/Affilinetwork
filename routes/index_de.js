@@ -63,30 +63,22 @@ router.get('/', function(req, res, next) {
     var minprice = req.query.minprice || Number.NEGATIVE_INFINITY;
     var maxprice = req.query.maxprice || Number.POSITIVE_INFINITY;
     var sort = req.query.sort || "";
+    var brand = req.query.brand || "";
     var mainPage = false;
-    var _category = category;
+    var _category = Utils.urlToCategory(category);
+    var _sort = {};
+    var _brand = brand;
     var ItemOnPage = 30;
-    if (category == "" || category == "所有") {
-        _category = {
-            $in: ["服装鞋子", "食品饮食", "厨房用具", "电子产品", "手机平板", "化妆品", "健康保健", "旅游", "其他", "小家电", "钟表手饰", "办公", "母婴", "null", undefined]
-        };
-    }
-    if (sort == 'Preis tief nach hoch') {
-        sort = {
-            Price: 1
-        };
-    } else if (sort == 'Preis hoch nach tief') {
-        sort = {
-            Price: -1
-        };
-    } else if (sort == 'Bewertung') {
-        sort = {
-            SaleRank: -1
-        };
+    if (category == "" || category == "all") _category = { $exists: true };
+    if (brand == "" || brand == "all") _brand = { $exists: true };
+    if (sort == 'price_asc') {
+        _sort = { Price: 1 };
+    } else if (sort == 'price_desc') {
+        _sort = { Price: -1 };
+    } else if (sort == 'rank') {
+        _sort = { SaleRank: -1 };
     } else {
-        sort = {
-            updated_at: -1
-        };
+        _sort = { updated_at: -1 };
     }
     var group = {
         _id: "$EAN",
@@ -116,6 +108,7 @@ router.get('/', function(req, res, next) {
                 $gte: Number(minprice)
             },
             Category: _category,
+            Brand: _brand,
             $or: [{
                 Title: new RegExp(search, 'gi')
             }, {
@@ -125,45 +118,77 @@ router.get('/', function(req, res, next) {
             }]
         }]
     };
-
-    Product.distinct("EAN", matchQuery, function(err, results) {
-        var pages = Math.ceil(results.length / ItemOnPage);
-        Product.aggregate([{
-            "$match": matchQuery
-        }, {
-            "$group": group
-        }, {
-            "$skip": (page - 1) * ItemOnPage
-        }, {
-            "$limit": ItemOnPage
-        }, {
-            "$sort": sort
-        }], function(err, products) {
-            if (err != null) {
-                next(err);
-            } else {
-                if (products.length != 0) {
-                    if (page == 1 && search == "" && category == "" && minprice == Number.NEGATIVE_INFINITY && maxprice == Number.POSITIVE_INFINITY) {
-                        mainPage = true;
-                        Product.aggregate([{
-                            "$match": {
-                                $and: [{
-                                    EAN: {
-                                        $ne: 'null'
-                                    },
-                                    SalesRank: {
-                                        $lte: 15,
-                                        $gte: 1
-                                    }
-                                }]
-                            }
-                        }, {
-                            "$group": group
-                        }, {
-                            "$sort": {
-                                update_at: -1
-                            }
-                        }], function(err, hotproduct) {
+    Product.aggregate([{
+        "$match": matchQuery
+    }, {
+        "$group": {
+            _id: "$Brand",
+            Sum: {
+                $sum: 1
+            },
+        }
+    }, {
+        "$sort": {
+            "_id": 1
+        }
+    }], function(err, brands) {   
+        Product.distinct("EAN", matchQuery, function(err, results) {
+            var pages = Math.ceil(results.length / ItemOnPage);
+            Product.aggregate([{
+                "$match": matchQuery
+            }, {
+                "$group": group
+            }, {
+                "$skip": (page - 1) * ItemOnPage
+            }, {
+                "$limit": ItemOnPage
+            }, {
+                "$sort": _sort
+            }], function(err, products) {
+                if (err != null) {
+                    next(err);
+                } else {
+                    if (products.length != 0) {
+                        if (page == 1 && search == "" && category == "" && minprice == Number.NEGATIVE_INFINITY && maxprice == Number.POSITIVE_INFINITY) {
+                            mainPage = true;
+                            Product.aggregate([{
+                                "$match": {
+                                    $and: [{
+                                        EAN: {
+                                            $ne: 'null'
+                                        },
+                                        SalesRank: {
+                                            $lte: 15,
+                                            $gte: 1
+                                        }
+                                    }]
+                                }
+                            }, {
+                                "$group": group
+                            }, {
+                                "$sort": {
+                                    SalesRank: -1
+                                }
+                            }], function(err, hotproduct) {
+                                res.render('index_de', {
+                                    title: 'Allhaha - Preisvergleich und Gutscheine',
+                                    footer_bottom: false,
+                                    mainPage: mainPage,
+                                    pages: pages,
+                                    currentPage: page,
+                                    products: products,
+                                    hotproducts: hotproduct,
+                                    category: Utils.urlToCategory(category),
+                                    minprice: req.query.minprice || "",
+                                    maxprice: req.query.maxprice || "",
+                                    brand: brand,
+                                    brands: brands,
+                                    sort: sort,
+                                    user: req.user,
+                                    layout: 'layout_de'
+                                });
+                            });
+                        } else {
                             res.render('index_de', {
                                 title: 'Allhaha - Preisvergleich und Gutscheine',
                                 footer_bottom: false,
@@ -171,35 +196,25 @@ router.get('/', function(req, res, next) {
                                 pages: pages,
                                 currentPage: page,
                                 products: products,
-                                hotproducts: hotproduct,
-                                category: 'Alle',
-                                sort: 'Datum',
+                                category: Utils.urlToCategory(category),
+                                minprice: req.query.minprice || "",
+                                maxprice: req.query.maxprice || "",
+                                brand: brand,
+                                brands: brands,
+                                sort: sort,
                                 user: req.user,
                                 layout: 'layout_de'
                             });
-                        });
+                        }
                     } else {
-                        res.render('index_de', {
-                            title: 'Allhaha - Preisvergleich und Gutscheine',
-                            footer_bottom: false,
-                            mainPage: mainPage,
-                            pages: pages,
-                            currentPage: page,
-                            products: products,
-                            category: 'Alle',
-                            sort: 'Datum',
-                            user: req.user,
+                        res.render('notfound_de', {
+                            title: 'Produkte nicht gefunden',
+                            footer_bottom: !Utils.checkMobile(req),
                             layout: 'layout_de'
                         });
                     }
-                } else {
-                    res.render('notfound_de', {
-                        title: 'Produkte nicht gefunden',
-                        footer_bottom: !Utils.checkMobile(req),
-                        layout: 'layout_de'
-                    });
                 }
-            }
+            });
         });
     });
 });
@@ -219,7 +234,7 @@ router.get('/product', function(req, res, next) {
             if (err != null) next(err);
             else {
                 res.render('product_details_de', {
-                    title: 'Details',
+                    title: _product.Title,
                     footer_bottom: !Utils.checkMobile(req),
                     product: _product,
                     product_link: req.url,
@@ -294,11 +309,34 @@ router.get('/favourite', function(req, res, next) {
         favourites.forEach(function(favourite) {
             productEANs.push(favourite.ProductEAN);
         });
-        Product.find({
-            'EAN': {
+        var group = {
+            _id: "$EAN",
+            ProductId: {
+                $first: "$_id"
+            },
+            ProductImage: {
+                $first: "$ProductImage"
+            },
+            Title: {
+                $first: "$Title"
+            },
+            Description: {
+                $first: "$Description"
+            },
+            Price: {
+                $push: "$Price"
+            }
+        };
+        var matchQuery = {
+            EAN: {
                 $in: productEANs
             }
-        }, function(err, products) {
+        };
+        Product.aggregate([{
+            "$match": matchQuery
+        }, {
+            "$group": group
+        }], function(err, products) {
             res.render('favourite_de', {
                 title: 'Merkliste',
                 footer_bottom: !Utils.checkMobile(req),
