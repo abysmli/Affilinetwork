@@ -1,0 +1,27 @@
+<div class="container-fluid">
+	<h2>合作品牌</h2>
+	<div class="space-bottom"></div>
+	<div class="row">
+	<% shops.forEach(function(shop, index) { %>
+	    <div class="col-md-2 col-xs-6 shops_block">
+	        <div class="image-box mb-20 object-non-visible" data-animation-effect="fadeInLeft" data-effect-delay="300">
+	            <div class="overlay-container">
+	                <img class="lazy" data-original="<%= shop.Logo.URL %>">
+	                <div class="overlay">
+	                    <div class="overlay-links">
+	                        <a href="<%= shop.ShopLink %>"><i class="fa fa-link"></i></a>
+	                        <a href="images/portfolio-1.jpg" class="popup-img"><i class="fa fa-search-plus"></i></a>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	<% }) %>
+	</div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $("img.lazy").lazyload();
+    });
+</script>

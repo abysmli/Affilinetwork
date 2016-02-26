@@ -20,6 +20,18 @@ module.exports = (function() {
                         _images.push(image.LargeImage.URL);
                     });
                 }
+                var ItemDimensions = {
+                    Length: (product.ItemAttributes.ItemDimensions !== undefined) ? (product.ItemAttributes.ItemDimensions.Length !== undefined ? Math.ceil(product.ItemAttributes.ItemDimensions.Length['#'] * 0.0254) : null) : null,
+                    Width: (product.ItemAttributes.ItemDimensions !== undefined) ? (product.ItemAttributes.ItemDimensions.Width !== undefined ? Math.ceil(product.ItemAttributes.ItemDimensions.Width['#'] * 0.0254) : null) : null,
+                    Height: (product.ItemAttributes.ItemDimensions !== undefined) ? (product.ItemAttributes.ItemDimensions.Height !== undefined ? Math.ceil(product.ItemAttributes.ItemDimensions.Height['#'] * 0.0254) : null) : null,
+                    Weight: (product.ItemAttributes.ItemDimensions !== undefined) ? (product.ItemAttributes.ItemDimensions.Weight !== undefined ? Math.ceil(product.ItemAttributes.ItemDimensions.Weight['#'] * 0.00453) : null) : null
+                };
+                var PackageDimensions = {
+                    Length: (product.ItemAttributes.PackageDimensions !== undefined) ? (product.ItemAttributes.PackageDimensions.Length !== undefined ? Math.ceil(product.ItemAttributes.PackageDimensions.Length['#'] * 0.0254) : null) : null,
+                    Width: (product.ItemAttributes.PackageDimensions !== undefined) ? (product.ItemAttributes.PackageDimensions.Width !== undefined ? Math.ceil(product.ItemAttributes.PackageDimensions.Width['#'] * 0.0254) : null) : null,
+                    Height: (product.ItemAttributes.PackageDimensions !== undefined) ? (product.ItemAttributes.PackageDimensions.Height !== undefined ? Math.ceil(product.ItemAttributes.PackageDimensions.Height['#'] * 0.0254) : null) : null,
+                    Weight: (product.ItemAttributes.PackageDimensions !== undefined) ? (product.ItemAttributes.PackageDimensions.Weight !== undefined ? Math.ceil(product.ItemAttributes.PackageDimensions.Weight['#'] * 0.00453) : null) : null
+                };
                 _product = {
                     ProductId: product.ProductId || null,
                     ASIN: product.ASIN || null,
@@ -43,6 +55,9 @@ module.exports = (function() {
                     DeliveryTime: null,
                     Keywords: null,
                     Source: "Amazon",
+                    Weight: PackageDimensions.Weight || ItemDimensions.Weight || null,
+                    ItemDimensions: ItemDimensions,
+                    PackageDimensions: PackageDimensions,
                     Tranlated: false,
                 };
             }
@@ -74,6 +89,9 @@ module.exports = (function() {
             DeliveryTime: product.DeliveryTime || null,
             Keywords: product.Keywords || null,
             Source: "Affilinet",
+            Weight: null,
+            ItemDimensions: null,
+            PackageDimensions: null,
             Tranlated: false,
         };
         return _product;

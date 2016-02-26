@@ -81,3 +81,7 @@ File Description: Place here your custom CSS styles
 .scrollToTop {
     opacity: 0.6;
 }
+
+.shops_block {
+    max-height: 100px;
+}

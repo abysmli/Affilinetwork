@@ -57,7 +57,7 @@
 							<% } %>
 						</div>
 					</div>
-					<footer class="clearfix">
+					<footer class="clearfix" onmouseover="setShare('<%= voucher.TitleCN %>', '<%= voucher.DescriptionCN %>');">
 						<ul class="links pull-right">
 							<!-- JiaThis Button BEGIN -->
 							<div class="jiathis_style_32x32">
@@ -88,6 +88,12 @@
 		data_track_clickback:true,
 		hideMore:false
 	}
+
+	function setShare(title, summary) {
+        jiathis_config.title = title;
+        jiathis_config.summary = summary;
+    }
+
 	$(document).ready(function() {
 		$(".gutschein-copy").click(function() {
 			copyToClipboard($(".gutschein-text").val());

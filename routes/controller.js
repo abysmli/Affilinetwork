@@ -467,6 +467,18 @@ router.post('/product/add', auth, function(req, res, next) {
         ProductId: product.ProductId,
         ASIN: product.ASIN
     });
+    product.ItemDimensions = {
+        Length: product.ItemDimensions_Length,
+        Width: product.ItemDimensions_Width,
+        Height: product.ItemDimensions_Height,
+        Weight: product.ItemDimensions_Weight
+    };
+    product.PackageDimensions = {
+        Length: product.PackageDimensions_Length,
+        Width: product.PackageDimensions_Width,
+        Height: product.PackageDimensions_Height,
+        Weight: product.PackageDimensions_Weight
+    };
     query.findOne(function(err, _product) {
         if (err) next(err);
         if (!_product) {
@@ -488,6 +500,7 @@ router.get('/product/edit', auth, function(req, res, next) {
     Product.findById(req.query.id, function(err, product) {
         if (err != null) next(err);
         else {
+            console.log(product);
             res.render('controller/product_form', {
                 title: 'Edit Product',
                 product: product,
@@ -499,6 +512,18 @@ router.get('/product/edit', auth, function(req, res, next) {
 
 router.post('/product/edit', auth, function(req, res, next) {
     var product = req.body;
+    product.ItemDimensions = {
+        Length: product.ItemDimensions_Length,
+        Width: product.ItemDimensions_Width,
+        Height: product.ItemDimensions_Height,
+        Weight: product.ItemDimensions_Weight
+    };
+    product.PackageDimensions = {
+        Length: product.PackageDimensions_Length,
+        Width: product.PackageDimensions_Width,
+        Height: product.PackageDimensions_Height,
+        Weight: product.PackageDimensions_Weight
+    };
     if (product.TitleCN !== "" && product.DescriptionCN !== "") {
         product.Tranlated = true;
     }

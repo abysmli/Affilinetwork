@@ -134,7 +134,7 @@ router.get('/', function(req, res, next) {
         "$sort": {
             "_id": 1
         }
-    }], function(err, brands) {      
+    }], function(err, brands) {
         Product.distinct("EAN", matchQuery, function(err, results) {
             var pages = Math.ceil(results.length / ItemOnPage);
             Product.aggregate([{
@@ -466,26 +466,26 @@ router.get('/voucher', function(req, res, next) {
             });
         } else {
             Voucher.find({
-                EndDate: {
-                    $gte: new Date()
-                }
-            }).sort({
-                updated_at: -1
-            }).skip((page - 1) * ItemOnPage)
-            .limit(ItemOnPage)
-            .exec(function(err, vouchers) {
-                res.render('voucher', {
-                    title: '折扣券',
-                    footer_bottom: false,
-                    vouchers: vouchers,
-                    modal: modal,
-                    pages: pages,
-                    currentPage: page,
-                    gutscheinCode: gutscheinCode,
-                    voucherContent: voucherContent,
-                    user: req.user
+                    EndDate: {
+                        $gte: new Date()
+                    }
+                }).sort({
+                    updated_at: -1
+                }).skip((page - 1) * ItemOnPage)
+                .limit(ItemOnPage)
+                .exec(function(err, vouchers) {
+                    res.render('voucher', {
+                        title: '折扣券',
+                        footer_bottom: false,
+                        vouchers: vouchers,
+                        modal: modal,
+                        pages: pages,
+                        currentPage: page,
+                        gutscheinCode: gutscheinCode,
+                        voucherContent: voucherContent,
+                        user: req.user
+                    });
                 });
-            });
         }
     });
 });
@@ -650,39 +650,40 @@ router.get('/currencyExchange', function(req, res, next) {
     });
 });
 
-router.get('/test', function(req, res, next) {
-    // prodAdv.call("ItemLookup", {
-    //     ItemId: "4011143454014",
-    //     IdType: "EAN",
-    //     SearchIndex: "All",
-    //     ResponseGroup: "Large"
-    // }, function(err, product) {
-    //     if (!err) {
-    //         var _product = Utils.fromAmazonToLocalProduct(product.Items.Item);
-    //         res.json(product);
-    //     } else {
-    //         res.send(err);
-    //     }
-    // });
-
-    Product.aggregate([{
-        "$match": {
-            Tranlated: true
+router.get('/nav', function(req, res, next) {
+    Affilinet.getShopList({}, function(err, response, shops) {
+        if (!err && response.statusCode == 200) {
+            res.render('nav', {
+                title: '导航链接',
+                shops: shops.Shops,
+                footer_bottom: false,
+                layout: 'layout'
+            });
+        } else {
+            next(err);
         }
-    }, {
-        "$group": {
-            _id: "$Brand",
-            Sum: {
-                $sum: 1
-            },
-        }
-    }, {
-        "$sort": {
-            _id: 1
-        }
-    }], function(err, brands) {
-        res.json(brands);
     });
+});
+
+router.get('/test', function(req, res, next) {
+    prodAdv.call("ItemSearch", {
+        SearchIndex: "All",
+        Keywords: "creme",
+        ResponseGroup: "Large"
+    }, function(err, products) {
+        if (!err) {
+            var _products = [];
+            products.Items.Item.forEach(function(product, index){
+                _products.push(Utils.fromAmazonToLocalProduct(product));
+            });
+            res.json(_products);
+        } else {
+            res.send(err);
+        }
+    });
+    // Affilinet.getProducts({ProductIds: 20940203}, function(err, response, results) {
+    //     res.json(results);
+    // });
 });
 
 module.exports = router;

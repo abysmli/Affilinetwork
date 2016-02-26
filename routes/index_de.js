@@ -89,10 +89,10 @@ router.get('/', function(req, res, next) {
             $first: "$ProductImage"
         },
         ProductName: {
-            $first: "$Title"
+            $push: "$Title"
         },
         Description: {
-            $first: "$Description"
+            $push: "$Description"
         },
         Price: {
             $push: "$Price"
@@ -148,64 +148,100 @@ router.get('/', function(req, res, next) {
                 if (err != null) {
                     next(err);
                 } else {
+                    var iterateNum = 0;
                     if (products.length != 0) {
-                        if (page == 1 && search == "" && category == "" && minprice == Number.NEGATIVE_INFINITY && maxprice == Number.POSITIVE_INFINITY) {
-                            mainPage = true;
-                            Product.aggregate([{
-                                "$match": {
-                                    $and: [{
-                                        EAN: {
-                                            $ne: 'null'
-                                        },
-                                        SalesRank: {
-                                            $lte: 15,
-                                            $gte: 1
+                        products.forEach(function(product, index) {
+                            Product.find({
+                                    EAN: product._id
+                                }).stream()
+                                .on("error", function(err) {
+                                    next(err);
+                                })
+                                .on("data", function(_product) {
+                                    product.ProductName.push(_product.Title);
+                                    product.Description.push(_product.Description);
+                                    product.Price.push(_product.Price);
+                                })
+                                .on("close", function() {
+                                    if (++iterateNum == products.length) {
+                                        if (page == 1 && search == "" && category == "" && minprice == Number.NEGATIVE_INFINITY && maxprice == Number.POSITIVE_INFINITY) {
+                                            mainPage = true;
+                                            Product.aggregate([{
+                                                "$match": {
+                                                    $and: [{
+                                                        EAN: {
+                                                            $ne: 'null'
+                                                        },
+                                                        SalesRank: {
+                                                            $lte: 15,
+                                                            $gte: 1
+                                                        }
+                                                    }]
+                                                }
+                                            }, {
+                                                "$group": group
+                                            }, {
+                                                "$sort": {
+                                                    SalesRank: -1
+                                                }
+                                            }], function(err, hotproducts) {
+                                                var iterateNumber = 0;
+                                                hotproducts.forEach(function(hotproduct, index) {
+                                                    Product.find({
+                                                            EAN: hotproduct._id
+                                                        }).stream()
+                                                        .on("error", function(err) {
+                                                            next(err);
+                                                        })
+                                                        .on("data", function(_hotproduct) {
+                                                            hotproduct.ProductName.push(_hotproduct.Title);
+                                                            hotproduct.Description.push(_hotproduct.Description);
+                                                            hotproduct.Price.push(_hotproduct.Price);
+                                                        })
+                                                        .on("close", function() {
+                                                            if (++iterateNumber == hotproducts.length) {
+                                                                res.render('index_de', {
+                                                                    title: 'Allhaha - Preisvergleich und Gutscheine',
+                                                                    footer_bottom: false,
+                                                                    mainPage: mainPage,
+                                                                    pages: pages,
+                                                                    currentPage: page,
+                                                                    products: products,
+                                                                    hotproducts: hotproducts,
+                                                                    category: Utils.urlToCategory(category),
+                                                                    minprice: req.query.minprice || "",
+                                                                    maxprice: req.query.maxprice || "",
+                                                                    brand: brand,
+                                                                    brands: brands,
+                                                                    sort: sort,
+                                                                    user: req.user,
+                                                                    layout: 'layout_de'
+                                                                });
+                                                            }
+                                                        });
+                                                });
+                                            });
+                                        } else {
+                                            res.render('index_de', {
+                                                title: 'Allhaha - Preisvergleich und Gutscheine',
+                                                footer_bottom: false,
+                                                mainPage: mainPage,
+                                                pages: pages,
+                                                currentPage: page,
+                                                products: products,
+                                                category: Utils.urlToCategory(category),
+                                                minprice: req.query.minprice || "",
+                                                maxprice: req.query.maxprice || "",
+                                                brand: brand,
+                                                brands: brands,
+                                                sort: sort,
+                                                user: req.user,
+                                                layout: 'layout_de'
+                                            });
                                         }
-                                    }]
-                                }
-                            }, {
-                                "$group": group
-                            }, {
-                                "$sort": {
-                                    SalesRank: -1
-                                }
-                            }], function(err, hotproduct) {
-                                res.render('index_de', {
-                                    title: 'Allhaha - Preisvergleich und Gutscheine',
-                                    footer_bottom: false,
-                                    mainPage: mainPage,
-                                    pages: pages,
-                                    currentPage: page,
-                                    products: products,
-                                    hotproducts: hotproduct,
-                                    category: Utils.urlToCategory(category),
-                                    minprice: req.query.minprice || "",
-                                    maxprice: req.query.maxprice || "",
-                                    brand: brand,
-                                    brands: brands,
-                                    sort: sort,
-                                    user: req.user,
-                                    layout: 'layout_de'
+                                    }
                                 });
-                            });
-                        } else {
-                            res.render('index_de', {
-                                title: 'Allhaha - Preisvergleich und Gutscheine',
-                                footer_bottom: false,
-                                mainPage: mainPage,
-                                pages: pages,
-                                currentPage: page,
-                                products: products,
-                                category: Utils.urlToCategory(category),
-                                minprice: req.query.minprice || "",
-                                maxprice: req.query.maxprice || "",
-                                brand: brand,
-                                brands: brands,
-                                sort: sort,
-                                user: req.user,
-                                layout: 'layout_de'
-                            });
-                        }
+                        });
                     } else {
                         res.render('notfound_de', {
                             title: 'Produkte nicht gefunden',

@@ -46,11 +46,11 @@
                             <img src="<%= product.Images %>" />
                             <a href="/de/product?product_id=<%= product.ProductId %>" class="overlay small">
                                 <i class="fa fa-search-plus"></i>
-                                <span><%= product.Description %></span>
+                                <span><%= product.Description[0] %></span>
                             </a>
                         </div>
                         <div class="listing-item-body clearfix">
-                            <h3 class="title" style="font-weight: 300"><a href="/de/product?product_id=<%= product.ProductId %>"><%= product.ProductName %></a></h3>
+                            <h3 class="title" style="font-weight: 300"><a href="/de/product?product_id=<%= product.ProductId %>"><%= product.ProductName[0] %></a></h3>
                             <% if (product.Price.length == 1 || Math.min.apply(null, product.Price) == Math.max.apply(null, product.Price)) { %>
                             <span class="price" style="font-size: 20px"><%= product.Price[0].toString().replace(".", ",") %> €</span>
                             <% } else { %>
@@ -75,11 +75,11 @@
                                 <img src="<%= product.Images %>" onerror="this.src= '/images/no-image.jpg';" />
                                 <a href="/de/product?product_id=<%= product.ProductId %>" class="overlay small">
                                     <i class="fa fa-search-plus"></i>
-                                    <span><%= product.Description %></span>
+                                    <span><%= product.Description[0] %></span>
                                 </a>
                             </div>
                             <div class="listing-item-body clearfix">
-                                <h3 class="title" style="font-weight: 300"><a href="/de/product?product_id=<%= product.ProductId %>"><%= product.ProductName %></a></h3>
+                                <h3 class="title" style="font-weight: 300"><a href="/de/product?product_id=<%= product.ProductId %>"><%= product.ProductName[0] %></a></h3>
                                 <% if (product.Price.length == 1 || Math.min.apply(null, product.Price) == Math.max.apply(null, product.Price)) { %>
                                 <span class="price" style="font-size: 20px"><%= product.Price[0].toString().replace(".", ",") %> €</span>
                                 <% } else { %>
