@@ -1,0 +1,58 @@
+<div class="page-header">
+    <h1><%= title %></h1>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <form method="post" id="shop_form">
+            <div class="form-group">
+                <label for="ShopId">ShopId</label>
+                <input type="text" class="form-control" id="ShopId" placeholder="ShopId" name="ShopId" value="<%= shop.ShopId || '' %>" readonly>
+            </div>
+            <div class="form-group">
+                <label for="ShopTitle">ShopTitle</label>
+                <input type="text" class="form-control" id="ShopTitle" placeholder="ShopTitle" name="ShopTitle" value="<%= shop.ShopTitle || '' %>">
+            </div>
+            <div class="form-group">
+                <label for="LogoURL">LogoURL</label>
+                <input type="text" class="form-control" id="LogoURL" placeholder="LogoURL" name="LogoURL" value="<%= shop.LogoURL || '' %>">
+            </div>
+            <div class="form-group">
+                <label for="ProductCount">ProductCount</label>
+                <input type="text" class="form-control" id="ProductCount" placeholder="ProductCount" name="ProductCount" value="<%= shop.ProductCount || '' %>">
+            </div>            
+            <div class="form-group">
+                <label for="ProgramId">ProgramId</label>
+                <input type="text" class="form-control" id="ProgramId" placeholder="ProgramId" name="ProgramId" value="<%= shop.ProgramId || '' %>">
+            </div>
+            <div class="form-group">
+                <label for="ShopLink">ShopLink</label>
+                <input type="text" class="form-control" id="ShopLink" placeholder="ShopLink" name="ShopLink" value="<%= shop.ShopLink || '' %>">
+            </div>
+            <div class="form-group">
+                <label for="LastUpdate">LastUpdate</label>
+                <input type="text" class="form-control" id="LastUpdate" placeholder="LastUpdate" name="LastUpdate" value="<%= shop.LastUpdate || '' %>">
+            </div>
+            <div id="summernote"><%- shop.Usage || "" %></div>
+            <hr/>
+            <button type="submit" id="post_button" class="btn btn-default"><span class="glyphicon glyphicon-share-alt"></span> Post</button>
+        </form>
+    </div>
+</div>
+<hr/>
+<script>
+    $(document).ready(function() {
+        $("#shop_page").addClass("active");
+
+        $('#shop_form').submit(function(event) {
+            var data = {
+                Usage: $('#summernote').summernote('code'),
+            };
+            post(data, "shop_form");
+        });
+        $('#summernote').summernote({
+            height: 500,                 // set editor height
+            minHeight: null,             // set minimum height of editor
+            maxHeight: null,             // set maximum height of editor
+        });
+    });
+</script>

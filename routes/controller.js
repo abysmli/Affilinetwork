@@ -10,6 +10,7 @@ var Article = require('../models/article');
 var Voucher = require('../models/voucher');
 var Feedback = require('../models/feedback');
 var Request = require('../models/request');
+var Shop = require('../models/shop');
 var setting = require('../setting');
 var utils = require('../utils/utils');
 var Utils = new utils();
@@ -27,16 +28,91 @@ var prodAdv = aws.createProdAdvClient(setting.amazon_setting.AccessKeyId, settin
 
 /* GET users listing. */
 router.get('/', auth, function(req, res, next) {
-    Affilinet.getShopList({}, function(err, response, shops) {
-        if (!err && response.statusCode == 200) {
+    if (req.query.mode == "cloud") {
+        Affilinet.getShopList({}, function(err, response, shops) {
+            if (!err && response.statusCode == 200) {
+                req.session.shops = shops.Shops;
+                res.render('controller/index', {
+                    title: 'Shops Manage',
+                    mode: 'cloud',
+                    shops: shops.Shops,
+                    layout: 'controller/layout'
+                });
+            } else {
+                next(err);
+            }
+        });
+    } else {
+        Shop.find({}, function(err, shops) {
+            if (err) next(err);
             res.render('controller/index', {
                 title: 'Shops Manage',
-                shops: shops.Shops,
+                mode: 'local',
+                shops: shops,
                 layout: 'controller/layout'
             });
-        } else {
+        });
+    }
+});
+
+router.get('/shop/add', auth, function(req, res, next) {
+    var shop = req.session.shops[req.query.id];
+    shop.LogoURL = shop.Logo.URL;
+    res.render('controller/shop_form', {
+        title: 'Add Shop',
+        shop: shop,
+        layout: 'controller/layout'
+    });
+});
+
+router.post('/shop/add', auth, function(req, res, next) {
+    Shop.create(req.body, function(err, shop) {
+        if (err) {
             next(err);
         }
+        return res.redirect('/controller/');
+    });
+});
+
+router.get('/shop/edit', auth, function(req, res, next) {
+    Shop.findById(req.query.id, function(err, shop) {
+        if (err != null) next(err);
+        else {
+            res.render('controller/shop_form', {
+                title: 'Edit Shop',
+                shop: shop,
+                layout: 'controller/layout'
+            });
+        }
+    });
+});
+
+router.post('/shop/edit', auth, function(req, res, next) {
+    Shop.findOneAndUpdate({
+        _id: req.query.id
+    }, req.body, function(err, shop) {
+        if (err != null) next(err);
+        else {
+            res.redirect('/controller/');
+        }
+    });
+});
+
+router.get('/shop/remove', auth, function(req, res, next) {
+    Shop.findByIdAndRemove(req.query.id, function(err, shop) {
+        if (err != null) next(err);
+        else {
+            return res.redirect('/controller/');
+        }
+    });
+});
+
+router.get('/shop/remove_all', auth, function(req, res, next) {
+    Shop.remove(function(err) {
+        if (err)
+            next(err);
+        else
+            res.redirect('/controller/');
     });
 });
 
@@ -563,7 +639,7 @@ router.post('/product/auto_add', auth, function(req, res, next) {
                                 products.push(_product);
                             }
                             var update_count = 0;
-                            if (products.length != 0 ) {
+                            if (products.length != 0) {
                                 products.forEach(function(product, index) {
                                     delete product['SalesRank'];
                                     delete product['Category'];
@@ -573,23 +649,23 @@ router.post('/product/auto_add', auth, function(req, res, next) {
                                     delete product['TitleCN'];
                                     product.EAN = product.EAN.substr(product.EAN.length - 13);
                                     if (product.Source == "Affilinet") {
-                                        Product.update({ ProductId: product.ProductId }, product, { upsert: true }, function (err, raw) {
+                                        Product.update({ ProductId: product.ProductId }, product, { upsert: true }, function(err, raw) {
                                             if (err) return next(err);
                                             if (++update_count == products.length) {
-                                                res.json({count: update_count});
+                                                res.json({ count: update_count });
                                             }
                                         });
                                     } else if (product.Source == "Amazon") {
-                                        Product.update({ ASIN: product.ASIN }, product, { upsert: true }, function (err, raw) {
+                                        Product.update({ ASIN: product.ASIN }, product, { upsert: true }, function(err, raw) {
                                             if (err) return next(err);
                                             if (++update_count == products.length) {
-                                                res.json({count: update_count});
+                                                res.json({ count: update_count });
                                             }
                                         });
                                     }
                                 });
                             } else {
-                                res.json({count: 0});
+                                res.json({ count: 0 });
                             }
                         } else {
                             next(err);
@@ -615,7 +691,7 @@ router.get('/product/remove', auth, function(req, res, next) {
 });
 
 router.get('/product/remove_ean', auth, function(req, res, next) {
-    Product.remove({EAN: req.query.ean}, function(err) {
+    Product.remove({ EAN: req.query.ean }, function(err) {
         if (err)
             next(err);
         else

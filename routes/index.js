@@ -15,6 +15,7 @@ var Voucher = require('../models/voucher');
 var Feedback = require('../models/feedback');
 var Request = require('../models/request');
 var Account = require("../models/account");
+var Shop = require('../models/shop');
 
 var affilinet = require('../utils/affilinetapi');
 
@@ -651,39 +652,49 @@ router.get('/currencyExchange', function(req, res, next) {
 });
 
 router.get('/nav', function(req, res, next) {
-    Affilinet.getShopList({}, function(err, response, shops) {
-        if (!err && response.statusCode == 200) {
-            res.render('nav', {
-                title: '导航链接',
-                shops: shops.Shops,
-                footer_bottom: false,
-                layout: 'layout'
-            });
-        } else {
-            next(err);
-        }
+    Shop.find({}, function(err, shops) {
+        if (err) next(err);
+        res.render('nav', {
+            title: '导航链接',
+            shops: shops,
+            footer_bottom: false,
+            layout: 'layout'
+        });
+    });
+});
+
+router.get('/nav/usage', function(req, res, next) {
+    Shop.findById(req.query.id, function(err, shop) {
+        res.send(shop.Usage);
     });
 });
 
 router.get('/test', function(req, res, next) {
-    prodAdv.call("ItemSearch", {
-        SearchIndex: "All",
-        Keywords: "creme",
-        ResponseGroup: "Large"
-    }, function(err, products) {
-        if (!err) {
-            var _products = [];
-            products.Items.Item.forEach(function(product, index){
-                _products.push(Utils.fromAmazonToLocalProduct(product));
-            });
-            res.json(_products);
-        } else {
-            res.send(err);
-        }
-    });
+    // prodAdv.call("ItemSearch", {
+    //     SearchIndex: "All",
+    //     Keywords: "creme",
+    //     ResponseGroup: "Large"
+    // }, function(err, products) {
+    //     if (!err) {
+    //         var _products = [];
+    //         products.Items.Item.forEach(function(product, index){
+    //             _products.push(Utils.fromAmazonToLocalProduct(product));
+    //         });
+    //         res.json(_products);
+    //     } else {
+    //         res.send(err);
+    //     }
+    // });
     // Affilinet.getProducts({ProductIds: 20940203}, function(err, response, results) {
     //     res.json(results);
     // });
+    Affilinet.getShopList({}, function(err, response, shops) {
+        if (!err && response.statusCode == 200) {
+            res.json(shops);
+        } else {
+            next(err);
+        }
+    });
 });
 
 module.exports = router;

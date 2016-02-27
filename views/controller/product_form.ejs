@@ -97,17 +97,17 @@
             </div>
             <div class="form-group form-inline">
                 <label for="Length">ItemDimensions</label>
-                <input type="text" class="form-control" id="Length" name="ItemDimensions_Length" value="<%= (product.ItemDimensions !== undefined) ? product.ItemDimensions.Length || '' : '' %>" placeholder="Length">
-                <input type="text" class="form-control" id="Width" name="ItemDimensions_Width" value="<%= (product.ItemDimensions !== undefined) ? product.ItemDimensions.Width || '' : '' %>" placeholder="Width">
-                <input type="text" class="form-control" id="Height" name="ItemDimensions_Height" value="<%= (product.ItemDimensions !== undefined) ? product.ItemDimensions.Height || '' : '' %>" placeholder="Height">
-                <input type="text" class="form-control" id="Weight" name="ItemDimensions_Weight" value="<%= (product.ItemDimensions !== undefined) ? product.ItemDimensions.Weight || '' : '' %>" placeholder="Weight">
+                <input type="text" class="form-control" id="Length" name="ItemDimensions_Length" value="<%= (product.ItemDimensions !== undefined && product.ItemDimensions !== null) ? product.ItemDimensions.Length || '' : '' %>" placeholder="Length">
+                <input type="text" class="form-control" id="Width" name="ItemDimensions_Width" value="<%= (product.ItemDimensions !== undefined && product.ItemDimensions !== null) ? product.ItemDimensions.Width || '' : '' %>" placeholder="Width">
+                <input type="text" class="form-control" id="Height" name="ItemDimensions_Height" value="<%= (product.ItemDimensions !== undefined && product.ItemDimensions !== null) ? product.ItemDimensions.Height || '' : '' %>" placeholder="Height">
+                <input type="text" class="form-control" id="Weight" name="ItemDimensions_Weight" value="<%= (product.ItemDimensions !== undefined && product.ItemDimensions !== null) ? product.ItemDimensions.Weight || '' : '' %>" placeholder="Weight">
             </div>
             <div class="form-group form-inline">
                 <label for="Length">PackageDimensions</label>
-                <input type="text" class="form-control" id="Length" name="PackageDimensions_Length" value="<%= (product.PackageDimensions !== undefined) ? product.PackageDimensions.Length || '' : '' %>" placeholder="Length">
-                <input type="text" class="form-control" id="Width" name="PackageDimensions_Width" value="<%= (product.PackageDimensions !== undefined) ? product.PackageDimensions.Width || '' : '' %>" placeholder="Width">
-                <input type="text" class="form-control" id="Height" name="PackageDimensions_Height" value="<%= (product.PackageDimensions !== undefined) ? product.PackageDimensions.Height || '' : '' %>" placeholder="Height">
-                <input type="text" class="form-control" id="Weight" name="PackageDimensions_Weight" value="<%= (product.PackageDimensions !== undefined) ? product.PackageDimensions.Weight || '' : '' %>" placeholder="Weight">
+                <input type="text" class="form-control" id="Length" name="PackageDimensions_Length" value="<%= (product.PackageDimensions !== undefined && product.PackageDimensions !== null) ? product.PackageDimensions.Length || '' : '' %>" placeholder="Length">
+                <input type="text" class="form-control" id="Width" name="PackageDimensions_Width" value="<%= (product.PackageDimensions !== undefined && product.PackageDimensions !== null) ? product.PackageDimensions.Width || '' : '' %>" placeholder="Width">
+                <input type="text" class="form-control" id="Height" name="PackageDimensions_Height" value="<%= (product.PackageDimensions !== undefined && product.PackageDimensions !== null) ? product.PackageDimensions.Height || '' : '' %>" placeholder="Height">
+                <input type="text" class="form-control" id="Weight" name="PackageDimensions_Weight" value="<%= (product.PackageDimensions !== undefined && product.PackageDimensions !== null) ? product.PackageDimensions.Weight || '' : '' %>" placeholder="Weight">
             </div>
             <div class="form-group">
                 <label for="ProductImage">ProductImage</label>

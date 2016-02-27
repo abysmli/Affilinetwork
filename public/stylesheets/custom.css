@@ -83,5 +83,5 @@ File Description: Place here your custom CSS styles
 }
 
 .shops_block {
-    max-height: 100px;
+    max-height: 90px !important;
 }
