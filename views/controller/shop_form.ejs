@@ -32,7 +32,12 @@
                 <label for="LastUpdate">LastUpdate</label>
                 <input type="text" class="form-control" id="LastUpdate" placeholder="LastUpdate" name="LastUpdate" value="<%= shop.LastUpdate || '' %>">
             </div>
-            <div id="summernote"><%- shop.Usage || "" %></div>
+            <br/>
+            <h4>CustomContent</h4>
+            <div id="summernote_customContent"><%- shop.CustomContent || "" %></div>
+            <br/>
+            <h4>Usage</h4>
+            <div id="summernote_Usage"><%- shop.Usage || "" %></div>
             <hr/>
             <button type="submit" id="post_button" class="btn btn-default"><span class="glyphicon glyphicon-share-alt"></span> Post</button>
         </form>
@@ -45,11 +50,17 @@
 
         $('#shop_form').submit(function(event) {
             var data = {
-                Usage: $('#summernote').summernote('code'),
+                Usage: $('#summernote_Usage').summernote('code'),
+                CustomContent: $('#summernote_customContent').summernote('code')
             };
             post(data, "shop_form");
         });
-        $('#summernote').summernote({
+        $('#summernote_customContent').summernote({
+            height: 500,                 // set editor height
+            minHeight: null,             // set minimum height of editor
+            maxHeight: null,             // set maximum height of editor
+        });
+        $('#summernote_Usage').summernote({
             height: 500,                 // set editor height
             minHeight: null,             // set minimum height of editor
             maxHeight: null,             // set maximum height of editor

@@ -10,6 +10,7 @@ var ShopoSchema = new mongoose.Schema({
     ProgramId: String,
     ShopLink: String,
     LastUpdate: String,
+    CustomContent: String,
     Usage: String,
 	updated_at: { type: Date, default: Date.now }
 });
