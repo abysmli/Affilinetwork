@@ -261,6 +261,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/product', function(req, res, next) {
+    var currenturl = req.protocol + '://' + req.get('host') + req.originalUrl;
     var query = Product.where({
         _id: req.query.product_id,
     });
@@ -278,6 +279,7 @@ router.get('/product', function(req, res, next) {
                     title: _product.TitleCN,
                     footer_bottom: !Utils.checkMobile(req),
                     product: _product,
+                    currenturl: currenturl,
                     product_link: req.url,
                     products: _products,
                     layout: '/layout',
