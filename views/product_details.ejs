@@ -84,7 +84,7 @@
                                         <!-- Nav tabs -->
                                         <ul class="nav nav-tabs" role="tablist">
                                             <li class="active"><a href="#h2tab1" role="tab" data-toggle="tab"><i class="fa fa-file-text-o pr-5"></i>产品介绍</a></li>
-                                            <li><a href="#h2tab3" role="tab" data-toggle="tab"><i class="fa fa-star pr-5"></i>用户反馈</a></li>
+
                                         </ul>
                                         <!-- Tab panes -->
                                         <div class="tab-content padding-top-clear padding-bottom-clear">
@@ -192,6 +192,7 @@
                                                                         <% } %>
                                                                     </table>
                                                                 </div>
+
                                                                 <% } %>
                                                                 <div class="col-md-12">
                                                                     <h3>品牌</h3>
@@ -200,13 +201,9 @@
                                                                 <% break %>
                                                             <% } %>
                                                         <% } %>
+                                                        <div class="ds-thread" data-thread-key="<%= product._id %>" data-title="<%= product.TitleCN %>" data-url="<%= currenturl %>"></div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="tab-pane fade" id="h2tab3">
-                                                <!-- 多说评论框 start -->
-                                                <div class="ds-thread" data-thread-key="<%= product._id %>" data-title="<%= product.TitleCN %>" data-url="<%= currenturl %>"></div>
-                                                <!-- 多说评论框 end -->
                                             </div>
                                         </div>
                                     </div>
