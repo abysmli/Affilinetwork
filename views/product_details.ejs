@@ -95,7 +95,7 @@
                                                             <% product = products[i]%>
                                                             <% if (product.TitleCN !== "" && product.TitleCN !== undefined) { %>
                                                                 <div class="col-md-12">
-                                                                    <h3><%= product.Title %></h3>
+                                                                    <h3><%= product.Title %> <small><a href="/?category=all&minprice=&maxprice=&sort=date&brand=<%= product.Brand %>"> - <%= product.Brand %></a></small></h3>
                                                                     <p><%- product.DescriptionCN %></p>
                                                                 </div>
                                                                 <hr/>
@@ -194,14 +194,13 @@
                                                                 </div>
 
                                                                 <% } %>
-                                                                <div class="col-md-12">
-                                                                    <h3>品牌</h3>
-                                                                    <a href="/?category=all&minprice=&maxprice=&sort=date&brand=<%= product.Brand %>"><%= product.Brand %></a>
-                                                                </div>
                                                                 <% break %>
                                                             <% } %>
                                                         <% } %>
-                                                        <div class="ds-thread" data-thread-key="<%= product._id %>" data-title="<%= product.TitleCN %>" data-url="<%= currenturl %>"></div>
+                                                        <div class="col-md-12">
+                                                            <h3>用户评论</h3>
+                                                            <div class="ds-thread" data-thread-key="<%= product._id %>" data-title="<%= product.TitleCN %>" data-url="<%= currenturl %>"></div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

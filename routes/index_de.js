@@ -356,10 +356,10 @@ router.get('/favourite', function(req, res, next) {
                 $first: "$ProductImage"
             },
             Title: {
-                $first: "$Title"
+                $push: "$Title"
             },
             Description: {
-                $first: "$Description"
+                $push: "$Description"
             },
             Price: {
                 $push: "$Price"

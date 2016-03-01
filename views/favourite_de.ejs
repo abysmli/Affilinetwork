@@ -35,7 +35,7 @@
 							</div>
 						</div>
 					</div>
-					<h3><a href="/de/product?product_id=<%= product.ProductId %>"><%= product.Title %></a></h3>
+					<h3><a href="/de/product?product_id=<%= product.ProductId %>"><%= product.Title[0] %></a></h3>
 					<p>
 						<% if (product.Price.length == 1 || Math.min.apply(null, product.Price) == Math.max.apply(null, product.Price)) { %>
 	                    <span class="price" style="font-size: 20px"><%= product.Price[0].toString().replace(".", ",") %> €</span>

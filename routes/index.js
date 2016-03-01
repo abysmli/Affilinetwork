@@ -361,10 +361,10 @@ router.get('/favourite', function(req, res, next) {
                 $first: "$ProductImage"
             },
             TitleCN: {
-                $first: "$TitleCN"
+                $push: "$TitleCN"
             },
             DescriptionCN: {
-                $first: "$DescriptionCN"
+                $push: "$DescriptionCN"
             },
             Price: {
                 $push: "$Price"

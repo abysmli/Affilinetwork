@@ -78,7 +78,6 @@
 									<!-- Nav tabs -->
 									<ul class="nav nav-tabs" role="tablist">
 										<li class="active"><a href="#h2tab1" role="tab" data-toggle="tab"><i class="fa fa-file-text-o pr-5"></i>Beschreibung</a></li>
-										<li><a href="#h2tab3" role="tab" data-toggle="tab"><i class="fa fa-star pr-5"></i>Feedback</a></li>
 									</ul>
 									<!-- Tab panes -->
 									<div class="tab-content padding-top-clear padding-bottom-clear">
@@ -86,6 +85,7 @@
 												<div class="container-fluid">
 													<div class="row">
 														<div class="col-md-12">
+															<h3><small><a href="/de/?category=all&minprice=&maxprice=&sort=date&brand=<%= product.Brand %>">Brand: <%= product.Brand %></a></small></h3>
 															<p>
 																<%- product.Description %>
 															</p>
@@ -190,16 +190,11 @@
 															<% } %>
 														<% } %>
 														<div class="col-md-12">
-															<h3>Brand</h3>
-															<a href="/de/?category=all&minprice=&maxprice=&sort=date&brand=<%= product.Brand %>"><%= product.Brand %></a>
+															<h3>Kundenrezensionen</h3>
+															<div class="ds-thread" data-thread-key="<%= product._id %>" data-title="<%= product.TitleCN %>" data-url="<%= currenturl %>"></div>
 														</div>
 													</div>
 												</div>
-										</div>
-										<div class="tab-pane fade" id="h2tab3">
-											<!-- 多说评论框 start -->
-											<div class="ds-thread" data-thread-key="<%= product._id %>" data-title="<%= product.TitleCN %>" data-url="<%= currenturl %>"></div>
-											<!-- 多说评论框 end -->
 										</div>
 									</div>
 								</div>
