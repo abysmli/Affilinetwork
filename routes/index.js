@@ -97,6 +97,9 @@ router.get('/', function(req, res, next) {
         },
         Price: {
             $push: "$Price"
+        },
+        updated_at:{
+            $first: "$updated_at"
         }
     };
     var matchQuery = {
