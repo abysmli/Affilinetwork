@@ -25,7 +25,9 @@
             <th>Brand</th>
             <th>Price</th>
             <th>URL</th>
+            <% if(type == 'local') { %>
             <th>Date</th>
+            <% } %>
             <th>EAN</th>
             <th>ASIN</th>
             <th>Keywords</th>
@@ -51,7 +53,9 @@
             <th>Brand</th>
             <th>Price</th>
             <th>URL</th>
+            <% if(type == 'local') { %>
             <th>Date</th>
+            <% } %>
             <th>EAN</th>
             <th>ASIN</th>
             <th>Keywords</th>
@@ -95,9 +99,11 @@
                 <td>
                     <a href="<%= product.URL %>">Link</a>
                 </td>
+                <% if(type == 'local') { %>
                 <td>
-                    <%= product.updated_at.toISOString() %>
+                    <%= new Date(product.updated_at).toISOString() %>
                 </td>
+                <% } %>
                 <td>
                     <%= product.EAN %>
                 </td>
