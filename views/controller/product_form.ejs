@@ -81,7 +81,7 @@
             </div>
             <div class="form-group">
                 <label for="Brand">Brand</label>
-                <input type="text" class="form-control" id="Brand" name="Brand" value="<%= product.Brand.charAt(0).toUpperCase() + product.Brand.slice(1) || '' %>" placeholder="Brand">
+                <input type="text" class="form-control" id="Brand" name="Brand" value="<%= product.Brand == undefined ? "" : product.Brand.charAt(0).toUpperCase() + product.Brand.slice(1) || '' %>" placeholder="Brand">
             </div>
             <div class="form-group">
                 <label for="Manufactor">Manufactor</label>
