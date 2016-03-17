@@ -144,7 +144,7 @@ module.exports = (function() {
         } else if ( url == "tourism") {
             return "旅游";
         } else if ( url == "home_appliances") {
-            return "小家电";
+            return "居家用品";
         } else if ( url == "jewelry_watches") {
             return "钟表手饰";
         } else if ( url == "office") {
