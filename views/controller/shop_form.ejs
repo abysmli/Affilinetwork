@@ -13,6 +13,18 @@
                 <input type="text" class="form-control" id="ShopTitle" placeholder="ShopTitle" name="ShopTitle" value="<%= shop.ShopTitle || '' %>">
             </div>
             <div class="form-group">
+                <label for="CustomTitle">CustomTitle</label>
+                <input type="text" class="form-control" id="CustomTitle" placeholder="CustomTitle" name="CustomTitle" value="<%= shop.CustomTitle || shop.ShopTitle %>">
+            </div>
+            <div class="form-group">
+                <label for="CustomTitleCN">CustomTitleCN</label>
+                <input type="text" class="form-control" id="CustomTitleCN" placeholder="CustomTitleCN" name="CustomTitleCN" value="<%= shop.CustomTitleCN || shop.ShopTitle %>">
+            </div>
+            <div class="form-group">
+                <label for="Source">Source</label>
+                <input type="text" class="form-control" id="Source" placeholder="Source" name="Source" value="Affilinet">
+            </div>
+            <div class="form-group">
                 <label for="LogoURL">LogoURL</label>
                 <input type="text" class="form-control" id="LogoURL" placeholder="LogoURL" name="LogoURL" value="<%= shop.LogoURL || '' %>">
             </div>
@@ -32,25 +44,56 @@
                 <label for="LastUpdate">LastUpdate</label>
                 <input type="text" class="form-control" id="LastUpdate" placeholder="LastUpdate" name="LastUpdate" value="<%= shop.LastUpdate || '' %>">
             </div>
+            <div class="form-group">
+                <label for="ShipToChina">ShipToChina</label>
+                <select name="ShipToChina">
+                    <option <% if(shop.ShipToChina==false) { %> selected='selected' <% } %>>false</option>
+                    <option <% if(shop.ShipToChina==true) { %> selected='selected' <% } %>>true</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="Activity">Activity</label>
+                <select name="Activity">
+                    <option <% if(shop.Activity==true) { %> selected='selected' <% } %>>true</option>
+                    <option <% if(shop.Activity==false) { %> selected='selected' <% } %>>false</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Logo</label>
+                <input type="file" id="image" onchange="previewFile('#image', '#image_preview')"/>
+                <div class="row">
+                    <div class="col-xs-12 col-md-12">
+                        <a href="#" class="thumbnail" id="image_preview" hidden></a>
+                    </div>
+                </div>
+            </div>
             <br/>
             <h4>CustomContent</h4>
             <div id="summernote_customContent"><%- shop.CustomContent || "" %></div>
-            <br/>
-            <h4>Usage</h4>
-            <div id="summernote_Usage"><%- shop.Usage || "" %></div>
             <hr/>
             <button type="submit" id="post_button" class="btn btn-default"><span class="glyphicon glyphicon-share-alt"></span> Post</button>
         </form>
+        <% if (shop.Logo !== "" && shop.Logo !== undefined) { %>
+        <hr/>
+        <label>Logo</label>
+        <div class="row">
+            <div class="col-xs-4 col-md-2">
+                <a href="#" class="thumbnail">
+                    <img src=<%- shop.Logo %> alt="shop logo set">
+                </a>
+            </div>
+        </div>
+        <% } %>
     </div>
 </div>
 <hr/>
 <script>
+    var _image = "";
     $(document).ready(function() {
         $("#shop_page").addClass("active");
-
         $('#shop_form').submit(function(event) {
             var data = {
-                Usage: $('#summernote_Usage').summernote('code'),
+                Logo: JSON.stringify(_image),
                 CustomContent: $('#summernote_customContent').summernote('code')
             };
             post(data, "shop_form");
@@ -60,10 +103,6 @@
             minHeight: null,             // set minimum height of editor
             maxHeight: null,             // set maximum height of editor
         });
-        $('#summernote_Usage').summernote({
-            height: 500,                 // set editor height
-            minHeight: null,             // set minimum height of editor
-            maxHeight: null,             // set maximum height of editor
-        });
+
     });
 </script>

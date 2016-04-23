@@ -10,7 +10,7 @@
     <% } %>
     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#search_modal">Search</button>
     <a class="btn btn-warning btn-sm" href="/controller/product/add?add_type=manu">Add a Product</a>
-    <a href="/controller/product?translated=true" class="btn btn-primary btn-sm pull-right">Show Translated</a>
+    <a href="/controller/product?translated=false&activity=false" class="btn btn-primary btn-sm pull-right">Show All</a>
     <a href="#" class="btn btn-danger btn-sm pull-right" data-toggle="modal" data-target="#remove_modal" style="margin-right: 10px">Remove Series Product by EAN</a>
 </div>
 
@@ -23,6 +23,7 @@
             <th>TitleCN</th>
             <% } %>
             <th>Brand</th>
+            <th>ShopId</th>
             <th>Price</th>
             <th>URL</th>
             <% if(type == 'local') { %>
@@ -30,16 +31,17 @@
             <% } %>
             <th>EAN</th>
             <th>ASIN</th>
-            <th>Keywords</th>
             <th>Source</th>
             <% if(type == 'local') { %>
-                <th>Category</th>
-                <th>Translated</th>
-                <th>Delete</th>
-                <th>Auto</th>
+            <th>Count</th>
+            <th>Views</th>
+            <% } %>
+            <% if(type == 'local') { %>
+            <th>Category</th>
+            <th>Status</th>
+            <th>Manipulate</th>
             <% } else { %>
-                <th>Add</th>
-                <th>Auto</th>
+            <th>Manipulate</th>
             <% } %>
         </tr>
     </thead>
@@ -51,6 +53,7 @@
             <th>TitleCN</th>
             <% } %>
             <th>Brand</th>
+            <th>ShopId</th>
             <th>Price</th>
             <th>URL</th>
             <% if(type == 'local') { %>
@@ -58,40 +61,43 @@
             <% } %>
             <th>EAN</th>
             <th>ASIN</th>
-            <th>Keywords</th>
             <th>Source</th>
             <% if(type == 'local') { %>
-                <th>Category</th>
-                <th>Translated</th>
-                <th>Delete</th>
-                <th>Auto</th>
+            <th>Count</th>
+            <th>Views</th>
+            <% } %>
+            <% if(type == 'local') { %>
+            <th>Category</th>
+            <th>Status</th>
+            <th>Manipulate</th>
             <% } else { %>
-                <th>Add</th>
-                <th>Auto</th>
+            <th>Manipulate</th>
             <% } %>
         </tr>
     </tfoot>
-
     <tbody>
         <% products.forEach(function(product, index) { %>
             <tr>
                 <td>
                     <% if (type != "local") { %>
-                        <img class="lazy" data-original="<%= product.ProductImage %>" style="max-width: 100px; max-height: 100px" onerror="this.src= '/images/no-image.jpg';">
+                        <img src="<%= product.ProductImage|| '' %>" style="max-width: 100px; max-height: 100px" onerror="this.src= '/images/no-image.jpg';">
                     <% } else { %>
-                        <a href="/controller/product/edit?id=<%= product._id %>"><img class="lazy" data-original="<%= product.ProductImage %>" onerror="this.src= '/images/no-image.jpg';" style="max-width: 100px; max-height: 100px"></a>
+                        <a href="/controller/product/edit?id=<%= product.Id %>"><img src="<%= product.ProductImage || '' %>" onerror="this.src= '/images/no-image.jpg';" style="max-width: 100px; max-height: 100px"></a>
                     <% } %>
                 </td>
                 <td>
-                    <%= product.Title %>
+                    <a href="/de/product?product_id=<%= product.Id %>"><%= product.Title %></a>
                 </td>
                 <% if(type == 'local') { %>
                 <td>
-                    <%= product.TitleCN %>
+                    <a href="/product?product_id=<%= product.Id %>"><%= product.TitleCN %></a>
                 </td>
                 <% } %>
                 <td>
                     <%= product.Brand %>
+                </td>
+                <td>
+                    <a href="/controller/shop/edit?ShopId=<%= product.ShopId %>"><%= product.ShopId %></a>
                 </td>
                 <td>
                     <%= product.Price %>
@@ -101,7 +107,7 @@
                 </td>
                 <% if(type == 'local') { %>
                 <td>
-                    <%= new Date(product.updated_at).toISOString() %>
+                    <%= product.insert_at %>
                 </td>
                 <% } %>
                 <td>
@@ -111,34 +117,53 @@
                     <%= product.ASIN %>
                 </td>
                 <td>
-                    <%= product.Keywords %>
-                </td>
-                <td>
                     <%= product.Source %>
                 </td>
+                <% if(type == 'local') { %>
+                <td>
+                    <%= product.Description.length %>
+                </td>
+                <td>
+                    <%= product.Views %>
+                </td>
+                <% } %>
                 <% if(type == 'local') { %>
                     <td>
                         <%= product.Category %>
                     </td>
                     <td>
-                        <% if (product.Tranlated) { %>
-                        <span class="label label-primary">Translated</span>
+                        <% if (product.Translated) { %>
+                        <a id="translate" ean="<%= product.EAN %>" href="#" translate="true"><span class="label label-primary">Trans.</span></a>
                         <% } else { %>
-                        <span class="label label-warning">Not Translated</span>
+                        <a id="translate" ean="<%= product.EAN %>" href="#" translate="false"><span class="label label-warning">Not Trans.</span></a>
+                        <% } %>
+                        <% if (product.Hot) { %>
+                        <a id="hot" ean="<%= product.EAN %>" href="#" hot="true"><span class="label label-danger">Hot</span></a>
+                        <% } else { %>
+                        <a id="hot" ean="<%= product.EAN %>" href="#" hot="false"><span class="label label-info">Normal</span></a>
+                        <% } %>
+                        <% if (product.Activity) { %>
+                        <a id="activity" tid="<%= product.Id %>" href="#" activity="true"><span class="label label-success">Activ</span></a>
+                        <% } else { %>
+                        <a id="activity" tid="<%= product.Id %>" href="#" activity="false"><span class="label label-default">Deactiv</span></a>
                         <% } %>
                     </td>
                     <td>
-                        <a class="btn btn-sm btn-danger" href="/controller/product/remove?id=<%= product._id %>" role="button">Remove</a>
-                    </td>
-                    <td>
-                        <a class="btn btn-sm btn-info" id="auto_add_button" ean="<%= product.EAN %>" href="#" role="button">Auto Add</a>
+                        <a type="button" class="btn btn-default" id="auto_add_button" ean="<%= product.EAN %>" href="#">
+                            <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+                        </a>
+                        <a type="button" class="btn btn-default" href="/controller/product/remove?id=<%= product.Id %>">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        </a>
                     </td>
                 <% } else { %>
                     <td>
-                        <a class="btn btn-sm btn-success" href="/controller/product/add?add_type=auto&id=<%= index %>" role="button">Manual Add</a>
-                    </td>
-                    <td>
-                        <a class="btn btn-sm btn-info" id="auto_add_button" ean="<%= product.EAN %>" href="#" role="button">Auto Add</a>
+                        <a type="button" class="btn btn-default" id="auto_add_button" ean="<%= product.EAN %>" href="#">
+                            <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+                        </a>
+                        <a type="button" class="btn btn-default" href="/controller/product/add?add_type=auto&id=<%= index %>">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        </a>
                     </td>
                 <% } %>
             </tr>
@@ -222,9 +247,6 @@
 
 <script>
     $(document).ready(function() {
-
-        $("img.lazy").lazyload();
-
         $("#product_page").addClass("active");
 
         var search_selector = "Query";
@@ -284,7 +306,7 @@
                 setProgressBar(data.segment_count / data.segment_length);
             });
             socket.on('update_finished', function(data) {
-                $("#progress_bar").html("Updating finished! " + data.count + " Products updated in Database.");
+                $("#progress_bar").html("Updating finished! " + data.update_count + " Products updated, and " + data.deactiv_count + " Products deactivited!");
                 $('#done_button').fadeIn();
             });
         });
@@ -322,17 +344,52 @@
             var ean = $(this).attr("ean");
             if ( ean != "null") {
                 sendAjax("product/auto_add", {ean: ean.substr(ean.length - 13)}, function(result){
-                    if (result.count == 0 ) {
-                        alert("This product has been already added in Database!");
-                    } else {
-                        alert(result.count + " products has been added in Database!");
-                    }
+                    alert(result.update_count + " products has been added in Database!\n" + result.deactiv_count + " products has been deactivited from Database!");
+                    location.reload();
                 }, function(jqXHR, error, errorThrown) {
-                    alert("Auto add product failed!\nPlease contact Li, Yuan to solve the problem!");
+                    alert("Failed!\n" + "Auto add product failed!\nPlease contact Li, Yuan to solve the problem!");
                 });
             } else {
                 alert("Can not auto add product with EAN=null!\nPlease try add product manually!");
             }
+        });
+
+        $('tbody').on( 'click', '#hot', function () {
+            var ean = $(this).attr("ean");
+            var hot = ($(this).attr("hot") !== 'true');
+            if ( ean != "null") {
+                sendAjax("product/hot", {ean: ean.substr(ean.length - 13), hot: hot}, function(result){
+                    location.reload();
+                }, function(jqXHR, error, errorThrown) {
+                    alert("Failed!\n" + "Please contact Li, Yuan to solve the problem!");
+                });
+            } else {
+                alert("Error EAN=null!");
+            }
+        });
+
+        $('tbody').on( 'click', '#translate', function () {
+            var ean = $(this).attr("ean");
+            var translate = ($(this).attr("translate") !== 'true');
+            if ( ean != "null") {
+                sendAjax("product/translate", {ean: ean.substr(ean.length - 13), translate: translate}, function(result){
+                    location.reload();
+                }, function(jqXHR, error, errorThrown) {
+                    alert("Failed!\n" + "Please contact Li, Yuan to solve the problem!");
+                });
+            } else {
+                alert("Error EAN=null!");
+            }
+        });
+
+        $('tbody').on( 'click', '#activity', function () {
+            var id = $(this).attr("tid");
+            var activity = ($(this).attr("activity") !== 'true');
+            sendAjax("product/activity", {id: id, activity: activity}, function(result){
+                location.reload();
+            }, function(jqXHR, error, errorThrown) {
+                alert("Failed!\n" + "Please contact Li, Yuan to solve the problem!");
+            });
         });
 
         function post(path, params, method) {

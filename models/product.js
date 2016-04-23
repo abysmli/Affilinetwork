@@ -21,6 +21,7 @@ var ProductSchema = new mongoose.Schema({
     Title: String,
     TitleCN: String,
     ShopName: String,
+    ShopId: String,
     Category: { type: String, default: "null" },
     Weight: String,
     ItemDimensions: mongoose.Schema.Types.Mixed,
@@ -29,7 +30,13 @@ var ProductSchema = new mongoose.Schema({
     DeliveryTime: String,
     Keywords: String,
     Source: String,
-    Tranlated: { type: Boolean, default: false },
+    Views: { type: Number, default: 0 },
+    Sales: { type: Number, default: 0 },
+    SearchCount: {type: Number, default: 0},
+    Translated: { type: Boolean, default: false },
+    Activity: { type: Boolean, default: true },
+    Hot: {type: Boolean, default: false },
+    insert_at: {type: Date, default: Date.now},
 	updated_at: { type: Date, default: Date.now }
 });
 

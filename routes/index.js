@@ -25,6 +25,8 @@ var EmailSender = new emailSender();
 var utils = require('../utils/utils.js');
 var Utils = new utils();
 
+var UpdateDatabase = require('../utils/updatedatabase.js');
+
 var prodAdv = aws.createProdAdvClient(setting.amazon_setting.AccessKeyId, setting.amazon_setting.SecretAccessKey, setting.amazon_setting.AssociateTag, {
     host: "ecs.amazonaws.de",
     region: "DE"
@@ -98,13 +100,13 @@ router.get('/', function(req, res, next) {
         Price: {
             $push: "$Price"
         },
-        updated_at:{
+        updated_at: {
             $first: "$updated_at"
         }
     };
     var matchQuery = {
         $and: [{
-            Tranlated: true,
+            Translated: true,
             EAN: {
                 $ne: 'null'
             },
@@ -176,7 +178,7 @@ router.get('/', function(req, res, next) {
                                             Product.aggregate([{
                                                 "$match": {
                                                     $and: [{
-                                                        Tranlated: true,
+                                                        Translated: true,
                                                         EAN: {
                                                             $ne: 'null'
                                                         },
@@ -251,11 +253,65 @@ router.get('/', function(req, res, next) {
                                 });
                         });
                     } else {
-                        res.render('notfound', {
-                            title: '没有找到您需要的产品',
-                            footer_bottom: !Utils.checkMobile(req),
-                            layout: 'layout'
-                        });
+                        if (req.query.search != "") {
+
+
+
+
+
+                            // var query = {};
+                            // query.Query = req.query.search;
+                            // Affilinet.searchProducts(query, function(err, response, results) {
+                            //     if (!err && response.statusCode == 200) {
+                            //         var counter = results.ProductsSummary.TotalRecords;
+                            //         var products = Utils.ToLocalProducts(results.Products, "affilinet");
+                            //         prodAdv.call("ItemSearch", {
+                            //             SearchIndex: "All",
+                            //             Keywords: req.body.search_value,
+                            //             ResponseGroup: "Large"
+                            //         }, function(err, results) {
+                            //             if (!err) {
+                            //                 counter = "Affilinet: " + counter + " | Amazon: " + results.Items.TotalResults;
+                            //                 var _products = [];
+                            //                 if (Array.isArray(results.Items.Item)) {
+                            //                     Utils.ToLocalProducts(results.Items.Item, "amazon");
+                            //                     products = products.concat(_products);
+                            //                 }
+                            //                 res.render('index', {
+                            //                     title: 'Allhaha.com 德国欧哈哈精品购物网 - 商品比价 - 优惠券',
+                            //                     footer_bottom: false,
+                            //                     mainPage: false,
+                            //                     pages: 1,
+                            //                     currentPage: 1,
+                            //                     products: products,
+                            //                     category: Utils.urlToCategory(category),
+                            //                     minprice: req.query.minprice || "",
+                            //                     maxprice: req.query.maxprice || "",
+                            //                     brand: brand,
+                            //                     brands: brands,
+                            //                     sort: sort,
+                            //                     user: req.user,
+                            //                     layout: 'layout'
+                            //                 });
+                            //             } else {
+                            //                 next(err);
+                            //             }
+                            //         });
+                            //     } else {
+                            //         next(err);
+                            //     }
+                            // });
+
+
+
+
+                        } else {
+                            res.render('notfound', {
+                                title: '没有找到您需要的产品',
+                                footer_bottom: !Utils.checkMobile(req),
+                                layout: 'layout'
+                            });
+                        }
                     }
                 }
             });
@@ -278,15 +334,28 @@ router.get('/product', function(req, res, next) {
         }, function(err, _products) {
             if (err != null) next(err);
             else {
-                res.render('product_details', {
-                    title: _product.TitleCN,
-                    footer_bottom: !Utils.checkMobile(req),
-                    product: _product,
-                    currenturl: currenturl,
-                    product_link: req.url,
-                    products: _products,
-                    layout: '/layout',
-                    user: req.user
+                Product.update({ EAN: _products[0].EAN }, { Views: _products[0].Views + 1 }, { multi: true }, function(err, doc) {
+                    if (err) return next(err);
+                    var productsCount = 0;
+                    _products.forEach(function(__product, index) {
+                        Shop.findOne({ ShopId: __product.ShopId }, function(err, shop) {
+                            if (shop != null) {
+                                __product.ShopName = shop.CustomTitleCN;
+                            }
+                            if (++productsCount == _products.length) {
+                                res.render('product_details', {
+                                    title: _product.TitleCN,
+                                    footer_bottom: !Utils.checkMobile(req),
+                                    product: _product,
+                                    currenturl: currenturl,
+                                    product_link: req.url,
+                                    products: _products,
+                                    layout: '/layout',
+                                    user: req.user
+                                });
+                            }
+                        });
+                    });
                 });
             }
         });
@@ -657,7 +726,7 @@ router.get('/currencyExchange', function(req, res, next) {
 });
 
 router.get('/nav', function(req, res, next) {
-    Shop.find({}, function(err, shops) {
+    Shop.find({ Activity: { $ne: false } }, function(err, shops) {
         if (err) next(err);
         res.render('nav', {
             title: '导航链接',
@@ -668,24 +737,35 @@ router.get('/nav', function(req, res, next) {
     });
 });
 
-router.get('/nav/usage', function(req, res, next) {
+router.get('/nav/customContent', function(req, res, next) {
     Shop.findById(req.query.id, function(err, shop) {
-        res.send(shop.Usage);
+        res.send(shop.CustomContent);
+    });
+});
+
+router.post('/nav/customContent', function(req, res, next) {
+    Shop.findOne({ ShopId: req.query.ShopId }, function(err, shop) {
+        res.json({ content: shop.CustomContent });
     });
 });
 
 router.get('/test', function(req, res, next) {
-    // prodAdv.call("ItemSearch", {
+    // prodAdv.call("ItemLookup", {
+    //     ItemId: '8004399326415',
+    //     IdType: "EAN",
     //     SearchIndex: "All",
-    //     Keywords: "creme",
     //     ResponseGroup: "Large"
     // }, function(err, products) {
     //     if (!err) {
-    //         var _products = [];
-    //         products.Items.Item.forEach(function(product, index){
-    //             _products.push(Utils.fromAmazonToLocalProduct(product));
-    //         });
-    //         res.json(_products);
+
+    //         var _product = {};
+    //         if (Array.isArray(products.Items.Item)) {
+    //             _product = Utils.fromAmazonToLocalProduct(products.Items.Item[0]);
+    //         } else {
+    //             _product = Utils.fromAmazonToLocalProduct(products.Items.Item);
+    //         }
+
+    //         res.json(_product);
     //     } else {
     //         res.send(err);
     //     }
@@ -693,13 +773,20 @@ router.get('/test', function(req, res, next) {
     // Affilinet.getProducts({ProductIds: 20940203}, function(err, response, results) {
     //     res.json(results);
     // });
-    Affilinet.getShopList({}, function(err, response, shops) {
-        if (!err && response.statusCode == 200) {
-            res.json(shops);
-        } else {
-            next(err);
-        }
-    });
+    // Affilinet.getShopList({}, function(err, response, shops) {
+    //     if (!err && response.statusCode == 200) {
+    //         res.json(shops);
+    //     } else {
+    //         next(err);
+    //     }
+    // });
+    // var query = {};
+    // query.FQ = "EAN:03760108930650";
+    // Affilinet.searchProducts(query, function(err, response, results) {
+    //     if (!err && response.statusCode == 200) {
+    //         res.json(results);
+    //     }
+    // });
 });
 
 module.exports = router;

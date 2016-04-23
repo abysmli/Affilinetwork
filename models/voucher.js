@@ -18,7 +18,7 @@ var Voucherschema = new mongoose.Schema({
     Image: String,
     StartDate: { type: Date, default: Date.now },
     EndDate: { type: Date, default: Date.now },
-    Tranlated: { type: Boolean, default: false },
+    Translated: { type: Boolean, default: false },
 	updated_at: { type: Date, default: Date.now }
 });
 

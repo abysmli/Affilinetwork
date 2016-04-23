@@ -3,16 +3,23 @@
 	<div class="space-bottom"></div>
 	<div class="row">
 	<% shops.forEach(function(shop, index) { %>
-	    <div class="col-md-2 col-xs-6 shops_block">
+	    <div class="col-md-2 col-xs-6">
 	        <div class="image-box mb-20 object-non-visible" data-animation-effect="fadeInLeft" data-effect-delay="300">
 	            <div class="overlay-container">
-	                <div><%- shop.CustomContent %></div>
+	            	<% if (shop.Logo == "") { %>
+	            	<img src="<%= shop.LogoURL%>" alt="">
+	            	<% } else { %>
+	            	<img src="<%- shop.Logo %>" alt="">
+	            	<% } %>
 	                <div class="overlay">
 	                    <div class="overlay-links">
 	                        <a href="<%= shop.ShopLink %>"><i class="fa fa-link"></i></a>
-	                        <a href="/nav/usage?id=<%= shop._id %>" target="_blank"><i class="fa fa-search-plus"></i></a>
+	                        <a href="/nav/customContent?id=<%= shop._id %>" target="_blank"><i class="fa fa-search-plus"></i></a>
 	                    </div>
 	                </div>
+	                <div class="image-box-body">
+						<p class="title" style="text-align: center"><%= shop.CustomTitleCN %></p>
+					</div>
 	            </div>
 	        </div>
 	    </div>

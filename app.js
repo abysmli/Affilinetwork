@@ -28,6 +28,7 @@ var strategy = new StormpathStrategy({
     appHref: setting.stormpath_setting.APP_HREF,
 });
 
+
 passport.use(strategy);
 passport.serializeUser(strategy.serializeUser);
 passport.deserializeUser(strategy.deserializeUser);

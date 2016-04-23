@@ -21,12 +21,16 @@
                 <textarea rows="5" class="form-control" id="Description" name="Description" placeholder="Description"><%= product.Description || '' %></textarea>
             </div>
             <div class="form-group">
-                <label for="ShopName">ShopName</label>
-                <input type="text" class="form-control" id="ShopName" name="ShopName" value="<%= product.ShopName || '' %>" placeholder="ShopName">
-            </div>
-            <div class="form-group">
                 <label for="DescriptionCN">中文详细</label>
                 <div id="summernote"><%- product.DescriptionCN %></div>
+            </div>
+           <div class="form-group">
+                <label for="ShopId">ShopId</label>
+                <input type="text" class="form-control" id="ShopId" name="ShopId" value="<%= product.ShopId || '' %>" placeholder="ShopId">
+            </div>
+            <div class="form-group">
+                <label for="ShopName">ShopName</label>
+                <input type="text" class="form-control" id="ShopName" name="ShopName" value="<%= product.ShopName || '' %>" placeholder="ShopName">
             </div>
             <div class="form-group">
                 <label for="Category">Category</label>
@@ -108,6 +112,32 @@
                 <input type="text" class="form-control" id="Width" name="PackageDimensions_Width" value="<%= (product.PackageDimensions !== undefined && product.PackageDimensions !== null) ? product.PackageDimensions.Width || '' : '' %>" placeholder="Width">
                 <input type="text" class="form-control" id="Height" name="PackageDimensions_Height" value="<%= (product.PackageDimensions !== undefined && product.PackageDimensions !== null) ? product.PackageDimensions.Height || '' : '' %>" placeholder="Height">
                 <input type="text" class="form-control" id="Weight" name="PackageDimensions_Weight" value="<%= (product.PackageDimensions !== undefined && product.PackageDimensions !== null) ? product.PackageDimensions.Weight || '' : '' %>" placeholder="Weight">
+            </div>
+            <div class="form-group">
+                <label for="Views">Views</label>
+                <input type="text" class="form-control" id="Views" name="Views" value="<%= product.Views || '' %>" placeholder="Views">
+            </div>
+            <div class="form-group">
+                <label for="Sales">Sales</label>
+                <input type="text" class="form-control" id="Sales" name="Sales" value="<%= product.Sales || '' %>" placeholder="Sales">
+            </div>
+            <div class="form-group">
+                <label for="SearchCount">SearchCount</label>
+                <input type="text" class="form-control" id="SearchCount" name="SearchCount" value="<%= product.SearchCount || '' %>" placeholder="SearchCount">
+            </div>
+            <div class="form-group">
+                <label for="Hot">Hot</label>
+                <select name="Hot">
+                    <option <% if(product.Hot==true) { %> selected='selected' <% } %>>true</option>
+                    <option <% if(product.Hot==false) { %> selected='selected' <% } %>>false</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="Activity">Activity</label>
+                <select name="Activity">
+                    <option <% if(product.Activity==true) { %> selected='selected' <% } %>>true</option>
+                    <option <% if(product.Activity==false) { %> selected='selected' <% } %>>false</option>
+                </select>
             </div>
             <div class="form-group">
                 <label for="ProductImage">ProductImage</label>
