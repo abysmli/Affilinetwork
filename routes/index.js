@@ -59,7 +59,115 @@ passport.use(new LocalStrategy(
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    var Utils = new utils();
+    var group1 = {
+        _id: "$EAN",
+        ProductId: {
+            $first: "$_id"
+        },
+        ProductImage: {
+            $first: "$ProductImage"
+        },
+        TitleCN: {
+            $first: "$TitleCN"
+        },
+        DescriptionCN: {
+            $first: "$DescriptionCN"
+        },
+        Price: {
+            $push: "$Price"
+        },
+        Category: {
+            $first: "$Category"
+        },
+        updated_at: {
+            $first: "$updated_at"
+        }
+    };
+    var group2 = {
+        _id: "$Category",
+        ProductId: {
+            $push: "$ProductId"
+        },
+        EAN: {
+            $push: "$_id"
+        },
+        ProductImage: {
+            $push: "$ProductImage"
+        },
+        TitleCN: {
+            $push: "$TitleCN"
+        },
+        DescriptionCN: {
+            $push: "$DescriptionCN"
+        },
+        Price: {
+            $push: "$Price"
+        },
+        updated_at: {
+            $push: "$updated_at"
+        }
+    };
+    Product.aggregate([{
+        "$match": {
+            $and: [{
+                Brand: {
+                    $ne: ""
+                },
+                Translated: true,
+                EAN: {
+                    $ne: 'null'
+                },
+                EAN: {
+                    $ne: null
+                },
+                Activity: true
+            }]
+        }
+    }, {
+        "$group": {
+            _id: "$Brand",
+            Sum: {
+                $sum: 1
+            },
+        }
+    }, {
+        "$sort": {
+            "_id": 1
+        }
+    }], function(err, brands) {
+        Product.aggregate([{
+            "$match": {
+                $and: [{
+                    Translated: true,
+                    EAN: {
+                        $ne: 'null'
+                    },
+                    EAN: {
+                        $ne: null
+                    },
+                    Hot: true,
+                    Activity: true
+                }]
+            }
+        }, {
+            "$group": group1
+        }, {
+            "$group": group2
+        }], function(err, products) {
+            res.render('index', {
+                title: 'Allhaha 欧哈哈德国优选购物 － 商品比价 － 优惠券',
+                footer_bottom: false,
+                products: products,
+                brands: brands,
+                user: req.user,
+                layout: 'layout'
+            });
+        });
+    });
+});
+
+
+router.get('/filter', function(req, res, next) {
     var page = req.query.page || 1;
     var search = req.query.search || "";
     var category = req.query.category || "";
@@ -67,7 +175,6 @@ router.get('/', function(req, res, next) {
     var maxprice = req.query.maxprice || Number.POSITIVE_INFINITY;
     var sort = req.query.sort || "";
     var brand = req.query.brand || "";
-    var mainPage = false;
     var _category = Utils.urlToCategory(category);
     var _sort = {};
     var _brand = brand;
@@ -109,6 +216,12 @@ router.get('/', function(req, res, next) {
             Translated: true,
             EAN: {
                 $ne: 'null'
+            },
+            EAN: {
+                $ne: null
+            },
+            Activity: {
+                $ne: false
             },
             Price: {
                 $lte: Number(maxprice),
@@ -174,7 +287,6 @@ router.get('/', function(req, res, next) {
                                 .on("close", function() {
                                     if (++iterateNum == products.length) {
                                         if (page == 1 && search == "" && category == "" && minprice == Number.NEGATIVE_INFINITY && maxprice == Number.POSITIVE_INFINITY) {
-                                            mainPage = true;
                                             Product.aggregate([{
                                                 "$match": {
                                                     $and: [{
@@ -210,10 +322,9 @@ router.get('/', function(req, res, next) {
                                                         })
                                                         .on("close", function() {
                                                             if (++iterateNumber == hotproducts.length) {
-                                                                res.render('index', {
+                                                                res.render('product_list.ejs', {
                                                                     title: 'Allhaha 欧哈哈德国优选购物 － 商品比价 － 优惠券',
                                                                     footer_bottom: false,
-                                                                    mainPage: mainPage,
                                                                     pages: pages,
                                                                     currentPage: page,
                                                                     products: products,
@@ -232,10 +343,9 @@ router.get('/', function(req, res, next) {
                                                 });
                                             });
                                         } else {
-                                            res.render('index', {
+                                            res.render('product_list.ejs', {
                                                 title: 'Allhaha.com 德国欧哈哈精品购物网 - 商品比价 - 优惠券',
                                                 footer_bottom: false,
-                                                mainPage: mainPage,
                                                 pages: pages,
                                                 currentPage: page,
                                                 products: products,
@@ -254,11 +364,6 @@ router.get('/', function(req, res, next) {
                         });
                     } else {
                         if (req.query.search != "") {
-
-
-
-
-
                             // var query = {};
                             // query.Query = req.query.search;
                             // Affilinet.searchProducts(query, function(err, response, results) {
@@ -301,10 +406,6 @@ router.get('/', function(req, res, next) {
                             //         next(err);
                             //     }
                             // });
-
-
-
-
                         } else {
                             res.render('notfound', {
                                 title: '没有找到您需要的产品',
@@ -327,6 +428,7 @@ router.get('/product', function(req, res, next) {
     query.findOne(function(err, _product) {
         Product.find({
             EAN: _product.EAN,
+            Activity: true
         }, null, {
             sort: {
                 Price: 1
@@ -338,9 +440,11 @@ router.get('/product', function(req, res, next) {
                     if (err) return next(err);
                     var productsCount = 0;
                     _products.forEach(function(__product, index) {
-                        Shop.findOne({ ShopId: __product.ShopId }, function(err, shop) {
+                        Shop.findOne({ ShopId: __product.ShopId, Activity: true }, function(err, shop) {
                             if (shop != null) {
                                 __product.ShopName = shop.CustomTitleCN;
+                            } else {
+                                __product.ShopId="deactiv";
                             }
                             if (++productsCount == _products.length) {
                                 res.render('product_details', {
@@ -737,16 +841,23 @@ router.get('/nav', function(req, res, next) {
     });
 });
 
-router.get('/nav/customContent', function(req, res, next) {
-    Shop.findById(req.query.id, function(err, shop) {
-        res.send(shop.CustomContent);
-    });
-});
-
 router.post('/nav/customContent', function(req, res, next) {
-    Shop.findOne({ ShopId: req.query.ShopId }, function(err, shop) {
-        res.json({ content: shop.CustomContent });
-    });
+    if (req.query.id != undefined) {
+        console.log(req.query.id);
+        Shop.findById(req.query.id, function(err, shop) {
+            res.json({ content: shop.CustomContent || "" });
+        });
+    } else {
+        console.log(req.query.ShopId);
+        Shop.findOne({ ShopId: req.query.ShopId }, function(err, shop) {
+            if (shop != {} && shop != null) {
+                res.json({ content: shop.CustomContent });
+            } else {
+                res.json({ content: "" });
+            }
+            
+        });
+    }
 });
 
 router.get('/test', function(req, res, next) {

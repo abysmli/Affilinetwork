@@ -1,3 +1,16 @@
+<!-- Modal -->
+<div class="modal fade" id="shopContentModal" tabindex="-1" role="dialog" aria-labelledby="shopContentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="shopContentModalLabel">店铺说明</h4>
+            </div>
+            <div class="modal-body" id="shop_custom_content"></div>
+        </div>
+    </div>
+</div>
+
 <div class="container-fluid">
 	<h2>合作品牌</h2>
 	<div class="space-bottom"></div>
@@ -14,7 +27,7 @@
 	                <div class="overlay">
 	                    <div class="overlay-links">
 	                        <a href="<%= shop.ShopLink %>"><i class="fa fa-link"></i></a>
-	                        <a href="/nav/customContent?id=<%= shop._id %>" target="_blank"><i class="fa fa-search-plus"></i></a>
+	                        <a href=href="#" target="_blank" data-toggle="modal" data-target="#shopContentModal" id="shop_content" content="/nav/customContent?id=<%= shop._id %>" target="_blank"><i class="fa fa-search-plus"></i></a>
 	                    </div>
 	                </div>
 	                <div class="image-box-body">
@@ -30,5 +43,13 @@
 <script>
     $(document).ready(function() {
         $("img.lazy").lazyload();
+
+        $('body').on( 'click', '#shop_content', function () {
+            sendAjax($(this).attr('content'), {}, function(result) {
+                $('#shop_custom_content').html(result.content);
+            }, function(error) {
+                Notify('warning', '服务器错误，请稍后再试!');
+            }); 
+        });
     });
 </script>

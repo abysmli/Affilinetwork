@@ -86,8 +86,10 @@
                                         <td>商家</td>
                                         <td>价格</td>
                                         <td>链接</td>
+                                        <td>商家Id</td>
                                     </tr>
                                     <% products.forEach(function(product, index) { %>
+                                    <% if (product.ShopId != "deactiv") { %>
                                     <tr>
                                         <td>
                                             <a href="#" target="_blank" data-toggle="modal" data-target="#shopContentModal" id="shop_content" content="/nav/customContent?ShopId=<%= product.ShopId %>"><%= product.ShopName %></a>
@@ -96,7 +98,11 @@
                                             <%= product.Price.toString().replace(".", ",") %>€
                                         </td>
                                         <td><a target="_blank" href="<%= product.URL %>">购买</a></td>
+                                        <td>
+                                            <%= product.ShopId %>
+                                        </td>
                                     </tr>
+                                    <% } %>
                                     <% }) %>
                                 </table>
                             </div>
@@ -276,7 +282,7 @@
                     Notify('warning', '请先登陆!'); 
             <% } %>
         });
-        $('#shop_content').click(function(){
+        $('body').on( 'click', '#shop_content', function () {
             sendAjax($(this).attr('content'), {}, function(result) {
                 $('#shop_custom_content').html(result.content);
             }, function(error) {
