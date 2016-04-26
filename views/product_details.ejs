@@ -86,7 +86,6 @@
                                         <td>商家</td>
                                         <td>价格</td>
                                         <td>链接</td>
-                                        <td>商家Id</td>
                                     </tr>
                                     <% products.forEach(function(product, index) { %>
                                     <% if (product.ShopId != "deactiv") { %>
@@ -98,11 +97,8 @@
                                             <%= product.Price.toString().replace(".", ",") %>€
                                         </td>
                                         <td><a target="_blank" href="<%= product.URL %>">购买</a></td>
-                                        <td>
-                                            <%= product.ShopId %>
-                                        </td>
                                     </tr>
-                                    <% } %>
+                                    <% } g%>
                                     <% }) %>
                                 </table>
                             </div>
