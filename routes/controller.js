@@ -728,17 +728,13 @@ router.post('/product/edit', auth, function(req, res, next) {
     }
     product.ProductImageSet = JSON.parse(product.ProductImageSet);
     product.insert_at = new Date();
-    console.log(1);
-    console.log(product);
     Product.findOneAndUpdate({
         _id: req.query.id
     }, product, function(err, _product) {
         if (err != null) next(err);
         else {
-            console.log(2);
-            console.log(_product);
-            if (_product.EAN !== null && _product.EAN !== "") {
-                Utils.syncProductByEAN(Affilinet, prodAdv, Product, _product.EAN, function(update_count, deactiv_count) {
+            if (Product.EAN !== null && Product.EAN !== "") {
+                Utils.syncProductByEAN(Affilinet, prodAdv, Product, Product.EAN, function(update_count, deactiv_count) {
                     return res.redirect('/controller/product');
                 });
             } else {

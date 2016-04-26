@@ -220,6 +220,7 @@ module.exports = (function() {
                                 var update_count = 0;
                                 if (products.length != 0) {
                                     products.forEach(function(product, index) {
+                                        delete product['Brand'];
                                         delete product['Category'];
                                         delete product['Keywords'];
                                         delete product['Translated'];
@@ -319,7 +320,6 @@ module.exports = (function() {
                     existFlag ? null : ( _product.Activity ? deactiv_count++ : null );
                     _product.Activity = existFlag;
                     _product.Brand = lastChangedProduct.Brand || "";
-                    console.log(lastChangedProduct);
                     _product.Category = lastChangedProduct.Category || "";
                     _product.Manufactor = lastChangedProduct.Manufactor || "";
                     _product.DescriptionCN = lastChangedProduct.DescriptionCN || "";
