@@ -317,6 +317,9 @@ module.exports = (function() {
                             existFlag = true;
                         }
                     });
+                    if (_product.Source == "Amazon") {
+                        existFlag = true;
+                    }
                     existFlag ? null : ( _product.Activity ? deactiv_count++ : null );
                     _product.Activity = existFlag;
                     _product.Brand = lastChangedProduct.Brand || "";
