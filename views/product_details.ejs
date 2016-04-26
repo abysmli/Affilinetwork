@@ -123,7 +123,7 @@
                                                         <% if (product.TitleCN !== "" && product.TitleCN !== undefined) { %>
                                                         <div class="col-md-12">
                                                             <h3><%= product.Title %></h3>
-                                                            <button class ="btn btn-info btn-sm"><a href="/?category=all&minprice=&maxprice=&sort=date&brand=<%= product.Brand %>" style="color: white; font-weight: bold"><%= product.Brand %></a></button>
+                                                            <button class ="btn btn-info btn-sm"><a href="/filter?category=all&minprice=&maxprice=&sort=date&brand=<%= product.Brand %>" style="color: white; font-weight: bold"><%= product.Brand %></a></button>
                                                             <p><%- product.DescriptionCN %></p>
                                                         </div>
                                                         <hr/>
