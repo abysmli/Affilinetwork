@@ -319,12 +319,12 @@ module.exports = (function() {
                     existFlag ? null : ( _product.Activity ? deactiv_count++ : null );
                     _product.Activity = existFlag;
                     _product.Brand = lastChangedProduct.Brand || "";
+                    console.log(lastChangedProduct);
                     _product.Category = lastChangedProduct.Category || "";
                     _product.Manufactor = lastChangedProduct.Manufactor || "";
                     _product.DescriptionCN = lastChangedProduct.DescriptionCN || "";
                     _product.TitleCN = lastChangedProduct.TitleCN;
                     _product.Weight = lastChangedProduct.Weight || "";
-                    _product.Brand = lastChangedProduct.Brand || "";
                     _product.ItemDimensions = lastChangedProduct.ItemDimensions || {};
                     _product.PackageDimensions = lastChangedProduct.PackageDimensions || {};
                     _product.Keywords = lastChangedProduct.Keywords || "";
@@ -332,9 +332,8 @@ module.exports = (function() {
                     _product.Sales = lastChangedProduct.Sales || 0;
                     _product.SearchCount = lastChangedProduct.SearchCount || 0;
                     _product.Translated = lastChangedProduct.Translated || false;
-                    _product.Brand = lastChangedProduct.Brand || "";
                     _product.Hot = lastChangedProduct.Hot || false;
-                    _product.update_at = lastChangedProduct.update_at;
+                    _product.update_at = new Date();
                     _product.save(function(err) {
                         if (err) {
                             console.log("Error occured at updating Product!" + JSON.stringify(err));
