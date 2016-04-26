@@ -363,56 +363,11 @@ router.get('/filter', function(req, res, next) {
                                 });
                         });
                     } else {
-                        if (req.query.search != "") {
-                            // var query = {};
-                            // query.Query = req.query.search;
-                            // Affilinet.searchProducts(query, function(err, response, results) {
-                            //     if (!err && response.statusCode == 200) {
-                            //         var counter = results.ProductsSummary.TotalRecords;
-                            //         var products = Utils.ToLocalProducts(results.Products, "affilinet");
-                            //         prodAdv.call("ItemSearch", {
-                            //             SearchIndex: "All",
-                            //             Keywords: req.body.search_value,
-                            //             ResponseGroup: "Large"
-                            //         }, function(err, results) {
-                            //             if (!err) {
-                            //                 counter = "Affilinet: " + counter + " | Amazon: " + results.Items.TotalResults;
-                            //                 var _products = [];
-                            //                 if (Array.isArray(results.Items.Item)) {
-                            //                     Utils.ToLocalProducts(results.Items.Item, "amazon");
-                            //                     products = products.concat(_products);
-                            //                 }
-                            //                 res.render('index', {
-                            //                     title: 'Allhaha.com 德国欧哈哈精品购物网 - 商品比价 - 优惠券',
-                            //                     footer_bottom: false,
-                            //                     mainPage: false,
-                            //                     pages: 1,
-                            //                     currentPage: 1,
-                            //                     products: products,
-                            //                     category: Utils.urlToCategory(category),
-                            //                     minprice: req.query.minprice || "",
-                            //                     maxprice: req.query.maxprice || "",
-                            //                     brand: brand,
-                            //                     brands: brands,
-                            //                     sort: sort,
-                            //                     user: req.user,
-                            //                     layout: 'layout'
-                            //                 });
-                            //             } else {
-                            //                 next(err);
-                            //             }
-                            //         });
-                            //     } else {
-                            //         next(err);
-                            //     }
-                            // });
-                        } else {
-                            res.render('notfound', {
-                                title: '没有找到您需要的产品',
-                                footer_bottom: !Utils.checkMobile(req),
-                                layout: 'layout'
-                            });
-                        }
+                        res.render('notfound', {
+                            title: '没有找到您需要的产品',
+                            footer_bottom: !Utils.checkMobile(req),
+                            layout: 'layout'
+                        });
                     }
                 }
             });
@@ -434,7 +389,7 @@ router.get('/product', function(req, res, next) {
                 Price: 1
             }
         }, function(err, _products) {
-            if (err != null) next(err);
+            if (err != null || _products.length == 0) next(err);
             else {
                 Product.update({ EAN: _products[0].EAN }, { Views: _products[0].Views + 1 }, { multi: true }, function(err, doc) {
                     if (err) return next(err);
@@ -444,7 +399,7 @@ router.get('/product', function(req, res, next) {
                             if (shop != null) {
                                 __product.ShopName = shop.CustomTitleCN;
                             } else {
-                                __product.ShopId="deactiv";
+                                __product.ShopId = "deactiv";
                             }
                             if (++productsCount == _products.length) {
                                 res.render('product_details', {
@@ -855,7 +810,7 @@ router.post('/nav/customContent', function(req, res, next) {
             } else {
                 res.json({ content: "" });
             }
-            
+
         });
     }
 });

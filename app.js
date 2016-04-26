@@ -83,6 +83,7 @@ app.use(function(req, res, next) {
 if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
         res.status(err.status || 500);
+        console.log(err.status);
         res.render('error', {
             title: "发生错误啦！",
             footer_bottom: true,
@@ -96,12 +97,21 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
     res.status(err.status || 500);
-    res.render('error', {
-        title: "发生错误啦！",
-        footer_bottom: true,
-        message: err.message,
-        error: err
-    });
+    if (err.status == "404") {
+        res.render('error-404', {
+            title: "发生错误啦！",
+            footer_bottom: true,
+            message: err.message,
+            error: err
+        });
+    } else {
+        res.render('error', {
+            title: "发生错误啦！",
+            footer_bottom: true,
+            message: err.message,
+            error: err
+        });
+    }
 });
 
 module.exports = app;
