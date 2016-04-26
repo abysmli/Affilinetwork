@@ -82,8 +82,11 @@ router.post('/shopsync', auth, function(req, res, next) {
 });
 
 router.get('/shop/add', auth, function(req, res, next) {
-    var shop = req.session.shops[req.query.id];
-    shop.LogoURL = shop.Logo.URL;
+    var shop = {};
+    if (req.query.id != undefined) {
+        shop = req.session.shops[req.query.id];
+        shop.LogoURL = shop.Logo.URL;
+    }
     res.render('controller/shop_form', {
         title: 'Add Shop',
         shop: shop,
@@ -92,7 +95,9 @@ router.get('/shop/add', auth, function(req, res, next) {
 });
 
 router.post('/shop/add', auth, function(req, res, next) {
-    Shop.create(req.body, function(err, shop) {
+    var shop = req.body;
+    shop.Logo = JSON.parse(shop.Logo);
+    Shop.create(shop, function(err, shop) {
         if (err) {
             next(err);
         }

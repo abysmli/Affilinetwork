@@ -6,7 +6,7 @@
         <form method="post" id="shop_form">
             <div class="form-group">
                 <label for="ShopId">ShopId</label>
-                <input type="text" class="form-control" id="ShopId" placeholder="ShopId" name="ShopId" value="<%= shop.ShopId || '' %>" readonly>
+                <input type="text" class="form-control" id="ShopId" placeholder="ShopId" name="ShopId" value="<%= shop.ShopId || '' %>">
             </div>
             <div class="form-group">
                 <label for="ShopTitle">ShopTitle</label>
@@ -14,11 +14,11 @@
             </div>
             <div class="form-group">
                 <label for="CustomTitle">CustomTitle</label>
-                <input type="text" class="form-control" id="CustomTitle" placeholder="CustomTitle" name="CustomTitle" value="<%= shop.CustomTitle || shop.ShopTitle %>">
+                <input type="text" class="form-control" id="CustomTitle" placeholder="CustomTitle" name="CustomTitle" value="<%= shop.CustomTitle || shop.ShopTitle || ""%>">
             </div>
             <div class="form-group">
                 <label for="CustomTitleCN">CustomTitleCN</label>
-                <input type="text" class="form-control" id="CustomTitleCN" placeholder="CustomTitleCN" name="CustomTitleCN" value="<%= shop.CustomTitleCN || shop.ShopTitle %>">
+                <input type="text" class="form-control" id="CustomTitleCN" placeholder="CustomTitleCN" name="CustomTitleCN" value="<%= shop.CustomTitleCN || shop.ShopTitle || ""%>">
             </div>
             <div class="form-group">
                 <label for="Source">Source</label>
@@ -42,7 +42,7 @@
             </div>
             <div class="form-group">
                 <label for="LastUpdate">LastUpdate</label>
-                <input type="text" class="form-control" id="LastUpdate" placeholder="LastUpdate" name="LastUpdate" value="<%= shop.LastUpdate || '' %>">
+                <input type="text" class="form-control" id="LastUpdate" placeholder="LastUpdate" name="LastUpdate" value="<%= shop.LastUpdate || "" %>">
             </div>
             <div class="form-group">
                 <label for="ShipToChina">ShipToChina</label>
