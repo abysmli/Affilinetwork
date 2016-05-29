@@ -13,11 +13,13 @@ module.exports = (function() {
         this.Product = _product;
         this.socket = _socket;
         this.timer = new Date().getTime();
+        this.startTimer = new Date().getTime();
         _this = this;
     }
 
     _Class.prototype.update = function update(_currentPage) {
         normalizeEAN(function(err, eans) {
+            _this.startTimer = new Date().getTime();
             syncLooper(eans, 0);
         });
     }
@@ -81,7 +83,8 @@ module.exports = (function() {
                     console.log('Sync finished!');
                     _this.socket.emit("update_finished", {
                         update_count: _this.data.update_count,
-                        deactiv_count: _this.data.deactiv_count
+                        deactiv_count: _this.data.deactiv_count,
+                        time_cost: new Date().getTime() - _this.startTimer,
                     });
                 } else {
                     _this.data.update_count += update_count;

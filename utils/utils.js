@@ -318,6 +318,7 @@ module.exports = (function() {
                         }
                     });
                     if (_product.Source == "Amazon") {
+                        _product.ShopId = "-1";
                         existFlag = true;
                     }
                     existFlag ? null : ( _product.Activity ? deactiv_count++ : null );

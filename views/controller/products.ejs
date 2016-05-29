@@ -121,7 +121,7 @@
                 </td>
                 <% if(type == 'local') { %>
                 <td>
-                    <%= product.Description.length %>
+                    <a href="/controller/product?EAN=<%= product.EAN %>"><%= product.Count %></a>
                 </td>
                 <td>
                     <%= product.Views %>
@@ -306,7 +306,7 @@
                 setProgressBar(data.segment_count / data.segment_length);
             });
             socket.on('update_finished', function(data) {
-                $("#progress_bar").html("Updating finished! " + data.update_count + " Products updated, and " + data.deactiv_count + " Products deactivited!");
+                $("#progress_bar").html("Updating finished! " + data.update_count + " Products updated, and " + data.deactiv_count + " Products deactivited, Total Time cost: " + (parseFloat(data.time_cost)/1000) + "s!");
                 $('#done_button').fadeIn();
             });
         });

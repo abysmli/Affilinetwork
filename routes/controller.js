@@ -61,7 +61,9 @@ router.post('/shopsync', auth, function(req, res, next) {
             shops = shops.Shops;
             var update_count = 0;
             shops.forEach(function(shop, index) {
-                Shop.findOne({ ShopId: shop.ShopId }, function(err, _shop) {
+                Shop.findOne({
+                    ShopId: shop.ShopId
+                }, function(err, _shop) {
                     if (_shop == null) {
                         Shop.create(Utils.ShopConverter(shop), function(err, shop) {
                             if (err) {
@@ -71,7 +73,9 @@ router.post('/shopsync', auth, function(req, res, next) {
                         });
                     }
                     if (++update_count == shops.length) {
-                        res.json({ count: update_count });
+                        res.json({
+                            count: update_count
+                        });
                     }
                 });
             });
@@ -118,7 +122,9 @@ router.get('/shop/edit', auth, function(req, res, next) {
             }
         });
     } else {
-        Shop.findOne({ ShopId: req.query.ShopId }, function(err, shop) {
+        Shop.findOne({
+            ShopId: req.query.ShopId
+        }, function(err, shop) {
             if (err != null) next(err);
             else {
                 res.render('controller/shop_form', {
@@ -134,9 +140,13 @@ router.get('/shop/edit', auth, function(req, res, next) {
 router.post('/shop/edit', auth, function(req, res, next) {
     var query = {};
     if (req.query.id !== undefined) {
-        query = { _id: req.query.id };
+        query = {
+            _id: req.query.id
+        };
     } else {
-        query = { ShopId: req.query.ShopId };
+        query = {
+            ShopId: req.query.ShopId
+        };
     }
     var shop = req.body;
     if (JSON.parse(shop.Logo) == "") {
@@ -154,9 +164,15 @@ router.post('/shop/edit', auth, function(req, res, next) {
 
 router.post('/shop/activity', auth, function(req, res, next) {
     var Activity = (req.body.activity === 'true');
-    Shop.update({ _id: req.body.id }, { Activity: Activity }, function(err, doc) {
+    Shop.update({
+        _id: req.body.id
+    }, {
+        Activity: Activity
+    }, function(err, doc) {
         if (err) return next(err);
-        res.json({ status: 'success' });
+        res.json({
+            status: 'success'
+        });
     });
 });
 
@@ -437,83 +453,143 @@ router.get('/product', auth, function(req, res, next) {
             }
         });
     } else {
-        Product.count({}, function(err, count) {
-            var group = {
-                _id: "$EAN",
-                Id: { $first: "$_id" },
-                ProductImage: { $first: "$ProductImage" },
-                Title: { $first: "$Title" },
-                TitleCN: { $first: "$TitleCN" },
-                Description: { $push: "$Description" },
-                Brand: { $first: "$Brand" },
-                ShopId: { $first: "$ShopId" },
-                Price: { $first: "$Price" },
-                URL: { $first: "$URL" },
-                EAN: { $first: "$EAN" },
-                ASIN: { $first: "$ASIN" },
-                Source: { $first: "$Source" },
-                Category: { $first: "$Category" },
-                Translated: { $first: "$Translated" },
-                Hot: { $first: "$Hot" },
-                Activity: { $first: "$Activity" },
-                Views: { $first: "$Views" },
-                SearchCount: { $first: "$SearchCount" },
-                Sales: { $first: "$Sales" },
-                insert_at: { $first: "$insert_at" },
-                updated_at: { $first: "$updated_at" }
-            };
-            var matchQuery = {
-                $and: [{
-                    Translated: (req.query.translated == 'true' || req.query.translated == undefined) ? true : { $exists: true },
-                    Activity: (req.query.activity == 'true' || req.query.activity == undefined) ? true : { $exists: true },
-                    // EAN: {
-                    //     $ne: 'null'
-                    // },
-                    // Price: {
-                    //     $lte: Number(maxprice),
-                    //     $gte: Number(minprice)
-                    // },
-                    // Category: _category,
-                    // Brand: _brand,
-                    // $or: [{
-                    //     Title: new RegExp(search, 'gi')
-                    // }, {
-                    //     TitleCN: new RegExp(search, 'gi')
-                    // }, {
-                    //     Category: new RegExp(search, 'gi')
-                    // }, {
-                    //     Keywords: new RegExp(search, 'gi')
-                    // }]
-                }]
-            };
-            Product.aggregate([{
-                "$match": matchQuery
-            }, {
-                "$group": group
-            }, {
-                "$sort": { insert_at: -1 }
-                // }, {
-                //     "$skip": (page - 1) * ItemOnPage
-                // }, {
-                //     "$limit": ItemOnPage
-            }], function(err, products) {
-                if (err) {
-                    next(err);
-                } else {
-                    res.render('controller/products', {
-                        title: 'Products Manage',
-                        shopid: -1,
-                        categoryid: -1,
-                        query: "",
-                        fq: "",
-                        type: 'local',
-                        counter: count,
-                        products: products,
-                        layout: 'controller/layout'
-                    });
-                }
+
+        if (req.query.EAN == undefined) {
+            Product.count({}, function(err, count) {
+                var group = {
+                    _id: "$EAN",
+                    Id: {
+                        $first: "$_id"
+                    },
+                    ProductImage: {
+                        $first: "$ProductImage"
+                    },
+                    Title: {
+                        $first: "$Title"
+                    },
+                    TitleCN: {
+                        $first: "$TitleCN"
+                    },
+                    Description: {
+                        $first: "$Description"
+                    },
+                    Brand: {
+                        $first: "$Brand"
+                    },
+                    ShopId: {
+                        $first: "$ShopId"
+                    },
+                    Price: {
+                        $first: "$Price"
+                    },
+                    URL: {
+                        $first: "$URL"
+                    },
+                    EAN: {
+                        $first: "$EAN"
+                    },
+                    ASIN: {
+                        $first: "$ASIN"
+                    },
+                    Source: {
+                        $first: "$Source"
+                    },
+                    Category: {
+                        $first: "$Category"
+                    },
+                    Translated: {
+                        $first: "$Translated"
+                    },
+                    Hot: {
+                        $first: "$Hot"
+                    },
+                    Activity: {
+                        $first: "$Activity"
+                    },
+                    Views: {
+                        $first: "$Views"
+                    },
+                    SearchCount: {
+                        $first: "$SearchCount"
+                    },
+                    Sales: {
+                        $first: "$Sales"
+                    },
+                    insert_at: {
+                        $first: "$insert_at"
+                    },
+                    updated_at: {
+                        $first: "$updated_at"
+                    },
+                    Count: {
+                        $sum: 1
+                    }
+                };
+                matchQuery = {
+                    $and: [{
+                        Translated: (req.query.translated == 'true' || req.query.translated == undefined) ? true : {
+                            $exists: true
+                        },
+                        Activity: (req.query.activity == 'true' || req.query.activity == undefined) ? true : {
+                            $exists: true
+                        }
+                    }]
+                };
+                Product.aggregate([{
+                    "$match": matchQuery
+                }, {
+                    "$group": group
+                }, {
+                    "$sort": {
+                        insert_at: -1
+                    }
+                }], function(err, products) {
+                    if (err) {
+                        next(err);
+                    } else {
+                        res.render('controller/products', {
+                            title: 'Products Manage',
+                            shopid: -1,
+                            categoryid: -1,
+                            query: "",
+                            fq: "",
+                            type: 'local',
+                            counter: count,
+                            products: products,
+                            layout: 'controller/layout'
+                        });
+                    }
+                });
             });
-        });
+        } else {
+            Product.count({
+                EAN: req.query.EAN
+            }, function(err, count) {
+                Product.find({
+                    EAN: req.query.EAN
+                }, function(err, products) {
+                    if (err) {
+                        next(err);
+                    } else {
+                        products.forEach(function(product, index){
+                            product.Id = product._id;
+                            product.Count = "-";
+                        });
+                        res.render('controller/products', {
+                            title: 'Products Manage',
+                            shopid: -1,
+                            categoryid: -1,
+                            query: "",
+                            fq: "",
+                            type: 'local',
+                            counter: count,
+                            products: products,
+                            layout: 'controller/layout'
+                        });
+                    }
+                });
+            });
+        }
     }
 });
 
@@ -536,7 +612,7 @@ router.post('/product', auth, function(req, res, next) {
                         if (Array.isArray(results.Items.Item)) {
                             Utils.ToLocalProducts(results.Items.Item, "amazon");
                             products = products.concat(_products);
-                        } 
+                        }
                         req.session.products = products;
                         res.render('controller/products', {
                             title: 'Products Manage',
@@ -751,31 +827,58 @@ router.post('/product/edit', auth, function(req, res, next) {
 
 router.post('/product/auto_add', auth, function(req, res, next) {
     Utils.syncProductByEAN(Affilinet, prodAdv, Product, req.body.ean, function(update_count, deactiv_count) {
-        res.json({ update_count: update_count, deactiv_count: deactiv_count });
+        res.json({
+            update_count: update_count,
+            deactiv_count: deactiv_count
+        });
     });
 });
 
 router.post('/product/hot', auth, function(req, res, next) {
     var Hot = (req.body.hot === 'true');
-    Product.update({ EAN: req.body.ean }, { Hot: Hot }, { multi: true }, function(err, doc) {
+    Product.update({
+        EAN: req.body.ean
+    }, {
+        Hot: Hot
+    }, {
+        multi: true
+    }, function(err, doc) {
         if (err) return next(err);
-        res.json({ status: 'success' });
+        res.json({
+            status: 'success'
+        });
     });
 });
 
 router.post('/product/translate', auth, function(req, res, next) {
     var Translated = (req.body.translate === 'true');
-    Product.update({ EAN: req.body.ean }, { Translated: Translated }, { multi: true }, function(err, doc) {
+    Product.update({
+        EAN: req.body.ean
+    }, {
+        Translated: Translated
+    }, {
+        multi: true
+    }, function(err, doc) {
         if (err) return next(err);
-        res.json({ status: 'success' });
+        res.json({
+            status: 'success'
+        });
     });
 });
 
 router.post('/product/activity', auth, function(req, res, next) {
     var Activity = (req.body.activity === 'true');
-    Product.update({ _id: req.body.id }, { Activity: Activity }, { multi: true }, function(err, doc) {
+    Product.update({
+        _id: req.body.id
+    }, {
+        Activity: Activity
+    }, {
+        multi: true
+    }, function(err, doc) {
         if (err) return next(err);
-        res.json({ status: 'success' });
+        res.json({
+            status: 'success'
+        });
     });
 });
 
@@ -789,7 +892,9 @@ router.get('/product/remove', auth, function(req, res, next) {
 });
 
 router.get('/product/remove_ean', auth, function(req, res, next) {
-    Product.remove({ EAN: req.query.ean }, function(err) {
+    Product.remove({
+        EAN: req.query.ean
+    }, function(err) {
         if (err)
             next(err);
         else

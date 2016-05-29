@@ -179,16 +179,28 @@ router.get('/filter', function(req, res, next) {
     var _sort = {};
     var _brand = brand;
     var ItemOnPage = 30;
-    if (category == "" || category == "all") _category = { $exists: true };
-    if (brand == "" || brand == "all") _brand = { $exists: true };
+    if (category == "" || category == "all") _category = {
+        $exists: true
+    };
+    if (brand == "" || brand == "all") _brand = {
+        $exists: true
+    };
     if (sort == 'price_asc') {
-        _sort = { Price: 1 };
+        _sort = {
+            Price: 1
+        };
     } else if (sort == 'price_desc') {
-        _sort = { Price: -1 };
+        _sort = {
+            Price: -1
+        };
     } else if (sort == 'rank') {
-        _sort = { SaleRank: -1 };
+        _sort = {
+            SaleRank: -1
+        };
     } else {
-        _sort = { updated_at: -1 };
+        _sort = {
+            updated_at: -1
+        };
     }
     var group = {
         _id: "$EAN",
@@ -274,8 +286,8 @@ router.get('/filter', function(req, res, next) {
                     if (products.length != 0) {
                         products.forEach(function(product, index) {
                             Product.find({
-                                    EAN: product._id
-                                }).stream()
+                                EAN: product._id
+                            }).stream()
                                 .on("error", function(err) {
                                     next(err);
                                 })
@@ -310,8 +322,8 @@ router.get('/filter', function(req, res, next) {
                                                 var iterateNumber = 0;
                                                 hotproducts.forEach(function(hotproduct, index) {
                                                     Product.find({
-                                                            EAN: hotproduct._id
-                                                        }).stream()
+                                                        EAN: hotproduct._id
+                                                    }).stream()
                                                         .on("error", function(err) {
                                                             next(err);
                                                         })
@@ -391,7 +403,13 @@ router.get('/product', function(req, res, next) {
         }, function(err, _products) {
             if (err != null || _products.length == 0) next(err);
             else {
-                Product.update({ EAN: _products[0].EAN }, { Views: _products[0].Views + 1 }, { multi: true }, function(err, doc) {
+                Product.update({
+                    EAN: _products[0].EAN
+                }, {
+                    Views: _products[0].Views + 1
+                }, {
+                    multi: true
+                }, function(err, doc) {
                     if (err) return next(err);
                     var productsCount = 0;
                     _products.forEach(function(__product, index) {
@@ -600,12 +618,12 @@ router.get('/voucher', function(req, res, next) {
             });
         } else {
             Voucher.find({
-                    EndDate: {
-                        $gte: new Date()
-                    }
-                }).sort({
-                    updated_at: -1
-                }).skip((page - 1) * ItemOnPage)
+                EndDate: {
+                    $gte: new Date()
+                }
+            }).sort({
+                updated_at: -1
+            }).skip((page - 1) * ItemOnPage)
                 .limit(ItemOnPage)
                 .exec(function(err, vouchers) {
                     res.render('voucher', {
@@ -785,7 +803,11 @@ router.get('/currencyExchange', function(req, res, next) {
 });
 
 router.get('/nav', function(req, res, next) {
-    Shop.find({ Activity: { $ne: false } }, function(err, shops) {
+    Shop.find({
+        Activity: {
+            $ne: false
+        }
+    }, function(err, shops) {
         if (err) next(err);
         res.render('nav', {
             title: '导航链接',
@@ -800,15 +822,23 @@ router.post('/nav/customContent', function(req, res, next) {
     if (req.query.id != undefined) {
         console.log(req.query.id);
         Shop.findById(req.query.id, function(err, shop) {
-            res.json({ content: shop.CustomContent || "" });
+            res.json({
+                content: shop.CustomContent || ""
+            });
         });
     } else {
         console.log(req.query.ShopId);
-        Shop.findOne({ ShopId: req.query.ShopId }, function(err, shop) {
+        Shop.findOne({
+            ShopId: req.query.ShopId
+        }, function(err, shop) {
             if (shop != {} && shop != null) {
-                res.json({ content: shop.CustomContent });
+                res.json({
+                    content: shop.CustomContent
+                });
             } else {
-                res.json({ content: "" });
+                res.json({
+                    content: ""
+                });
             }
 
         });
