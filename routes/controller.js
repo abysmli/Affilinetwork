@@ -902,6 +902,17 @@ router.get('/product/remove_ean', auth, function(req, res, next) {
     });
 });
 
+router.get('/product/remove_deactived', auth, function(req, res, next) {
+    Product.remove({
+        Activity: false
+    }, function(err) {
+        if (err)
+            next(err);
+        else
+            res.redirect('/controller/product');
+    });
+});
+
 router.get('/product/remove_all', auth, function(req, res, next) {
     Product.remove(function(err) {
         if (err)

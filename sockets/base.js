@@ -11,8 +11,10 @@ var Affilinet = new affilinet({
     publisherWebservicePassword: setting.affilinet_setting.publisherWebservicePassword
 });
 
-var prodAdv = aws.createProdAdvClient(setting.amazon_setting.AccessKeyId, setting.amazon_setting.SecretAccessKey, setting.amazon_setting.AssociateTag);
-
+var prodAdv = aws.createProdAdvClient(setting.amazon_setting.AccessKeyId, setting.amazon_setting.SecretAccessKey, setting.amazon_setting.AssociateTag, {
+    host: "ecs.amazonaws.de",
+    region: "DE"
+});
 module.exports = function (io) {
     io.of('/product').on("connection", function (socket) {
         socket.on('sync', function (data) {
