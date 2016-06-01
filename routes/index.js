@@ -4,7 +4,6 @@ var router = express.Router();
 var request = require("request");
 var aws = require('aws-lib');
 var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
 var parseString = require('xml2js').parseString;
 
 var setting = require('../setting');
@@ -37,25 +36,6 @@ var Affilinet = new affilinet({
     productWebservicePassword: setting.affilinet_setting.productWebservicePassword,
     publisherWebservicePassword: setting.affilinet_setting.publisherWebservicePassword
 });
-
-passport.use(new LocalStrategy(
-    function(username, password, done) {
-        User.findOne({
-            username: username
-        }, function(err, user) {
-            if (err) {
-                return done(err);
-            }
-            if (!user) {
-                return done(null, false);
-            }
-            if (!user.verifyPassword(password)) {
-                return done(null, false);
-            }
-            return done(null, user);
-        });
-    }
-));
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -413,7 +393,10 @@ router.get('/product', function(req, res, next) {
                     if (err) return next(err);
                     var productsCount = 0;
                     _products.forEach(function(__product, index) {
-                        Shop.findOne({ ShopId: __product.ShopId, Activity: true }, function(err, shop) {
+                        Shop.findOne({
+                            ShopId: __product.ShopId,
+                            Activity: true
+                        }, function(err, shop) {
                             if (shop != null) {
                                 __product.ShopName = shop.CustomTitleCN;
                             } else {
@@ -771,7 +754,8 @@ router.get('/ean', function(req, res, next) {
                         ItemId: req.query.value,
                         IdType: "EAN",
                         SearchIndex: "All",
-                        ResponseGroup: "Medium"
+                        ResponseGroup: "Large",
+                        MerchantId: "Amazon"
                     }, function(err, product) {
                         if (!err) {
                             var _product = Utils.fromAmazonToLocalProduct(product.Items.Item);
@@ -827,7 +811,6 @@ router.post('/nav/customContent', function(req, res, next) {
             });
         });
     } else {
-        console.log(req.query.ShopId);
         Shop.findOne({
             ShopId: req.query.ShopId
         }, function(err, shop) {
@@ -847,21 +830,20 @@ router.post('/nav/customContent', function(req, res, next) {
 
 router.get('/test', function(req, res, next) {
     prodAdv.call("ItemLookup", {
-        ItemId: '3414200542258',
+        ItemId: '0689122001159',
         IdType: "EAN",
         SearchIndex: "All",
-        ResponseGroup: "Large"
+        ResponseGroup: "Large",
+        MerchantId: "Amazon"
     }, function(err, products) {
         if (!err) {
-
-            var _product = {};
-            if (Array.isArray(products.Items.Item)) {
-                _product = Utils.fromAmazonToLocalProduct(products.Items.Item[0]);
-            } else {
-                _product = Utils.fromAmazonToLocalProduct(products.Items.Item);
-            }
-
-            res.json(_product);
+            // var _product = {};
+            // if (Array.isArray(products.Items.Item)) {
+            //     _product = Utils.fromAmazonToLocalProduct(products.Items.Item[0]);
+            // } else {
+            //     _product = Utils.fromAmazonToLocalProduct(products.Items.Item);
+            // }
+            res.json(products);
         } else {
             res.send(err);
         }

@@ -203,7 +203,8 @@ module.exports = (function() {
                             ItemId: ean,
                             IdType: "EAN",
                             SearchIndex: "All",
-                            ResponseGroup: "Large"
+                            ResponseGroup: "Large",
+                            MerchantId: "Amazon"
                         }, function(err, product) {
                             if (!err) {
                                 var _Time3 = new Date().getTime();
@@ -319,7 +320,6 @@ module.exports = (function() {
                     });
                     if (_product.Source == "Amazon") {
                         _product.ShopId = "-1";
-                        existFlag = true;
                     }
                     existFlag ? null : ( _product.Activity ? deactiv_count++ : null );
                     _product.Activity = existFlag;

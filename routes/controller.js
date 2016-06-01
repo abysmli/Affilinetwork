@@ -604,7 +604,8 @@ router.post('/product', auth, function(req, res, next) {
                 prodAdv.call("ItemSearch", {
                     SearchIndex: "All",
                     Keywords: req.body.search_value,
-                    ResponseGroup: "Large"
+                    ResponseGroup: "Large",
+                    MerchantId: "Amazon"
                 }, function(err, results) {
                     if (!err) {
                         counter = "Affilinet: " + counter + " | Amazon: " + results.Items.TotalResults;
@@ -637,7 +638,8 @@ router.post('/product', auth, function(req, res, next) {
         query.FQ = "ASIN:" + req.body.search_value;
         prodAdv.call("ItemLookup", {
             ItemId: req.body.search_value,
-            ResponseGroup: "Large"
+            ResponseGroup: "Large",
+            MerchantId: "Amazon"
         }, function(err, product) {
             if (!err) {
                 var counter = 0;
@@ -684,7 +686,8 @@ router.post('/product', auth, function(req, res, next) {
                             ItemId: req.body.search_value,
                             IdType: "EAN",
                             SearchIndex: "All",
-                            ResponseGroup: "Large"
+                            ResponseGroup: "Large",
+                            MerchantId: "Amazon"
                         }, function(err, product) {
                             if (!err) {
                                 var _product = {};
