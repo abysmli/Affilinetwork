@@ -373,52 +373,56 @@ router.get('/product', function(req, res, next) {
         _id: req.query.product_id,
     });
     query.findOne(function(err, _product) {
-        Product.find({
-            EAN: _product.EAN,
-            Activity: true
-        }, null, {
-            sort: {
-                Price: 1
-            }
-        }, function(err, _products) {
-            if (err != null || _products.length == 0) next(err);
-            else {
-                Product.update({
-                    EAN: _products[0].EAN
-                }, {
-                    Views: _products[0].Views + 1
-                }, {
-                    multi: true
-                }, function(err, doc) {
-                    if (err) return next(err);
-                    var productsCount = 0;
-                    _products.forEach(function(__product, index) {
-                        Shop.findOne({
-                            ShopId: __product.ShopId,
-                            Activity: true
-                        }, function(err, shop) {
-                            if (shop != null) {
-                                __product.ShopName = shop.CustomTitleCN;
-                            } else {
-                                __product.ShopId = "deactiv";
-                            }
-                            if (++productsCount == _products.length) {
-                                res.render('product_details', {
-                                    title: _product.TitleCN,
-                                    footer_bottom: !Utils.checkMobile(req),
-                                    product: _product,
-                                    currenturl: currenturl,
-                                    product_link: req.url,
-                                    products: _products,
-                                    layout: '/layout',
-                                    user: req.user
-                                });
-                            }
+        if (_product != undefined && _product != {}) {
+            Product.find({
+                EAN: _product.EAN,
+                Activity: true
+            }, null, {
+                sort: {
+                    Price: 1
+                }
+            }, function(err, _products) {
+                if (err != null || _products.length == 0) next(err);
+                else {
+                    Product.update({
+                        EAN: _products[0].EAN
+                    }, {
+                        Views: _products[0].Views + 1
+                    }, {
+                        multi: true
+                    }, function(err, doc) {
+                        if (err) return next(err);
+                        var productsCount = 0;
+                        _products.forEach(function(__product, index) {
+                            Shop.findOne({
+                                ShopId: __product.ShopId,
+                                Activity: true
+                            }, function(err, shop) {
+                                if (shop != null) {
+                                    __product.ShopName = shop.CustomTitleCN;
+                                } else {
+                                    __product.ShopId = "deactiv";
+                                }
+                                if (++productsCount == _products.length) {
+                                    res.render('product_details', {
+                                        title: _product.TitleCN,
+                                        footer_bottom: !Utils.checkMobile(req),
+                                        product: _product,
+                                        currenturl: currenturl,
+                                        product_link: req.url,
+                                        products: _products,
+                                        layout: '/layout',
+                                        user: req.user
+                                    });
+                                }
+                            });
                         });
                     });
-                });
-            }
-        });
+                }
+            });
+        } else {
+            next(err);
+        }
     });
 });
 

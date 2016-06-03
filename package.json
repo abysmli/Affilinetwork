@@ -6,8 +6,11 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "async": "*",
+    "aws-lib": "*",
     "basic-auth": "*",
     "body-parser": "*",
+    "connect-ensure-login": "^0.1.1",
     "connect-flash": "*",
     "cookie-parser": "*",
     "debug": "*",
@@ -15,23 +18,22 @@
     "express": "*",
     "express-partials": "*",
     "express-session": "*",
+    "express-stormpath": "*",
+    "mobile-detect": "*",
     "mongoose": "*",
     "mongoose-auto-increment": "*",
+    "mongoose-text-search": "*",
     "morgan": "*",
+    "nodemailer": "*",
     "passport": "*",
+    "passport-facebook": "*",
     "passport-local": "*",
     "passport-local-mongoose": "*",
     "passport-stormpath": "*",
     "request": "*",
-    "aws-lib": "*",
-    "socket.io": "*",
     "serve-favicon": "*",
+    "socket.io": "*",
     "stormpath": "*",
-    "express-stormpath": "*",
-    "mongoose-text-search": "*",
-    "nodemailer": "*",
-    "xml2js": "*",
-    "mobile-detect": "*",
-    "async": "*"
+    "xml2js": "*"
   }
 }

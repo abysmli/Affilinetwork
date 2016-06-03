@@ -69,16 +69,28 @@ router.get('/', function(req, res, next) {
     var _sort = {};
     var _brand = brand;
     var ItemOnPage = 30;
-    if (category == "" || category == "all") _category = { $exists: true };
-    if (brand == "" || brand == "all") _brand = { $exists: true };
+    if (category == "" || category == "all") _category = {
+        $exists: true
+    };
+    if (brand == "" || brand == "all") _brand = {
+        $exists: true
+    };
     if (sort == 'price_asc') {
-        _sort = { Price: 1 };
+        _sort = {
+            Price: 1
+        };
     } else if (sort == 'price_desc') {
-        _sort = { Price: -1 };
+        _sort = {
+            Price: -1
+        };
     } else if (sort == 'rank') {
-        _sort = { SaleRank: -1 };
+        _sort = {
+            SaleRank: -1
+        };
     } else {
-        _sort = { updated_at: -1 };
+        _sort = {
+            updated_at: -1
+        };
     }
     var group = {
         _id: "$EAN",
@@ -134,7 +146,7 @@ router.get('/', function(req, res, next) {
         "$sort": {
             "_id": 1
         }
-    }], function(err, brands) {   
+    }], function(err, brands) {
         Product.distinct("EAN", matchQuery, function(err, results) {
             var pages = Math.ceil(results.length / ItemOnPage);
             Product.aggregate([{
@@ -155,8 +167,8 @@ router.get('/', function(req, res, next) {
                     if (products.length != 0) {
                         products.forEach(function(product, index) {
                             Product.find({
-                                    EAN: product._id
-                                }).stream()
+                                EAN: product._id
+                            }).stream()
                                 .on("error", function(err) {
                                     next(err);
                                 })
@@ -191,8 +203,8 @@ router.get('/', function(req, res, next) {
                                                 var iterateNumber = 0;
                                                 hotproducts.forEach(function(hotproduct, index) {
                                                     Product.find({
-                                                            EAN: hotproduct._id
-                                                        }).stream()
+                                                        EAN: hotproduct._id
+                                                    }).stream()
                                                         .on("error", function(err) {
                                                             next(err);
                                                         })
@@ -264,27 +276,31 @@ router.get('/product', function(req, res, next) {
         _id: req.query.product_id,
     });
     query.findOne(function(err, _product) {
-        Product.find({
-            EAN: _product.EAN
-        }, null, {
-            sort: {
-                Price: 1
-            }
-        }, function(err, _products) {
-            if (err != null) next(err);
-            else {
-                res.render('product_details_de', {
-                    title: _product.Title,
-                    footer_bottom: !Utils.checkMobile(req),
-                    product: _product,
-                    currenturl: currenturl,
-                    product_link: req.url,
-                    products: _products,
-                    layout: '/layout_de',
-                    user: req.user
-                });
-            }
-        });
+        if (_product != undefined && _product != {}) {
+            Product.find({
+                EAN: _product.EAN
+            }, null, {
+                sort: {
+                    Price: 1
+                }
+            }, function(err, _products) {
+                if (err != null) next(err);
+                else {
+                    res.render('product_details_de', {
+                        title: _product.Title,
+                        footer_bottom: !Utils.checkMobile(req),
+                        product: _product,
+                        currenturl: currenturl,
+                        product_link: req.url,
+                        products: _products,
+                        layout: '/layout_de',
+                        user: req.user
+                    });
+                }
+            });
+        } else {
+            next(err);
+        }
     });
 });
 
