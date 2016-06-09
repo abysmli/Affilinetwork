@@ -94,7 +94,7 @@
                                             <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i>Login</button>
                                             <ul class="dropdown-menu dropdown-menu-right dropdown-animation">
                                                 <li>
-                                                    <form class="login-form" action="/de" method="post">
+                                                    <form class="login-form" action="/de/login" method="post">
                                                         <div class="form-group has-feedback">
                                                             <label class="control-label">Benutzername</label>
                                                             <input name="username" type="text" class="form-control" placeholder="">
@@ -115,7 +115,7 @@
                                                 </li>
                                             </ul>
                                             <% } else { %>
-                                            <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i><%= user.username %></button>
+                                            <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i><%= user.displayName %></button>
                                             <ul class="dropdown-menu dropdown-menu-right dropdown-animation">
                                                 <a class="btn btn-group btn-dark btn-sm" href="/de/favourite">Merkliste</a>
                                                 <span><p style="font-size: small"><a href="/de/logout">Logout</a></p></span>

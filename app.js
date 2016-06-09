@@ -7,33 +7,43 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var passport = require('passport');
 var StormpathStrategy = require('passport-stormpath');
+var FacebookStrategy = require('passport-facebook').Strategy;
 var session = require('express-session');
 var flash = require('connect-flash');
 
 var routes = require('./routes/index');
 var routes_de = require('./routes/index_de');
 var controller = require('./routes/controller');
+var login = require('./routes/login');
 var register = require('./routes/register');
 var register_de = require('./routes/register_de');
 var passwordreset = require('./routes/passwordreset');
 var passwordreset_de = require('./routes/passwordreset_de');
-var facebook = require('./routes/facebook');
-
 var setting = require('./setting');
 
 var app = express();
 
-var strategy = new StormpathStrategy({
+passport.use(new StormpathStrategy({
     apiKeyId: setting.stormpath_setting.API_KEY_ID,
     apiKeySecret: setting.stormpath_setting.API_KEY_SECRET,
     appHref: setting.stormpath_setting.APP_HREF,
+}));
+
+passport.use(new FacebookStrategy({
+    clientID: setting.facebook_setting.clientID,
+    clientSecret: setting.facebook_setting.clientSecret,
+    callbackURL: setting.facebook_setting.callbackURL
+}, function(accessToken, refreshToken, profile, cb) {
+    return cb(null, profile);
+}));
+
+passport.serializeUser(function(user, cb) {
+    cb(null, user);
 });
 
-
-passport.use(strategy);
-passport.serializeUser(strategy.serializeUser);
-passport.deserializeUser(strategy.deserializeUser);
-
+passport.deserializeUser(function(obj, cb) {
+    cb(null, obj);
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -53,7 +63,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(partials());
 app.use(session({
     secret: setting.secret,
-    key: "F&&L",
+    key: "allhaha",
     cookie: {
         secure: false
     },
@@ -67,11 +77,11 @@ app.use(flash());
 app.use('/', routes);
 app.use('/de', routes_de)
 app.use('/controller', controller);
+app.use('/login', login);
 app.use('/register', register);
 app.use('/de/register', register_de);
 app.use('/password_reset', passwordreset);
 app.use('/de/password_reset', passwordreset_de);
-app.use('/facebook', facebook);
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {

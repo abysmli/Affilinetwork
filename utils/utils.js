@@ -354,5 +354,15 @@ module.exports = (function() {
         });
     }
 
+    _Class.prototype.duoshuoUserParse = function duoshuoUserParse(user) {
+        var _user = {
+            user_id: user.user_id,
+            username: user.name,
+            displayName: user.name,
+            avatar_url: user.avatar_url
+        };
+        return _user;
+    }
+
     return _Class;
 })();

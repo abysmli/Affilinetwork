@@ -90,3 +90,21 @@ function copyToClipboard(string) {
 function getCurrencyExchange(cb) {
     $.get("currencyExchange", cb);
 }
+
+$("#logout").attr("href", "http://allhaha.duoshuo.com/logout/?sso=1&redirect_uri=" + window.location.origin + "/logout");
+
+var duoshuoQuery = {
+    short_name: "allhaha",
+    sso: {
+        login: window.location.origin + "/login",
+        logout: window.location.origin + "/logout"
+    }
+};
+(function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();

@@ -34,6 +34,7 @@
     "serve-favicon": "*",
     "socket.io": "*",
     "stormpath": "*",
-    "xml2js": "*"
+    "xml2js": "*",
+    "jsonwebtoken": "*"
   }
 }

@@ -35,6 +35,18 @@ var app_setting = {
         API_KEY_ID: '2R0MZVWQRYZ8L1WV9FAR5XWEN',
         API_KEY_SECRET: 'QKrjkPly30p4amNCWnPWsbjsj1ulASCiF1P/WKC9ucE',
         APP_HREF: 'https://api.stormpath.com/v1/applications/4zQYkYfG2y0xcD6bultOxW',
+    },
+    duoshuo_setting: {
+        profileURL: "http://api.duoshuo.com/users/profile.json",
+        authURL: "http://api.duoshuo.com/oauth2/access_token",
+        importURL: "http://api.duoshuo.com/users/import.json",
+        short_name: 'allhaha',
+        secret: '21d51207d519e830deab40d57645d343'
+    },
+    facebook_setting: {
+        clientID: "1134828276538020",
+        clientSecret: "0bf5b4d8c0354acc2d3cb822a3e5ef55",
+        callbackURL: 'http://localhost:8818/login/facebook/return',
     }
 };
 

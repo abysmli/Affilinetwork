@@ -91,7 +91,7 @@
                                         <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i>登录</button>
                                         <ul class="dropdown-menu dropdown-menu-right dropdown-animation">
                                             <li>
-                                                <form class="login-form" action="/" method="post">
+                                                <form class="login-form" action="/login" method="post">
                                                     <div class="form-group has-feedback">
                                                         <label class="control-label">用户名</label>
                                                         <input name="username" type="text" class="form-control" placeholder="">
@@ -108,14 +108,27 @@
                                                     <ul>
                                                         <li><a href="/password_reset">忘记密码?</a></li>
                                                     </ul>
+                                                    <div class="divider"></div>
+                                                    <span class="text-center">社交登录</span>
+                                                    <div class="ds-login" style="margin-top: 7px"></div>
                                                 </form>
                                             </li>
                                         </ul>
                                         <% } else { %>
-                                        <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i><%= user.username %></button>
+
+                                        <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
+                                        <% if (user.avatar_url != undefined) { %>
+                                        <img src="<%= user.avatar_url %>" style="width: 20px; height: 20px; display: inline-block;" >
+                                        <% } else { %>
+                                        <i class="fa fa-user"></i>
+                                        <% } %>
+                                        <%= user.displayName %>
+                                        </button>
                                         <ul class="dropdown-menu dropdown-menu-right dropdown-animation">
-                                            <a class="btn btn-group btn-dark btn-sm" href="/favourite">查看收藏夹</a>
-                                            <span><p style="font-size: small"><a href="/logout">退出登录</a></p></span>
+                                            <a class="btn btn-group btn-primary btn-sm" href="/favourite">查看收藏夹</a>
+                                            <ul>
+                                                <li><a id="logout" href="#">退出登录</a></li>
+                                            </ul>
                                         </ul>
                                         <% } %>
                                     </div>

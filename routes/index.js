@@ -426,30 +426,6 @@ router.get('/product', function(req, res, next) {
     });
 });
 
-router.post('/', passport.authenticate('stormpath', {
-    failureRedirect: '/login',
-    layout: 'layout',
-    title: '错误登录信息'
-}), function(req, res, next) {
-    res.redirect('/');
-});
-
-router.get('/login', function(req, res, next) {
-    res.render('userlogin/login', {
-        title: '登录',
-        footer_bottom: !Utils.checkMobile(req),
-        layout: 'layout',
-        info: '用户名或密码错误, 请重新填写',
-        user: req.user
-    });
-});
-
-//logout
-router.get('/logout', function(req, res, next) {
-    req.logout();
-    res.redirect('/');
-});
-
 router.post('/favourite', function(req, res, next) {
     var data = {
         Username: req.body.Username,
@@ -830,6 +806,13 @@ router.post('/nav/customContent', function(req, res, next) {
 
         });
     }
+});
+
+//logout
+router.get('/logout', function(req, res, next) {
+    req.logout();
+    res.clearCookie("duoshuo_token");
+    res.redirect('/');
 });
 
 router.get('/test', function(req, res, next) {
