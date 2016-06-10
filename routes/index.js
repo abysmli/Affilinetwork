@@ -483,9 +483,15 @@ router.get('/favourite', function(req, res, next) {
             }
         };
         var matchQuery = {
-            EAN: {
-                $in: productEANs
-            }
+            $and: [{
+                EAN: {
+                    $in: productEANs
+                },
+                Activity: {
+                    $ne: false
+                },
+                Translated: true
+            }]
         };
         Product.aggregate([{
             "$match": matchQuery
@@ -812,7 +818,7 @@ router.post('/nav/customContent', function(req, res, next) {
 router.get('/logout', function(req, res, next) {
     req.logout();
     res.clearCookie("duoshuo_token");
-    res.redirect('/');
+    res.redirect(req.query.from || '/');
 });
 
 router.get('/test', function(req, res, next) {

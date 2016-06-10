@@ -101,8 +101,8 @@ $(document).ready(function(){
 var duoshuoQuery = {
     short_name: "allhaha",
     sso: {
-        login: window.location.origin + "/login/from=" + window.location.pathname + window.location.search,
-        logout: window.location.origin + "/logout/?from=" + window.location.href
+        login: window.location.origin + "/login" + window.location.pathname + window.location.search,
+        logout: window.location.origin + "/logout?from=" + window.location.href
     }
 };
 (function() {

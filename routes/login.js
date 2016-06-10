@@ -37,7 +37,7 @@ router.post('/', passport.authenticate('stormpath', {
     });
 });
 
-router.get('/:from', function(req, res, next) {
+router.get('/', function(req, res, next) {
     if (req.query.code == undefined || req.query.code == "") {
         res.render('userlogin/login', {
             title: '登录',
@@ -47,9 +47,6 @@ router.get('/:from', function(req, res, next) {
             user: req.user
         });
     } else {
-        var url = "/" + req.params.from + (req.query.id == undefined ? "" : "?id=" + req.query.id);
-        console.log(url);
-        console.log(req.query.code);
         request.post({
             url: setting.duoshuo_setting.authURL,
             form: {
@@ -60,7 +57,6 @@ router.get('/:from', function(req, res, next) {
             if (err) {
                 next(err);
             } else {
-                console.log(JSON.parse(httpResponse.body));
                 request({
                     url: setting.duoshuo_setting.profileURL,
                     qs: {
@@ -70,7 +66,7 @@ router.get('/:from', function(req, res, next) {
                     var user = Utils.duoshuoUserParse(JSON.parse(response.body).response);
                     req.login(user, function(err) {
                         if (!err) {
-                            res.redirect(url);
+                            res.redirect("/");
                         } else {
                             next(err)
                         }
@@ -79,6 +75,40 @@ router.get('/:from', function(req, res, next) {
             }
         });
     }
+});
+
+
+router.get('/:from', function(req, res, next) {
+    var url = "/" + req.params.from + (req.query.id == undefined ? "" : "?id=" + req.query.id) + (req.query.product_id == undefined ? "" : "?product_id=" + req.query.product_id);
+    console.log(url);
+    console.log(req.query.code);
+    request.post({
+        url: setting.duoshuo_setting.authURL,
+        form: {
+            client_id: setting.duoshuo_setting.short_name,
+            code: req.query.code,
+        }
+    }, function(err, httpResponse, body) {
+        if (err) {
+            next(err);
+        } else {
+            request({
+                url: setting.duoshuo_setting.profileURL,
+                qs: {
+                    user_id: JSON.parse(httpResponse.body).user_id
+                }
+            }, function(err, response) {
+                var user = Utils.duoshuoUserParse(JSON.parse(response.body).response);
+                req.login(user, function(err) {
+                    if (!err) {
+                        res.redirect(url);
+                    } else {
+                        next(err)
+                    }
+                });
+            });
+        }
+    });
 });
 
 router.get('/facebook', passport.authenticate('facebook'));
