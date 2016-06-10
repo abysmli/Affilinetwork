@@ -33,11 +33,11 @@ router.post('/', passport.authenticate('stormpath', {
             name: req.user.username
         }, setting.duoshuo_setting.secret);
         res.cookie('duoshuo_token', duoshuo_token);
-        res.redirect('/');
+        res.redirect(req.query.from || "/");
     });
 });
 
-router.get('/', function(req, res, next) {
+router.get('/:from', function(req, res, next) {
     if (req.query.code == undefined || req.query.code == "") {
         res.render('userlogin/login', {
             title: '登录',
@@ -47,6 +47,9 @@ router.get('/', function(req, res, next) {
             user: req.user
         });
     } else {
+        var url = "/" + req.params.from + (req.query.id == undefined ? "" : "?id=" + req.query.id);
+        console.log(url);
+        console.log(req.query.code);
         request.post({
             url: setting.duoshuo_setting.authURL,
             form: {
@@ -57,6 +60,7 @@ router.get('/', function(req, res, next) {
             if (err) {
                 next(err);
             } else {
+                console.log(JSON.parse(httpResponse.body));
                 request({
                     url: setting.duoshuo_setting.profileURL,
                     qs: {
@@ -66,7 +70,7 @@ router.get('/', function(req, res, next) {
                     var user = Utils.duoshuoUserParse(JSON.parse(response.body).response);
                     req.login(user, function(err) {
                         if (!err) {
-                            res.redirect('/');
+                            res.redirect(url);
                         } else {
                             next(err)
                         }

@@ -91,13 +91,18 @@ function getCurrencyExchange(cb) {
     $.get("currencyExchange", cb);
 }
 
-$("#logout").attr("href", "http://allhaha.duoshuo.com/logout/?sso=1&redirect_uri=" + window.location.origin + "/logout");
+console.log(window.location);
+
+$(document).ready(function(){
+    $("#logout").attr("href", "http://allhaha.duoshuo.com/logout/?sso=1&redirect_uri=" + window.location.origin + "/logout/?from=" + window.location.pathname + window.location.search);
+    $("#login_form").attr("action", "/login/?from=" + window.location.href);
+});
 
 var duoshuoQuery = {
     short_name: "allhaha",
     sso: {
-        login: window.location.origin + "/login",
-        logout: window.location.origin + "/logout"
+        login: window.location.origin + "/login/from=" + window.location.pathname + window.location.search,
+        logout: window.location.origin + "/logout/?from=" + window.location.href
     }
 };
 (function() {
