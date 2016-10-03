@@ -14,6 +14,7 @@ var flash = require('connect-flash');
 var routes = require('./routes/index');
 var routes_de = require('./routes/index_de');
 var controller = require('./routes/controller');
+var partner = require('./routes/partner');
 var login = require('./routes/login');
 var register = require('./routes/register');
 var register_de = require('./routes/register_de');
@@ -77,6 +78,7 @@ app.use(flash());
 app.use('/', routes);
 app.use('/de', routes_de)
 app.use('/controller', controller);
+app.use('/partner', partner);
 app.use('/login', login);
 app.use('/register', register);
 app.use('/de/register', register_de);

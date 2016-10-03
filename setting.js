@@ -3,6 +3,8 @@ var app_setting = {
     database: 'affilinet',
     username: 'LLHF',
     password: 'LLHF!allhaha',
+    partner_username: "jun.shao",
+    partner_password: "shaojun",
     affilinet_setting: {
         publisherId: '760068',
         productWebservicePassword: 'YXysbEHNzfKCyFhAyESb',
