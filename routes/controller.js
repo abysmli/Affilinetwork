@@ -611,7 +611,7 @@ router.post('/product', auth, function(req, res, next) {
                         counter = "Affilinet: " + counter + " | Amazon: " + results.Items.TotalResults;
                         var _products = [];
                         if (Array.isArray(results.Items.Item)) {
-                            Utils.ToLocalProducts(results.Items.Item, "amazon");
+                            _products = Utils.ToLocalProducts(results.Items.Item, "amazon");
                             products = products.concat(_products);
                         }
                         req.session.products = products;

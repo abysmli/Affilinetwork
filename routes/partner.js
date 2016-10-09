@@ -43,11 +43,11 @@ router.post('/', auth_partner, function (req, res, next) {
                     ResponseGroup: "Large",
                     MerchantId: "Amazon"
                 }, function (err, results) {
+                    console.log(results);
                     if (!err) {
-                        counter = "Affilinet: " + counter + " | Amazon: " + results.Items.TotalResults;
                         var _products = [];
                         if (Array.isArray(results.Items.Item)) {
-                            Utils.ToLocalProducts(results.Items.Item, "amazon");
+                            _products = Utils.ToLocalProducts(results.Items.Item, "amazon");
                             products = products.concat(_products);
                         }
                         req.session.products = products;
