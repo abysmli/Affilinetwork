@@ -1,0 +1,51 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <table class="table table-bordered">
+                <% if (rates == "amazon") { %>
+                <tr>
+                    <th>Produktkategorie</th>
+                    <th>Feste Werbekostenerstattungssätze</th>
+                </tr>
+                <tr>
+                    <td>Fernseher und Heimkino , Smartphones und Handys, Tablet-PCs ohne Vertragsbindung, PS4-Konsolen</td>
+                    <td>1,0%</td>
+                </tr>
+                <tr>
+                    <td>Computer, Elektronik, Kamera, Elektro- Großgeräte, Geschenkgutscheine, Kindle und Fire Zubehör, Kindle (alle Geräte)</td>
+                    <td>3,0%</td>
+                </tr>
+                <tr>
+                    <td>Software, Musik, DVDs & Blu-ray, Videospiele, Baumarkt, Spielzeug, Küche, Sport & Freizeit, Bier, Wein & Spirituosen, Gewerbe, Industrie & Wissenschaft, Handmade</td>
+                    <td>5,0%</td>
+                </tr>
+                <tr>
+                    <td>Bücher*, Kindle eBooks*, Auto & Motorrad, Haushalt, Musikinstrumente, Büroartikel, Babyartikel, Kosmetik, Lebensmittel, Geräte für Gesundheit und Körperpflege, Drogerie, Haustierprodukte, Garten, Pantry</td>
+                    <td>7,0%</td>
+                </tr>
+                <tr>
+                    <td>Videospiele-Downloads, Software-Downloads, Kleidung, Schmuck, Gepäck, Schuhe, Uhren, BuyVIP, Möbel</td>
+                    <td>10,0%</td>
+                </tr>
+                <tr>
+                    <td>Alle übrigen Produkte</td>
+                    <td>3,0%</td>
+                </tr>
+                <% } else { %>
+                <tr>
+                    <th>Rate Name</th>
+                    <th>Rate Mode</th>
+                    <th>Rate Value</th>
+                </tr>
+                <% rates.forEach(function(rate, index) { %>
+                <tr>
+                    <td><%= rate.RateName %></td>
+                    <td><%= rate.RateMode == 0 ? "None" : rate.RateMode == 1 ? "PayPerClick" : rate.RateMode == 2 ? "PayPerSale" : "PayPerLead" %></td>
+                    <td><%= rate.RateValue %> <%= rate.Unit %></td>
+                </tr>
+                <% }) %>
+                <% } %>
+            </table>
+        </div>
+    </div>
+</div>

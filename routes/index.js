@@ -822,25 +822,25 @@ router.get('/logout', function(req, res, next) {
 });
 
 router.get('/test', function(req, res, next) {
-    prodAdv.call("ItemLookup", {
-        ItemId: '0689122001159',
-        IdType: "EAN",
-        SearchIndex: "All",
-        ResponseGroup: "Large",
-        MerchantId: "Amazon"
-    }, function(err, products) {
-        if (!err) {
-            // var _product = {};
-            // if (Array.isArray(products.Items.Item)) {
-            //     _product = Utils.fromAmazonToLocalProduct(products.Items.Item[0]);
-            // } else {
-            //     _product = Utils.fromAmazonToLocalProduct(products.Items.Item);
-            // }
-            res.json(products);
-        } else {
-            res.send(err);
-        }
-    });
+    // prodAdv.call("ItemLookup", {
+    //     ItemId: '0689122001159',
+    //     IdType: "EAN",
+    //     SearchIndex: "All",
+    //     ResponseGroup: "Large",
+    //     MerchantId: "Amazon"
+    // }, function(err, products) {
+    //     if (!err) {
+    //         // var _product = {};
+    //         // if (Array.isArray(products.Items.Item)) {
+    //         //     _product = Utils.fromAmazonToLocalProduct(products.Items.Item[0]);
+    //         // } else {
+    //         //     _product = Utils.fromAmazonToLocalProduct(products.Items.Item);
+    //         // }
+    //         res.json(products);
+    //     } else {
+    //         res.send(err);
+    //     }
+    // });
     // Affilinet.getProducts({ProductIds: 20940203}, function(err, response, results) {
     //     res.json(results);
     // });

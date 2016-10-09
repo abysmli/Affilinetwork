@@ -21,7 +21,7 @@ var prodAdv = aws.createProdAdvClient(setting.amazon_setting.AccessKeyId, settin
     region: "DE"
 });
 
-router.get('/', auth_partner, function(req, res, next) {
+router.get('/', auth_partner, function (req, res, next) {
     res.render('partner/products', {
         title: 'Products View',
         products: [],
@@ -29,11 +29,11 @@ router.get('/', auth_partner, function(req, res, next) {
     });
 });
 
-router.post('/', auth_partner, function(req, res, next) {
+router.post('/', auth_partner, function (req, res, next) {
     var query = {};
     if (req.body.search_type == "Query") {
         query.Query = req.body.search_value;
-        Affilinet.searchProducts(query, function(err, response, results) {
+        Affilinet.searchProducts(query, function (err, response, results) {
             if (!err && response.statusCode == 200) {
                 var counter = results.ProductsSummary.TotalRecords;
                 var products = Utils.ToLocalProducts(results.Products, "affilinet");
@@ -42,7 +42,7 @@ router.post('/', auth_partner, function(req, res, next) {
                     Keywords: req.body.search_value,
                     ResponseGroup: "Large",
                     MerchantId: "Amazon"
-                }, function(err, results) {
+                }, function (err, results) {
                     if (!err) {
                         counter = "Affilinet: " + counter + " | Amazon: " + results.Items.TotalResults;
                         var _products = [];
@@ -70,7 +70,7 @@ router.post('/', auth_partner, function(req, res, next) {
             ItemId: req.body.search_value,
             ResponseGroup: "Large",
             MerchantId: "Amazon"
-        }, function(err, product) {
+        }, function (err, product) {
             if (!err) {
                 var counter = 0;
                 var products = [];
@@ -96,11 +96,11 @@ router.post('/', auth_partner, function(req, res, next) {
         });
     } else if (req.body.search_type == "EAN") {
         query.FQ = "EAN:" + req.body.search_value;
-        Affilinet.searchProducts(query, function(err, response, results) {
+        Affilinet.searchProducts(query, function (err, response, results) {
             if (!err && response.statusCode == 200) {
                 var products = Utils.ToLocalProducts(results.Products, "affilinet");
                 query.FQ = "EAN:0" + req.body.search_value;
-                Affilinet.searchProducts(query, function(err, response, results) {
+                Affilinet.searchProducts(query, function (err, response, results) {
                     if (!err && response.statusCode == 200) {
                         var _product = Utils.ToLocalProducts(results.Products, "affilinet");
                         if (!Utils.isEmptyObject(_product)) {
@@ -112,7 +112,7 @@ router.post('/', auth_partner, function(req, res, next) {
                             SearchIndex: "All",
                             ResponseGroup: "Large",
                             MerchantId: "Amazon"
-                        }, function(err, product) {
+                        }, function (err, product) {
                             if (!err) {
                                 var _product = {};
                                 if (Array.isArray(product.Items.Item)) {
@@ -143,5 +143,30 @@ router.post('/', auth_partner, function(req, res, next) {
         });
     }
 });
+
+router.get('/getProgram', auth_partner, function (req, res, next) {
+    var ProgramId = req.query.ProgramId;
+    if (ProgramId == "amazon") {
+        res.render('partner/rateinfo', {
+            title: 'Rate Info',
+            rates: "amazon",
+            layout: 'partner/layout'
+        });
+    } else {
+        Affilinet.getProgramRates({ ProgramId: ProgramId }, function (err, response, results) {
+            if (err) return next(err);
+            parseString(results, { trim: true, mergeAttrs: true }, function (err, result) {
+                if (err) return next(err);
+                var Rates = result.GetProgramRatesResponse.RateCollection[0].Rate;
+                res.render('partner/rateinfo', {
+                    title: 'Rate Info',
+                    rates: Rates,
+                    layout: 'partner/layout'
+                });
+            });
+        });
+    }
+});
+
 
 module.exports = router;
