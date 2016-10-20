@@ -19,6 +19,7 @@
     "express-partials": "*",
     "express-session": "*",
     "express-stormpath": "*",
+    "jsonwebtoken": "*",
     "mobile-detect": "*",
     "mongoose": "*",
     "mongoose-auto-increment": "*",
@@ -34,7 +35,6 @@
     "serve-favicon": "*",
     "socket.io": "*",
     "stormpath": "*",
-    "xml2js": "*",
-    "jsonwebtoken": "*"
+    "xml2js": "*"
   }
 }

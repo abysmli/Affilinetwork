@@ -20,6 +20,7 @@ var register = require('./routes/register');
 var register_de = require('./routes/register_de');
 var passwordreset = require('./routes/passwordreset');
 var passwordreset_de = require('./routes/passwordreset_de');
+var link = require('./routes/link');
 var setting = require('./setting');
 
 var app = express();
@@ -84,6 +85,7 @@ app.use('/register', register);
 app.use('/de/register', register_de);
 app.use('/password_reset', passwordreset);
 app.use('/de/password_reset', passwordreset_de);
+app.use('/go', link);
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {

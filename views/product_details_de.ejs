@@ -64,6 +64,7 @@
 										<td>Link</td>
 									</tr>
 									<% products.forEach(function(product, index) { %>
+									<% if (product.ShopId != "deactiv" && product.Price) { %>
 									<tr>
 										<td>
 											<%= product.Price.toString().replace(".", ",") %>€
@@ -73,6 +74,7 @@
 										</td>
 										<td><a target="_blank" href="<%= product.URL %>">Kaufen</a></td>
 									</tr>
+									<% } %>
 									<% }) %>
 								</table>
 							</div>

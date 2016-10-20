@@ -13,6 +13,7 @@ var ShopSchema = new mongoose.Schema({
     ProductCount: String,
     ProgramId: String,
     ShopLink: String,
+    ShortURL: String,
     LastUpdate: String,
     CustomContent: String,
     ShipToChina: { type: Boolean, default: false },

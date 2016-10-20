@@ -7,6 +7,7 @@ var ProductSchema = new mongoose.Schema({
     ProductId: String,
     ASIN: String,
     URL: String,
+    ShortURL: String,
     ProductName: String,
     SalesRank: Number,
     ProductImage: String,

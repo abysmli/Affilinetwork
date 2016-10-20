@@ -27,9 +27,9 @@ var prodAdv = aws.createProdAdvClient(setting.amazon_setting.AccessKeyId, settin
 });
 
 /* GET users listing. */
-router.get('/', auth, function(req, res, next) {
+router.get('/', auth, function (req, res, next) {
     if (req.query.mode == "cloud") {
-        Affilinet.getShopList({}, function(err, response, shops) {
+        Affilinet.getShopList({}, function (err, response, shops) {
             if (!err && response.statusCode == 200) {
                 req.session.shops = shops.Shops;
                 res.render('controller/index', {
@@ -43,7 +43,7 @@ router.get('/', auth, function(req, res, next) {
             }
         });
     } else {
-        Shop.find({}, function(err, shops) {
+        Shop.find({}, function (err, shops) {
             if (err) next(err);
             res.render('controller/index', {
                 title: 'Shops Manage',
@@ -55,21 +55,24 @@ router.get('/', auth, function(req, res, next) {
     }
 });
 
-router.post('/shopsync', auth, function(req, res, next) {
-    Affilinet.getShopList({}, function(err, response, shops) {
+router.post('/shopsync', auth, function (req, res, next) {
+    Affilinet.getShopList({}, function (err, response, shops) {
         if (!err && response.statusCode == 200) {
             shops = shops.Shops;
             var update_count = 0;
-            shops.forEach(function(shop, index) {
+            shops.forEach(function (shop, index) {
                 Shop.findOne({
                     ShopId: shop.ShopId
-                }, function(err, _shop) {
+                }, function (err, _shop) {
                     if (_shop == null) {
-                        Shop.create(Utils.ShopConverter(shop), function(err, shop) {
-                            if (err) {
-                                next(err);
-                            }
-                            update_count++;
+                        Utils.shortURL(shop.ShopLink, function (err, shorturl) {
+                            shop.ShortURL = shorturl;
+                            Shop.create(Utils.ShopConverter(shop), function (err, shop) {
+                                if (err) {
+                                    next(err);
+                                }
+                                update_count++;
+                            });
                         });
                     }
                     if (++update_count == shops.length) {
@@ -85,7 +88,7 @@ router.post('/shopsync', auth, function(req, res, next) {
     });
 });
 
-router.get('/shop/add', auth, function(req, res, next) {
+router.get('/shop/add', auth, function (req, res, next) {
     var shop = {};
     if (req.query.id != undefined) {
         shop = req.session.shops[req.query.id];
@@ -98,20 +101,23 @@ router.get('/shop/add', auth, function(req, res, next) {
     });
 });
 
-router.post('/shop/add', auth, function(req, res, next) {
+router.post('/shop/add', auth, function (req, res, next) {
     var shop = req.body;
     shop.Logo = JSON.parse(shop.Logo);
-    Shop.create(shop, function(err, shop) {
-        if (err) {
-            next(err);
-        }
-        return res.redirect('/controller/');
+    Utils.shortURL(shop.ShopLink, function (err, shorturl) {
+        shop.ShortURL = shorturl;
+        Shop.create(shop, function (err, shop) {
+            if (err) {
+                next(err);
+            }
+            return res.redirect('/controller/');
+        });
     });
 });
 
-router.get('/shop/edit', auth, function(req, res, next) {
+router.get('/shop/edit', auth, function (req, res, next) {
     if (req.query.id !== undefined) {
-        Shop.findById(req.query.id, function(err, shop) {
+        Shop.findById(req.query.id, function (err, shop) {
             if (err != null) next(err);
             else {
                 res.render('controller/shop_form', {
@@ -124,7 +130,7 @@ router.get('/shop/edit', auth, function(req, res, next) {
     } else {
         Shop.findOne({
             ShopId: req.query.ShopId
-        }, function(err, shop) {
+        }, function (err, shop) {
             if (err != null) next(err);
             else {
                 res.render('controller/shop_form', {
@@ -137,7 +143,7 @@ router.get('/shop/edit', auth, function(req, res, next) {
     }
 });
 
-router.post('/shop/edit', auth, function(req, res, next) {
+router.post('/shop/edit', auth, function (req, res, next) {
     var query = {};
     if (req.query.id !== undefined) {
         query = {
@@ -154,7 +160,7 @@ router.post('/shop/edit', auth, function(req, res, next) {
     } else {
         shop.Logo = JSON.parse(shop.Logo);
     }
-    Shop.findOneAndUpdate(query, shop, function(err, shop) {
+    Shop.findOneAndUpdate(query, shop, function (err, shop) {
         if (err != null) next(err);
         else {
             res.redirect('/controller/');
@@ -162,22 +168,22 @@ router.post('/shop/edit', auth, function(req, res, next) {
     });
 });
 
-router.post('/shop/activity', auth, function(req, res, next) {
+router.post('/shop/activity', auth, function (req, res, next) {
     var Activity = (req.body.activity === 'true');
     Shop.update({
         _id: req.body.id
     }, {
-        Activity: Activity
-    }, function(err, doc) {
-        if (err) return next(err);
-        res.json({
-            status: 'success'
+            Activity: Activity
+        }, function (err, doc) {
+            if (err) return next(err);
+            res.json({
+                status: 'success'
+            });
         });
-    });
 });
 
-router.get('/shop/remove', auth, function(req, res, next) {
-    Shop.findByIdAndRemove(req.query.id, function(err, shop) {
+router.get('/shop/remove', auth, function (req, res, next) {
+    Shop.findByIdAndRemove(req.query.id, function (err, shop) {
         if (err != null) next(err);
         else {
             return res.redirect('/controller/');
@@ -185,8 +191,8 @@ router.get('/shop/remove', auth, function(req, res, next) {
     });
 });
 
-router.get('/shop/remove_all', auth, function(req, res, next) {
-    Shop.remove(function(err) {
+router.get('/shop/remove_all', auth, function (req, res, next) {
+    Shop.remove(function (err) {
         if (err)
             next(err);
         else
@@ -194,12 +200,12 @@ router.get('/shop/remove_all', auth, function(req, res, next) {
     });
 });
 
-router.get('/category', auth, function(req, res, next) {
+router.get('/category', auth, function (req, res, next) {
     var ShopId = req.query.shopid == undefined ? 0 : req.query.shopid;
     var shoptitle = req.query.shoptitle == undefined ? "for All Shops" : "for " + req.query.shoptitle;
     Affilinet.getCategoryList({
         ShopId: ShopId
-    }, function(err, response, categorylist) {
+    }, function (err, response, categorylist) {
         if (!err && response.statusCode == 200) {
             res.render('controller/category', {
                 title: 'Categories Manage',
@@ -214,12 +220,12 @@ router.get('/category', auth, function(req, res, next) {
     });
 });
 
-router.get('/program', auth, function(req, res, next) {
-    Affilinet.getMyPrograms({}, function(err, response, programs) {
+router.get('/program', auth, function (req, res, next) {
+    Affilinet.getMyPrograms({}, function (err, response, programs) {
         if (!err && response.statusCode == 200) {
             parseString(programs, {
                 explicitArray: false
-            }, function(err, programs) {
+            }, function (err, programs) {
                 var programs = programs.ProgramList.Programs.ProgramSummary;
                 req.session.programs = programs;
                 res.render('controller/program', {
@@ -234,27 +240,27 @@ router.get('/program', auth, function(req, res, next) {
     });
 });
 
-router.post('/program_details', auth, function(req, res, next) {
-    req.session.programs.forEach(function(program, index) {
+router.post('/program_details', auth, function (req, res, next) {
+    req.session.programs.forEach(function (program, index) {
         if (program.ProgramID == req.body.program_id) {
             return res.json(program);
         }
     });
 });
 
-router.get('/voucher', auth, function(req, res, next) {
+router.get('/voucher', auth, function (req, res, next) {
     if (req.query.type == 'remote') {
         Affilinet.getVoucherCodes({
             ProgramId: req.query.program_id,
-        }, function(err, response, vouchers) {
+        }, function (err, response, vouchers) {
             parseString(vouchers, {
                 explicitArray: false
-            }, function(err, vouchers) {
+            }, function (err, vouchers) {
                 var vouchers = vouchers.GetVoucherCodesResponse.VoucherCodeCollection.VoucherCode || [];
                 if (vouchers.constructor != Array) {
                     vouchers = [vouchers];
                 }
-                vouchers.forEach(function(voucher) {
+                vouchers.forEach(function (voucher) {
                     voucher.Program = req.query.program_title;
                 });
                 req.session.vouchers = vouchers;
@@ -268,27 +274,27 @@ router.get('/voucher', auth, function(req, res, next) {
             });
         });
     } else if (req.query.type == 'getAll') {
-        Affilinet.getMyPrograms({}, function(err, response, programs) {
+        Affilinet.getMyPrograms({}, function (err, response, programs) {
             if (!err && response.statusCode == 200) {
                 parseString(programs, {
                     explicitArray: false
-                }, function(err, programs) {
+                }, function (err, programs) {
                     var programs = programs.ProgramList.Programs.ProgramSummary;
                     var allVouchers = [];
                     var voucher_nummber = 0;
-                    programs.forEach(function(program, index) {
+                    programs.forEach(function (program, index) {
                         Affilinet.getVoucherCodes({
                             ProgramId: program.ProgramID
-                        }, function(err, response, vouchers) {
+                        }, function (err, response, vouchers) {
                             parseString(vouchers, {
                                 explicitArray: false,
                                 async: true,
-                            }, function(err, vouchers) {
+                            }, function (err, vouchers) {
                                 var vouchers = vouchers.GetVoucherCodesResponse.VoucherCodeCollection.VoucherCode || [];
                                 if (vouchers.constructor != Array) {
                                     vouchers = [vouchers];
                                 }
-                                vouchers.forEach(function(voucher, index, object) {
+                                vouchers.forEach(function (voucher, index, object) {
                                     voucher.Program = program.Title;
                                     if (voucher.ActivePartnership == "true") {
                                         allVouchers.push(voucher);
@@ -319,7 +325,7 @@ router.get('/voucher', auth, function(req, res, next) {
             }
         }).sort({
             updated_at: -1
-        }).exec(function(err, vouchers) {
+        }).exec(function (err, vouchers) {
             req.session.vouchers = vouchers;
             res.render('controller/voucher', {
                 title: 'Vouchers Manage',
@@ -332,15 +338,15 @@ router.get('/voucher', auth, function(req, res, next) {
     }
 });
 
-router.post('/voucher_details', auth, function(req, res, next) {
-    req.session.vouchers.forEach(function(voucher, index) {
+router.post('/voucher_details', auth, function (req, res, next) {
+    req.session.vouchers.forEach(function (voucher, index) {
         if (voucher.Id == req.body.voucher_id) {
             return res.json(voucher);
         }
     });
 });
 
-router.get('/voucher/add', auth, function(req, res, next) {
+router.get('/voucher/add', auth, function (req, res, next) {
     var voucher = {};
     if (req.query.add_type == "auto") {
         voucher = req.session.vouchers[req.query.id];
@@ -352,19 +358,19 @@ router.get('/voucher/add', auth, function(req, res, next) {
     });
 });
 
-router.post('/voucher/add', auth, function(req, res, next) {
+router.post('/voucher/add', auth, function (req, res, next) {
     var voucher = req.body;
     var query = Voucher.where({
         Id: voucher.Id
     });
-    query.findOne(function(err, _voucher) {
+    query.findOne(function (err, _voucher) {
         if (err) next(err);
         if (!_voucher) {
             voucher.Image = JSON.parse(voucher.Image);
             if (voucher.DescriptionCN !== "" && voucher.IntegrationCodeCN !== "") {
                 voucher.Translated = true;
             }
-            Voucher.create(voucher, function(err, voucher) {
+            Voucher.create(voucher, function (err, voucher) {
                 if (err) next(err);
             });
         }
@@ -372,8 +378,8 @@ router.post('/voucher/add', auth, function(req, res, next) {
     });
 });
 
-router.get('/voucher/edit', auth, function(req, res, next) {
-    Voucher.findById(req.query.id, function(err, voucher) {
+router.get('/voucher/edit', auth, function (req, res, next) {
+    Voucher.findById(req.query.id, function (err, voucher) {
         if (err != null) next(err);
         else {
             res.render('controller/voucher_form', {
@@ -385,7 +391,7 @@ router.get('/voucher/edit', auth, function(req, res, next) {
     });
 });
 
-router.post('/voucher/edit', auth, function(req, res, next) {
+router.post('/voucher/edit', auth, function (req, res, next) {
     var voucher = req.body;
     if (voucher.DescriptionCN !== "" && voucher.IntegrationCodeCN !== "") {
         voucher.Translated = true;
@@ -397,7 +403,7 @@ router.post('/voucher/edit', auth, function(req, res, next) {
     }
     Voucher.findOneAndUpdate({
         _id: req.query.id
-    }, voucher, function(err, voucher) {
+    }, voucher, function (err, voucher) {
         if (err != null) next(err);
         else {
             res.redirect('/controller/voucher');
@@ -405,8 +411,8 @@ router.post('/voucher/edit', auth, function(req, res, next) {
     });
 });
 
-router.get('/voucher/remove', auth, function(req, res, next) {
-    Voucher.findByIdAndRemove(req.query.id, function(err, voucher) {
+router.get('/voucher/remove', auth, function (req, res, next) {
+    Voucher.findByIdAndRemove(req.query.id, function (err, voucher) {
         if (err != null) next(err);
         else {
             return res.redirect('/controller/voucher');
@@ -414,8 +420,8 @@ router.get('/voucher/remove', auth, function(req, res, next) {
     });
 });
 
-router.get('/voucher/remove_all', auth, function(req, res, next) {
-    Voucher.remove(function(err) {
+router.get('/voucher/remove_all', auth, function (req, res, next) {
+    Voucher.remove(function (err) {
         if (err)
             next(err);
         else
@@ -423,7 +429,7 @@ router.get('/voucher/remove_all', auth, function(req, res, next) {
     });
 });
 
-router.get('/product', auth, function(req, res, next) {
+router.get('/product', auth, function (req, res, next) {
     if (req.query.type == "remote") {
         var query = {
             ShopIds: req.query.shopid,
@@ -433,7 +439,7 @@ router.get('/product', auth, function(req, res, next) {
             query.ShopIdMode = "Include";
             query.UseAffilinetCategories = "false";
         }
-        Affilinet.searchProducts(query, function(err, response, results) {
+        Affilinet.searchProducts(query, function (err, response, results) {
             if (!err && response.statusCode == 200) {
                 var counter = results.ProductsSummary.TotalRecords;
                 var products = Utils.ToLocalProducts(results.Products, "affilinet");
@@ -455,7 +461,7 @@ router.get('/product', auth, function(req, res, next) {
     } else {
 
         if (req.query.EAN == undefined) {
-            Product.count({}, function(err, count) {
+            Product.count({}, function (err, count) {
                 var group = {
                     _id: "$EAN",
                     Id: {
@@ -543,7 +549,7 @@ router.get('/product', auth, function(req, res, next) {
                     "$sort": {
                         insert_at: -1
                     }
-                }], function(err, products) {
+                }], function (err, products) {
                     if (err) {
                         next(err);
                     } else {
@@ -564,14 +570,14 @@ router.get('/product', auth, function(req, res, next) {
         } else {
             Product.count({
                 EAN: req.query.EAN
-            }, function(err, count) {
+            }, function (err, count) {
                 Product.find({
                     EAN: req.query.EAN
-                }, function(err, products) {
+                }, function (err, products) {
                     if (err) {
                         next(err);
                     } else {
-                        products.forEach(function(product, index){
+                        products.forEach(function (product, index) {
                             product.Id = product._id;
                             product.Count = "-";
                         });
@@ -593,11 +599,11 @@ router.get('/product', auth, function(req, res, next) {
     }
 });
 
-router.post('/product', auth, function(req, res, next) {
+router.post('/product', auth, function (req, res, next) {
     var query = {};
     if (req.body.search_type == "Query") {
         query.Query = req.body.search_value;
-        Affilinet.searchProducts(query, function(err, response, results) {
+        Affilinet.searchProducts(query, function (err, response, results) {
             if (!err && response.statusCode == 200) {
                 var counter = results.ProductsSummary.TotalRecords;
                 var products = Utils.ToLocalProducts(results.Products, "affilinet");
@@ -606,7 +612,7 @@ router.post('/product', auth, function(req, res, next) {
                     Keywords: req.body.search_value,
                     ResponseGroup: "Large",
                     MerchantId: "Amazon"
-                }, function(err, results) {
+                }, function (err, results) {
                     if (!err) {
                         counter = "Affilinet: " + counter + " | Amazon: " + results.Items.TotalResults;
                         var _products = [];
@@ -640,7 +646,7 @@ router.post('/product', auth, function(req, res, next) {
             ItemId: req.body.search_value,
             ResponseGroup: "Large",
             MerchantId: "Amazon"
-        }, function(err, product) {
+        }, function (err, product) {
             if (!err) {
                 var counter = 0;
                 var products = [];
@@ -672,11 +678,11 @@ router.post('/product', auth, function(req, res, next) {
         });
     } else if (req.body.search_type == "EAN") {
         query.FQ = "EAN:" + req.body.search_value;
-        Affilinet.searchProducts(query, function(err, response, results) {
+        Affilinet.searchProducts(query, function (err, response, results) {
             if (!err && response.statusCode == 200) {
                 var products = Utils.ToLocalProducts(results.Products, "affilinet");
                 query.FQ = "EAN:0" + req.body.search_value;
-                Affilinet.searchProducts(query, function(err, response, results) {
+                Affilinet.searchProducts(query, function (err, response, results) {
                     if (!err && response.statusCode == 200) {
                         var _product = Utils.ToLocalProducts(results.Products, "affilinet");
                         if (!Utils.isEmptyObject(_product)) {
@@ -688,7 +694,7 @@ router.post('/product', auth, function(req, res, next) {
                             SearchIndex: "All",
                             ResponseGroup: "Large",
                             MerchantId: "Amazon"
-                        }, function(err, product) {
+                        }, function (err, product) {
                             if (!err) {
                                 var _product = {};
                                 if (Array.isArray(product.Items.Item)) {
@@ -726,7 +732,7 @@ router.post('/product', auth, function(req, res, next) {
     }
 });
 
-router.get('/product/add', auth, function(req, res, next) {
+router.get('/product/add', auth, function (req, res, next) {
     var product = {};
     if (req.query.add_type == "auto") {
         product = req.session.products[req.query.id];
@@ -738,7 +744,7 @@ router.get('/product/add', auth, function(req, res, next) {
     });
 });
 
-router.post('/product/add', auth, function(req, res, next) {
+router.post('/product/add', auth, function (req, res, next) {
     var product = req.body;
     var query = Product.where({
         ProductId: product.ProductId,
@@ -756,7 +762,7 @@ router.post('/product/add', auth, function(req, res, next) {
         Height: product.PackageDimensions_Height,
         Weight: product.PackageDimensions_Weight
     };
-    query.findOne(function(err, _product) {
+    query.findOne(function (err, _product) {
         if (err) next(err);
         if (!_product) {
             product.ProductImageSet = JSON.parse(product.ProductImageSet);
@@ -764,14 +770,17 @@ router.post('/product/add', auth, function(req, res, next) {
                 product.Translated = true;
             }
             product.insert_at = new Date();
-            Product.create(product, function(err, product) {
-                if (err) {
-                    next(err);
-                }
+            Utils.shortURL(product.URL, function (err, shorturl) {
+                product.ShortURL = shorturl;
+                Product.create(product, function (err, product) {
+                    if (err) {
+                        next(err);
+                    }
+                });
             });
         }
         if (product.EAN !== null && product.EAN !== "") {
-            Utils.syncProductByEAN(Affilinet, prodAdv, Product, product.EAN, function(update_count, deactiv_count) {
+            Utils.syncProductByEAN(Affilinet, prodAdv, Product, product.EAN, function (update_count, deactiv_count) {
                 return res.redirect('/controller/product');
             });
         } else {
@@ -780,8 +789,8 @@ router.post('/product/add', auth, function(req, res, next) {
     });
 });
 
-router.get('/product/edit', auth, function(req, res, next) {
-    Product.findById(req.query.id, function(err, product) {
+router.get('/product/edit', auth, function (req, res, next) {
+    Product.findById(req.query.id, function (err, product) {
         if (err != null) next(err);
         else {
             res.render('controller/product_form', {
@@ -793,7 +802,7 @@ router.get('/product/edit', auth, function(req, res, next) {
     });
 });
 
-router.post('/product/edit', auth, function(req, res, next) {
+router.post('/product/edit', auth, function (req, res, next) {
     var product = req.body;
     product.ItemDimensions = {
         Length: product.ItemDimensions_Length,
@@ -814,11 +823,11 @@ router.post('/product/edit', auth, function(req, res, next) {
     product.insert_at = new Date();
     Product.findOneAndUpdate({
         _id: req.query.id
-    }, product, function(err, _product) {
+    }, product, function (err, _product) {
         if (err != null) next(err);
         else {
             if (Product.EAN !== null && Product.EAN !== "") {
-                Utils.syncProductByEAN(Affilinet, prodAdv, Product, Product.EAN, function(update_count, deactiv_count) {
+                Utils.syncProductByEAN(Affilinet, prodAdv, Product, Product.EAN, function (update_count, deactiv_count) {
                     return res.redirect('/controller/product');
                 });
             } else {
@@ -828,8 +837,8 @@ router.post('/product/edit', auth, function(req, res, next) {
     });
 });
 
-router.post('/product/auto_add', auth, function(req, res, next) {
-    Utils.syncProductByEAN(Affilinet, prodAdv, Product, req.body.ean, function(update_count, deactiv_count) {
+router.post('/product/auto_add', auth, function (req, res, next) {
+    Utils.syncProductByEAN(Affilinet, prodAdv, Product, req.body.ean, function (update_count, deactiv_count) {
         res.json({
             update_count: update_count,
             deactiv_count: deactiv_count
@@ -837,56 +846,56 @@ router.post('/product/auto_add', auth, function(req, res, next) {
     });
 });
 
-router.post('/product/hot', auth, function(req, res, next) {
+router.post('/product/hot', auth, function (req, res, next) {
     var Hot = (req.body.hot === 'true');
     Product.update({
         EAN: req.body.ean
     }, {
-        Hot: Hot
-    }, {
-        multi: true
-    }, function(err, doc) {
-        if (err) return next(err);
-        res.json({
-            status: 'success'
+            Hot: Hot
+        }, {
+            multi: true
+        }, function (err, doc) {
+            if (err) return next(err);
+            res.json({
+                status: 'success'
+            });
         });
-    });
 });
 
-router.post('/product/translate', auth, function(req, res, next) {
+router.post('/product/translate', auth, function (req, res, next) {
     var Translated = (req.body.translate === 'true');
     Product.update({
         EAN: req.body.ean
     }, {
-        Translated: Translated
-    }, {
-        multi: true
-    }, function(err, doc) {
-        if (err) return next(err);
-        res.json({
-            status: 'success'
+            Translated: Translated
+        }, {
+            multi: true
+        }, function (err, doc) {
+            if (err) return next(err);
+            res.json({
+                status: 'success'
+            });
         });
-    });
 });
 
-router.post('/product/activity', auth, function(req, res, next) {
+router.post('/product/activity', auth, function (req, res, next) {
     var Activity = (req.body.activity === 'true');
     Product.update({
         _id: req.body.id
     }, {
-        Activity: Activity
-    }, {
-        multi: true
-    }, function(err, doc) {
-        if (err) return next(err);
-        res.json({
-            status: 'success'
+            Activity: Activity
+        }, {
+            multi: true
+        }, function (err, doc) {
+            if (err) return next(err);
+            res.json({
+                status: 'success'
+            });
         });
-    });
 });
 
-router.get('/product/remove', auth, function(req, res, next) {
-    Product.findByIdAndRemove(req.query.id, function(err, product) {
+router.get('/product/remove', auth, function (req, res, next) {
+    Product.findByIdAndRemove(req.query.id, function (err, product) {
         if (err != null) next(err);
         else {
             return res.redirect('/controller/product');
@@ -894,10 +903,10 @@ router.get('/product/remove', auth, function(req, res, next) {
     });
 });
 
-router.get('/product/remove_ean', auth, function(req, res, next) {
+router.get('/product/remove_ean', auth, function (req, res, next) {
     Product.remove({
         EAN: req.query.ean
-    }, function(err) {
+    }, function (err) {
         if (err)
             next(err);
         else
@@ -905,10 +914,10 @@ router.get('/product/remove_ean', auth, function(req, res, next) {
     });
 });
 
-router.get('/product/remove_deactived', auth, function(req, res, next) {
+router.get('/product/remove_deactived', auth, function (req, res, next) {
     Product.remove({
         Activity: false
-    }, function(err) {
+    }, function (err) {
         if (err)
             next(err);
         else
@@ -916,8 +925,8 @@ router.get('/product/remove_deactived', auth, function(req, res, next) {
     });
 });
 
-router.get('/product/remove_all', auth, function(req, res, next) {
-    Product.remove(function(err) {
+router.get('/product/remove_all', auth, function (req, res, next) {
+    Product.remove(function (err) {
         if (err)
             next(err);
         else
@@ -925,8 +934,8 @@ router.get('/product/remove_all', auth, function(req, res, next) {
     });
 });
 
-router.get('/article', auth, function(req, res, next) {
-    Article.find({}, function(err, articles) {
+router.get('/article', auth, function (req, res, next) {
+    Article.find({}, function (err, articles) {
         if (err) {
             next(err);
         } else {
@@ -939,7 +948,7 @@ router.get('/article', auth, function(req, res, next) {
     });
 });
 
-router.get('/article/add', auth, function(req, res, next) {
+router.get('/article/add', auth, function (req, res, next) {
     res.render('controller/article_form', {
         title: 'Add Article',
         article: '',
@@ -947,9 +956,9 @@ router.get('/article/add', auth, function(req, res, next) {
     });
 });
 
-router.post('/article/add', auth, function(req, res, next) {
+router.post('/article/add', auth, function (req, res, next) {
     req.body.Image = JSON.parse(req.body.Image);
-    Article.create(req.body, function(err, article) {
+    Article.create(req.body, function (err, article) {
         if (err) {
             next(err);
         }
@@ -957,8 +966,8 @@ router.post('/article/add', auth, function(req, res, next) {
     });
 });
 
-router.get('/article/edit', auth, function(req, res, next) {
-    Article.findById(req.query.id, function(err, article) {
+router.get('/article/edit', auth, function (req, res, next) {
+    Article.findById(req.query.id, function (err, article) {
         if (err != null) next(err);
         else {
             res.render('controller/article_form', {
@@ -970,11 +979,11 @@ router.get('/article/edit', auth, function(req, res, next) {
     });
 });
 
-router.post('/article/edit', auth, function(req, res, next) {
+router.post('/article/edit', auth, function (req, res, next) {
     req.body.Image = JSON.parse(req.body.Image);
     Article.findOneAndUpdate({
         _id: req.query.id
-    }, req.body, function(err, article) {
+    }, req.body, function (err, article) {
         if (err != null) next(err);
         else {
             res.redirect('/controller/article');
@@ -982,8 +991,8 @@ router.post('/article/edit', auth, function(req, res, next) {
     });
 });
 
-router.get('/article/remove', auth, function(req, res, next) {
-    Article.findByIdAndRemove(req.query.id, function(err, article) {
+router.get('/article/remove', auth, function (req, res, next) {
+    Article.findByIdAndRemove(req.query.id, function (err, article) {
         if (err != null) next(err);
         else {
             return res.redirect('/controller/article');
@@ -991,8 +1000,8 @@ router.get('/article/remove', auth, function(req, res, next) {
     });
 });
 
-router.get('/article/remove_all', auth, function(req, res, next) {
-    Article.remove(function(err) {
+router.get('/article/remove_all', auth, function (req, res, next) {
+    Article.remove(function (err) {
         if (err)
             next(err);
         else
@@ -1000,12 +1009,12 @@ router.get('/article/remove_all', auth, function(req, res, next) {
     });
 });
 
-router.get('/feedback', auth, function(req, res, next) {
-    Feedback.find({}, function(err, feedbacks) {
+router.get('/feedback', auth, function (req, res, next) {
+    Feedback.find({}, function (err, feedbacks) {
         if (err) {
             next(err);
         } else {
-            Request.find({}, function(err, requests) {
+            Request.find({}, function (err, requests) {
                 if (err) {
                     next(err);
                 } else {
@@ -1022,16 +1031,16 @@ router.get('/feedback', auth, function(req, res, next) {
     });
 });
 
-router.get('/feedback/remove', auth, function(req, res, next) {
+router.get('/feedback/remove', auth, function (req, res, next) {
     if (req.query.type == "feedback") {
-        Feedback.findByIdAndRemove(req.query.id, function(err, feedback) {
+        Feedback.findByIdAndRemove(req.query.id, function (err, feedback) {
             if (err != null) next(err);
             else {
                 return res.redirect('/controller/feedback');
             }
         });
     } else if (req.query.type == "request") {
-        Request.findByIdAndRemove(req.query.id, function(err, request) {
+        Request.findByIdAndRemove(req.query.id, function (err, request) {
             if (err != null) next(err);
             else {
                 return res.redirect('/controller/feedback');

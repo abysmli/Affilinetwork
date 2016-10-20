@@ -1,5 +1,7 @@
-module.exports = (function() {
-    function _Class() {}
+var Link = require("../models/link");
+
+module.exports = (function () {
+    function _Class() { }
 
     _Class.prototype.findByEAN = function findByEAN(product, EAN) {
         for (var i = 0; i < product.length; i++) {
@@ -16,7 +18,7 @@ module.exports = (function() {
             if (product.OfferSummary.TotalNew !== "0") {
                 var _images = [];
                 if (product.ImageSets !== undefined && Array.isArray(product.ImageSets.ImageSet)) {
-                    product.ImageSets.ImageSet.forEach(function(image) {
+                    product.ImageSets.ImageSet.forEach(function (image) {
                         _images.push(image.LargeImage.URL);
                     });
                 }
@@ -36,6 +38,7 @@ module.exports = (function() {
                     ProductId: product.ProductId || null,
                     ASIN: product.ASIN || null,
                     URL: product.DetailPageURL || null,
+                    ShortURL: this.shortURL(product.DetailPageURL, function (err, shortURL) { }),
                     ProductName: product.ProductName || null,
                     SalesRank: product.SalesRank || null,
                     ProductImage: (product.LargeImage !== undefined) ? product.LargeImage.URL || null : null,
@@ -72,6 +75,7 @@ module.exports = (function() {
             ProductId: product.ProductId || null,
             ASIN: null,
             URL: product.Deeplink1 || null,
+            ShortURL: this.shortURL(product.Deeplink1, function (err, shortURL) { }),
             ProductName: product.ProductName || null,
             SalesRank: null,
             ProductImage: (product.Images[0][0] !== undefined) ? product.Images[0][0].URL || null : null,
@@ -113,6 +117,7 @@ module.exports = (function() {
             ProductCount: shop.ProductCount || null,
             ProgramId: shop.ProgramId || null,
             ShopLink: shop.ShopLink || null,
+            ShortURL: shop.ShortURL || null,
             LastUpdate: shop.LastUpdate || null,
             ShipToChina: false,
             Activity: 'activ',
@@ -129,9 +134,9 @@ module.exports = (function() {
         var self = this;
         var _products = [];
         if (products) {
-            products.forEach(function(product) {
+            products.forEach(function (product) {
                 var _product = {};
-                (type == "amazon") ? _product = self.fromAmazonToLocalProduct(product): _product = self.fromAffilinetToLocalProduct(product);
+                (type == "amazon") ? _product = self.fromAmazonToLocalProduct(product) : _product = self.fromAffilinetToLocalProduct(product);
                 if (!self.isEmptyObject(_product)) {
                     _products.push(_product);
                 }
@@ -185,14 +190,14 @@ module.exports = (function() {
         var query = {};
         query.FQ = "EAN:" + ean;
         var Time1 = new Date().getTime();
-        Affilinet.searchProducts(query, function(err, response, results) {
+        Affilinet.searchProducts(query, function (err, response, results) {
             if (!err && response.statusCode == 200) {
                 var _Time1 = new Date().getTime();
                 console.log("EAN: " + ean + " | Step 1 time cost: " + (_Time1 - Time1) + "ms");
                 var products = _this.ToLocalProducts(results.Products, "affilinet");
                 query.FQ = "EAN:0" + ean;
                 var Time2 = new Date().getTime();
-                Affilinet.searchProducts(query, function(err, response, results) {
+                Affilinet.searchProducts(query, function (err, response, results) {
                     if (!err && response.statusCode == 200) {
                         var _Time2 = new Date().getTime();
                         console.log("EAN: " + ean + " | Step 2 time cost: " + (_Time2 - Time2) + "ms");
@@ -207,7 +212,7 @@ module.exports = (function() {
                             SearchIndex: "All",
                             ResponseGroup: "Large",
                             MerchantId: "Amazon"
-                        }, function(err, product) {
+                        }, function (err, product) {
                             if (!err) {
                                 var _Time3 = new Date().getTime();
                                 console.log("EAN: " + ean + " | Step 3 time cost: " + (_Time3 - Time3) + "ms");
@@ -222,7 +227,7 @@ module.exports = (function() {
                                 }
                                 var update_count = 0;
                                 if (products.length != 0) {
-                                    products.forEach(function(product, index) {
+                                    products.forEach(function (product, index) {
                                         delete product['Brand'];
                                         delete product['Category'];
                                         delete product['Keywords'];
@@ -236,44 +241,50 @@ module.exports = (function() {
                                             product.EAN = "0" + product.EAN;
                                         }
                                         if (product.Source == "Affilinet") {
-                                            Product.update({ ProductId: product.ProductId }, product, { upsert: true }, function(err, raw) {
-                                                if (err) {
-                                                    console.log("Error occured at saving Affilinet Product into Database: " + JSON.stringify(err));
-                                                    return cb(0, 0, true);
-                                                }
-                                                console.log("Affilinet Update Count: " + (update_count + 1) + " | Length: " + products.length);
-                                                if (++update_count == products.length) {
-                                                    var Time4 = new Date().getTime();
-                                                    _this.updateProductDatabase(Product, products, ean, update_count, function(update_count, deactiv_count) {
-                                                        var _Time4 = new Date().getTime();
-                                                        console.log("EAN: " + ean + " | Step 4 time cost: " + (_Time4 - Time4) + "ms");
-                                                        console.log("EAN: " + ean + " | All Step time cost: " + (_Time4 - Time1) + "ms");
-                                                        cb(update_count, deactiv_count, false);
-                                                    });
-                                                }
+                                            _this.shortURL(product.URL, function(err, shorturl){
+                                                product.ShortURL = shorturl;
+                                                Product.update({ ProductId: product.ProductId }, product, { upsert: true }, function (err, raw) {
+                                                    if (err) {
+                                                        console.log("Error occured at saving Affilinet Product into Database: " + JSON.stringify(err));
+                                                        return cb(0, 0, true);
+                                                    }
+                                                    console.log("Affilinet Update Count: " + (update_count + 1) + " | Length: " + products.length);
+                                                    if (++update_count == products.length) {
+                                                        var Time4 = new Date().getTime();
+                                                        _this.updateProductDatabase(Product, products, ean, update_count, function (update_count, deactiv_count) {
+                                                            var _Time4 = new Date().getTime();
+                                                            console.log("EAN: " + ean + " | Step 4 time cost: " + (_Time4 - Time4) + "ms");
+                                                            console.log("EAN: " + ean + " | All Step time cost: " + (_Time4 - Time1) + "ms");
+                                                            cb(update_count, deactiv_count, false);
+                                                        });
+                                                    }
+                                                });
                                             });
                                         } else if (product.Source == "Amazon") {
-                                            Product.update({ ASIN: product.ASIN }, product, { upsert: true }, function(err, raw) {
-                                                if (err) {
-                                                    console.log("Error occured at saving Amazon Product into Database: " + JSON.stringify(err));
-                                                    return cb(0, 0, true);
-                                                }
-                                                console.log("Amazon Update Count: " + (update_count + 1) + " | Length: " + products.length);
-                                                if (++update_count == products.length) {
-                                                    var Time4 = new Date().getTime();
-                                                    _this.updateProductDatabase(Product, products, ean, update_count, function(update_count, deactiv_count) {
-                                                        var _Time4 = new Date().getTime();
-                                                        console.log("EAN: " + ean + " | Step 4 time cost: " + (_Time4 - Time4) + "ms");
-                                                        console.log("EAN: " + ean + " | All Step time cost: " + (_Time4 - Time1) + "ms");
-                                                        cb(update_count, deactiv_count, false);
-                                                    });
-                                                }
+                                            _this.shortURL(product.URL, function (err, shorturl) {
+                                                product.ShortURL = shorturl;
+                                                Product.update({ ASIN: product.ASIN }, product, { upsert: true }, function (err, raw) {
+                                                    if (err) {
+                                                        console.log("Error occured at saving Amazon Product into Database: " + JSON.stringify(err));
+                                                        return cb(0, 0, true);
+                                                    }
+                                                    console.log("Amazon Update Count: " + (update_count + 1) + " | Length: " + products.length);
+                                                    if (++update_count == products.length) {
+                                                        var Time4 = new Date().getTime();
+                                                        _this.updateProductDatabase(Product, products, ean, update_count, function (update_count, deactiv_count) {
+                                                            var _Time4 = new Date().getTime();
+                                                            console.log("EAN: " + ean + " | Step 4 time cost: " + (_Time4 - Time4) + "ms");
+                                                            console.log("EAN: " + ean + " | All Step time cost: " + (_Time4 - Time1) + "ms");
+                                                            cb(update_count, deactiv_count, false);
+                                                        });
+                                                    }
+                                                });
                                             });
                                         }
                                     });
                                 } else {
                                     var Time4 = new Date().getTime();
-                                    _this.updateProductDatabase(Product, products, ean, update_count, function(update_count, deactiv_count) {
+                                    _this.updateProductDatabase(Product, products, ean, update_count, function (update_count, deactiv_count) {
                                         var _Time4 = new Date().getTime();
                                         console.log("EAN: " + ean + " | Step 4 time cost: " + (_Time4 - Time4) + "ms");
                                         console.log("EAN: " + ean + " | All Step time cost: " + (_Time4 - Time1) + "ms");
@@ -298,24 +309,24 @@ module.exports = (function() {
     }
 
     _Class.prototype.updateProductDatabase = function updateProductDatabase(Product, products, ean, update_count, cb) {
-        Product.findOne({ EAN: ean, Translated: true }, {}, { sort: { 'insert_at': -1 } }, function(err, lastChangedProduct) {
-            Product.find({ EAN: ean }, {}, { sort: { 'insert_at': -1 } }, function(err, _products) {
+        Product.findOne({ EAN: ean, Translated: true }, {}, { sort: { 'insert_at': -1 } }, function (err, lastChangedProduct) {
+            Product.find({ EAN: ean }, {}, { sort: { 'insert_at': -1 } }, function (err, _products) {
                 if (lastChangedProduct == {} || lastChangedProduct == null) {
                     lastChangedProduct = _products[0];
                 }
                 var product_count = 0,
                     deactiv_count = 0;
 
-                _products.forEach(function(_product, index) {
+                _products.forEach(function (_product, index) {
                     console.log("Database -- Local ProductId: " + _product.ProductId + " | Local ASIN: " + _product.ASIN);
                 });
-                products.forEach(function(product, index) {
+                products.forEach(function (product, index) {
                     console.log("Database -- Remote ProductId: " + product.ProductId + " | Remote ASIN: " + product.ASIN);
                 });
 
-                _products.forEach(function(_product, index) {
+                _products.forEach(function (_product, index) {
                     var existFlag = false;
-                    products.forEach(function(product, index) {
+                    products.forEach(function (product, index) {
                         if (((product.ProductId == _product.ProductId) && (_product.ProductId != null) && (_product.ProductId != "null") && (_product.ProductId != "")) || ((product.ASIN == _product.ASIN) && (_product.ASIN != null) && (_product.ASIN != "null") && (_product.ASIN != ""))) {
                             existFlag = true;
                         }
@@ -323,7 +334,7 @@ module.exports = (function() {
                     if (_product.Source == "Amazon") {
                         _product.ShopId = "-1";
                     }
-                    existFlag ? null : ( _product.Activity ? deactiv_count++ : null );
+                    existFlag ? null : (_product.Activity ? deactiv_count++ : null);
                     _product.Activity = existFlag;
                     _product.Brand = lastChangedProduct.Brand || "";
                     _product.Category = lastChangedProduct.Category || "";
@@ -340,7 +351,7 @@ module.exports = (function() {
                     _product.Translated = lastChangedProduct.Translated || false;
                     _product.Hot = lastChangedProduct.Hot || false;
                     _product.update_at = new Date();
-                    _product.save(function(err) {
+                    _product.save(function (err) {
                         if (err) {
                             console.log("Error occured at updating Product!" + JSON.stringify(err));
                             return cb(update_count, deactiv_count, true);
@@ -364,6 +375,43 @@ module.exports = (function() {
             avatar_url: user.avatar_url
         };
         return _user;
+    }
+
+    _Class.prototype.shortURL = function shortURL(newURL, cb) {
+        var makeText = function () {
+            var text = "";
+            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            for (var i = 0; i < 5; i++) {
+                text += possible.charAt(Math.floor(Math.random() * possible.length));
+            }
+            return text;
+        }
+        var text = makeText();
+        var checkText = function () {
+            Link.findOne({ short: text }, function (err, url) {
+                if (url) {
+                    text = makeText();
+                    checkText();
+                }
+                else {
+                    Link.findOne({ long: newURL }, function (err, url) {
+                        if (url) {
+                            cb(null, url.short);
+                        } else {
+                            var newLink = Link({
+                                short: text,
+                                long: newURL
+                            });
+                            newLink.save(function (err, obj) {
+                                if (err) return cb(err, null);
+                                cb(null, obj.short);
+                            });
+                        }
+                    });
+                }
+            })
+        }
+        checkText();
     }
 
     return _Class;
