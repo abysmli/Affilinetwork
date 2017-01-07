@@ -38,7 +38,7 @@ var Affilinet = new affilinet({
 });
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
     var group1 = {
         _id: "$EAN",
         ProductId: {
@@ -114,7 +114,7 @@ router.get('/', function(req, res, next) {
         "$sort": {
             "_id": 1
         }
-    }], function(err, brands) {
+    }], function (err, brands) {
         Product.aggregate([{
             "$match": {
                 $and: [{
@@ -133,7 +133,7 @@ router.get('/', function(req, res, next) {
             "$group": group1
         }, {
             "$group": group2
-        }], function(err, products) {
+        }], function (err, products) {
             res.render('index', {
                 title: 'Allhaha 欧哈哈德国优选购物 － 商品比价 － 优惠券',
                 footer_bottom: false,
@@ -147,7 +147,7 @@ router.get('/', function(req, res, next) {
 });
 
 
-router.get('/filter', function(req, res, next) {
+router.get('/filter', function (req, res, next) {
     var page = req.query.page || 1;
     var search = req.query.search || "";
     var category = req.query.category || "";
@@ -245,8 +245,8 @@ router.get('/filter', function(req, res, next) {
         "$sort": {
             "_id": 1
         }
-    }], function(err, brands) {
-        Product.distinct("EAN", matchQuery, function(err, results) {
+    }], function (err, brands) {
+        Product.distinct("EAN", matchQuery, function (err, results) {
             var pages = Math.ceil(results.length / ItemOnPage);
             Product.aggregate([{
                 "$match": matchQuery
@@ -258,25 +258,25 @@ router.get('/filter', function(req, res, next) {
                 "$skip": (page - 1) * ItemOnPage
             }, {
                 "$limit": ItemOnPage
-            }], function(err, products) {
+            }], function (err, products) {
                 if (err != null) {
                     next(err);
                 } else {
                     var iterateNum = 0;
                     if (products.length != 0) {
-                        products.forEach(function(product, index) {
+                        products.forEach(function (product, index) {
                             Product.find({
                                 EAN: product._id
                             }).stream()
-                                .on("error", function(err) {
+                                .on("error", function (err) {
                                     next(err);
                                 })
-                                .on("data", function(_product) {
+                                .on("data", function (_product) {
                                     product.ProductName.push(_product.TitleCN);
                                     product.DescriptionCN.push(_product.DescriptionCN);
                                     product.Price.push(_product.Price);
                                 })
-                                .on("close", function() {
+                                .on("close", function () {
                                     if (++iterateNum == products.length) {
                                         if (page == 1 && search == "" && category == "" && minprice == Number.NEGATIVE_INFINITY && maxprice == Number.POSITIVE_INFINITY) {
                                             Product.aggregate([{
@@ -298,21 +298,21 @@ router.get('/filter', function(req, res, next) {
                                                 "$sort": {
                                                     SalesRank: -1
                                                 }
-                                            }], function(err, hotproducts) {
+                                            }], function (err, hotproducts) {
                                                 var iterateNumber = 0;
-                                                hotproducts.forEach(function(hotproduct, index) {
+                                                hotproducts.forEach(function (hotproduct, index) {
                                                     Product.find({
                                                         EAN: hotproduct._id
                                                     }).stream()
-                                                        .on("error", function(err) {
+                                                        .on("error", function (err) {
                                                             next(err);
                                                         })
-                                                        .on("data", function(_hotproduct) {
+                                                        .on("data", function (_hotproduct) {
                                                             hotproduct.ProductName.push(_hotproduct.TitleCN);
                                                             hotproduct.DescriptionCN.push(_hotproduct.DescriptionCN);
                                                             hotproduct.Price.push(_hotproduct.Price);
                                                         })
-                                                        .on("close", function() {
+                                                        .on("close", function () {
                                                             if (++iterateNumber == hotproducts.length) {
                                                                 res.render('product_list.ejs', {
                                                                     title: 'Allhaha 欧哈哈德国优选购物 － 商品比价 － 优惠券',
@@ -367,76 +367,76 @@ router.get('/filter', function(req, res, next) {
     });
 });
 
-router.get('/product', function(req, res, next) {
+router.get('/product', function (req, res, next) {
     var currenturl = req.protocol + '://' + req.get('host') + req.originalUrl;
     var query = Product.where({
         _id: req.query.product_id,
     });
-    query.findOne(function(err, _product) {
+    query.findOne(function (err, _product) {
         if (_product != undefined && _product != {}) {
             Product.find({
                 EAN: _product.EAN,
                 Activity: true
             }, null, {
-                sort: {
-                    Price: 1
-                }
-            }, function(err, _products) {
-                if (err != null || _products.length == 0) next(err);
-                else {
-                    Product.update({
-                        EAN: _products[0].EAN
-                    }, {
-                        Views: _products[0].Views + 1
-                    }, {
-                        multi: true
-                    }, function(err, doc) {
-                        if (err) return next(err);
-                        var productsCount = 0;
-                        _products.forEach(function(__product, index) {
-                            Shop.findOne({
-                                ShopId: __product.ShopId,
-                                Activity: true
-                            }, function(err, shop) {
-                                if (shop != null) {
-                                    __product.ShopName = shop.CustomTitleCN;
-                                } else {
-                                    __product.ShopId = "deactiv";
-                                }
-                                if (++productsCount == _products.length) {
-                                    res.render('product_details', {
-                                        title: _product.TitleCN,
-                                        footer_bottom: !Utils.checkMobile(req),
-                                        product: _product,
-                                        currenturl: currenturl,
-                                        product_link: req.url,
-                                        products: _products,
-                                        layout: '/layout',
-                                        user: req.user
+                    sort: {
+                        Price: 1
+                    }
+                }, function (err, _products) {
+                    if (err != null || _products.length == 0) next(err);
+                    else {
+                        Product.update({
+                            EAN: _products[0].EAN
+                        }, {
+                                Views: _products[0].Views + 1
+                            }, {
+                                multi: true
+                            }, function (err, doc) {
+                                if (err) return next(err);
+                                var productsCount = 0;
+                                _products.forEach(function (__product, index) {
+                                    Shop.findOne({
+                                        ShopId: __product.ShopId,
+                                        Activity: true
+                                    }, function (err, shop) {
+                                        if (shop != null) {
+                                            __product.ShopName = shop.CustomTitleCN;
+                                        } else {
+                                            __product.ShopId = "deactiv";
+                                        }
+                                        if (++productsCount == _products.length) {
+                                            res.render('product_details', {
+                                                title: _product.TitleCN,
+                                                footer_bottom: !Utils.checkMobile(req),
+                                                product: _product,
+                                                currenturl: currenturl,
+                                                product_link: req.url,
+                                                products: _products,
+                                                layout: '/layout',
+                                                user: req.user
+                                            });
+                                        }
                                     });
-                                }
+                                });
                             });
-                        });
-                    });
-                }
-            });
+                    }
+                });
         } else {
             next(err);
         }
     });
 });
 
-router.post('/favourite', function(req, res, next) {
+router.post('/favourite', function (req, res, next) {
     var data = {
         Username: req.body.Username,
         ProductEAN: req.body.ProductEAN,
     };
     if (data.Username != "" && data.Username != undefined && data.ProductEAN != "" && data.ProductEAN != undefined) {
         var query = Favourite.where(data);
-        query.findOne(function(err, _favourite) {
+        query.findOne(function (err, _favourite) {
             if (err) return res.status(500).send('Service Error!');
             if (!_favourite) {
-                Favourite.create(data, function(err, favourite) {
+                Favourite.create(data, function (err, favourite) {
                     if (err) {
                         return res.status(500).send('Service Error!');
                     } else {
@@ -456,12 +456,12 @@ router.post('/favourite', function(req, res, next) {
     }
 });
 
-router.get('/favourite', function(req, res, next) {
+router.get('/favourite', function (req, res, next) {
     Favourite.find({
         Username: req.user.username
-    }, function(err, favourites) {
+    }, function (err, favourites) {
         var productEANs = [];
-        favourites.forEach(function(favourite) {
+        favourites.forEach(function (favourite) {
             productEANs.push(favourite.ProductEAN);
         });
         var group = {
@@ -497,7 +497,7 @@ router.get('/favourite', function(req, res, next) {
             "$match": matchQuery
         }, {
             "$group": group
-        }], function(err, products) {
+        }], function (err, products) {
             res.render('favourite', {
                 title: '用户收藏',
                 footer_bottom: !Utils.checkMobile(req),
@@ -508,11 +508,11 @@ router.get('/favourite', function(req, res, next) {
     });
 });
 
-router.get('/favourite/remove', function(req, res, next) {
+router.get('/favourite/remove', function (req, res, next) {
     Favourite.remove({
         Username: req.user.username,
         ProductEAN: req.query.ean
-    }, function(err, feedback) {
+    }, function (err, feedback) {
         if (err != null) next(err);
         else {
             return res.redirect('/favourite');
@@ -520,8 +520,8 @@ router.get('/favourite/remove', function(req, res, next) {
     });
 });
 
-router.get('/article', function(req, res, next) {
-    Article.find({}, function(err, articles) {
+router.get('/article', function (req, res, next) {
+    Article.find({}, function (err, articles) {
         res.render('article', {
             title: '精彩的文章',
             footer_bottom: false,
@@ -531,8 +531,8 @@ router.get('/article', function(req, res, next) {
     });
 });
 
-router.get('/article_detail', function(req, res, next) {
-    Article.findById(req.query.id, function(err, article) {
+router.get('/article_detail', function (req, res, next) {
+    Article.findById(req.query.id, function (err, article) {
         if (article) {
             res.render('article_details', {
                 title: article.Title,
@@ -546,7 +546,7 @@ router.get('/article_detail', function(req, res, next) {
     });
 });
 
-router.get('/voucher', function(req, res, next) {
+router.get('/voucher', function (req, res, next) {
     var page = req.query.page || 1;
     var ItemOnPage = 10;
     var modal = false,
@@ -556,12 +556,12 @@ router.get('/voucher', function(req, res, next) {
         EndDate: {
             $gte: new Date()
         }
-    }, function(err, count) {
+    }, function (err, count) {
         var pages = Math.ceil(count / ItemOnPage);
         if (req.query.id != undefined) {
             Voucher.findOne({
                 Id: req.query.id
-            }, function(err, voucher) {
+            }, function (err, voucher) {
                 modal = true;
                 gutscheinCode = voucher.Code;
                 voucherContent = voucher.DescriptionCN;
@@ -571,7 +571,7 @@ router.get('/voucher', function(req, res, next) {
                     }
                 }).sort({
                     updated_at: -1
-                }).exec(function(err, vouchers) {
+                }).exec(function (err, vouchers) {
                     res.render('voucher', {
                         title: '折扣券',
                         footer_bottom: false,
@@ -594,7 +594,7 @@ router.get('/voucher', function(req, res, next) {
                 updated_at: -1
             }).skip((page - 1) * ItemOnPage)
                 .limit(ItemOnPage)
-                .exec(function(err, vouchers) {
+                .exec(function (err, vouchers) {
                     res.render('voucher', {
                         title: '折扣券',
                         footer_bottom: false,
@@ -611,7 +611,7 @@ router.get('/voucher', function(req, res, next) {
     });
 });
 
-router.get('/aboutus', function(req, res, next) {
+router.get('/aboutus', function (req, res, next) {
     res.render('aboutus', {
         title: '关于我们',
         footer_bottom: !Utils.checkMobile(req),
@@ -620,7 +620,7 @@ router.get('/aboutus', function(req, res, next) {
     });
 });
 
-router.get('/contact', function(req, res, next) {
+router.get('/contact', function (req, res, next) {
     res.render('contactus', {
         title: '联系我们',
         footer_bottom: !Utils.checkMobile(req),
@@ -629,7 +629,7 @@ router.get('/contact', function(req, res, next) {
     });
 });
 
-router.post('/contact', function(req, res, next) {
+router.post('/contact', function (req, res, next) {
     var feedback = {
         name: req.body.name,
         email: req.body.email,
@@ -647,7 +647,7 @@ router.post('/contact', function(req, res, next) {
             image: "",
             url: req.protocol + '://' + req.get('host')
         }
-    }, function(err) {
+    }, function (err) {
         if (err) return next(err);
     });
 
@@ -661,16 +661,16 @@ router.post('/contact', function(req, res, next) {
             image: "",
             url: req.protocol + '://' + req.get('host')
         }
-    }, function(err) {
+    }, function (err) {
         if (err) return next(err);
     });
 
-    new Feedback(feedback).save(function(err, todo, count) {
+    new Feedback(feedback).save(function (err, todo, count) {
         res.redirect('/');
     });
 });
 
-router.get('/product_request', function(req, res, next) {
+router.get('/product_request', function (req, res, next) {
     res.render('product_request', {
         title: '产品请求',
         footer_bottom: !Utils.checkMobile(req),
@@ -679,7 +679,7 @@ router.get('/product_request', function(req, res, next) {
     });
 });
 
-router.post('/product_request', function(req, res, next) {
+router.post('/product_request', function (req, res, next) {
     var request = {
         name: req.body.name,
         email: req.body.email,
@@ -697,7 +697,7 @@ router.post('/product_request', function(req, res, next) {
             image: request.image,
             url: req.protocol + '://' + req.get('host')
         }
-    }, function(err) {
+    }, function (err) {
         if (err) return next(err);
     });
 
@@ -711,24 +711,24 @@ router.post('/product_request', function(req, res, next) {
             image: "",
             url: req.protocol + '://' + req.get('host')
         }
-    }, function(err) {
+    }, function (err) {
         if (err) return next(err);
     });
 
-    new Request(request).save(function(err, todo, count) {
+    new Request(request).save(function (err, todo, count) {
         res.redirect('/');
     });
 });
 
-router.get('/ean', function(req, res, next) {
+router.get('/ean', function (req, res, next) {
     var query = {};
     query.FQ = "EAN:" + req.query.value;
-    Affilinet.searchProducts(query, function(err, response, results) {
+    Affilinet.searchProducts(query, function (err, response, results) {
         if (!err && response.statusCode == 200) {
             var counter = results.ProductsSummary.TotalRecords;
             var products = Utils.ToLocalProducts(results.Products, "affilinet");
             query.FQ = "EAN:0" + req.query.value;
-            Affilinet.searchProducts(query, function(err, response, results) {
+            Affilinet.searchProducts(query, function (err, response, results) {
                 if (!err && response.statusCode == 200) {
                     counter = parseInt(counter) + parseInt(results.ProductsSummary.TotalRecords);
                     var _product = Utils.ToLocalProducts(results.Products, "affilinet");
@@ -742,7 +742,7 @@ router.get('/ean', function(req, res, next) {
                         SearchIndex: "All",
                         ResponseGroup: "Large",
                         MerchantId: "Amazon"
-                    }, function(err, product) {
+                    }, function (err, product) {
                         if (!err) {
                             var _product = Utils.fromAmazonToLocalProduct(product.Items.Item);
                             if (!Utils.isEmptyObject(_product)) {
@@ -764,20 +764,20 @@ router.get('/ean', function(req, res, next) {
     });
 });
 
-router.get('/currencyExchange', function(req, res, next) {
+router.get('/currencyExchange', function (req, res, next) {
     request({
         url: "https://www.exchangerate-api.com/EUR/CNY?k=2d8c6e862f92ff48d10fa915"
-    }, function(err, response, data) {
+    }, function (err, response, data) {
         res.send(data);
     });
 });
 
-router.get('/nav', function(req, res, next) {
+router.get('/nav', function (req, res, next) {
     Shop.find({
         Activity: {
             $ne: false
         }
-    }, function(err, shops) {
+    }, function (err, shops) {
         if (err) next(err);
         res.render('nav', {
             title: '导航链接',
@@ -788,10 +788,10 @@ router.get('/nav', function(req, res, next) {
     });
 });
 
-router.post('/nav/customContent', function(req, res, next) {
+router.post('/nav/customContent', function (req, res, next) {
     if (req.query.id != undefined) {
         console.log(req.query.id);
-        Shop.findById(req.query.id, function(err, shop) {
+        Shop.findById(req.query.id, function (err, shop) {
             res.json({
                 content: shop.CustomContent || ""
             });
@@ -799,7 +799,7 @@ router.post('/nav/customContent', function(req, res, next) {
     } else {
         Shop.findOne({
             ShopId: req.query.ShopId
-        }, function(err, shop) {
+        }, function (err, shop) {
             if (shop != {} && shop != null) {
                 res.json({
                     content: shop.CustomContent
@@ -815,13 +815,13 @@ router.post('/nav/customContent', function(req, res, next) {
 });
 
 //logout
-router.get('/logout', function(req, res, next) {
+router.get('/logout', function (req, res, next) {
     req.logout();
     res.clearCookie("duoshuo_token");
     res.redirect(req.query.from || '/');
 });
 
-router.get('/test', function(req, res, next) {
+router.get('/test', function (req, res, next) {
     // prodAdv.call("ItemLookup", {
     //     ItemId: '0689122001159',
     //     IdType: "EAN",

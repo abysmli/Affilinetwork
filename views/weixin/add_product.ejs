@@ -1,0 +1,176 @@
+<div class="page-header">
+    <h1>添加产品</h1>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <form method="post" id="product_form">
+            <div class="form-group">
+                <label for="Source">Source</label>
+                <input type="text" class="form-control" id="Source" name="Source" placeholder="Source" readonly>
+            </div>
+            <div class="form-group">
+                <label for="Title">Title</label>
+                <input type="text" class="form-control" id="Title" name="Title" placeholder="Title">
+            </div>
+            <div class="form-group">
+                <label for="TitleCN">中文名称</label>
+                <input type="text" name="TitleCN" class="form-control" placeholder="中文名称" id="TitleCN">
+            </div>
+            <div class="form-group">
+                <label for="Description">Description</label>
+                <textarea rows="5" class="form-control" id="Description" name="Description" placeholder="Description"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="DescriptionCN">中文详细</label>
+                <div id="summernote"></div>
+            </div>
+           <div class="form-group">
+                <label for="ShopId">ShopId</label>
+                <input type="text" class="form-control" id="ShopId" name="ShopId" placeholder="ShopId">
+            </div>
+            <div class="form-group">
+                <label for="ShopName">ShopName</label>
+                <input type="text" class="form-control" id="ShopName" name="ShopName" placeholder="ShopName">
+            </div>
+            <div class="form-group">
+                <label for="Category">Category</label>
+                <select name="Category">
+                    <option>null</option>
+                    <option>服装鞋子</option>
+                    <option>食品饮食</option>
+                    <option>厨房用具</option>
+                    <option>电子产品</option>
+                    <option>母婴</option>
+                    <option>化妆品</option>
+                    <option>健康保健</option>
+                    <option>运动旅行</option>
+                    <option>居家用品</option>
+                    <option>钟表手饰</option>
+                    <option>办公</option>
+                    <option>打折券</option>
+                    <option>其他</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="Price">Price</label>
+                <input type="text" class="form-control" id="Price" name="Price" placeholder="Price">
+            </div>
+            <div class="form-group">
+                <label for="PriceCurrency">PriceCurrency</label>
+                <input type="text" class="form-control" id="PriceCurrency" name="PriceCurrency" placeholder="PriceCurrency">
+            </div>
+            <div class="form-group">
+                <label for="DeliveryTime">DeliveryTime</label>
+                <input type="text" class="form-control" id="DeliveryTime" name="DeliveryTime" placeholder="DeliveryTime">
+            </div>
+            <div class="form-group">
+                <label for="URL">URL</label>
+                <input type="text" class="form-control" id="URL" name="URL" placeholder="URL">
+            </div>
+            <div class="form-group">
+                <label for="SalesRank">SalesRank</label>
+                <input type="text" class="form-control" id="SalesRank" name="SalesRank" placeholder="SalesRank">
+            </div>
+            <div class="form-group">
+                <label for="EAN">EAN</label>
+                <input type="text" class="form-control" id="EAN" name="EAN" value="" placeholder="EAN">
+            </div>
+            <div class="form-group">
+                <label for="ProductId">ProductId (Affilinet Identification Number)</label>
+                <input type="text" class="form-control" id="ProductId" name="ProductId" placeholder="ProductId" readonly>
+            </div>
+            <div class="form-group">
+                <label for="ASIN">ASIN (Amazon Standard Identification Number)</label>
+                <input type="text" class="form-control" id="ASIN" name="ASIN" placeholder="ASIN" readonly>
+            </div>
+            <div class="form-group">
+                <label for="Brand">Brand</label>
+                <input type="text" class="form-control" id="Brand" name="Brand" placeholder="Brand">
+            </div>
+            <div class="form-group">
+                <label for="Manufactor">Manufactor</label>
+                <input type="text" class="form-control" id="Manufactor" name="Manufactor" placeholder="Manufactor">
+            </div>
+            <div class="form-group">
+                <label for="Keywords">Keywords</label>
+                <input type="text" class="form-control" id="Keywords" name="Keywords" placeholder="Keywords">
+            </div>
+            <div class="form-group">
+                <label for="Weight">Weight</label>
+                <input type="text" class="form-control" id="Weight" name="Weight" placeholder="Weight">
+            </div>
+            <div class="form-group form-inline">
+                <label for="Length">ItemDimensions</label>
+                <input type="text" class="form-control" id="Length" name="ItemDimensions_Length" placeholder="Length">
+                <input type="text" class="form-control" id="Width" name="ItemDimensions_Width" placeholder="Width">
+                <input type="text" class="form-control" id="Height" name="ItemDimensions_Height" placeholder="Height">
+                <input type="text" class="form-control" id="Weight" name="ItemDimensions_Weight" placeholder="Weight">
+            </div>
+            <div class="form-group form-inline">
+                <label for="Length">PackageDimensions</label>
+                <input type="text" class="form-control" id="Length" name="PackageDimensions_Length"  placeholder="Length">
+                <input type="text" class="form-control" id="Width" name="PackageDimensions_Width" placeholder="Width">
+                <input type="text" class="form-control" id="Height" name="PackageDimensions_Height" placeholder="Height">
+                <input type="text" class="form-control" id="Weight" name="PackageDimensions_Weight" placeholder="Weight">
+            </div>
+            <div class="form-group">
+                <label for="Views">Views</label>
+                <input type="text" class="form-control" id="Views" name="Views" placeholder="Views">
+            </div>
+            <div class="form-group">
+                <label for="Sales">Sales</label>
+                <input type="text" class="form-control" id="Sales" name="Sales" placeholder="Sales">
+            </div>
+            <div class="form-group">
+                <label for="SearchCount">SearchCount</label>
+                <input type="text" class="form-control" id="SearchCount" name="SearchCount" placeholder="SearchCount">
+            </div>
+            <div class="form-group">
+                <label for="Hot">Hot</label>
+                <select name="Hot">
+                    <option>true</option>
+                    <option>false</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="Activity">Activity</label>
+                <select name="Activity">
+                    <option>true</option>
+                    <option>false</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="ProductImage">ProductImage</label>
+                <input type="text" class="form-control" id="ProductImage" name="ProductImage" placeholder="ProductImage">
+            </div>
+            <div class="form-group">
+                <label for="ProductImageSet">ProductImageSet</label>
+                <textarea rows="5" class="form-control" id="ProductImageSet" name="ProductImageSet" placeholder="ProductImageSet"> </textarea>
+            </div>
+            <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-share-alt"></span> 添加产品</button>
+        </form>
+        <hr/>
+    </div>
+</div>
+<script>
+    $("#product_page").addClass("active");
+    $(document).ready(function() {
+        var _ean = "<%= EAN %>";
+        _ean = _ean.substr(_ean.length - 13);
+        $("#EAN").val(_ean);
+
+        $('#summernote').summernote({
+            height: 500,                 // set editor height
+            minHeight: null,             // set minimum height of editor
+            maxHeight: null,             // set maximum height of editor
+        });
+
+        $('#product_form').submit(function(event) {
+            var data = {
+                DescriptionCN: $('#summernote').summernote('code')
+            };
+            post(data, "product_form");
+        });
+    });
+
+</script>
