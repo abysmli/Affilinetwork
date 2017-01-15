@@ -28,6 +28,69 @@ router.get('/', function (req, res, next) {
     });
 });
 
+router.get('/prerequest', function (req, res, next) {
+    var query = {};
+    query.FQ = "EAN:" + req.query.value;
+    Affilinet.searchProducts(query, function (err, response, results) {
+        if (!err && response.statusCode == 200) {
+            var counter = results.ProductsSummary.TotalRecords;
+            var products = Utils.ToLocalProducts(results.Products, "affilinet");
+            query.FQ = "EAN:0" + req.query.value;
+            Affilinet.searchProducts(query, function (err, response, results) {
+                if (!err && response.statusCode == 200) {
+                    counter = parseInt(counter) + parseInt(results.ProductsSummary.TotalRecords);
+                    var _product = Utils.ToLocalProducts(results.Products, "affilinet");
+                    if (!Utils.isEmptyObject(_product)) {
+                        counter = parseInt(counter) + 1;
+                        products = products.concat(_product);
+                    }
+                    prodAdv.call("ItemLookup", {
+                        ItemId: req.query.value,
+                        IdType: "EAN",
+                        SearchIndex: "All",
+                        ResponseGroup: "Large",
+                        MerchantId: "Amazon"
+                    }, function (err, product) {
+                        if (!err) {
+                            var _product = Utils.fromAmazonToLocalProduct(product.Items.Item);
+                            if (!Utils.isEmptyObject(_product)) {
+                                counter = parseInt(counter) + 1;
+                                products.push(_product);
+                            }
+                            if (products.length !== 0) {
+                                var price = products[0].Price;
+                                products.forEach(function(product) {
+                                    if (price < product.Price) {
+                                        price = product.Price;
+                                    }
+                                });
+                                var data = {
+                                    Result: "success",
+                                    Title: products[0].Title,
+                                    Image: products[0].ProductImage,
+                                    Brand: products[0].Brand,
+                                    Price: price
+                                };
+                                res.json(data);
+                            } else {
+                                res.json({
+                                    Result: "产品未找到，我们将及时添加。"
+                                });
+                            }
+                        } else {
+                            res.send(err);
+                        }
+                    });
+                } else {
+                    res.send(err);
+                }
+            });
+        } else {
+            res.send(err);
+        }
+    });
+});
+
 router.get('/ean', function (req, res, next) {
     var group = {
         _id: "$EAN",
