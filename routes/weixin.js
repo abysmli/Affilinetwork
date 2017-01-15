@@ -110,7 +110,7 @@ router.get('/ean', function (req, res, next) {
         }, function (err, _products) {
             if (_products.length !== 0) {
                 scanResult.Result = "In Local";
-                res.redirect("/product？product_id=" + _products[0]._id);
+                res.redirect("/product?product_id=" + _products[0]._id);
             } else {
                 var query = {};
                 query.FQ = "EAN:" + req.query.value;
@@ -143,7 +143,7 @@ router.get('/ean', function (req, res, next) {
                                         if (products.length !== 0) {
                                             scanResult.Result = "In Cloud";
                                             Utils.syncProductByEAN(Affilinet, prodAdv, Product, req.query.value, function (update_count, deactiv_count) {
-                                                res.redirect("/de/product？product_id=" + _products[0]._id);
+                                                res.redirect("/de/product?product_id=" + _products[0]._id);
                                             });
                                         } else {
                                             scanResult.Result = "Not Found";
