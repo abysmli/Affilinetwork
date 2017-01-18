@@ -50,6 +50,10 @@ router.get('/', function (req, res, next) {
         TitleCN: {
             $first: "$TitleCN"
         },
+        Title: {
+            $first: "$Title"
+        },
+
         DescriptionCN: {
             $first: "$DescriptionCN"
         },
@@ -76,6 +80,9 @@ router.get('/', function (req, res, next) {
         },
         TitleCN: {
             $push: "$TitleCN"
+        },
+        Title: {
+            $push: "$Title"
         },
         DescriptionCN: {
             $push: "$DescriptionCN"
