@@ -1,0 +1,278 @@
+<div class="page-intro">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-10">
+                <ol class="breadcrumb">
+                    <li><i class="fa fa-home pr-10"></i><a href="/">主页</a></li>
+                    <li class="active">产品介绍</li>
+                </ol>
+            </div>
+            <div class="col-md-2">
+                <form role="search" action = "/" class="search-box" style="margin: 0 !important;">
+                    <div class="has-feedback">
+                        <input type="text" class="form-control" placeholder="搜索产品" name="search" style="-webkit-appearance: textfield; border-radius: 25px">
+                        <i class="fa fa-search form-control-feedback"></i>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="shopContentModal" tabindex="-1" role="dialog" aria-labelledby="shopContentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="shopContentModalLabel">店铺说明</h4>
+            </div>
+            <div class="modal-body" id="shop_custom_content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- page-intro end -->
+<!-- main-container start -->
+<!-- ================ -->
+<section class="main-container">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- main start -->
+            <!-- ================ -->
+            <div class="main col-md-12">
+                <!-- page-title start -->
+                <!-- ================ -->
+                <% for (var l = products.length, i = 0; i < l; i++) { %>
+                <% product = products[i]%>
+                <% if (product.TitleCN !== "" && product.TitleCN !== undefined) { %>
+                <h1 class="page-title margin-top-clear"><%= product.TitleCN %></h1>
+                <% break %>
+                <% } %>
+                <% } %>
+                <!-- page-title end -->
+                <div class="row">
+                    <div class="col-md-4">
+                        <!-- Nav tabs -->
+                        <!-- Tab panes start-->
+                        <div class="tab-content clear-style">
+                            <div class="tab-pane active" id="product-images">
+
+                                <div class="owl-carousel content-slider-with-controls-bottom">
+                                    <div class="overlay-container outside">
+                                        <img src="<%= product.ProductImage %>" alt="">
+                                        <a href="<%= product.ProductImage %>" class="popup-img overlay" title="<%= product.TitleCN %>"><i class="fa fa-search-plus"></i></a>
+                                    </div>
+                                    <% for (var i=0; i<product.ProductImageSet.length; i++) { %>
+                                        <div class="overlay-container outside">
+                                            <img src="<%= product.ProductImageSet[i] %>" alt="">
+                                            <a href="<%= product.ProductImageSet[i] %>" class="popup-img overlay" title="<%= product.TitleCN %>"><i class="fa fa-search-plus"></i></a>
+                                        </div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Tab panes end-->
+                            <hr/>
+                            <div class="elements-list pull-right clearfix">
+                                <a id="add_favourite_button" href="#"><span>收藏</span></a>
+                                <!--<a id="calc" href="#"><span>一键计算</span></a>-->
+                            </div>
+                            <div class="clearfix">
+                                <table class="table table-striped">
+                                    <tr>
+                                        <td>商家</td>
+                                        <td>价格</td>
+                                        <td>链接</td>
+                                    </tr>
+                                    <% products.forEach(function(product, index) { %>
+                                    <% if (product.ShopId != "deactiv" && product.Price) { %>
+                                    <tr>
+                                        <td>
+                                            <a href="#" target="_blank" data-toggle="modal" data-target="#shopContentModal" id="shop_content" content="/nav/customContent?ShopId=<%= product.ShopId %>"><%= product.ShopName %></a>
+                                        </td>
+                                        <td>
+                                            <%= product.Price.toString().replace(".", ",") %>€
+                                        </td>
+                                        <td><a target="_blank" href="/go/<%= product.ShortURL %>">购买</a></td>
+                                    </tr>
+                                    <% } %>
+                                    <% }) %>
+                                </table>
+                            </div>
+                            <hr/>
+                        </div>
+                        <!-- product side start -->
+                        <aside class="col-md-8">
+                            <div class="sidebar">
+                                <div class="side product-item vertical-divider-left">
+                                    <div class="tabs-style-2">
+                                        <!-- Nav tabs -->
+                                        <ul class="nav nav-tabs" role="tablist">
+                                            <li class="active"><a href="#h2tab1" role="tab" data-toggle="tab"><i class="fa fa-file-text-o pr-5"></i>产品介绍</a></li>
+                                        </ul>
+                                        <!-- Tab panes -->
+                                        <div class="tab-content padding-top-clear padding-bottom-clear">
+                                            <div class="tab-pane fade in active" id="h2tab1">
+                                                <div class="container-fluid">
+                                                    <div class="row">
+                                                        <% for (var l = products.length, i = 0; i < l; i++) { %>
+                                                        <% product = products[i]%>
+                                                        <% if (product.TitleCN !== "" && product.TitleCN !== undefined) { %>
+                                                        <div class="col-md-12">
+                                                            <h3><%= product.Title %></h3>
+                                                            <button class ="btn btn-info btn-sm"><a href="/filter?category=all&minprice=&maxprice=&sort=date&brand=<%= product.Brand %>" style="color: white; font-weight: bold"><%= product.Brand %></a></button>
+                                                            <p><%- product.DescriptionCN %></p>
+                                                        </div>
+                                                        <hr/>
+                                                        <% if (product.ItemDimensions != undefined && product.ItemDimensions != {}) { %>
+                                                        <div class="col-md-6">
+                                                            <h4>产品详情</h4>
+                                                            <table class="table">
+                                                                <% if (product.ItemDimensions.Length != "" && product.ItemDimensions.Length != undefined) { %>
+                                                                <tr>
+                                                                    <td>
+                                                                        长度
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= product.ItemDimensions.Length %> cm
+                                                                    </td>
+                                                                </tr>
+                                                                <% } %>
+                                                                <% if (product.ItemDimensions.Width != "" && product.ItemDimensions.Width != undefined) { %>
+                                                                <tr>
+                                                                    <td>
+                                                                        宽度
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= product.ItemDimensions.Width %> cm
+                                                                    </td>
+                                                                </tr>
+                                                                <% } %>
+                                                                <% if (product.ItemDimensions.Height != "" && product.ItemDimensions.Height != undefined) { %>
+                                                                <tr>
+                                                                    <td>
+                                                                        高度
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= product.ItemDimensions.Height %> cm
+                                                                    </td>
+                                                                </tr>
+                                                                <% } %>
+                                                                <% if (product.ItemDimensions.Weight != "" && product.ItemDimensions.Weight != undefined) { %>
+                                                                <tr>
+                                                                    <td>
+                                                                        重量
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= product.ItemDimensions.Weight %> kg
+                                                                    </td>
+                                                                </tr>
+                                                                <% } %>
+                                                            </table>
+                                                        </div>
+                                                        <% } %>
+                                                        <% if (product.PackageDimensions != undefined && product.PackageDimensions != {}) { %>
+                                                        <div class="col-md-6">
+                                                            <h4>包装详情</h4>
+                                                            <table class="table">
+                                                                <% if (product.PackageDimensions.Length != "" && product.PackageDimensions.Length != undefined) { %>
+                                                                <tr>
+                                                                    <td>
+                                                                        长度
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= product.PackageDimensions.Length %> cm
+                                                                    </td>
+                                                                </tr>
+                                                                <% } %>
+                                                                <% if (product.PackageDimensions.Width != "" && product.PackageDimensions.Width != undefined) { %>
+                                                                <tr>
+                                                                    <td>
+                                                                        宽度
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= product.PackageDimensions.Width %> cm
+                                                                    </td>
+                                                                </tr>
+                                                                <% } %>
+                                                                <% if (product.PackageDimensions.Height != "" && product.PackageDimensions.Height != undefined) { %>
+                                                                <tr>
+                                                                    <td>
+                                                                        高度
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= product.PackageDimensions.Height %> cm
+                                                                    </td>
+                                                                </tr>
+                                                                <% } %>
+                                                                <% if (product.PackageDimensions.Weight != "" && product.PackageDimensions.Weight != undefined) { %>
+                                                                <tr>
+                                                                    <td>
+                                                                        重量
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= product.PackageDimensions.Weight %> kg
+                                                                    </td>
+                                                                </tr>
+                                                                <% } %>
+                                                            </table>
+                                                        </div>
+                                                        <% } %>
+                                                        <% break %>
+                                                        <% } %>
+                                                        <% } %>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class = "side product-item vertical-divider-left">
+                                    <div class="tabs-style-2">
+                                        <ul class="nav nav-tabs" role="tablist">
+                                            <li class="active"><a href="#h2tab1" role="tab" data-toggle="tab"><i class="fa fa-file-users pr-5"></i>用户评论</a></li>
+                                        </ul>
+                                        <div class="ds-thread" data-thread-key="<%= product._id %>" data-title="<%= product.TitleCN %>" data-url="<%= currenturl %>"></div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </aside>
+                        <!-- product side end -->
+                    </div>
+                </div>
+                <!-- main end -->
+            </div>
+        </div>
+    </section>
+    <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+    <script type = "text/javascript">
+
+    $(document).ready(function() {
+        $("#add_favourite_button").click(function() { 
+            <% if (user != "" && user != undefined) { %>
+                var data = {
+                    Username: "<%= user.username %>",
+                    ProductEAN: "<%= product.EAN %>"
+                };
+                sendAjax('/favourite', data, function(result) {
+                    Notify('success', result.result);
+                }, function(error) {
+                    Notify('warning', '服务器错误，请稍后再试!');
+                }); 
+            <% } else { %>
+                    Notify('warning', '请先登陆!'); 
+            <% } %>
+        });
+        $('body').on( 'click', '#shop_content', function () {
+            sendAjax($(this).attr('content'), {}, function(result) {
+                $('#shop_custom_content').html(result.content);
+            }, function(error) {
+                Notify('warning', '服务器错误，请稍后再试!');
+            }); 
+        });
+    });
+    </script>
+    <!-- 多说公共JS代码 end -->
