@@ -199,7 +199,7 @@ router.get('/product', function (req, res, next) {
                                     __product.ShopId = "deactiv";
                                 }
                                 if (++productsCount == _products.length) {
-                                    res.render('/weinxin/product', {
+                                    res.render('/weixin/product', {
                                         title: _products[0].TitleCN || _products[0].Title,
                                         footer_bottom: !Utils.checkMobile(req),
                                         product: _products[0],
