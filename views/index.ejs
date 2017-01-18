@@ -54,11 +54,16 @@
                         <div class="listing-item-body clearfix">
                             <h3 class="title" style="font-weight: 300">
                                 <a href="/product?product_id=<%= product.ProductId[index] %>">
+                                 <% if (product.TitleCN[index] != null) { %>
                                     <%= product.TitleCN[index].replace(/<\/?[^>]+(>|$)/g, "") %>
+                                <% } else { %>
+                                    <%= product.Title[index] %>
+                                <% } %>
                                 </a>
                             </h3>
-                            <% if (product.Price[index].length == 1 || Math.min.apply(null, product.Price[index]) == Math.max.apply(null, product.Price[index])) { %>
-                            <span class="price" style="font-size: 20px"><%= product.Price[index][0].toString().replace(".", ",") %> €</span>
+                            <% if (product.Price[index].length == 1 || Math.min.apply(null, product.Price[index]) == Math.max.apply(null, product.Price[index])) { %> 
+
+                                <span class="price" style="font-size: 20px"><%= product.Price[index][0].toString().replace(".", ",") %> €</span>                            
                             <% } else { %>
                             <span class="price" style="font-size: 20px"><%= Math.min.apply(null,product.Price[index]).toString().replace(".", ",") %> - <%= Math.max.apply(null,product.Price[index]).toString().replace(".", ",") %> €</span>
                             <% } %>
