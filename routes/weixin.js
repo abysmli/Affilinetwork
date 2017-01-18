@@ -200,9 +200,9 @@ router.get('/product', function (req, res, next) {
                                 }
                                 if (++productsCount == _products.length) {
                                     res.render('/weinxin/product', {
-                                        title: _product.TitleCN || _product.Title,
+                                        title: _products[0].TitleCN || _products[0].Title,
                                         footer_bottom: !Utils.checkMobile(req),
-                                        product: _product,
+                                        product: _products[0],
                                         currenturl: currenturl,
                                         product_link: req.url,
                                         products: _products,
