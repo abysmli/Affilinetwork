@@ -68,9 +68,9 @@ router.get('/prerequest', function (req, res, next) {
                                 });
                                 var data = {
                                     Result: "success",
-                                    Title: products[0].Title,
-                                    Image: products[0].ProductImage,
-                                    Brand: products[0].Brand,
+                                    Title: products[0].Title || "",
+                                    Image: products[0].ProductImage || "",
+                                    Brand: products[0].Brand || "",
                                     Price: price
                                 };
                                 res.json(data);
