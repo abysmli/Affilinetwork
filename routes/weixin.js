@@ -61,7 +61,8 @@ router.get('/prerequest', function (req, res, next) {
                             if (products.length !== 0) {
                                 var price = products[0].Price;
                                 products.forEach(function (product) {
-                                    if (price < product.Price) {
+                                    console.log(product.Price);
+                                    if (price > product.Price) {
                                         price = product.Price;
                                     }
                                 });
