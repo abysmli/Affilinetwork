@@ -120,6 +120,7 @@ router.get('/ean', function (req, res, next) {
                 Affilinet.searchProducts(query, function (err, response, results) {
                     if (!err && response.statusCode == 200) {
                         var counter = results.ProductsSummary.TotalRecords;
+                        console.log(results.Products);
                         var products = Utils.ToLocalProducts(results.Products, "affilinet");
                         query.FQ = "EAN:0" + req.query.value;
                         Affilinet.searchProducts(query, function (err, response, results) {
@@ -138,6 +139,7 @@ router.get('/ean', function (req, res, next) {
                                     MerchantId: "Amazon"
                                 }, function (err, product) {
                                     if (!err) {
+                                        console.log(product.Items.Item[0]);
                                         var _product = Utils.fromAmazonToLocalProduct(product.Items.Item);
                                         if (!Utils.isEmptyObject(_product)) {
                                             counter = parseInt(counter) + 1;
