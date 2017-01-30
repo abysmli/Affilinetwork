@@ -96,7 +96,7 @@
                                             <%= product.Price.toString().replace(".", ",") %> €
                                         </td>
                                         <td>
-                                            <%= product.Shipping.toString().replace(".", ",") || "-" %> €
+                                            <%= product.Shipping === null ? "-" : product.Shipping.toString().replace(".", ",") || "-" %> €
                                         </td>
                                         <td><a target="_blank" href="/go/<%= product.ShortURL %>">购买</a></td>
                                     </tr>
