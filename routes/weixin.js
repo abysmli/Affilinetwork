@@ -31,9 +31,6 @@ router.get('/', function (req, res, next) {
 
 router.get('/prerequest', function (req, res, next) {
     var query = {};
-    if (req.query.value.length == 12) {
-        req.query.value = "0" + req.query.value;
-    }
     query.FQ = "EAN:" + req.query.value;
     Affilinet.searchProducts(query, function (err, response, results) {
         if (!err && response.statusCode == 200) {
@@ -98,9 +95,6 @@ router.get('/prerequest', function (req, res, next) {
 
 router.get('/ean', function (req, res, next) {
     var currenturl = req.protocol + '://' + req.get('host') + req.originalUrl;
-    if (req.query.value.length == 12) {
-        req.query.value = "0" + req.query.value;
-    }
     var scanResult = {
         Result: "",
         EAN: req.query.value,
