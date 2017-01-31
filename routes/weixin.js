@@ -4,6 +4,7 @@ var parseString = require('xml2js').parseString;
 var affilinet = require('../utils/affilinetapi');
 var aws = require('aws-lib');
 var Product = require('../models/product');
+var Shop = require('../models/shop');
 var Scan = require("../models/scan");
 var setting = require('../setting');
 var utils = require('../utils/utils');
