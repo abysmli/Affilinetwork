@@ -11,6 +11,8 @@ var Voucher = require('../models/voucher');
 var Feedback = require('../models/feedback');
 var Request = require('../models/request');
 var Shop = require('../models/shop');
+var Link = require("../models/link");
+var Scan = require("../models/scan");
 var setting = require('../setting');
 var utils = require('../utils/utils');
 var Utils = new utils();
@@ -118,7 +120,7 @@ router.post('/shop/add', auth, function (req, res, next) {
 router.get('/shop/edit', auth, function (req, res, next) {
     if (req.query.id !== undefined) {
         Shop.findById(req.query.id, function (err, shop) {
-            if (err != null) next(err);
+            if (err) next(err);
             else {
                 res.render('controller/shop_form', {
                     title: 'Edit Shop',
@@ -131,7 +133,7 @@ router.get('/shop/edit', auth, function (req, res, next) {
         Shop.findOne({
             ShopId: req.query.ShopId
         }, function (err, shop) {
-            if (err != null) next(err);
+            if (err) next(err);
             else {
                 res.render('controller/shop_form', {
                     title: 'Edit Shop',
@@ -161,7 +163,7 @@ router.post('/shop/edit', auth, function (req, res, next) {
         shop.Logo = JSON.parse(shop.Logo);
     }
     Shop.findOneAndUpdate(query, shop, function (err, shop) {
-        if (err != null) next(err);
+        if (err) next(err);
         else {
             res.redirect('/controller/');
         }
@@ -184,7 +186,7 @@ router.post('/shop/activity', auth, function (req, res, next) {
 
 router.get('/shop/remove', auth, function (req, res, next) {
     Shop.findByIdAndRemove(req.query.id, function (err, shop) {
-        if (err != null) next(err);
+        if (err) next(err);
         else {
             return res.redirect('/controller/');
         }
@@ -380,7 +382,7 @@ router.post('/voucher/add', auth, function (req, res, next) {
 
 router.get('/voucher/edit', auth, function (req, res, next) {
     Voucher.findById(req.query.id, function (err, voucher) {
-        if (err != null) next(err);
+        if (err) next(err);
         else {
             res.render('controller/voucher_form', {
                 title: 'Edit Voucher',
@@ -404,7 +406,7 @@ router.post('/voucher/edit', auth, function (req, res, next) {
     Voucher.findOneAndUpdate({
         _id: req.query.id
     }, voucher, function (err, voucher) {
-        if (err != null) next(err);
+        if (err) next(err);
         else {
             res.redirect('/controller/voucher');
         }
@@ -413,7 +415,7 @@ router.post('/voucher/edit', auth, function (req, res, next) {
 
 router.get('/voucher/remove', auth, function (req, res, next) {
     Voucher.findByIdAndRemove(req.query.id, function (err, voucher) {
-        if (err != null) next(err);
+        if (err) next(err);
         else {
             return res.redirect('/controller/voucher');
         }
@@ -791,7 +793,7 @@ router.post('/product/add', auth, function (req, res, next) {
 
 router.get('/product/edit', auth, function (req, res, next) {
     Product.findById(req.query.id, function (err, product) {
-        if (err != null) next(err);
+        if (err) next(err);
         else {
             res.render('controller/product_form', {
                 title: 'Edit Product',
@@ -824,7 +826,7 @@ router.post('/product/edit', auth, function (req, res, next) {
     Product.findOneAndUpdate({
         _id: req.query.id
     }, product, function (err, _product) {
-        if (err != null) next(err);
+        if (err) next(err);
         else {
             if (Product.EAN !== null && Product.EAN !== "") {
                 Utils.syncProductByEAN(Affilinet, prodAdv, Product, Product.EAN, function (update_count, deactiv_count) {
@@ -896,7 +898,7 @@ router.post('/product/activity', auth, function (req, res, next) {
 
 router.get('/product/remove', auth, function (req, res, next) {
     Product.findByIdAndRemove(req.query.id, function (err, product) {
-        if (err != null) next(err);
+        if (err) next(err);
         else {
             return res.redirect('/controller/product');
         }
@@ -968,7 +970,7 @@ router.post('/article/add', auth, function (req, res, next) {
 
 router.get('/article/edit', auth, function (req, res, next) {
     Article.findById(req.query.id, function (err, article) {
-        if (err != null) next(err);
+        if (err) next(err);
         else {
             res.render('controller/article_form', {
                 title: 'Edit Article',
@@ -984,7 +986,7 @@ router.post('/article/edit', auth, function (req, res, next) {
     Article.findOneAndUpdate({
         _id: req.query.id
     }, req.body, function (err, article) {
-        if (err != null) next(err);
+        if (err) next(err);
         else {
             res.redirect('/controller/article');
         }
@@ -993,7 +995,7 @@ router.post('/article/edit', auth, function (req, res, next) {
 
 router.get('/article/remove', auth, function (req, res, next) {
     Article.findByIdAndRemove(req.query.id, function (err, article) {
-        if (err != null) next(err);
+        if (err) next(err);
         else {
             return res.redirect('/controller/article');
         }
@@ -1034,19 +1036,97 @@ router.get('/feedback', auth, function (req, res, next) {
 router.get('/feedback/remove', auth, function (req, res, next) {
     if (req.query.type == "feedback") {
         Feedback.findByIdAndRemove(req.query.id, function (err, feedback) {
-            if (err != null) next(err);
+            if (err) next(err);
             else {
                 return res.redirect('/controller/feedback');
             }
         });
     } else if (req.query.type == "request") {
         Request.findByIdAndRemove(req.query.id, function (err, request) {
-            if (err != null) next(err);
+            if (err) next(err);
             else {
                 return res.redirect('/controller/feedback');
             }
         });
     }
+});
+
+router.get('/link', auth, function (req, res, next) {
+    Link.find({}, function (err, links) {
+        if (err) {
+            next(err);
+        } else {
+            res.render('controller/link', {
+                title: 'Links Manage',
+                links: links,
+                layout: 'controller/layout'
+            });
+        }
+    });
+});
+
+router.get('/link/add', auth, function (req, res, next) {
+    res.render('controller/link_form', {
+        title: 'Add Link',
+        link: {},
+        layout: 'controller/layout'
+    });
+});
+
+router.post('/link/add', auth, function (req, res, next) {
+    Link.create(req.body, function (err, link) {
+        if (err) next(err);
+        else {
+            res.redirect('/controller/link');
+        }
+    });
+});
+
+router.get('/link/edit', auth, function (req, res, next) {
+    Link.findById(req.query.id, function (err, link) {
+        if (err) {
+            next(err);
+        } else {
+            res.render('controller/link_form', {
+                title: 'Edit Link',
+                link: link,
+                layout: 'controller/layout'
+            });
+        }
+    });
+});
+
+router.post('/link/edit', auth, function (req, res, next) {
+    Link.findOneAndUpdate({ _id: req.query.id }, req.body, function (err, link) {
+        if (err) {
+            next(err);
+        } else {
+            res.redirect('/controller/link');
+        }
+    });
+});
+
+router.get('/link/remove', auth, function (req, res, next) {
+    Link.findByIdAndRemove(req.query.id, function (err, link) {
+        if (err) next(err);
+        else {
+            return res.redirect('/controller/link');
+        }
+    });
+});
+
+router.get('/scan', auth, function (req, res, next) {
+    Scan.find({}, function (err, scans) {
+        if (err) {
+            next(err);
+        } else {
+            res.render('controller/scan', {
+                title: 'Scan View',
+                scans: scans,
+                layout: 'controller/layout'
+            });
+        }
+    });
 });
 
 module.exports = router;
