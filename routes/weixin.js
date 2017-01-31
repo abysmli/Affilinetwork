@@ -4,8 +4,7 @@ var parseString = require('xml2js').parseString;
 var affilinet = require('../utils/affilinetapi');
 var aws = require('aws-lib');
 var Product = require('../models/product');
-var Shop = require('../models/shop');
-var Request = require('../models/request');
+var Scan = require("../models/scan");
 var setting = require('../setting');
 var utils = require('../utils/utils');
 var Utils = new utils();
@@ -32,6 +31,12 @@ router.get('/', function (req, res, next) {
 router.get('/prerequest', function (req, res, next) {
     var query = {};
     query.FQ = "EAN:" + req.query.value;
+    var scanResult = {
+        Result: "",
+        EAN: req.query.value,
+        FromUser: req.query.from,
+        Type: req.query.type
+    };
     Affilinet.searchProducts(query, function (err, response, results) {
         if (!err && response.statusCode == 200) {
             var counter = results.ProductsSummary.TotalRecords;
@@ -75,6 +80,10 @@ router.get('/prerequest', function (req, res, next) {
                                 };
                                 res.json(data);
                             } else {
+                                scanResult.Result = "Not Found";
+                                Scan.create(scanResult, function (err, scan) {
+                                    if (err) next(err);
+                                });
                                 res.json({
                                     Result: "产品未找到，我们将及时添加。"
                                 });
@@ -98,7 +107,7 @@ router.get('/ean', function (req, res, next) {
     var scanResult = {
         Result: "",
         EAN: req.query.value,
-        From: req.query.from,
+        FromUser: req.query.from,
         Type: req.query.type
     };
     Product.find({
@@ -111,6 +120,9 @@ router.get('/ean', function (req, res, next) {
         }, function (err, _products) {
             if (_products.length !== 0) {
                 scanResult.Result = "In Local";
+                Scan.create(scanResult, function (err, scan) {
+                    if (err) next(err);
+                });
                 Utils.syncProductByEAN(Affilinet, prodAdv, Product, req.query.value, function (update_count, deactiv_count) {
                     res.redirect("/weixin/product?EAN=" + req.query.value);
                 });
@@ -147,11 +159,17 @@ router.get('/ean', function (req, res, next) {
                                         }
                                         if (products.length !== 0) {
                                             scanResult.Result = "In Cloud";
+                                            Scan.create(scanResult, function (err, scan) {
+                                                if (err) next(err);
+                                            });
                                             Utils.syncProductByEAN(Affilinet, prodAdv, Product, req.query.value, function (update_count, deactiv_count) {
                                                 res.redirect("/weixin/product?EAN=" + req.query.value);
                                             });
                                         } else {
                                             scanResult.Result = "Not Found";
+                                            Scan.create(scanResult, function (err, scan) {
+                                                if (err) next(err);
+                                            });
                                             res.send("产品未找到，我们将及时添加。");
                                         }
                                     } else {
