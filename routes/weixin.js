@@ -164,7 +164,7 @@ router.get('/ean', function (req, res, next) {
                                                 if (err) next(err);
                                             });
                                             Utils.syncProductByEAN(Affilinet, prodAdv, Product, req.query.value, function (update_count, deactiv_count) {
-                                                res.redirect("/weixin/product?EAN=" + req.query.value);
+                                                res.redirect("/product?EAN=" + req.query.value);
                                             });
                                         } else {
                                             scanResult.Result = "Not Found";
@@ -190,54 +190,7 @@ router.get('/ean', function (req, res, next) {
 });
 
 router.get('/product', function (req, res, next) {
-    var currenturl = req.protocol + '://' + req.get('host') + req.originalUrl;
-    Product.find({
-        EAN: req.query.EAN,
-        Activity: true
-    }, null, {
-            sort: {
-                Price: 1
-            }
-        }, function (err, _products) {
-            if (err !== null || _products.length === 0) next(err);
-            else {
-                Product.update({
-                    EAN: _products[0].EAN
-                }, {
-                        Views: _products[0].Views + 1
-                    }, {
-                        multi: true
-                    }, function (err, doc) {
-                        if (err) return next(err);
-                        var productsCount = 0;
-                        _products.forEach(function (__product, index) {
-                            Shop.findOne({
-                                ShopId: __product.ShopId,
-                                Activity: true
-                            }, function (err, shop) {
-                                if (shop !== null) {
-                                    __product.ShopName = shop.CustomTitleCN;
-                                } else {
-                                    __product.ShopId = "deactiv";
-                                }
-                                if (++productsCount == _products.length) {
-                                    res.render('weixin/product', {
-                                        title: _products[0].TitleCN || _products[0].Title,
-                                        footer_bottom: !Utils.checkMobile(req),
-                                        product: _products[0],
-                                        currenturl: currenturl,
-                                        product_link: req.url,
-                                        products: _products,
-                                        layout: 'weixin/layout',
-                                        user: req.user
-                                    });
-                                }
-                            });
-                        });
-                    });
-            }
-        });
-
+    res.redirect("/product?EAN=" + req.query.EAN);
 });
 
 module.exports = router;

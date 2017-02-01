@@ -194,6 +194,9 @@ router.get('/filter', function (req, res, next) {
         ProductId: {
             $first: "$_id"
         },
+        EAN: {
+            $first: "$EAN"
+        },
         Images: {
             $first: "$ProductImage"
         },
@@ -376,61 +379,52 @@ router.get('/filter', function (req, res, next) {
 
 router.get('/product', function (req, res, next) {
     var currenturl = req.protocol + '://' + req.get('host') + req.originalUrl;
-    var query = Product.where({
-        _id: req.query.product_id,
-    });
-    query.findOne(function (err, _product) {
-        if (_product != undefined && _product != {}) {
-            Product.find({
-                EAN: _product.EAN,
-                Activity: true
-            }, null, {
-                    sort: {
-                        Price: 1
-                    }
-                }, function (err, _products) {
-                    if (err != null || _products.length == 0) next(err);
-                    else {
-                        Product.update({
-                            EAN: _products[0].EAN
-                        }, {
-                                Views: _products[0].Views + 1
-                            }, {
-                                multi: true
-                            }, function (err, doc) {
-                                if (err) return next(err);
-                                var productsCount = 0;
-                                _products.forEach(function (__product, index) {
-                                    Shop.findOne({
-                                        ShopId: __product.ShopId,
-                                        Activity: true
-                                    }, function (err, shop) {
-                                        if (shop != null) {
-                                            __product.ShopName = shop.CustomTitleCN;
-                                        } else {
-                                            __product.ShopId = "deactiv";
-                                        }
-                                        if (++productsCount == _products.length) {
-                                            res.render('product_details', {
-                                                title: _product.TitleCN,
-                                                footer_bottom: !Utils.checkMobile(req),
-                                                product: _product,
-                                                currenturl: currenturl,
-                                                product_link: req.url,
-                                                products: _products,
-                                                layout: '/layout',
-                                                user: req.user
-                                            });
-                                        }
+    Product.find({
+        EAN: req.query.EAN,
+        Activity: true
+    }, null, {
+            sort: {
+                Price: 1
+            }
+        }, function (err, _products) {
+            if (err != null || _products.length == 0) next(err);
+            else {
+                Product.update({
+                    EAN: _products[0].EAN
+                }, {
+                        Views: _products[0].Views + 1
+                    }, {
+                        multi: true
+                    }, function (err, doc) {
+                        if (err) return next(err);
+                        var productsCount = 0;
+                        _products.forEach(function (__product, index) {
+                            Shop.findOne({
+                                ShopId: __product.ShopId,
+                                Activity: true
+                            }, function (err, shop) {
+                                if (shop != null) {
+                                    __product.ShopName = shop.CustomTitleCN;
+                                } else {
+                                    __product.ShopId = "deactiv";
+                                }
+                                if (++productsCount == _products.length) {
+                                    res.render('product_details', {
+                                        title: _products[0].TitleCN,
+                                        footer_bottom: !Utils.checkMobile(req),
+                                        product: _products[0],
+                                        currenturl: currenturl,
+                                        product_link: req.url,
+                                        products: _products,
+                                        layout: '/layout',
+                                        user: req.user
                                     });
-                                });
+                                }
                             });
-                    }
-                });
-        } else {
-            next(err);
-        }
-    });
+                        });
+                    });
+            }
+        });
 });
 
 router.post('/favourite', function (req, res, next) {
@@ -727,6 +721,62 @@ router.post('/product_request', function (req, res, next) {
     });
 });
 
+router.get('/currencyExchange', function (req, res, next) {
+    request({
+        url: "https://www.exchangerate-api.com/EUR/CNY?k=2d8c6e862f92ff48d10fa915"
+    }, function (err, response, data) {
+        res.send(data);
+    });
+});
+
+router.get('/nav', function (req, res, next) {
+    Shop.find({
+        Activity: {
+            $ne: false
+        }
+    }, function (err, shops) {
+        if (err) next(err);
+        res.render('nav', {
+            title: '导航链接',
+            shops: shops,
+            footer_bottom: false,
+            layout: 'layout'
+        });
+    });
+});
+
+router.post('/nav/customContent', function (req, res, next) {
+    if (req.query.id != undefined) {
+        Shop.findById(req.query.id, function (err, shop) {
+            res.json({
+                content: shop.CustomContent || ""
+            });
+        });
+    } else {
+        Shop.findOne({
+            ShopId: req.query.ShopId
+        }, function (err, shop) {
+            if (shop != {} && shop != null) {
+                res.json({
+                    content: shop.CustomContent
+                });
+            } else {
+                res.json({
+                    content: ""
+                });
+            }
+
+        });
+    }
+});
+
+//logout
+router.get('/logout', function (req, res, next) {
+    req.logout();
+    res.clearCookie("duoshuo_token");
+    res.redirect(req.query.from || '/');
+});
+
 router.get('/ean', function (req, res, next) {
     var query = {};
     query.FQ = "EAN:" + req.query.value;
@@ -771,63 +821,6 @@ router.get('/ean', function (req, res, next) {
     });
 });
 
-router.get('/currencyExchange', function (req, res, next) {
-    request({
-        url: "https://www.exchangerate-api.com/EUR/CNY?k=2d8c6e862f92ff48d10fa915"
-    }, function (err, response, data) {
-        res.send(data);
-    });
-});
-
-router.get('/nav', function (req, res, next) {
-    Shop.find({
-        Activity: {
-            $ne: false
-        }
-    }, function (err, shops) {
-        if (err) next(err);
-        res.render('nav', {
-            title: '导航链接',
-            shops: shops,
-            footer_bottom: false,
-            layout: 'layout'
-        });
-    });
-});
-
-router.post('/nav/customContent', function (req, res, next) {
-    if (req.query.id != undefined) {
-        console.log(req.query.id);
-        Shop.findById(req.query.id, function (err, shop) {
-            res.json({
-                content: shop.CustomContent || ""
-            });
-        });
-    } else {
-        Shop.findOne({
-            ShopId: req.query.ShopId
-        }, function (err, shop) {
-            if (shop != {} && shop != null) {
-                res.json({
-                    content: shop.CustomContent
-                });
-            } else {
-                res.json({
-                    content: ""
-                });
-            }
-
-        });
-    }
-});
-
-//logout
-router.get('/logout', function (req, res, next) {
-    req.logout();
-    res.clearCookie("duoshuo_token");
-    res.redirect(req.query.from || '/');
-});
-
 router.get('/test', function (req, res, next) {
     prodAdv.call("ItemLookup", {
         ItemId: '4015014029363',
@@ -835,7 +828,7 @@ router.get('/test', function (req, res, next) {
         SearchIndex: "All",
         ResponseGroup: "Large",
         MerchantId: "Amazon"
-    }, function(err, products) {
+    }, function (err, products) {
         if (!err) {
             // var _product = {};
             // if (Array.isArray(products.Items.Item)) {
