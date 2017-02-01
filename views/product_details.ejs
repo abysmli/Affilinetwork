@@ -83,6 +83,7 @@
                                     <tr>
                                         <td>商家</td>
                                         <td>价格</td>
+                                        <td>运费</td>
                                         <td>链接</td>
                                     </tr>
                                     <% products.forEach(function(product, index) { %>
@@ -93,6 +94,9 @@
                                         </td>
                                         <td>
                                             <%= product.Price.toString().replace(".", ",") %>€
+                                        </td>
+                                        <td>
+                                            <%= product.Shipping === null ? "无运费" : product.Shipping.toString().replace(".", ",") + "€" || "无运费" %> 
                                         </td>
                                         <td><a target="_blank" href="/go/<%= product.ShortURL %>">购买</a></td>
                                     </tr>
