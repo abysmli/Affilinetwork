@@ -126,10 +126,10 @@
             	<%= voucher.IsRestricted %>
             </td>
             <td>
-            	<%= voucher.StartDate %>
+            	<%= (new Date(voucher.StartDate)).toLocaleString("en-US", {timeZone: "Asia/Shanghai"}) %>
             </td>
             <td>
-            	<%= voucher.EndDate %>
+            	<%= (new Date(voucher.EndDate)).toLocaleString("en-US", {timeZone: "Asia/Shanghai"}) %>
             </td>
             <% if(type == 'local') { %>
                 <td>
