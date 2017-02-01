@@ -63,7 +63,7 @@
                     <a href="<%= shop.ShopLink %>">Shop Link</a>
                 </td>
                 <td>
-                    <%= (new Date(shop.updated_at)).toLocaleString("zh-CN", {timeZone: "Asia/Shanghai"}) %>
+                    <%= (new Date(shop.updated_at)).toLocaleString("en-US", {timeZone: "Asia/Shanghai"}) %>
                 </td>
                 <% if (mode == 'cloud' ) { %>
                 <td>
