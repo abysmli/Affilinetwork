@@ -36,7 +36,7 @@
                     <%= scan.Result %>
                 </td>
                 <td>
-                    <%= scan.insert_at %>
+                    <%= (new Date(scan.insert_at)).toLocaleString("zh-CN", {timeZone: "Asia/Shanghai"}) %>
                 </td>
             </tr>
         <% }) %>
