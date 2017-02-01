@@ -1124,7 +1124,9 @@ router.get('/link/remove', auth, function (req, res, next) {
 });
 
 router.get('/scan', auth, function (req, res, next) {
-    Scan.find({}, function (err, scans) {
+    Scan.find({}).sort({
+            insert_at: -1
+        }).exec(function (err, scans) {
         if (err) {
             next(err);
         } else {
