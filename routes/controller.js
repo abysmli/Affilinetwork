@@ -1066,9 +1066,17 @@ router.get('/link', auth, function (req, res, next) {
 });
 
 router.get('/link/add', auth, function (req, res, next) {
+    var makeText = function () {
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        for (var i = 0; i < 6; i++) {
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        return text;
+    };
     res.render('controller/link_form', {
         title: 'Add Link',
-        link: {},
+        link: { short: makeText() },
         layout: 'controller/layout'
     });
 });
