@@ -119,10 +119,8 @@ router.get('/', function (req, res, next) {
         }
     }, {
         "$sort": {
-            "Views": -1
+            "_id": 1
         }
-    }, {
-        "$limit": 5
     }], function (err, brands) {
         Product.aggregate([{
             "$match": {
@@ -142,6 +140,12 @@ router.get('/', function (req, res, next) {
             "$group": group1
         }, {
             "$group": group2
+        }, {
+            "$sort": {
+                "Views": -1
+            }
+        }, {
+            "$limit": 5
         }], function (err, products) {
             res.render('index', {
                 title: 'Allhaha 欧哈哈德国优选购物 － 商品比价 － 优惠券',
