@@ -137,15 +137,15 @@ router.get('/', function (req, res, next) {
                 }]
             }
         }, {
+            "$sort": {
+                "Views": -1
+            }
+        }, {
             "$group": group1
         }, {
             "$group": group2
         }, {
             "$limit": 5
-        }, {
-            "$sort": {
-                "Views": -1
-            }
         }], function (err, products) {
             console.log(products);
             res.render('index', {
