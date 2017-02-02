@@ -119,8 +119,10 @@ router.get('/', function (req, res, next) {
         }
     }, {
         "$sort": {
-            "_id": 1
+            "Views": -1
         }
+    }, {
+        "$limit": 5
     }], function (err, brands) {
         Product.aggregate([{
             "$match": {
