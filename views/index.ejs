@@ -41,6 +41,7 @@
                 <div class="separator-2"></div>
                 <div class="owl-carousel carousel-autoplay owl-theme col-xs-6">
                     <% product.ProductId.forEach(function(EAN, index) { %>
+                    <% if (index < 5) { %>
                     <div class="image-box">
                         <div class="overlay-container">
                             <img src="<%= product.ProductImage[index] %>" />
@@ -72,6 +73,7 @@
                             </div>
                         </div>
                     </div>
+                    <% } %>
                     <% }); %>
                 </div>
                 <div class="clearfix"></div>

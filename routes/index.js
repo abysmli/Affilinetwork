@@ -137,17 +137,16 @@ router.get('/', function (req, res, next) {
                 }]
             }
         }, {
+            "$sort": {
+                "Views": -1
+            }
+        }, {
             "$group": group1
         }, {
             "$group": group2
         }, {
             "$limit": 5
-        }, {
-            "$sort": {
-                "Views": -1
-            }
         }], function (err, products) {
-            console.log(products);
             res.render('index', {
                 title: 'Allhaha 欧哈哈德国优选购物 － 商品比价 － 优惠券',
                 footer_bottom: false,
