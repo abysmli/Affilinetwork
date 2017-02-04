@@ -36,7 +36,7 @@
                 </div>
             </td>
             <td>
-                <%= article.updated_at %>
+                <%= (new Date(article.updated_at)).toLocaleString("en-US", {timeZone: "Asia/Shanghai"}) %>
             </td>
             <td>
                 <a class="btn btn-sm btn-danger" href="/controller/article/remove?id=<%= article._id %>" role="button">Remove</a>

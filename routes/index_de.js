@@ -299,7 +299,7 @@ router.get('/product', function(req, res, next) {
         _id: req.query.product_id,
     });
     query.findOne(function(err, _product) {
-        if (_product != undefined && _product != {}) {
+        if (_product !== undefined && _product != {}) {
             Product.find({
                 EAN: _product.EAN
             }, null, {

@@ -15,7 +15,7 @@
 						<p><b>Email: </b><%= feedback.email %></p>
 						<p><b>Title: </b><%= feedback.subtitle %></p>
 						<p><b>Content: </b><%= feedback.feedback %></p>
-						<p><b>Date: </b><%= feedback.updated_at %></p>
+						<p><b>Date: </b><%= (new Date(feedback.updated_at)).toLocaleString("en-US", {timeZone: "Asia/Shanghai"}) %></p>
 						<a class="btn btn-sm btn-danger pull-right" href="/controller/feedback/remove?type=feedback&id=<%= feedback._id %>">Remove</a>
 					</div>
 				</div>

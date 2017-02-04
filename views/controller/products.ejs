@@ -108,7 +108,7 @@
                 </td>
                 <% if(type == 'local') { %>
                 <td>
-                    <%= product.insert_at %>
+                    <%= (new Date(product.insert_at)).toLocaleString("en-US", {timeZone: "Asia/Shanghai"}) %>
                 </td>
                 <% } %>
                 <td>
