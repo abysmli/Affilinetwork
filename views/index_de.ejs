@@ -37,10 +37,12 @@
         <div class="row">
             <div class="main col-md-10">
                 <% if (mainPage) { %>
+                <% if (hotproducts.length != 0) { %>
                 <h2 class="page-title">Top Angebote</h2>
                 <div class="separator-2"></div>
                 <div class="owl-carousel carousel-autoplay owl-theme col-xs-6">
                     <% hotproducts.forEach(function(product, index) { %>
+                    <% if (index < 6) { %>
                     <div class="image-box">
                         <div class="overlay-container">
                             <img src="<%= product.Images %>" />
@@ -61,9 +63,11 @@
                             </div>
                         </div>
                     </div>
+                    <% } %>
                     <% }); %>
                 </div>
                 <div class="clearfix"></div>
+                <% } %>
                 <% } %>
                 <h2 class="page-title">Produkte</h2>
                 <div class="separator-2"></div>
