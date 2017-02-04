@@ -201,7 +201,26 @@ router.get('/', function(req, res, next) {
                                                 }
                                             }], function(err, hotproducts) {
                                                 var iterateNumber = 0;
-                                                hotproducts.forEach(function(hotproduct, index) {
+                                                if (hotproducts.length == 0) {
+                                                    res.render('index_de', {
+                                                        title: 'Allhaha - Preisvergleich und Gutscheine',
+                                                        footer_bottom: false,
+                                                        mainPage: mainPage,
+                                                        pages: pages,
+                                                        currentPage: page,
+                                                        products: products,
+                                                        hotproducts: [],
+                                                        category: Utils.urlToCategory(category),
+                                                        minprice: req.query.minprice || "",
+                                                        maxprice: req.query.maxprice || "",
+                                                        brand: brand,
+                                                        brands: brands,
+                                                        sort: sort,
+                                                        user: req.user,
+                                                        layout: 'layout_de'
+                                                    });
+                                                } else {
+                                                    hotproducts.forEach(function(hotproduct, index) {
                                                     Product.find({
                                                         EAN: hotproduct._id
                                                     }).stream()
@@ -214,6 +233,8 @@ router.get('/', function(req, res, next) {
                                                             hotproduct.Price.push(_hotproduct.Price);
                                                         })
                                                         .on("close", function() {
+                                                            
+                                                            
                                                             if (++iterateNumber == hotproducts.length) {
                                                                 res.render('index_de', {
                                                                     title: 'Allhaha - Preisvergleich und Gutscheine',
@@ -235,6 +256,7 @@ router.get('/', function(req, res, next) {
                                                             }
                                                         });
                                                 });
+                                                }
                                             });
                                         } else {
                                             res.render('index_de', {
@@ -244,6 +266,7 @@ router.get('/', function(req, res, next) {
                                                 pages: pages,
                                                 currentPage: page,
                                                 products: products,
+                                                hotproducts: [],
                                                 category: Utils.urlToCategory(category),
                                                 minprice: req.query.minprice || "",
                                                 maxprice: req.query.maxprice || "",
