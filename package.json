@@ -25,6 +25,7 @@
     "mongoose-auto-increment": "*",
     "mongoose-text-search": "*",
     "morgan": "*",
+    "mstranslator": "^2.1.1",
     "nodemailer": "*",
     "passport": "*",
     "passport-facebook": "*",

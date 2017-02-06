@@ -1,4 +1,8 @@
 var Link = require("../models/link");
+var MsTranslator = require('mstranslator');
+var client = new MsTranslator({
+    api_key: "1d77d40d8eec46a180773798ce6cb46b" // use this for the new token API. 
+}, true);
 
 module.exports = (function () {
     function _Class() { }
@@ -47,7 +51,7 @@ module.exports = (function () {
                     Manufactor: (product.ItemAttributes !== undefined) ? product.ItemAttributes.Manufacturer || null : null,
                     EAN: (product.ItemAttributes !== undefined) ? product.ItemAttributes.EAN || null : null,
                     Description: (product.ItemAttributes !== undefined) ? product.ItemAttributes.Feature || null : null,
-                    DescriptionCN: null,
+                    DescriptionCN: this.,
                     Price: (product.Offers.Offer !== undefined) ? (product.Offers.Offer.OfferListing.Price.Amount / 100 || null) : (product.OfferSummary.LowestNewPrice.Amount / 100 || null),
                     Shipping: null,
                     PriceCurrency: (product.OfferSummary !== undefined) ? product.OfferSummary.LowestNewPrice.CurrencyCode || null : null,
@@ -243,7 +247,7 @@ module.exports = (function () {
                                             product.EAN = "0" + product.EAN;
                                         }
                                         if (product.Source == "Affilinet") {
-                                            _this.shortURL(product.URL, function(err, shorturl){
+                                            _this.shortURL(product.URL, function (err, shorturl) {
                                                 product.ShortURL = shorturl;
                                                 Product.update({ ProductId: product.ProductId }, product, { upsert: true }, function (err, raw) {
                                                     if (err) {
@@ -411,10 +415,25 @@ module.exports = (function () {
                         }
                     });
                 }
-            })
-        }
+            });
+        };
         checkText();
-    }
+    };
+
+    _Class.prototype.BingTranslate = function BingTranslate(translate, cb) {
+
+        var params = {
+            text: translate,
+            from: 'de',
+            to: 'zh'
+        };
+        // Using initialize_token manually.
+        client.initialize_token(function (keys) {
+            client.translate(params, function (err, data) {
+                cb(err, data);
+            });
+        });
+    };
 
     return _Class;
 })();
