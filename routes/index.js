@@ -407,8 +407,8 @@ router.get('/product', function (req, res, next) {
                         Utils.BingTranslate(_products[0].Title, function (err, TitleCN) {
                             Utils.BingTranslate(_products[0].Description, function (err, DescriptionCN) {
                                 _products.forEach(function (__product, index) {
-                                    __product.TitleCN = TitleCN;
-                                    __product.DescriptionCN = DescriptionCN;
+                                    __product.TitleCN =__product.TitleCN || TitleCN;
+                                    __product.DescriptionCN = __product.DescriptionCN || DescriptionCN;
                                     Shop.findOne({
                                         ShopId: __product.ShopId,
                                         Activity: true
