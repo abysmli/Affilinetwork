@@ -51,7 +51,7 @@ module.exports = (function () {
                     Manufactor: (product.ItemAttributes !== undefined) ? product.ItemAttributes.Manufacturer || null : null,
                     EAN: (product.ItemAttributes !== undefined) ? product.ItemAttributes.EAN || null : null,
                     Description: (product.ItemAttributes !== undefined) ? product.ItemAttributes.Feature || null : null,
-                    DescriptionCN: this.,
+                    DescriptionCN: null,
                     Price: (product.Offers.Offer !== undefined) ? (product.Offers.Offer.OfferListing.Price.Amount / 100 || null) : (product.OfferSummary.LowestNewPrice.Amount / 100 || null),
                     Shipping: null,
                     PriceCurrency: (product.OfferSummary !== undefined) ? product.OfferSummary.LowestNewPrice.CurrencyCode || null : null,
