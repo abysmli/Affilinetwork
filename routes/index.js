@@ -828,25 +828,25 @@ router.get('/ean', function (req, res, next) {
 });
 
 router.get('/test', function (req, res, next) {
-    prodAdv.call("ItemLookup", {
-        ItemId: '4015014029363',
-        IdType: "EAN",
-        SearchIndex: "All",
-        ResponseGroup: "Large",
-        MerchantId: "Amazon"
-    }, function (err, products) {
-        if (!err) {
-            // var _product = {};
-            // if (Array.isArray(products.Items.Item)) {
-            //     _product = Utils.fromAmazonToLocalProduct(products.Items.Item[0]);
-            // } else {
-            //     _product = Utils.fromAmazonToLocalProduct(products.Items.Item);
-            // }
-            res.json(products);
-        } else {
-            res.send(err);
-        }
-    });
+    // prodAdv.call("ItemLookup", {
+    //     ItemId: '4015014029363',
+    //     IdType: "EAN",
+    //     SearchIndex: "All",
+    //     ResponseGroup: "Large",
+    //     MerchantId: "Amazon"
+    // }, function (err, products) {
+    //     if (!err) {
+    //         // var _product = {};
+    //         // if (Array.isArray(products.Items.Item)) {
+    //         //     _product = Utils.fromAmazonToLocalProduct(products.Items.Item[0]);
+    //         // } else {
+    //         //     _product = Utils.fromAmazonToLocalProduct(products.Items.Item);
+    //         // }
+    //         res.json(products);
+    //     } else {
+    //         res.send(err);
+    //     }
+    // });
     // Affilinet.getProducts({ProductIds: 20940203}, function(err, response, results) {
     //     res.json(results);
     // });
@@ -864,6 +864,25 @@ router.get('/test', function (req, res, next) {
     //         res.json(results);
     //     }
     // });
+    var MsTranslator = require('mstranslator');
+
+    var client = new MsTranslator({
+        api_key: "1d77d40d8eec46a180773798ce6cb46b" // use this for the new token API. 
+    }, true);
+
+    var params = {
+        text: 'How\'s it going?'
+        , from: 'en'
+        , to: 'zh'
+    };
+
+    // Using initialize_token manually.
+    client.initialize_token(function (keys) {
+        console.log(keys.access_token);
+        client.translate(params, function (err, data) {
+            console.log(data);
+        });
+    });
 });
 
 module.exports = router;
