@@ -404,28 +404,34 @@ router.get('/product', function (req, res, next) {
                     }, function (err, doc) {
                         if (err) return next(err);
                         var productsCount = 0;
-                        _products.forEach(function (__product, index) {
-                            Shop.findOne({
-                                ShopId: __product.ShopId,
-                                Activity: true
-                            }, function (err, shop) {
-                                if (shop != null) {
-                                    __product.ShopName = shop.CustomTitleCN;
-                                } else {
-                                    __product.ShopId = "deactiv";
-                                }
-                                if (++productsCount == _products.length) {
-                                    res.render('product_details', {
-                                        title: _products[0].TitleCN,
-                                        footer_bottom: !Utils.checkMobile(req),
-                                        product: _products[0],
-                                        currenturl: currenturl,
-                                        product_link: req.url,
-                                        products: _products,
-                                        layout: '/layout',
-                                        user: req.user
+                        Utils.BingTranslate(_products[0].Title, function (err, TitleCN) {
+                            Utils.BingTranslate(_products[0].Description, function (err, DescriptionCN) {
+                                _products.forEach(function (__product, index) {
+                                    __product.TitleCN = TitleCN;
+                                    __product.DescriptionCN = DescriptionCN;
+                                    Shop.findOne({
+                                        ShopId: __product.ShopId,
+                                        Activity: true
+                                    }, function (err, shop) {
+                                        if (shop != null) {
+                                            __product.ShopName = shop.CustomTitleCN;
+                                        } else {
+                                            __product.ShopId = "deactiv";
+                                        }
+                                        if (++productsCount == _products.length) {
+                                            res.render('product_details', {
+                                                title: _products[0].TitleCN,
+                                                footer_bottom: !Utils.checkMobile(req),
+                                                product: _products[0],
+                                                currenturl: currenturl,
+                                                product_link: req.url,
+                                                products: _products,
+                                                layout: '/layout',
+                                                user: req.user
+                                            });
+                                        }
                                     });
-                                }
+                                });
                             });
                         });
                     });
@@ -828,42 +834,7 @@ router.get('/ean', function (req, res, next) {
 });
 
 router.get('/test', function (req, res, next) {
-    prodAdv.call("ItemLookup", {
-        ItemId: '4015014029363',
-        IdType: "EAN",
-        SearchIndex: "All",
-        ResponseGroup: "Large",
-        MerchantId: "Amazon"
-    }, function (err, products) {
-        if (!err) {
-            // var _product = {};
-            // if (Array.isArray(products.Items.Item)) {
-            //     _product = Utils.fromAmazonToLocalProduct(products.Items.Item[0]);
-            // } else {
-            //     _product = Utils.fromAmazonToLocalProduct(products.Items.Item);
-            // }
-            res.json(products);
-        } else {
-            res.send(err);
-        }
-    });
-    // Affilinet.getProducts({ProductIds: 20940203}, function(err, response, results) {
-    //     res.json(results);
-    // });
-    // Affilinet.getShopList({}, function(err, response, shops) {
-    //     if (!err && response.statusCode == 200) {
-    //         res.json(shops);
-    //     } else {
-    //         next(err);
-    //     }
-    // });
-    // var query = {};
-    // query.FQ = "EAN:03760108930650";
-    // Affilinet.searchProducts(query, function(err, response, results) {
-    //     if (!err && response.statusCode == 200) {
-    //         res.json(results);
-    //     }
-    // });
+
 });
 
 module.exports = router;
