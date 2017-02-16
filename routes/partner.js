@@ -168,5 +168,59 @@ router.get('/getProgram', auth_partner, function (req, res, next) {
     }
 });
 
+router.get('/voucher', auth_partner, function (req, res, next) {
+    Affilinet.getMyPrograms({}, function (err, response, programs) {
+        if (!err && response.statusCode == 200) {
+            parseString(programs, {
+                explicitArray: false
+            }, function (err, programs) {
+                var programs = programs.ProgramList.Programs.ProgramSummary;
+                var allVouchers = [];
+                var voucher_nummber = 0;
+                programs.forEach(function (program, index) {
+                    Affilinet.getVoucherCodes({
+                        ProgramId: program.ProgramID
+                    }, function (err, response, vouchers) {
+                        parseString(vouchers, {
+                            explicitArray: false,
+                            async: true,
+                        }, function (err, vouchers) {
+                            var vouchers = vouchers.GetVoucherCodesResponse.VoucherCodeCollection.VoucherCode || [];
+                            if (vouchers.constructor != Array) {
+                                vouchers = [vouchers];
+                            }
+                            vouchers.forEach(function (voucher, index, object) {
+                                voucher.Program = program.Title;
+                                if (voucher.ActivePartnership == "true") {
+                                    allVouchers.push(voucher);
+                                }
+                            });
+                            if (++voucher_nummber == programs.length) {
+                                req.session.vouchers = allVouchers;
+                                res.render('partner/voucher', {
+                                    title: 'Vouchers Manage',
+                                    vouchers: allVouchers,
+                                    type: 'remote',
+                                    programTitle: "All Programs",
+                                    layout: 'partner/layout'
+                                });
+                            }
+                        });
+                    });
+                });
+            });
+        } else {
+            next(err);
+        }
+    });
+});
+
+router.post('/voucher_details', auth_partner, function (req, res, next) {
+    req.session.vouchers.forEach(function (voucher, index) {
+        if (voucher.Id == req.body.voucher_id) {
+            return res.json(voucher);
+        }
+    });
+});
 
 module.exports = router;

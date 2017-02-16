@@ -1,0 +1,112 @@
+<div class="page-header">
+    <h1><%= title %> <small><%= programTitle %> | Total Vouchers: <%= vouchers.length %> <i>In Cloud Mode</i></small></h1>
+</div>
+<table id="voucher_table" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Program</th>
+            <th>Code</th>
+            <th>Description</th>
+            <th>IntegrationCode</th>
+            <th>StartDate</th>
+            <th>EndDate</th>
+        </tr>
+    </thead>
+    <tfoot>
+	    <tr>
+            <th>ID</th>
+            <th>Program</th>
+            <th>Code</th>
+            <th>Description</th>
+            <th>IntegrationCode</th>
+            <th>StartDate</th>
+            <th>EndDate</th>
+	    </tr>
+    </tfoot>
+    <tbody>
+        <% vouchers.forEach(function(voucher, index) { %>
+        <tr>
+            <td>
+                <%= voucher.Id %>
+            </td>
+            <td>
+                <%= voucher.Program %>
+            </td>
+            <td>
+            	<%= voucher.Code %>
+            </td>
+            <td>
+                <div class="voucher_desc">
+                    <p tyle="overflow: hidden;"><%- voucher.Description %></p>
+                </div>
+            </td>
+            <td>
+            	<div class="voucher_inte"></div>
+            	<button class="btn btn-sm btn-primary inte_button" alt="<%= voucher.Id %>" role="button">Show</button>
+            </td>            <td>
+            	<%= (new Date(voucher.StartDate)).toLocaleString("en-US", {timeZone: "Asia/Shanghai"}) %>
+            </td>
+            <td>
+            	<%= (new Date(voucher.EndDate)).toLocaleString("en-US", {timeZone: "Asia/Shanghai"}) %>
+            </td>
+        </tr>
+        <% }) %>
+    </tbody>
+</table>
+
+<script>
+	var dt = $('#voucher_table').DataTable({
+		lengthMenu: [
+			[10, 25, 50, -1],
+			[10, 25, 50, "All"]
+		],
+		stateSave: true
+	});
+
+    $("#voucher_page").addClass("active");
+
+    $("#remove_all").click(function(event) {
+        if (!confirm('Remove All products?！')) {
+            event.preventDefault();
+        }
+    });
+
+    $('tbody').on('click','button.inte_button',function() {
+		var that = $(this);
+		if (that.text() == "Show") {
+			sendAjax('/partner/voucher_details', {
+				voucher_id: that.attr("alt")
+			}, function(voucher_content) {
+				that.siblings("div.voucher_inte").html(voucher_content.IntegrationCode + "<hr/>");
+				that.text("Hide");
+			}, function(jqXHR, error, errorThrown) {
+				console.log(JSON.stringify(jqXHR));
+			});
+		} else {
+			that.siblings("div.voucher_inte").html("");
+			that.text("Show");
+		}
+	});
+    $('tbody').on('click','button.inteCN_button',function() {
+        var that = $(this);
+        if (that.text() == "Show") {
+            sendAjax('/partner/voucher_details', {
+                voucher_id: that.attr("alt")
+            }, function(voucher_content) {
+                that.siblings("div.voucher_inteCN").html(voucher_content.IntegrationCode + "<hr/>");
+                that.text("Hide");
+            }, function(jqXHR, error, errorThrown) {
+                console.log(JSON.stringify(jqXHR));
+            });
+        } else {
+            that.siblings("div.voucher_inteCN").html("");
+            that.text("Show");
+        }
+    });
+	$(".voucher_desc").shorten({
+		showChars: 50,
+		moreText: 'Show More',
+		lessText: 'Show Less'
+	});
+</script>
