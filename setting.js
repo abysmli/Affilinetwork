@@ -5,6 +5,8 @@ var app_setting = {
     password: 'LLHF!allhaha',
     partner_username: "jun.shao",
     partner_password: "shaojun",
+    partner_username_1: "liaocheng",
+    partner_password_1: "Liaocheng123",
     affilinet_setting: {
         publisherId: '760068',
         productWebservicePassword: 'YXysbEHNzfKCyFhAyESb',

@@ -13,7 +13,7 @@ var auth = function (req, res, next) {
         return unauthorized(res);
     };
 
-    if (user.name === setting.partner_username && user.pass === setting.partner_password) {
+    if ((user.name === setting.partner_username || user.name === setting.partner_username_1) && (user.pass === setting.partner_password || user.pass === setting.partner_password_1)) {
         return next();
     } else {
         return unauthorized(res);
