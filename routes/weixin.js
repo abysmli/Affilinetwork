@@ -189,6 +189,83 @@ router.get('/ean', function (req, res, next) {
         });
 });
 
+router.get('/eanSearch', function (req, res, next) {
+    var query = {};
+    query.FQ = "EAN:" + req.query.value;
+    Affilinet.searchProducts(query, function (err, response, results) {
+        if (!err && response.statusCode == 200) {
+            var counter = results.ProductsSummary.TotalRecords;
+            var products = Utils.ToLocalProducts(results.Products, "affilinet");
+            query.FQ = "EAN:0" + req.query.value;
+            Affilinet.searchProducts(query, function (err, response, results) {
+                if (!err && response.statusCode == 200) {
+                    counter = parseInt(counter) + parseInt(results.ProductsSummary.TotalRecords);
+                    var _product = Utils.ToLocalProducts(results.Products, "affilinet");
+                    if (!Utils.isEmptyObject(_product)) {
+                        counter = parseInt(counter) + 1;
+                        products = products.concat(_product);
+                    }
+                    prodAdv.call("ItemLookup", {
+                        ItemId: req.query.value,
+                        IdType: "EAN",
+                        SearchIndex: "All",
+                        ResponseGroup: "Large",
+                        MerchantId: "Amazon"
+                    }, function (err, product) {
+                        if (!err) {
+                            var _product = Utils.fromAmazonToLocalProduct(product.Items.Item);
+                            if (!Utils.isEmptyObject(_product)) {
+                                counter = parseInt(counter) + 1;
+                                products.push(_product);
+                            }
+                            res.json(products);
+                        } else {
+                            res.send(err);
+                        }
+                    });
+                } else {
+                    res.send(err);
+                }
+            });
+        } else {
+            res.send(err);
+        }
+    });
+});
+
+router.get('/querySearch', function (req, res, next) {
+    var query = {};
+    query.Query = req.query.value;
+    Affilinet.searchProducts(query, function (err, response, results) {
+        if (!err && response.statusCode == 200) {
+            var counter = results.ProductsSummary.TotalRecords;
+            var products = Utils.ToLocalProducts(results.Products, "affilinet");
+            prodAdv.call("ItemSearch", {
+                SearchIndex: "All",
+                Keywords: req.query.value,
+                ResponseGroup: "Large",
+                MerchantId: "Amazon"
+            }, function (err, results) {
+                if (!err) {
+                    counter = "Affilinet: " + counter + " | Amazon: " + results.Items.TotalResults;
+                    var _products = [];
+                    if (Array.isArray(results.Items.Item)) {
+                        _products = Utils.ToLocalProducts(results.Items.Item, "amazon");
+                        products = products.concat(_products);
+                    }
+                    res.json(products);
+                } else {
+                    next(err);
+                }
+            });
+        } else {
+            next(err);
+        }
+    });
+}
+);
+
+
 router.get('/product', function (req, res, next) {
     res.redirect("/product?EAN=" + req.query.EAN);
 });
