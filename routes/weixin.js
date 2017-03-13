@@ -190,78 +190,138 @@ router.get('/ean', function (req, res, next) {
 });
 
 router.get('/eanSearch', function (req, res, next) {
-    var query = {};
-    query.FQ = "EAN:" + req.query.value;
-    Affilinet.searchProducts(query, function (err, response, results) {
-        if (!err && response.statusCode == 200) {
-            var counter = results.ProductsSummary.TotalRecords;
-            var products = Utils.ToLocalProducts(results.Products, "affilinet");
-            query.FQ = "EAN:0" + req.query.value;
-            Affilinet.searchProducts(query, function (err, response, results) {
-                if (!err && response.statusCode == 200) {
-                    counter = parseInt(counter) + parseInt(results.ProductsSummary.TotalRecords);
-                    var _product = Utils.ToLocalProducts(results.Products, "affilinet");
-                    if (!Utils.isEmptyObject(_product)) {
-                        counter = parseInt(counter) + 1;
-                        products = products.concat(_product);
-                    }
-                    prodAdv.call("ItemLookup", {
-                        ItemId: req.query.value,
-                        IdType: "EAN",
-                        SearchIndex: "All",
-                        ResponseGroup: "Large",
-                        MerchantId: "Amazon"
-                    }, function (err, product) {
-                        if (!err) {
-                            var _product = Utils.fromAmazonToLocalProduct(product.Items.Item);
-                            if (!Utils.isEmptyObject(_product)) {
-                                counter = parseInt(counter) + 1;
-                                products.push(_product);
+    Product.find({
+        EAN: req.query.value,
+        Activity: true,
+        Translated: true
+    }, null, {
+            sort: {
+                Price: 1
+            }
+        }, function (err, _products) {
+            if (_products.length !== 0) {
+                Utils.syncProductByEAN(Affilinet, prodAdv, Product, req.query.value, function (update_count, deactiv_count) {
+                    Product.find({
+                        EAN: req.query.value,
+                        Activity: true
+                    }, null, {
+                            sort: {
+                                Price: 1
                             }
-                            res.json(products);
-                        } else {
-                            res.send(err);
-                        }
-                    });
-                } else {
-                    res.send(err);
-                }
-            });
-        } else {
-            res.send(err);
-        }
-    });
+                        }, function (err, _products) {
+                            res.json(_products);
+                        });
+                });
+            } else {
+                var query = {};
+                query.FQ = "EAN:" + req.query.value;
+                Affilinet.searchProducts(query, function (err, response, results) {
+                    if (!err && response.statusCode == 200) {
+                        var counter = results.ProductsSummary.TotalRecords;
+                        var products = Utils.ToLocalProducts(results.Products, "affilinet");
+                        query.FQ = "EAN:0" + req.query.value;
+                        Affilinet.searchProducts(query, function (err, response, results) {
+                            if (!err && response.statusCode == 200) {
+                                counter = parseInt(counter) + parseInt(results.ProductsSummary.TotalRecords);
+                                var _product = Utils.ToLocalProducts(results.Products, "affilinet");
+                                if (!Utils.isEmptyObject(_product)) {
+                                    counter = parseInt(counter) + 1;
+                                    products = products.concat(_product);
+                                }
+                                prodAdv.call("ItemLookup", {
+                                    ItemId: req.query.value,
+                                    IdType: "EAN",
+                                    SearchIndex: "All",
+                                    ResponseGroup: "Large",
+                                    MerchantId: "Amazon"
+                                }, function (err, product) {
+                                    if (!err) {
+                                        var _product = Utils.fromAmazonToLocalProduct(product.Items.Item);
+                                        if (!Utils.isEmptyObject(_product)) {
+                                            counter = parseInt(counter) + 1;
+                                            products.push(_product);
+                                        }
+                                        if (products.length !== 0) {
+                                            Utils.syncProductByEAN(Affilinet, prodAdv, Product, req.query.value, function (update_count, deactiv_count) {
+                                                Product.find({
+                                                    EAN: req.query.value,
+                                                    Activity: true
+                                                }, null, {
+                                                        sort: {
+                                                            Price: 1
+                                                        }
+                                                    }, function (err, _products) {
+                                                        res.json(_products);
+                                                    });
+                                            });
+                                        } else {
+                                            res.json({ result: "Product not found!" });
+                                        }
+                                    } else {
+                                        res.send(err);
+                                    }
+                                });
+                            } else {
+                                res.send(err);
+                            }
+                        });
+                    } else {
+                        res.send(err);
+                    }
+                });
+            }
+        });
 });
 
 router.get('/querySearch', function (req, res, next) {
-    var query = {};
-    query.Query = req.query.value;
-    Affilinet.searchProducts(query, function (err, response, results) {
-        if (!err && response.statusCode == 200) {
-            var counter = results.ProductsSummary.TotalRecords;
-            var products = Utils.ToLocalProducts(results.Products, "affilinet");
-            prodAdv.call("ItemSearch", {
-                SearchIndex: "All",
-                Keywords: req.query.value,
-                ResponseGroup: "Large",
-                MerchantId: "Amazon"
-            }, function (err, results) {
-                if (!err) {
-                    counter = "Affilinet: " + counter + " | Amazon: " + results.Items.TotalResults;
-                    var _products = [];
-                    if (Array.isArray(results.Items.Item)) {
-                        _products = Utils.ToLocalProducts(results.Items.Item, "amazon");
-                        products = products.concat(_products);
+    Product.find({
+        $or: [{
+            Title: new RegExp(req.query.value, 'gi')
+        }, {
+            TitleCN: new RegExp(req.query.value, 'gi')
+        }, {
+            Keywords: new RegExp(req.query.value, 'gi')
+        }],
+        Translate: true,
+        Activity: true
+    }, null, {
+            sort: {
+                Price: 1
+            }
+        }, function (err, _products) {
+            if (_products.length !== 0) {
+                res.json(_products);
+            } else {
+                var query = {};
+                query.Query = req.query.value;
+                Affilinet.searchProducts(query, function (err, response, results) {
+                    if (!err && response.statusCode == 200) {
+                        var counter = results.ProductsSummary.TotalRecords;
+                        var products = Utils.ToLocalProducts(results.Products, "affilinet");
+                        prodAdv.call("ItemSearch", {
+                            SearchIndex: "All",
+                            Keywords: req.query.value,
+                            ResponseGroup: "Large",
+                            MerchantId: "Amazon"
+                        }, function (err, results) {
+                            if (!err) {
+                                counter = "Affilinet: " + counter + " | Amazon: " + results.Items.TotalResults;
+                                var _products = [];
+                                if (Array.isArray(results.Items.Item)) {
+                                    _products = Utils.ToLocalProducts(results.Items.Item, "amazon");
+                                    products = products.concat(_products);
+                                }
+                                res.json(products);
+                            } else {
+                                next(err);
+                            }
+                        });
+                    } else {
+                        next(err);
                     }
-                    res.json(products);
-                } else {
-                    next(err);
-                }
-            });
-        } else {
-            next(err);
-        }
-    });
+                });
+            }
+        });
 }
 );
 
