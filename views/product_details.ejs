@@ -96,7 +96,7 @@
                                             <%= product.Price.toString().replace(".", ",") %>€
                                         </td>
                                         <td>
-                                            <%= product.Shipping === null ? "无运费" : product.Shipping.toString().replace(".", ",") + "€" || "无运费" %> 
+                                            <%= product.Shipping === null || product.Shipping == undefined ? "无运费" : product.Shipping.toString().replace(".", ",") + "€" || "无运费" %> 
                                         </td>
                                         <td><a target="_blank" href="/go/<%= product.ShortURL %>">购买</a></td>
                                     </tr>
