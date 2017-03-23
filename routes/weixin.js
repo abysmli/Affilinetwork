@@ -311,6 +311,7 @@ router.get('/querySearch', function (req, res, next) {
                                     _products = Utils.ToLocalProducts(results.Items.Item, "amazon");
                                     products = products.concat(_products);
                                 }
+                                products = products.slice(0,10);
                                 res.json(products);
                             } else {
                                 next(err);
