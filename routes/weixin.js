@@ -209,7 +209,7 @@ router.get('/eanSearch', function (req, res, next) {
                                 Price: 1
                             }
                         }, function (err, _products) {
-                            res.json(_products);
+                            res.json(_products.slice(0, 10));
                         });
                 });
             } else {
@@ -251,7 +251,7 @@ router.get('/eanSearch', function (req, res, next) {
                                                             Price: 1
                                                         }
                                                     }, function (err, _products) {
-                                                        res.json(_products);
+                                                        res.json(_products.slice(0, 10));
                                                     });
                                             });
                                         } else {
@@ -275,58 +275,32 @@ router.get('/eanSearch', function (req, res, next) {
 
 router.get('/querySearch', function (req, res, next) {
     Product.find({
-        $or: [{
-            Title: new RegExp(req.query.value, 'gi')
-        }, {
-            TitleCN: new RegExp(req.query.value, 'gi')
-        }, {
-            Keywords: new RegExp(req.query.value, 'gi')
-        }],
-        Translate: true,
-        Activity: true
+        $and: [{
+            Translated: true,
+            Activity: {
+                $ne: false
+            },
+            $or: [{
+                    Title: new RegExp(req.query.value, 'gi')
+                }, {
+                    TitleCN: new RegExp(req.query.value, 'gi')
+                }, {
+                    Keywords: new RegExp(req.query.value, 'gi')
+                }]
+        }]
     }, null, {
             sort: {
                 Price: 1
             }
         }, function (err, _products) {
             if (_products.length !== 0) {
-                res.json(_products);
+                res.json(_products.slice(0, 10));       
             } else {
-                var query = {};
-                query.Query = req.query.value;
-                Affilinet.searchProducts(query, function (err, response, results) {
-                    if (!err && response.statusCode == 200) {
-                        var counter = results.ProductsSummary.TotalRecords;
-                        var products = Utils.ToLocalProducts(results.Products, "affilinet");
-                        prodAdv.call("ItemSearch", {
-                            SearchIndex: "All",
-                            Keywords: req.query.value,
-                            ResponseGroup: "Large",
-                            MerchantId: "Amazon"
-                        }, function (err, results) {
-                            if (!err) {
-                                counter = "Affilinet: " + counter + " | Amazon: " + results.Items.TotalResults;
-                                var _products = [];
-                                if (Array.isArray(results.Items.Item)) {
-                                    _products = Utils.ToLocalProducts(results.Items.Item, "amazon");
-                                    products = products.concat(_products);
-                                }
-                                products = products.slice(0,10);
-                                res.json(products);
-                            } else {
-                                next(err);
-                            }
-                        });
-                    } else {
-                        next(err);
-                    }
-                });
+                res.json({result: "No Product found!"});
             }
         });
-}
-);
-
-
+});
+ 
 router.get('/product', function (req, res, next) {
     res.redirect("/product?EAN=" + req.query.EAN);
 });
