@@ -294,7 +294,14 @@ router.get('/querySearch', function (req, res, next) {
             }
         }, function (err, _products) {
             if (_products.length !== 0) {
-                res.json(_products.slice(0, 10));       
+                var __products=[], eanBuffer="";
+                _products.forEach(function(_product, index){
+                    if (_product.EAN != eanBuffer) {
+                        __products.push(_product);
+                        eanBuffer = _product.EAN;
+                    }
+                });
+                res.json(__products.slice(0, 10));       
             } else {
                 res.json({result: "No Product found!"});
             }
