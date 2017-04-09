@@ -10,6 +10,7 @@
     "aws-lib": "*",
     "basic-auth": "*",
     "body-parser": "*",
+    "compression": "^1.6.2",
     "connect-ensure-login": "^0.1.1",
     "connect-flash": "*",
     "cookie-parser": "*",
