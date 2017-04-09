@@ -1,5 +1,6 @@
 var express = require('express');
 var compression = require('compression');
+var minify = require('express-minify');
 var partials = require('express-partials');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -54,6 +55,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use(compression());
+app.use(minify());
 app.use(favicon(__dirname + '/public/favicon.png'));
 app.use(logger('dev'));
 app.use(bodyParser.json({

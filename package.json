@@ -17,6 +17,7 @@
     "debug": "*",
     "ejs": "*",
     "express": "*",
+    "express-minify": "^0.2.0",
     "express-partials": "*",
     "express-session": "*",
     "express-stormpath": "*",
