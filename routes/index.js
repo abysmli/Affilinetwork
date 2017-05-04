@@ -407,7 +407,7 @@ router.get('/product', function (req, res, next) {
                         Utils.BingTranslate(_products[0].Title, function (err, TitleCN) {
                             Utils.BingTranslate(_products[0].Description, function (err, DescriptionCN) {
                                 _products.forEach(function (__product, index) {
-                                    __product.TitleCN =__product.TitleCN || TitleCN;
+                                    __product.TitleCN = __product.TitleCN || TitleCN;
                                     __product.DescriptionCN = __product.DescriptionCN || DescriptionCN + " (内容来自“微软Bing翻译”)";
                                     Shop.findOne({
                                         ShopId: __product.ShopId,
@@ -834,7 +834,25 @@ router.get('/ean', function (req, res, next) {
 });
 
 router.get('/test', function (req, res, next) {
-
+    // prodAdv.call("ItemLookup", {
+    //     ItemId: "4015000516365",
+    //     IdType: "EAN",
+    //     SearchIndex: "All",
+    //     ResponseGroup: "Large",
+    //     MerchantId: "Amazon"
+    // }, function (err, product) {
+    //     if (!err) {
+    //         var _product = {};
+    //         if (Array.isArray(product.Items.Item)) {
+    //             _product = Utils.fromAmazonToLocalProduct(product.Items.Item[0]);
+    //         } else {
+    //             _product = Utils.fromAmazonToLocalProduct(product.Items.Item);
+    //         }
+    //         res.json(_product);
+    //     } else {
+    //         res.send(err);
+    //     }
+    // });
 });
 
 module.exports = router;
