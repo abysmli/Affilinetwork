@@ -59,7 +59,12 @@ router.get('/prerequest', function (req, res, next) {
                         MerchantId: "Amazon"
                     }, function (err, product) {
                         if (!err) {
-                            var _product = Utils.fromAmazonToLocalProduct(product.Items.Item);
+                            var _product = {};
+                            if (Array.isArray(product.Items.Item)) {
+                                _product = Utils.fromAmazonToLocalProduct(product.Items.Item[0]);
+                            } else {
+                                _product = Utils.fromAmazonToLocalProduct(product.Items.Item);
+                            }
                             if (!Utils.isEmptyObject(_product)) {
                                 counter = parseInt(counter) + 1;
                                 products.push(_product);
@@ -152,8 +157,12 @@ router.get('/ean', function (req, res, next) {
                                     MerchantId: "Amazon"
                                 }, function (err, product) {
                                     if (!err) {
-                                        console.log(product.Items.Item[0]);
-                                        var _product = Utils.fromAmazonToLocalProduct(product.Items.Item);
+                                        var _product = {};
+                                        if (Array.isArray(product.Items.Item)) {
+                                            _product = Utils.fromAmazonToLocalProduct(product.Items.Item[0]);
+                                        } else {
+                                            _product = Utils.fromAmazonToLocalProduct(product.Items.Item);
+                                        }
                                         if (!Utils.isEmptyObject(_product)) {
                                             counter = parseInt(counter) + 1;
                                             products.push(_product);
@@ -236,7 +245,12 @@ router.get('/eanSearch', function (req, res, next) {
                                     MerchantId: "Amazon"
                                 }, function (err, product) {
                                     if (!err) {
-                                        var _product = Utils.fromAmazonToLocalProduct(product.Items.Item);
+                                        var _product = {};
+                                        if (Array.isArray(product.Items.Item)) {
+                                            _product = Utils.fromAmazonToLocalProduct(product.Items.Item[0]);
+                                        } else {
+                                            _product = Utils.fromAmazonToLocalProduct(product.Items.Item);
+                                        }
                                         if (!Utils.isEmptyObject(_product)) {
                                             counter = parseInt(counter) + 1;
                                             products.push(_product);
@@ -281,12 +295,12 @@ router.get('/querySearch', function (req, res, next) {
                 $ne: false
             },
             $or: [{
-                    Title: new RegExp(req.query.value, 'gi')
-                }, {
-                    TitleCN: new RegExp(req.query.value, 'gi')
-                }, {
-                    Keywords: new RegExp(req.query.value, 'gi')
-                }]
+                Title: new RegExp(req.query.value, 'gi')
+            }, {
+                TitleCN: new RegExp(req.query.value, 'gi')
+            }, {
+                Keywords: new RegExp(req.query.value, 'gi')
+            }]
         }]
     }, null, {
             sort: {
@@ -294,20 +308,20 @@ router.get('/querySearch', function (req, res, next) {
             }
         }, function (err, _products) {
             if (_products.length !== 0) {
-                var __products=[], eanBuffer="";
-                _products.forEach(function(_product, index){
+                var __products = [], eanBuffer = "";
+                _products.forEach(function (_product, index) {
                     if (_product.EAN != eanBuffer) {
                         __products.push(_product);
                         eanBuffer = _product.EAN;
                     }
                 });
-                res.json(__products.slice(0, 10));       
+                res.json(__products.slice(0, 10));
             } else {
-                res.json({result: "No Product found!"});
+                res.json({ result: "No Product found!" });
             }
         });
 });
- 
+
 router.get('/product', function (req, res, next) {
     res.redirect("/product?EAN=" + req.query.EAN);
 });

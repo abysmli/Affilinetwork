@@ -32,6 +32,7 @@ var ProductSchema = new mongoose.Schema({
     DeliveryTime: String,
     Keywords: String,
     Source: String,
+    TranslateUtil: String,
     Views: { type: Number, default: 0 },
     Sales: { type: Number, default: 0 },
     SearchCount: {type: Number, default: 0},
