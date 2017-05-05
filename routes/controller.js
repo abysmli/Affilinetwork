@@ -508,6 +508,9 @@ router.get('/product', auth, function (req, res, next) {
                     Translated: {
                         $first: "$Translated"
                     },
+                    TranslationQuality: {
+                        $first: "$TranslationQuality"
+                    },
                     Hot: {
                         $first: "$Hot"
                     },

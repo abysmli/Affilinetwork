@@ -72,7 +72,6 @@ router.get('/prerequest', function (req, res, next) {
                             if (products.length !== 0) {
                                 var price = products[0].Price;
                                 products.forEach(function (product) {
-                                    console.log(product.Price);
                                     if (price > product.Price) {
                                         price = product.Price;
                                     }
@@ -138,7 +137,6 @@ router.get('/ean', function (req, res, next) {
                 Affilinet.searchProducts(query, function (err, response, results) {
                     if (!err && response.statusCode == 200) {
                         var counter = results.ProductsSummary.TotalRecords;
-                        console.log(results.Products);
                         var products = Utils.ToLocalProducts(results.Products, "affilinet");
                         query.FQ = "EAN:0" + req.query.value;
                         Affilinet.searchProducts(query, function (err, response, results) {

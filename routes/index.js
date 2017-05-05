@@ -404,34 +404,30 @@ router.get('/product', function (req, res, next) {
                     }, function (err, doc) {
                         if (err) return next(err);
                         var productsCount = 0;
-                        Utils.BingTranslate(_products[0].Title, function (err, TitleCN) {
-                            Utils.BingTranslate(_products[0].Description, function (err, DescriptionCN) {
-                                _products.forEach(function (__product, index) {
-                                    __product.TitleCN = __product.TitleCN || TitleCN;
-                                    __product.DescriptionCN = __product.DescriptionCN || DescriptionCN + " (内容来自“微软Bing翻译”)";
-                                    Shop.findOne({
-                                        ShopId: __product.ShopId,
-                                        Activity: true
-                                    }, function (err, shop) {
-                                        if (shop != null) {
-                                            __product.ShopName = shop.CustomTitleCN;
-                                        } else {
-                                            __product.ShopId = "deactiv";
-                                        }
-                                        if (++productsCount == _products.length) {
-                                            res.render('product_details', {
-                                                title: _products[0].TitleCN,
-                                                footer_bottom: !Utils.checkMobile(req),
-                                                product: _products[0],
-                                                currenturl: currenturl,
-                                                product_link: req.url,
-                                                products: _products,
-                                                layout: '/layout',
-                                                user: req.user
-                                            });
-                                        }
+                        _products.forEach(function (__product, index) {
+                            __product.TitleCN = __product.TitleCN;
+                            __product.DescriptionCN = __product.DescriptionCN;
+                            Shop.findOne({
+                                ShopId: __product.ShopId,
+                                Activity: true
+                            }, function (err, shop) {
+                                if (shop != null) {
+                                    __product.ShopName = shop.CustomTitleCN;
+                                } else {
+                                    __product.ShopId = "deactiv";
+                                }
+                                if (++productsCount == _products.length) {
+                                    res.render('product_details', {
+                                        title: _products[0].TitleCN,
+                                        footer_bottom: !Utils.checkMobile(req),
+                                        product: _products[0],
+                                        currenturl: currenturl,
+                                        product_link: req.url,
+                                        products: _products,
+                                        layout: '/layout',
+                                        user: req.user
                                     });
-                                });
+                                }
                             });
                         });
                     });
@@ -834,25 +830,9 @@ router.get('/ean', function (req, res, next) {
 });
 
 router.get('/test', function (req, res, next) {
-    // prodAdv.call("ItemLookup", {
-    //     ItemId: "4015000516365",
-    //     IdType: "EAN",
-    //     SearchIndex: "All",
-    //     ResponseGroup: "Large",
-    //     MerchantId: "Amazon"
-    // }, function (err, product) {
-    //     if (!err) {
-    //         var _product = {};
-    //         if (Array.isArray(product.Items.Item)) {
-    //             _product = Utils.fromAmazonToLocalProduct(product.Items.Item[0]);
-    //         } else {
-    //             _product = Utils.fromAmazonToLocalProduct(product.Items.Item);
-    //         }
-    //         res.json(_product);
-    //     } else {
-    //         res.send(err);
-    //     }
-    // });
+    Utils.GoogleTranslate([{ a: "Hello World!", b: "It is a test" }], function (err, translatedText) {
+        res.send(translatedText);
+    });
 });
 
 module.exports = router;

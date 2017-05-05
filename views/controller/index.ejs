@@ -96,7 +96,7 @@
             stateSave: true,
         });
         $("#sync_button").click(function(){
-            sendAjax("shopsync", {}, function(result){
+            sendAjax("/controller/shopsync", {}, function(result){
                 if (result.count == 0 ) {
                     alert("No new Shops added in Database!");
                 } else {
@@ -110,7 +110,7 @@
         $('tbody').on( 'click', '#activity', function () {
             var id = $(this).attr("tid");
             var activity = ($(this).attr("activity") !== 'true');
-            sendAjax("shop/activity", {id: id, activity: activity}, function(result){
+            sendAjax("/controller/shop/activity", {id: id, activity: activity}, function(result){
                 location.reload();
             }, function(jqXHR, error, errorThrown) {
                 alert("Failed!\n" + "Please contact Li, Yuan to solve the problem!");

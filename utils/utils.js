@@ -3,6 +3,7 @@ var MsTranslator = require('mstranslator');
 var client = new MsTranslator({
     api_key: "1d77d40d8eec46a180773798ce6cb46b" // use this for the new token API. 
 }, true);
+var googleTranslate = require('google-translate')("AIzaSyAI4JTyRJIUttLBFgoS49l_Qc92k3cwuV0");
 
 module.exports = (function () {
     function _Class() { }
@@ -315,6 +316,7 @@ module.exports = (function () {
     }
 
     _Class.prototype.updateProductDatabase = function updateProductDatabase(Product, products, ean, update_count, cb) {
+        var _this = this;
         Product.findOne({ EAN: ean, Translated: true }, {}, { sort: { 'insert_at': -1 } }, function (err, lastChangedProduct) {
             Product.find({ EAN: ean }, {}, { sort: { 'insert_at': -1 } }, function (err, _products) {
                 if (lastChangedProduct == {} || lastChangedProduct == null) {
@@ -330,45 +332,105 @@ module.exports = (function () {
                     console.log("Database -- Remote ProductId: " + product.ProductId + " | Remote ASIN: " + product.ASIN);
                 });
 
-                _products.forEach(function (_product, index) {
-                    var existFlag = false;
-                    products.forEach(function (product, index) {
-                        if (((product.ProductId == _product.ProductId) && (_product.ProductId != null) && (_product.ProductId != "null") && (_product.ProductId != "")) || ((product.ASIN == _product.ASIN) && (_product.ASIN != null) && (_product.ASIN != "null") && (_product.ASIN != ""))) {
-                            existFlag = true;
-                        }
-                    });
-                    if (_product.Source == "Amazon") {
-                        _product.ShopId = "-1";
-                    }
-                    existFlag ? null : (_product.Activity ? deactiv_count++ : null);
-                    _product.Activity = existFlag;
-                    _product.Brand = lastChangedProduct.Brand || "";
-                    _product.Category = lastChangedProduct.Category || "";
-                    _product.Manufactor = lastChangedProduct.Manufactor || "";
-                    _product.DescriptionCN = lastChangedProduct.DescriptionCN || "";
-                    _product.TitleCN = lastChangedProduct.TitleCN;
-                    _product.Weight = lastChangedProduct.Weight || "";
-                    _product.ItemDimensions = lastChangedProduct.ItemDimensions || {};
-                    _product.PackageDimensions = lastChangedProduct.PackageDimensions || {};
-                    _product.Keywords = lastChangedProduct.Keywords || "";
-                    _product.Views = lastChangedProduct.Views || 0;
-                    _product.Sales = lastChangedProduct.Sales || 0;
-                    _product.SearchCount = lastChangedProduct.SearchCount || 0;
-                    _product.Translated = lastChangedProduct.Translated || false;
-                    _product.Hot = lastChangedProduct.Hot || false;
-                    _product.update_at = new Date();
-                    _product.save(function (err) {
+                if (!lastChangedProduct.TitleCN) {
+                    _this.GoogleTranslate(lastChangedProduct.Title, function (err, TitleCN) {
                         if (err) {
-                            console.log("Error occured at updating Product!" + JSON.stringify(err));
+                            console.log("Error occured at Translate Title!" + JSON.stringify(err));
                             return cb(update_count, deactiv_count, true);
                         }
-                    });
+                        lastChangedProduct.TitleCN = TitleCN;
+                        _this.GoogleTranslate(lastChangedProduct.Description, function (err, DescriptionCN) {
+                            if (err) {
+                                console.log("Error occured at Translate Description!" + JSON.stringify(err));
+                                return cb(update_count, deactiv_count, true);
+                            }
+                            lastChangedProduct.DescriptionCN = DescriptionCN + "  ----('来自Google翻译！')";
+                            lastChangedProduct.Translated = true;
+                            lastChangedProduct.TranslationQuality = "0";
+                            _products.forEach(function (_product, index) {
+                                var existFlag = false;
+                                products.forEach(function (product, index) {
+                                    if (((product.ProductId == _product.ProductId) && (_product.ProductId != null) && (_product.ProductId != "null") && (_product.ProductId != "")) || ((product.ASIN == _product.ASIN) && (_product.ASIN != null) && (_product.ASIN != "null") && (_product.ASIN != ""))) {
+                                        existFlag = true;
+                                    }
+                                });
+                                if (_product.Source == "Amazon") {
+                                    _product.ShopId = "-1";
+                                }
+                                existFlag ? null : (_product.Activity ? deactiv_count++ : null);
+                                _product.Activity = existFlag;
+                                _product.Brand = lastChangedProduct.Brand || "";
+                                _product.Category = lastChangedProduct.Category || "";
+                                _product.Manufactor = lastChangedProduct.Manufactor || "";
+                                _product.DescriptionCN = lastChangedProduct.DescriptionCN || "";
+                                _product.TitleCN = lastChangedProduct.TitleCN;
+                                _product.Weight = lastChangedProduct.Weight || "";
+                                _product.ItemDimensions = lastChangedProduct.ItemDimensions || {};
+                                _product.PackageDimensions = lastChangedProduct.PackageDimensions || {};
+                                _product.Keywords = lastChangedProduct.Keywords || "";
+                                _product.Views = lastChangedProduct.Views || 0;
+                                _product.Sales = lastChangedProduct.Sales || 0;
+                                _product.SearchCount = lastChangedProduct.SearchCount || 0;
+                                _product.Translated = lastChangedProduct.Translated || false;
+                                _product.Hot = lastChangedProduct.Hot || false;
+                                _product.TranslationQuality = lastChangedProduct.TranslationQuality || "-1";
+                                _product.update_at = new Date();
+                                _product.save(function (err) {
+                                    if (err) {
+                                        console.log("Error occured at updating Product!" + JSON.stringify(err));
+                                        return cb(update_count, deactiv_count, true);
+                                    }
+                                });
 
-                    console.log("Database -- Update Count: " + product_count + " | Local Length: " + _products.length + " | Remote Length: " + products.length + " | Exist: " + existFlag + " | Activity: " + _product.Activity + " | Remove: " + deactiv_count);
-                    if (++product_count == _products.length) {
-                        cb(update_count, deactiv_count, false);
-                    }
-                });
+                                console.log("Database -- Update Count: " + product_count + " | Local Length: " + _products.length + " | Remote Length: " + products.length + " | Exist: " + existFlag + " | Activity: " + _product.Activity + " | Remove: " + deactiv_count);
+                                if (++product_count == _products.length) {
+                                    cb(update_count, deactiv_count, false);
+                                }
+                            });
+                        });
+                    });
+                } else {
+                    _products.forEach(function (_product, index) {
+                        var existFlag = false;
+                        products.forEach(function (product, index) {
+                            if (((product.ProductId == _product.ProductId) && (_product.ProductId != null) && (_product.ProductId != "null") && (_product.ProductId != "")) || ((product.ASIN == _product.ASIN) && (_product.ASIN != null) && (_product.ASIN != "null") && (_product.ASIN != ""))) {
+                                existFlag = true;
+                            }
+                        });
+                        if (_product.Source == "Amazon") {
+                            _product.ShopId = "-1";
+                        }
+                        existFlag ? null : (_product.Activity ? deactiv_count++ : null);
+                        _product.Activity = existFlag;
+                        _product.Brand = lastChangedProduct.Brand || "";
+                        _product.Category = lastChangedProduct.Category || "";
+                        _product.Manufactor = lastChangedProduct.Manufactor || "";
+                        _product.DescriptionCN = lastChangedProduct.DescriptionCN || "";
+                        _product.TitleCN = lastChangedProduct.TitleCN;
+                        _product.Weight = lastChangedProduct.Weight || "";
+                        _product.ItemDimensions = lastChangedProduct.ItemDimensions || {};
+                        _product.PackageDimensions = lastChangedProduct.PackageDimensions || {};
+                        _product.Keywords = lastChangedProduct.Keywords || "";
+                        _product.Views = lastChangedProduct.Views || 0;
+                        _product.Sales = lastChangedProduct.Sales || 0;
+                        _product.SearchCount = lastChangedProduct.SearchCount || 0;
+                        _product.Translated = lastChangedProduct.Translated || false;
+                        _product.Hot = lastChangedProduct.Hot || false;
+                        _product.TranslationQuality = lastChangedProduct.TranslationQuality || "-1";
+                        _product.update_at = new Date();
+                        _product.save(function (err) {
+                            if (err) {
+                                console.log("Error occured at updating Product!" + JSON.stringify(err));
+                                return cb(update_count, deactiv_count, true);
+                            }
+                        });
+
+                        console.log("Database -- Update Count: " + product_count + " | Local Length: " + _products.length + " | Remote Length: " + products.length + " | Exist: " + existFlag + " | Activity: " + _product.Activity + " | Remove: " + deactiv_count);
+                        if (++product_count == _products.length) {
+                            cb(update_count, deactiv_count, false);
+                        }
+                    });
+                }
             });
         });
     }
@@ -432,6 +494,12 @@ module.exports = (function () {
             client.translate(params, function (err, data) {
                 cb(err, data);
             });
+        });
+    };
+
+    _Class.prototype.GoogleTranslate = function GoogleTranslate(translate, cb) {
+        googleTranslate.translate(translate, 'zh', function (err, translation) {
+            cb(err, translation.translatedText);
         });
     };
 
