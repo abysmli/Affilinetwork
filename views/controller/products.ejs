@@ -134,9 +134,9 @@
                     </td>
                     <td>
                         <% if (product.Translated) { %>
-                        <a id="translate" ean="<%= product.EAN %>" href="#" translate="true"><span class="label label-primary">Trans.</span></a>
+                        <a id="translate" ean="<%= product.EAN %>" href="#" translate="true"><span class="label label-primary">Trans. <%= product.TranslationQuality %></span></a>
                         <% } else { %>
-                        <a id="translate" ean="<%= product.EAN %>" href="#" translate="false"><span class="label label-warning">Not Trans.</span></a>
+                        <a id="translate" ean="<%= product.EAN %>" href="#" translate="false"><span class="label label-warning">Not Trans. <%= product.TranslationQuality %></span></a>
                         <% } %>
                         <% if (product.Hot) { %>
                         <a id="hot" ean="<%= product.EAN %>" href="#" hot="true"><span class="label label-danger">Hot</span></a>

@@ -21,6 +21,7 @@
     "express-partials": "*",
     "express-session": "*",
     "express-stormpath": "*",
+    "google-translate": "^2.0.4",
     "jsonwebtoken": "*",
     "mobile-detect": "*",
     "mongoose": "*",

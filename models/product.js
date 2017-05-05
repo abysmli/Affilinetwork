@@ -33,6 +33,7 @@ var ProductSchema = new mongoose.Schema({
     Keywords: String,
     Source: String,
     TranslateUtil: String,
+    TranslationQuality: String,
     Views: { type: Number, default: 0 },
     Sales: { type: Number, default: 0 },
     SearchCount: {type: Number, default: 0},
