@@ -830,9 +830,6 @@ router.get('/ean', function (req, res, next) {
 });
 
 router.get('/test', function (req, res, next) {
-    Utils.GoogleTranslate([{ a: "Hello World!", b: "It is a test" }], function (err, translatedText) {
-        res.send(translatedText);
-    });
 });
 
 module.exports = router;

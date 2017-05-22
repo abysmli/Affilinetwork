@@ -1128,8 +1128,8 @@ router.get('/link/remove', auth, function (req, res, next) {
 
 router.get('/scan', auth, function (req, res, next) {
     Scan.find({}).sort({
-            insert_at: -1
-        }).exec(function (err, scans) {
+        insert_at: -1
+    }).exec(function (err, scans) {
         if (err) {
             next(err);
         } else {
@@ -1139,6 +1139,13 @@ router.get('/scan', auth, function (req, res, next) {
                 layout: 'controller/layout'
             });
         }
+    });
+});
+
+router.get('/product_import', auth, function (req, res, next) {
+    res.render('controller/product_import', {
+        title: 'Products Import',
+        layout: 'controller/layout'
     });
 });
 

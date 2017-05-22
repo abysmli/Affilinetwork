@@ -3,7 +3,10 @@ var affilinet = require('../utils/affilinetapi.js');
 var aws = require('aws-lib');
 var Sync = require('../utils/synchronization.js');
 var UpdateDatabase = require('../utils/updatedatabase.js');
+var WriteDatabase = require('../utils/writedatabase.js');
+var writeDatabase = new WriteDatabase();
 var setting = require('../setting.js');
+var SocketIOFile = require('socket.io-file');
 
 var Affilinet = new affilinet({
     publisherId: setting.affilinet_setting.publisherId,
@@ -15,7 +18,11 @@ var prodAdv = aws.createProdAdvClient(setting.amazon_setting.AccessKeyId, settin
     host: "ecs.amazonaws.de",
     region: "DE"
 });
+
 module.exports = function (io) {
+    io.on("connection", function (socket) {
+        console.log("Connected to Server Socket IO Service");
+    });
     io.of('/product').on("connection", function (socket) {
         socket.on('sync', function (data) {
             var sync = new Sync(Product, Affilinet, prodAdv, {
@@ -27,10 +34,38 @@ module.exports = function (io) {
             }, socket);
             sync.sync();
         });
-        
+
         socket.on('update', function (data) {
             var updatedatabase = new UpdateDatabase(Product, Affilinet, prodAdv, socket);
             updatedatabase.update();
+        });
+    });
+    io.of('/uploadProduct').on("connection", function (socket) {
+        var uploader = new SocketIOFile(socket, {
+            uploadDir: 'data',							// simple directory
+            rename: 'productData.csv',
+            accepts: ['text/csv', 'text/plain', 'application/vnd.ms-excel', 'text/x-csv'],
+            chunkSize: 102400,							// default is 10240(1KB)
+            transmissionDelay: 0,						// delay of each transmission, higher value saves more cpu resources, lower upload speed. default is 0(no delay)
+            overwrite: true 							// overwrite file if exists, default is true.
+        });
+        uploader.on('start', (fileInfo) => { });
+        uploader.on('stream', (fileInfo) => { });
+        uploader.on('complete', (fileInfo) => {
+            console.log('Upload Complete.');
+            writeDatabase.init(fileInfo.uploadDir, Product, Affilinet, prodAdv, socket);
+            writeDatabase.parse();
+        });
+        uploader.on('error', (err) => {
+            console.log('Error!', err);
+        });
+        uploader.on('abort', (fileInfo) => {
+            console.log('Aborted: ', fileInfo);
+        });
+        socket.on('write', function (data) {
+            writeDatabase.write((result) => {
+                socket.emit('write-completed', { result: result });
+            });
         });
     });
 }

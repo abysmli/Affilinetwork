@@ -21,6 +21,7 @@
     "express-partials": "*",
     "express-session": "*",
     "express-stormpath": "*",
+    "fast-csv": "^2.4.0",
     "google-translate": "^2.0.4",
     "jsonwebtoken": "*",
     "mobile-detect": "*",
@@ -38,6 +39,8 @@
     "request": "*",
     "serve-favicon": "*",
     "socket.io": "*",
+    "socket.io-file": "^2.0.14",
+    "socket.io-file-client": "^2.0.121",
     "stormpath": "*",
     "xml2js": "*"
   }

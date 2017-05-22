@@ -15,6 +15,7 @@ var ProductSchema = new mongoose.Schema({
     Brand: String,
     Manufactor: String,
     EAN: String,
+    PZN: String,
     Description: String,
     DescriptionCN: String,
     Price: Number,
