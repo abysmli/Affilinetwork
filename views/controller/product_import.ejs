@@ -1,0 +1,136 @@
+<div class="page-header">
+    <h1>
+        <%= title %> <small></small></h1>
+    <form class="form-inline" id="uploadform">
+        <div class="form-group">
+            <label class="sr-only" for="file">Product CSV File</label>
+            <input type="file" class="btn btn-default" id="file" multiple />
+        </div>
+        <button type="submit" id="upload_button" class="btn btn-default">Upload</button>
+        <button id="writeDatabase" class="btn btn-primary">Write into Database</button>
+    </form>
+</div>
+<table id="product_import_table" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%"></table>
+
+<div class="modal fade" id="uploading_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Uploading</h4>
+            </div>
+            <div class="modal-body">
+                <div class="progress">
+                    <div id="progress_bar" class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" style="width: 0%">
+                        0%
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="done_button" type="button" class="btn btn-default" data-dismiss="modal">Done</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var table = {
+        destroy: function () { }
+    };
+    $("#writeDatabase").prop("disabled", true);
+    var socket = io.connect('http://' + window.location.host + '/uploadProduct');
+    var uploader = new SocketIOFileClient(socket);
+    var uploadform = document.getElementById('uploadform');
+
+    uploader.on('start', function (fileInfo) {
+        console.log('Start uploading', fileInfo);
+        $('#done_button').hide();
+        $('#uploading_modal').modal({
+            backdrop: 'static',
+            keyboard: false
+        });
+    });
+    uploader.on('stream', function (fileInfo) {
+        setProgressBar(fileInfo.sent / fileInfo.size);
+    });
+    uploader.on('complete', function (fileInfo) {
+        console.log('Upload Complete', fileInfo);
+        setProgressBar(1);
+        $("#progress_bar").html("Uploading finished! " + (fileInfo.size / 1024 / 1024).toFixed(2) + " MB uploaded, and costed " + (fileInfo.estimated / 1000).toFixed(1) + " seconds!");
+        $('#done_button').fadeIn();
+    });
+    uploader.on('error', function (err) {
+        alert(err);
+    });
+    uploader.on('abort', function (fileInfo) {
+        alert(fileInfo);
+    });
+
+    socket.on('parseFile', function (data) {
+        table = $('#product_import_table')
+            .on('error.dt', function (e, settings, techNote, message) {
+                console.log('An error has been reported by DataTables: ', message);
+                $("#writeDatabase").prop("disabled", true);
+            }).on('draw.dt', function () {
+                console.log('Redraw occurred at: ' + new Date().getTime());
+                $("#writeDatabase").prop("disabled", false);
+                $("#upload_button").text("Re-Upload");
+            }).DataTable({
+                data: data,
+                columns: [
+                    { title: "ProductId" },
+                    { title: "ASIN" },
+                    { title: "URL" },
+                    { title: "ShortURL" },
+                    { title: "ProductName" },
+                    { title: "SalesRank" },
+                    { title: "ProductImage" },
+                    { title: "ProductImageSet" },
+                    { title: "Brand" },
+                    { title: "Manufactor" },
+                    { title: "EAN" },
+                    { title: "PZN" },
+                    { title: "Description" },
+                    { title: "DescriptionCN" },
+                    { title: "Price" },
+                    { title: "PriceCurrency" },
+                    { title: "Shipping" },
+                    { title: "Title" },
+                    { title: "TitleCN" },
+                    { title: "ShopName" },
+                    { title: "ShopId" },
+                    { title: "Category" },
+                    { title: "Weight" },
+                    { title: "ItemDimensions" },
+                    { title: "PackageDimensions" },
+                    { title: "LastProductChange" },
+                    { title: "DeliveryTime" },
+                    { title: "Keywords" },
+                    { title: "Source" },
+                    { title: "Translated" }
+                ]
+            });
+    });
+
+    socket.on('write-completed', (result) => {
+        alert("Write Database Result: " + (result.result ? "Success!" : "Failed!"));
+    });
+
+    uploadform.onsubmit = (ev) => {
+        ev.preventDefault();
+        table.destroy();
+        var fileEl = document.getElementById('file');
+        var uploadIds = uploader.upload(fileEl);
+    };
+
+    $("#writeDatabase").click((e) => {
+        e.preventDefault();
+        socket.emit("write", {});
+    });
+
+    function setProgressBar(value) {
+        var _value = (value * 100).toFixed(2) + "%";
+        $("#progress_bar").width(_value);
+        $("#progress_bar").html(_value);
+    }
+
+</script>

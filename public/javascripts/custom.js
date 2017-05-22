@@ -91,8 +91,6 @@ function getCurrencyExchange(cb) {
     $.get("currencyExchange", cb);
 }
 
-console.log(window.location);
-
 $(document).ready(function(){
     $("#logout").attr("href", "http://allhaha.duoshuo.com/logout/?sso=1&redirect_uri=" + window.location.origin + "/logout/?from=" + window.location.pathname + window.location.search);
     $("#login_form").attr("action", "/login/?from=" + window.location.href);
@@ -105,6 +103,7 @@ var duoshuoQuery = {
         logout: window.location.origin + "/logout?from=" + window.location.href
     }
 };
+
 (function() {
     var ds = document.createElement('script');
     ds.type = 'text/javascript';
