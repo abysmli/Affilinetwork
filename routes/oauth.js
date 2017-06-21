@@ -21,6 +21,8 @@ router.get('/wx_login', function(req,res, next){
 });
 
 
+
+
 router.get('/get_wx_access_token', function(req,res, next){
     //console.log("get_wx_access_token")
     //console.log("code_return: "+req.query.code)
