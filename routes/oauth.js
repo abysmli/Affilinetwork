@@ -13,7 +13,7 @@ router.get('/wx_login', function(req,res, next){
     // 第一步：用户同意授权，获取code
     var router = 'get_wx_access_token';
     // 这是编码后的地址
-    var return_uri = 'https%3A%2F%2Fallhaha.com%2Fwx%2Fauth%2Fack%2F'+router;  
+    var return_uri = 'http%3A%2F%2Fallhaha.com%2Fwx%2Fauth%2Fack%2F'+router;  
     var scope = 'snsapi_userinfo';
 
     res.redirect('https://open.weixin.qq.com/connect/oauth2/authorize?appid='+vWeChatAppId+'&redirect_uri='+return_uri+'&response_type=code&scope='+scope+'&state=STATE#wechat_redirect');
