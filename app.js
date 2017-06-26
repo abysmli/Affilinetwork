@@ -88,7 +88,7 @@ app.use('/controller', controller);
 app.use('/weixin', weixin);
 app.use('/partner', partner);
 app.use('/login', login);
-app.use('/wx/auth', oauth);
+app.use('/wx/auth/ack', oauth);
 app.use('/register', register);
 app.use('/de/register', register_de);
 app.use('/password_reset', passwordreset);
