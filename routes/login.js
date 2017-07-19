@@ -1,5 +1,8 @@
 var express = require('express');
 var router = express.Router();
+
+var OAuth = require('wechat-oauth');
+
 var passport = require('passport');
 var request = require("request");
 var cookieParser = require("cookie-parser");
@@ -8,6 +11,12 @@ var setting = require('../setting');
 var util = require('util');
 var utils = require('../utils/utils.js');
 var Utils = new utils();
+
+var vWeChatAppId = "wx9b210984c837ae28",
+    vWeChatAppSecret = "f7df0dce4d740b74bc91642d3c29ed70";
+
+
+
 
 router.post('/', passport.authenticate('stormpath', {
     failureRedirect: '/login',
