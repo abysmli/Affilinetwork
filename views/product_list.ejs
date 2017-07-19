@@ -44,7 +44,7 @@
                         <div class="listing-item">
                             <div class="overlay-container">
                                 <img src="<%= product.Images %>" onerror="this.src= '/images/no-image.jpg';" />
-                                <a href="/product?product_id=<%= product.ProductId[0] %>" class="overlay small">
+                                <a href="/product?product_id=<%= product.ProductId %>" class="overlay small">
                                     <i class="fa fa-search-plus"></i>
                                     <span>
                                     <% for (var l = product.DescriptionCN.length, i = 0; i < l; i++) { %>
@@ -59,7 +59,7 @@
                             </div>
                             <div class="listing-item-body clearfix">
                                 <h3 class="title" style="font-weight: 300">
-                                    <a href="/product?product_id=<%= product.ProductId[0] %>">
+                                    <a href="/product?product_id=<%= product.ProductId %>">
                                     <% for (var l = product.ProductName.length, i = 0; i < l; i++) { %>
                                         <% name = product.ProductName[i]%>
                                         <% if (name !== "") { %>
@@ -75,7 +75,7 @@
                                 <span class="price" style="font-size: 20px"><%= Math.min.apply(null,product.Price).toString().replace(".", ",") %> - <%= Math.max.apply(null,product.Price).toString().replace(".", ",") %> €</span>
                                 <% } %>
                                 <div class="elements-list pull-right">
-                                    <a href="/product?product_id=<%= product.ProductId[0] %>"><i class="fa fa-gift pr-10"></i>去看看</a>
+                                    <a href="/product?product_id=<%= product.ProductId %>"><i class="fa fa-gift pr-10"></i>去看看</a>
                                 </div>
                             </div>
                         </div>
