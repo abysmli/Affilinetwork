@@ -385,54 +385,57 @@ router.get('/filter', function (req, res, next) {
 
 router.get('/product', function (req, res, next) {
     var currenturl = req.protocol + '://' + req.get('host') + req.originalUrl;
-    Product.find({
-        EAN: req.query.EAN,
-        Activity: true
-    }, null, {
-            sort: {
-                Price: 1
-            }
-        }, function (err, _products) {
-            if (err != null || _products.length == 0) next(err);
-            else {
-                Product.update({
-                    EAN: _products[0].EAN
-                }, {
-                        Views: _products[0].Views + 1
+    Product.findOne({ _id: req.query.product_id }, function (err, product) {
+        if (err) return next(err);
+        Product.find({
+            EAN: product.EAN,
+            Activity: true
+        }, null, {
+                sort: {
+                    Price: 1
+                }
+            }, function (err, _products) {
+                if (err != null || _products.length == 0) next(err);
+                else {
+                    Product.update({
+                        EAN: _products[0].EAN
                     }, {
-                        multi: true
-                    }, function (err, doc) {
-                        if (err) return next(err);
-                        var productsCount = 0;
-                        _products.forEach(function (__product, index) {
-                            __product.TitleCN = __product.TitleCN;
-                            __product.DescriptionCN = __product.DescriptionCN;
-                            Shop.findOne({
-                                ShopId: __product.ShopId,
-                                Activity: true
-                            }, function (err, shop) {
-                                if (shop != null) {
-                                    __product.ShopName = shop.CustomTitleCN;
-                                } else {
-                                    __product.ShopId = "deactiv";
-                                }
-                                if (++productsCount == _products.length) {
-                                    res.render('product_details', {
-                                        title: _products[0].TitleCN,
-                                        footer_bottom: !Utils.checkMobile(req),
-                                        product: _products[0],
-                                        currenturl: currenturl,
-                                        product_link: req.url,
-                                        products: _products,
-                                        layout: '/layout',
-                                        user: req.user
-                                    });
-                                }
+                            Views: _products[0].Views + 1
+                        }, {
+                            multi: true
+                        }, function (err, doc) {
+                            if (err) return next(err);
+                            var productsCount = 0;
+                            _products.forEach(function (__product, index) {
+                                __product.TitleCN = __product.TitleCN;
+                                __product.DescriptionCN = __product.DescriptionCN;
+                                Shop.findOne({
+                                    ShopId: __product.ShopId,
+                                    Activity: true
+                                }, function (err, shop) {
+                                    if (shop != null) {
+                                        __product.ShopName = shop.CustomTitleCN;
+                                    } else {
+                                        __product.ShopId = "deactiv";
+                                    }
+                                    if (++productsCount == _products.length) {
+                                        res.render('product_details', {
+                                            title: _products[0].TitleCN,
+                                            footer_bottom: !Utils.checkMobile(req),
+                                            product: _products[0],
+                                            currenturl: currenturl,
+                                            product_link: req.url,
+                                            products: _products,
+                                            layout: '/layout',
+                                            user: req.user
+                                        });
+                                    }
+                                });
                             });
                         });
-                    });
-            }
-        });
+                }
+            });
+    });
 });
 
 router.post('/favourite', function (req, res, next) {

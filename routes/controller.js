@@ -1,10 +1,13 @@
 var express = require('express');
 var router = express.Router();
 var async = require('async');
+var csv = require("fast-csv");
+var fs = require('fs');
 var parseString = require('xml2js').parseString;
 var auth = require('../models/auth');
 var affilinet = require('../utils/affilinetapi');
 var aws = require('aws-lib');
+var uuidV4 = require('uuid/v4');
 var Product = require('../models/product');
 var Article = require('../models/article');
 var Voucher = require('../models/voucher');
@@ -12,6 +15,7 @@ var Feedback = require('../models/feedback');
 var Request = require('../models/request');
 var Shop = require('../models/shop');
 var Link = require("../models/link");
+var User = require("../models/user");
 var Scan = require("../models/scan");
 var setting = require('../setting');
 var utils = require('../utils/utils');
@@ -1148,5 +1152,149 @@ router.get('/product_import', auth, function (req, res, next) {
         layout: 'controller/layout'
     });
 });
+
+router.get('/user', auth, function (req, res, next) {
+    User.find({}, function (err, users) {
+        res.render('controller/user', {
+            title: 'User Manager',
+            users: users,
+            layout: 'controller/layout'
+        });
+    });
+});
+
+router.get('/user/add', auth, function (req, res, next) {
+    res.render('controller/user_form', {
+        title: 'Add User',
+        user: {},
+        layout: 'controller/layout'
+    });
+});
+
+router.post('/user/add', auth, function (req, res, next) {
+    req.body.admin = (req.body.admin == "true");
+    req.body.appid = uuidV4();
+    req.body.appsecret = uuidV4();
+    User.create(req.body, function (err, user) {
+        if (err) {
+            next(err);
+        }
+        return res.redirect('/controller/user');
+    });
+});
+
+router.get('/user/edit', auth, function (req, res, next) {
+    User.findById(req.query.id, function (err, user) {
+        res.render('controller/user_form', {
+            title: 'Edit User',
+            user: user,
+            layout: 'controller/layout'
+        });
+    });
+});
+
+router.post('/user/edit', auth, function (req, res, next) {
+    User.findOneAndUpdate({
+        _id: req.query.id
+    }, req.body, function (err, user) {
+        if (err) next(err);
+        else {
+            res.redirect('/controller/user');
+        }
+    });
+});
+
+router.get('/user/remove', auth, function (req, res, next) {
+    User.findByIdAndRemove(req.query.id, function (err, user) {
+        if (err) next(err);
+        else {
+            return res.redirect('/controller/user');
+        }
+    });
+});
+
+router.get('/csv', auth, function (req, res, next) {
+    var csvStream = csv.createWriteStream({ headers: true }).transform(function (row) {
+        return {
+            ProductId: row.a,
+            ASIN: row.b,
+            URL: row.c,
+            ProductName: row.d,
+            SalesRank: row.e,
+            ProductImage: row.f,
+            ProductImageSet: row.g,
+            Brand: row.h,
+            Manufactor: row.i,
+            EAN: row.j,
+            PZN: row.k,
+            Description: row.l,
+            DescriptionCN: row.m,
+            Price: row.n,
+            Shipping: row.o,
+            PriceCurrency: row.p,
+            Title: row.q,
+            TitleCN: row.r,
+            ShopName: row.s,
+            ShopId: row.t,
+            Category: row.u,
+            LastProductChange: row.v,
+            DeliveryTime: row.w,
+            Keywords: row.x,
+            Source: row.y
+        };
+    });
+    var writableStream = fs.createWriteStream(process.cwd() + '/public/products.csv');
+    writableStream.on("finish", function () {
+        res.sendFile(process.cwd() + '/public/products.csv');
+    });
+    var query = {
+        ShopIds: req.query.shopid,
+        CategoryIds: req.query.categoryid,
+    }
+    if (req.query.shopid != 0) {
+        query.ShopIdMode = "Include";
+        query.UseAffilinetCategories = "false";
+    }
+    Affilinet.searchProducts(query, function (err, response, results) {
+        if (!err && response.statusCode == 200) {
+            var counter = results.ProductsSummary.TotalRecords;
+            var products = Utils.ToLocalProducts(results.Products, "affilinet");
+            csvStream.pipe(writableStream);
+            products.forEach(function (product, index) {
+                csvStream.write({
+                    a: product.ProductId,
+                    b: product.ASIN,
+                    c: product.URL,
+                    d: product.ProductName,
+                    e: product.SalesRank,
+                    f: product.ProductImage,
+                    g: product.ProductImageSet,
+                    h: product.Brand,
+                    i: product.Manufactor,
+                    j: product.EAN,
+                    k: product.PZN,
+                    l: product.Description,
+                    m: product.DescriptionCN,
+                    n: product.Price,
+                    o: product.Shipping,
+                    p: product.PriceCurrency,
+                    q: product.Title,
+                    r: product.TitleCN,
+                    s: product.ShopName,
+                    t: product.ShopId,
+                    u: product.Category,
+                    v: product.LastProductChange,
+                    w: product.DeliveryTime,
+                    x: product.Keywords,
+                    y: product.Source,
+                });
+            });
+            csvStream.end();
+        } else {
+            next(err);
+        }
+    });
+});
+
 
 module.exports = router;

@@ -1,0 +1,32 @@
+<div class="page-header">
+    <h1><%= title %></h1>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <form method="post" id="user_form">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" class="form-control" id="name" placeholder="name" name="name" value="<%= user.name || '' %>">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="text" class="form-control" id="password" placeholder="password" name="password" value="<%= user.password || '' %>">
+            </div>
+            <div class="form-group">
+                <label for="admin">Admin</label>
+                <select name="admin">
+                    <option value="true" <% if(user.admin) { %> selected='selected' <% } %>>Yes</option>
+                    <option value="false" <% if(!user.admin) { %> selected='selected' <% } %>>No</option>
+                </select>
+            </div>
+            <hr/>
+            <button type="submit" id="post_button" class="btn btn-default"><span class="glyphicon glyphicon-share-alt"></span> Post</button>
+        </form>
+    </div>
+</div>
+<hr/>
+<script>
+    $(document).ready(function () {
+        $("#user_page").addClass("active");
+    });
+</script>

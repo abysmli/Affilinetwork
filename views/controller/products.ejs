@@ -2,6 +2,7 @@
     <% if(type != 'local' && fq == "") { %>
     <h1><%= title %> <small>Total Products: <%= counter %> <i>In Cloud Mode</i></small></h1>
     <a id="sync_button" class="btn btn-primary btn-sm" href="#">Synchronize</a>
+    <a class="btn btn-primary btn-sm" href="/controller/csv?type=product&categoryid=<%= categoryid %>&shopid=<%= shopid %>">Download CSV</a>
     <% } else if (type == 'local'){ %>
     <h1><%= title %> <small>Total Products: <%= counter %> <i>In Local Mode</i></small></h1>
     <a id="update_button" class="btn btn-success btn-sm" href="#">Update</a>
