@@ -18,6 +18,7 @@ module.exports = (function () {
         _this = this;
     }
 
+    // Todo: add a button, in order to overwrite the translation
     _Class.prototype.parse = function parse() {
         csv.fromPath(process.cwd() + "/data/productData.csv")
             .on("data", function (data) {

@@ -295,6 +295,8 @@ router.get('/querySearch', function (req, res, next) {
                 TitleCN: new RegExp(req.query.value, 'gi')
             }, {
                 Keywords: new RegExp(req.query.value, 'gi')
+            }, {
+                Brand: new RegExp(req.query.value, 'gi')
             }]
         }]
     }, null, {
