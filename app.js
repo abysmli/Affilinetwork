@@ -16,6 +16,7 @@ var flash = require('connect-flash');
 var routes = require('./routes/index');
 var routes_de = require('./routes/index_de');
 var controller = require('./routes/controller');
+var api = require('./routes/api');
 var weixin = require('./routes/weixin');
 var partner = require('./routes/partner');
 var login = require('./routes/login');
@@ -38,15 +39,15 @@ passport.use(new FacebookStrategy({
     clientID: setting.facebook_setting.clientID,
     clientSecret: setting.facebook_setting.clientSecret,
     callbackURL: setting.facebook_setting.callbackURL
-}, function(accessToken, refreshToken, profile, cb) {
+}, function (accessToken, refreshToken, profile, cb) {
     return cb(null, profile);
 }));
 
-passport.serializeUser(function(user, cb) {
+passport.serializeUser(function (user, cb) {
     cb(null, user);
 });
 
-passport.deserializeUser(function(obj, cb) {
+passport.deserializeUser(function (obj, cb) {
     cb(null, obj);
 });
 
@@ -84,6 +85,7 @@ app.use(flash());
 app.use('/', routes);
 app.use('/de', routes_de)
 app.use('/controller', controller);
+app.use('/api', api);
 app.use('/weixin', weixin);
 app.use('/partner', partner);
 app.use('/login', login);
@@ -94,7 +96,7 @@ app.use('/de/password_reset', passwordreset_de);
 app.use('/go', link);
 
 /// catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
@@ -103,7 +105,7 @@ app.use(function(req, res, next) {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-    app.use(function(err, req, res, next) {
+    app.use(function (err, req, res, next) {
         res.status(err.status || 500);
         console.log(err.status);
         res.render('error', {
@@ -117,7 +119,7 @@ if (app.get('env') === 'development') {
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     if (err.status == "404") {
         res.render('error-404', {

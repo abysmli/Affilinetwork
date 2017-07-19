@@ -3,9 +3,13 @@ var router = express.Router();
 var parseString = require('xml2js').parseString;
 var affilinet = require('../utils/affilinetapi');
 var aws = require('aws-lib');
+var jwt = require('jsonwebtoken');
+var uuidV4 = require('uuid/v4');
+var tokencheck = require('../utils/tokencheck');
 var Product = require('../models/product');
 var Shop = require('../models/shop');
 var Scan = require("../models/scan");
+var User = require("../models/user");
 var setting = require('../setting');
 var utils = require('../utils/utils');
 var Utils = new utils();
@@ -19,14 +23,6 @@ var Affilinet = new affilinet({
 var prodAdv = aws.createProdAdvClient(setting.amazon_setting.AccessKeyId, setting.amazon_setting.SecretAccessKey, setting.amazon_setting.AssociateTag, {
     host: "ecs.amazonaws.de",
     region: "DE"
-});
-
-router.get('/', function (req, res, next) {
-    res.render('weixin/products', {
-        title: 'Products View',
-        products: [],
-        layout: 'weixin/layout'
-    });
 });
 
 router.get('/prerequest', function (req, res, next) {
@@ -321,7 +317,9 @@ router.get('/querySearch', function (req, res, next) {
 });
 
 router.get('/product', function (req, res, next) {
-    res.redirect("/product?EAN=" + req.query.EAN);
+    Product.findOne({ EAN: req.query.EAN }, function (err, product) {
+        res.redirect("/product?product_id=" + product._id);
+    });
 });
 
 module.exports = router;
