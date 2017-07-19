@@ -45,7 +45,7 @@
                     <div class="image-box">
                         <div class="overlay-container">
                             <img src="<%= product.ProductImage[index] %>" />
-                            <a href="/product?product_id=<%= product.ProductId[0] %>" class="overlay small">
+                            <a href="/product?product_id=<%= product.ProductId[index] %>" class="overlay small">
                                 <i class="fa fa-search-plus"></i>
                                 <span>
                                     <%= product.DescriptionCN[index].replace(/<\/?[^>]+(>|$)/g, "") %>
@@ -54,7 +54,7 @@
                         </div>
                         <div class="listing-item-body clearfix">
                             <h3 class="title" style="font-weight: 300">
-                                <a href="/product?product_id=<%= product.ProductId[0] %>">
+                                <a href="/product?product_id=<%= product.ProductId[index] %>">
                                  <% if (product.TitleCN[index] != null) { %>
                                     <%= product.TitleCN[index].replace(/<\/?[^>]+(>|$)/g, "") %>
                                 <% } else { %>
@@ -69,7 +69,7 @@
                             <span class="price" style="font-size: 20px"><%= Math.min.apply(null,product.Price[index]).toString().replace(".", ",") %> - <%= Math.max.apply(null,product.Price[index]).toString().replace(".", ",") %> €</span>
                             <% } %>
                             <div class="elements-list pull-right">
-                                <a href="/product?product_id=<%= product.ProductId[0] %>"><i class="fa fa-gift pr-10"></i>去看看</a>
+                                <a href="/product?product_id=<%= product.ProductId[index] %>"><i class="fa fa-gift pr-10"></i>去看看</a>
                             </div>
                         </div>
                     </div>
