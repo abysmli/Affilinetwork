@@ -282,6 +282,7 @@ router.get('/eanSearch', function (req, res, next) {
 });
 
 router.get('/querySearch', function (req, res, next) {
+    console.log(req.query.value);
     Product.find({
         $and: [{
             Translated: true,
