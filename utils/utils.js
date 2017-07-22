@@ -402,7 +402,9 @@ module.exports = (function () {
                     if (_product.Source == "Amazon") {
                         _product.ShopId = "-1";
                     }
-                    existFlag = (parseInt(_product.ShopId) < -1) ? true : false;
+                    if (parseInt(_product.ShopId) < -1) {
+                        existFlag = true;
+                    }
                     existFlag ? null : (_product.Activity ? deactiv_count++ : null);
                     _product.Activity = existFlag;
                     _product.Brand = lastChangedProduct.Brand || "";
