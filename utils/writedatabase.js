@@ -101,7 +101,7 @@ module.exports = (function () {
                     Source: data[28],
                     Translated: data[29] == "TRUE",
                     Activity: true,
-                    TranslationQuality: (data[29] == "TRUE") ? "0" : "-1",
+                    TranslationQuality: (data[29] == "TRUE") ? "2" : "-1",
                     update_at: new Date()
                 }
                 _this.parseData.push(_data);
@@ -127,7 +127,6 @@ module.exports = (function () {
                 }
             });
         });
-
     }
 
     return _Class;
