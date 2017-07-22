@@ -26,91 +26,135 @@ var prodAdv = aws.createProdAdvClient(setting.amazon_setting.AccessKeyId, settin
 });
 
 router.get('/prerequest', function (req, res, next) {
-    var query = {};
-    query.FQ = "EAN:" + req.query.value;
-    var scanResult = {
-        Result: "",
-        EAN: req.query.value,
-        FromUser: req.query.from,
-        Type: req.query.type
-    };
-    Product.find({
-        EAN: req.query.value
-    }, (err, products) => {
-        var counter = products.length;
-        Affilinet.searchProducts(query, function (err, response, results) {
-            if (!err && response.statusCode == 200) {
-                counter = parseInt(counter) + parseInt(results.ProductsSummary.TotalRecords);
-                var _product = Utils.ToLocalProducts(results.Products, "affilinet");
-                if (!Utils.isEmptyObject(_product)) {
-                    counter = parseInt(counter) + 1;
-                    products = products.concat(_product);
-                }
-                query.FQ = "EAN:0" + req.query.value;
-                Affilinet.searchProducts(query, function (err, response, results) {
-                    if (!err && response.statusCode == 200) {
-                        counter = parseInt(counter) + parseInt(results.ProductsSummary.TotalRecords);
-                        var _product = Utils.ToLocalProducts(results.Products, "affilinet");
-                        if (!Utils.isEmptyObject(_product)) {
-                            counter = parseInt(counter) + 1;
-                            products = products.concat(_product);
-                        }
-                        prodAdv.call("ItemLookup", {
-                            ItemId: req.query.value,
-                            IdType: "EAN",
-                            SearchIndex: "All",
-                            ResponseGroup: "Large",
-                            MerchantId: "Amazon"
-                        }, function (err, product) {
-                            if (!err) {
-                                var _product = {};
-                                if (Array.isArray(product.Items.Item)) {
-                                    _product = Utils.fromAmazonToLocalProduct(product.Items.Item[0]);
-                                } else {
-                                    _product = Utils.fromAmazonToLocalProduct(product.Items.Item);
-                                }
-                                if (!Utils.isEmptyObject(_product)) {
-                                    counter = parseInt(counter) + 1;
-                                    products.push(_product);
-                                }
-                                if (products.length !== 0) {
-                                    var price = products[0].Price;
-                                    products.forEach(function (product) {
-                                        if (price > product.Price) {
-                                            price = product.Price;
-                                        }
-                                    });
-                                    var data = {
-                                        Result: "success",
-                                        Title: products[0].Title || "",
-                                        TitleCN: products[0].TitleCN || "",
-                                        Image: products[0].ProductImage || "",
-                                        Brand: products[0].Brand || "",
-                                        Price: price || ""
-                                    };
-                                    res.json(data);
-                                } else {
-                                    scanResult.Result = "Not Found";
-                                    Scan.create(scanResult, function (err, scan) {
-                                        if (err) next(err);
-                                    });
-                                    res.json({
-                                        Result: "产品未找到，我们将及时添加。"
-                                    });
-                                }
-                            } else {
-                                res.send(err);
-                            }
-                        });
-                    } else {
-                        res.send(err);
+    if (req.query.value != undefined) {
+        var query = {};
+        query.FQ = "EAN:" + req.query.value;
+        var scanResult = {
+            Result: "",
+            EAN: req.query.value,
+            FromUser: req.query.from,
+            Type: req.query.type
+        };
+        Product.find({
+            EAN: req.query.value
+        }, (err, products) => {
+            var counter = products.length;
+            Affilinet.searchProducts(query, function (err, response, results) {
+                if (!err && response.statusCode == 200) {
+                    counter = parseInt(counter) + parseInt(results.ProductsSummary.TotalRecords);
+                    var _product = Utils.ToLocalProducts(results.Products, "affilinet");
+                    if (!Utils.isEmptyObject(_product)) {
+                        counter = parseInt(counter) + 1;
+                        products = products.concat(_product);
                     }
-                });
-            } else {
-                res.send(err);
-            }
+                    query.FQ = "EAN:0" + req.query.value;
+                    Affilinet.searchProducts(query, function (err, response, results) {
+                        if (!err && response.statusCode == 200) {
+                            counter = parseInt(counter) + parseInt(results.ProductsSummary.TotalRecords);
+                            var _product = Utils.ToLocalProducts(results.Products, "affilinet");
+                            if (!Utils.isEmptyObject(_product)) {
+                                counter = parseInt(counter) + 1;
+                                products = products.concat(_product);
+                            }
+                            prodAdv.call("ItemLookup", {
+                                ItemId: req.query.value,
+                                IdType: "EAN",
+                                SearchIndex: "All",
+                                ResponseGroup: "Large",
+                                MerchantId: "Amazon"
+                            }, function (err, product) {
+                                if (!err) {
+                                    var _product = {};
+                                    if (Array.isArray(product.Items.Item)) {
+                                        _product = Utils.fromAmazonToLocalProduct(product.Items.Item[0]);
+                                    } else {
+                                        _product = Utils.fromAmazonToLocalProduct(product.Items.Item);
+                                    }
+                                    if (!Utils.isEmptyObject(_product)) {
+                                        counter = parseInt(counter) + 1;
+                                        products.push(_product);
+                                    }
+                                    if (products.length !== 0) {
+                                        var price = products[0].Price;
+                                        products.forEach(function (product) {
+                                            if (price > product.Price) {
+                                                price = product.Price;
+                                            }
+                                        });
+                                        var data = {
+                                            Result: "success",
+                                            Title: products[0].Title || "",
+                                            TitleCN: products[0].TitleCN || "",
+                                            Image: products[0].ProductImage || "",
+                                            Brand: products[0].Brand || "",
+                                            Price: price || ""
+                                        };
+                                        res.json(data);
+                                    } else {
+                                        scanResult.Result = "Not Found";
+                                        Scan.create(scanResult, function (err, scan) {
+                                            if (err) next(err);
+                                        });
+                                        res.json({
+                                            Result: "产品未找到，我们将及时添加。"
+                                        });
+                                    }
+                                } else {
+                                    res.send(err);
+                                }
+                            });
+                        } else {
+                            res.send(err);
+                        }
+                    });
+                } else {
+                    res.send(err);
+                }
+            });
         });
-    });
+    } else if (req.query.content != undefined) {
+        var scanResult = {
+            Result: "",
+            Content: req.query.content,
+            FromUser: req.query.from,
+            Type: req.query.type
+        };
+        Product.find({
+            $and: [{
+                Translated: true,
+                EAN: {
+                    $ne: 'null'
+                },
+                EAN: {
+                    $ne: null
+                },
+                Activity: {
+                    $ne: false
+                },
+                $or: [{
+                    Title: new RegExp(scanResult.Content, 'gi')
+                }, {
+                    TitleCN: new RegExp(scanResult.Content, 'gi')
+                }, {
+                    Category: new RegExp(scanResult.Content, 'gi')
+                }, {
+                    Keywords: new RegExp(scanResult.Content, 'gi')
+                }]
+            }]
+        }, (err, products) => {
+            var sum = products.length;
+            var data = {
+                Result: "success",
+                Content: scanResult.Content,
+                Sum: sum
+            };
+            res.json(data);
+        });
+    } else {
+        res.json({
+            Result: "Request not supported!"
+        });
+    }
 });
 
 router.get('/ean', function (req, res, next) {
