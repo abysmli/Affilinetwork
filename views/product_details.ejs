@@ -78,31 +78,64 @@
                                 <a id="add_favourite_button" href="#"><span>收藏</span></a>
                                 <!--<a id="calc" href="#"><span>一键计算</span></a>-->
                             </div>
-                            <div class="clearfix">
-                                <table class="table table-striped">
-                                    <tr>
-                                        <td>商家</td>
-                                        <td>价格</td>
-                                        <td>运费</td>
-                                        <td>链接</td>
-                                    </tr>
-                                    <% products.forEach(function(product, index) { %>
-                                    <% if (product.ShopId != "deactiv" && product.Price) { %>
-                                    <tr>
-                                        <td>
-                                            <a href="#" target="_blank" data-toggle="modal" data-target="#shopContentModal" id="shop_content" content="/nav/customContent?ShopId=<%= product.ShopId %>"><%= product.ShopName %></a>
-                                        </td>
-                                        <td>
-                                            <%= product.Price.toString().replace(".", ",") %>€
-                                        </td>
-                                        <td>
-                                            <%= product.Shipping === null || product.Shipping == undefined ? "无" : product.Shipping.toString().replace(".", ",") + "€" || "无" %> 
-                                        </td>
-                                        <td><a target="_blank" href="/go/<%= product.ShortURL %>">购买</a></td>
-                                    </tr>
-                                    <% } %>
-                                    <% }) %>
-                                </table>
+                            <br/>
+                            <div id="germany_block">
+                                <h3>德国</h3>
+                                <div class="clearfix">
+                                    <table id="germany_table" class="table table-striped">
+                                        <tr>
+                                            <td>商家</td>
+                                            <td>价格</td>
+                                            <td>运费</td>
+                                            <td>链接</td>
+                                        </tr>
+                                        <% products.forEach(function(product, index) { %>
+                                        <% if (product.ShopId != "deactiv" && product.Price && product.Source.substring(0, 3).toLowerCase() != "cn-") { %>
+                                        <tr>
+                                            <td>
+                                                <a href="#" target="_blank" data-toggle="modal" data-target="#shopContentModal" id="shop_content" content="/nav/customContent?ShopId=<%= product.ShopId %>"><%= product.ShopName %></a>
+                                            </td>
+                                            <td>
+                                                <%= product.Price.toString().replace(".", ",") %>€
+                                            </td>
+                                            <td>
+                                                <%= product.Shipping === null || product.Shipping == undefined ? "无" : product.Shipping.toString().replace(".", ",") + "€" || "无" %> 
+                                            </td>
+                                            <td><a target="_blank" href="/go/<%= product.ShortURL %>">购买</a></td>
+                                        </tr>
+                                        <% } %>
+                                        <% }) %>
+                                    </table>
+                                </div>
+                            </div>
+                            <div id="chinese_block">
+                                <h3>中国</h3>
+                                <div class="clearfix">
+                                    <table id="chinese_table" class="table table-striped">
+                                        <tr>
+                                            <td>商家</td>
+                                            <td>价格</td>
+                                            <td>运费</td>
+                                            <td>链接</td>
+                                        </tr>
+                                        <% products.forEach(function(product, index) { %>
+                                        <% if (product.ShopId != "deactiv" && product.Price && product.Source.substring(0, 3).toLowerCase() == "cn-") { %>
+                                        <tr>
+                                            <td>
+                                                <a href="#" target="_blank" data-toggle="modal" data-target="#shopContentModal" id="shop_content" content="/nav/customContent?ShopId=<%= product.ShopId %>"><%= product.ShopName %></a>
+                                            </td>
+                                            <td>
+                                                <%= product.Price.toString().replace(".", ",") %>€
+                                            </td>
+                                            <td>
+                                                <%= product.Shipping === null || product.Shipping == undefined ? "无" : product.Shipping.toString().replace(".", ",") + "€" || "无" %> 
+                                            </td>
+                                            <td><a target="_blank" href="/go/<%= product.ShortURL %>">购买</a></td>
+                                        </tr>
+                                        <% } %>
+                                        <% }) %>
+                                    </table>
+                                </div>
                             </div>
                             <hr/>
                         </div>
@@ -255,6 +288,12 @@
     <script type = "text/javascript">
 
     $(document).ready(function() {
+        if ($("#germany_table tr").length == 1) {
+            $("#germany_block").hide();
+        }
+        if ($("#chinese_table tr").length == 1) {
+            $("#chinese_block").hide();
+        }
         $("#add_favourite_button").click(function() { 
             <% if (user != "" && user != undefined) { %>
                 var data = {
