@@ -85,7 +85,7 @@ router.get('/prerequest', function (req, res, next) {
                                         Title: products[0].TitleCN || products[0].Title || "",
                                         Image: products[0].ProductImage || "",
                                         Brand: products[0].Brand || "",
-                                        Price: price
+                                        Price: price || ""
                                     };
                                     res.json(data);
                                 } else {
