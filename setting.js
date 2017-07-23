@@ -51,7 +51,10 @@ var app_setting = {
         clientID: "1134828276538020",
         clientSecret: "0bf5b4d8c0354acc2d3cb822a3e5ef55",
         callbackURL: 'http://localhost:8818/login/facebook/return',
-    }
+    },
+    // people in china can only see the table of china.
+    china_pricetable_block: true,
+    total_pricetable_block: false,
 };
 
 module.exports = app_setting;

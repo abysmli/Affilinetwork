@@ -384,6 +384,11 @@ router.get('/filter', function (req, res, next) {
 });
 
 router.get('/product', function (req, res, next) {
+    var ip = req.clientIp;
+    var country = Utils.getCountry(ip);
+    if (country == 'CN' && setting.china_pricetable_block) {
+        var china_table_block = true;
+    }
     var currenturl = req.protocol + '://' + req.get('host') + req.originalUrl;
     Product.findOne({ _id: req.query.product_id }, function (err, product) {
         if (err) return next(err);
@@ -426,6 +431,8 @@ router.get('/product', function (req, res, next) {
                                             currenturl: currenturl,
                                             product_link: req.url,
                                             products: _products,
+                                            china_table_block: china_table_block,
+                                            total_table_block: setting.total_pricetable_block,
                                             layout: '/layout',
                                             user: req.user
                                         });

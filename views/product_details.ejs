@@ -78,7 +78,9 @@
                                 <a id="add_favourite_button" href="#"><span>收藏</span></a>
                                 <!--<a id="calc" href="#"><span>一键计算</span></a>-->
                             </div>
+                            <% if (!total_table_block) { %>
                             <br/>
+                            <% if (!china_table_block) { %>
                             <div id="germany_block">
                                 <h3>德国</h3>
                                 <div class="clearfix">
@@ -108,6 +110,7 @@
                                     </table>
                                 </div>
                             </div>
+                            <% } %>
                             <div id="chinese_block">
                                 <h3>中国</h3>
                                 <div class="clearfix">
@@ -138,6 +141,7 @@
                                 </div>
                             </div>
                             <hr/>
+                            <% } %>
                         </div>
                         <!-- product side start -->
                         <aside class="col-md-8">

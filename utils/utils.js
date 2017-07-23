@@ -1,5 +1,6 @@
 var Link = require("../models/link");
 var MsTranslator = require('mstranslator');
+var geoip = require('geoip-lite');
 var client = new MsTranslator({
     api_key: "1d77d40d8eec46a180773798ce6cb46b" // use this for the new token API. 
 }, true);
@@ -506,6 +507,14 @@ module.exports = (function () {
         googleTranslate.translate(translate, 'zh', function (err, translation) {
             cb(err, translation.translatedText);
         });
+    };
+
+    _Class.prototype.getCountry = function getCountry(ip) {
+        console.log(ip);
+        if (ip == "::ffff:127.0.0.1" || ip == "127.0.0.1" || ip == "::1" || ip == undefined) {
+            return "";
+        }
+        return (geoip.lookup(ip)).country;
     };
 
     return _Class;
