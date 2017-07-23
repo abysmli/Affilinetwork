@@ -22,6 +22,7 @@
     "express-session": "*",
     "express-stormpath": "*",
     "fast-csv": "^2.4.0",
+    "geoip-lite": "^1.2.1",
     "google-translate": "^2.0.4",
     "jsonwebtoken": "^7.4.1",
     "mobile-detect": "*",
@@ -42,8 +43,8 @@
     "socket.io-file": "^2.0.14",
     "socket.io-file-client": "^2.0.121",
     "stormpath": "*",
-    "wechat-oauth": "^1.2.1",
     "uuid": "^3.1.0",
+    "wechat-oauth": "^1.2.1",
     "xml2js": "*"
   }
 }
