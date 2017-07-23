@@ -386,6 +386,7 @@ router.get('/filter', function (req, res, next) {
 router.get('/product', function (req, res, next) {
     var ip = req.clientIp;
     var country = Utils.getCountry(ip);
+    console.log(country);
     if (country == 'CN' && setting.china_pricetable_block) {
         var china_table_block = true;
     }
