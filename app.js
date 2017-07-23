@@ -12,6 +12,7 @@ var StormpathStrategy = require('passport-stormpath');
 var FacebookStrategy = require('passport-facebook').Strategy;
 var session = require('express-session');
 var flash = require('connect-flash');
+var requestIp = require('request-ip');
 
 var routes = require('./routes/index');
 var routes_de = require('./routes/index_de');
@@ -82,6 +83,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
+app.use(requestIp.mw());
 
 app.use('/', routes);
 app.use('/de', routes_de)

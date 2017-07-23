@@ -38,6 +38,7 @@
     "passport-local-mongoose": "*",
     "passport-stormpath": "*",
     "request": "*",
+    "request-ip": "^2.0.2",
     "serve-favicon": "*",
     "socket.io": "*",
     "socket.io-file": "^2.0.14",
