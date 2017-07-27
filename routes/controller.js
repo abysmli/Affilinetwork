@@ -1244,9 +1244,9 @@ router.get('/csv', auth, function (req, res, next) {
                 Source: row.y
             };
         });
-        var writableStream = fs.createWriteStream(process.cwd() + '/public/products.csv');
+        var writableStream = fs.createWriteStream(process.cwd() + '/data/products.csv');
         writableStream.on("finish", function () {
-            res.sendFile(process.cwd() + '/public/products.csv');
+            res.sendFile(process.cwd() + '/data/products.csv');
         });
         var query = {
             ShopIds: req.query.shopid,
@@ -1326,9 +1326,9 @@ router.get('/csv', auth, function (req, res, next) {
                 Source: row.y,
             };
         });
-        var writableStream = fs.createWriteStream(process.cwd() + '/public/products.csv');
+        var writableStream = fs.createWriteStream(process.cwd() + '/data/products.csv');
         writableStream.on("finish", function () {
-            res.sendFile(process.cwd() + '/public/products.csv');
+            res.sendFile(process.cwd() + '/data/products.csv');
         });
         var ean = "";
         Product.find({
@@ -1382,9 +1382,9 @@ router.get('/csv', auth, function (req, res, next) {
                 insert_at: row.e
             };
         });
-        var writableStream = fs.createWriteStream(process.cwd() + '/public/scan.csv');
+        var writableStream = fs.createWriteStream(process.cwd() + '/data/scan.csv');
         writableStream.on("finish", function () {
-            res.sendFile(process.cwd() + '/public/scan.csv');
+            res.sendFile(process.cwd() + '/data/scan.csv');
         });
         Scan.find({}).sort({ insert_at: -1 }).exec(function (err, scans) {
             if (err) return next(err);
