@@ -1214,86 +1214,195 @@ router.get('/user/remove', auth, function (req, res, next) {
 });
 
 router.get('/csv', auth, function (req, res, next) {
-    var csvStream = csv.createWriteStream({ headers: true }).transform(function (row) {
-        return {
-            ProductId: row.a,
-            ASIN: row.b,
-            URL: row.c,
-            ProductName: row.d,
-            SalesRank: row.e,
-            ProductImage: row.f,
-            ProductImageSet: row.g,
-            Brand: row.h,
-            Manufactor: row.i,
-            EAN: row.j,
-            PZN: row.k,
-            Description: row.l,
-            DescriptionCN: row.m,
-            Price: row.n,
-            Shipping: row.o,
-            PriceCurrency: row.p,
-            Title: row.q,
-            TitleCN: row.r,
-            ShopName: row.s,
-            ShopId: row.t,
-            Category: row.u,
-            LastProductChange: row.v,
-            DeliveryTime: row.w,
-            Keywords: row.x,
-            Source: row.y
-        };
-    });
-    var writableStream = fs.createWriteStream(process.cwd() + '/public/products.csv');
-    writableStream.on("finish", function () {
-        res.sendFile(process.cwd() + '/public/products.csv');
-    });
-    var query = {
-        ShopIds: req.query.shopid,
-        CategoryIds: req.query.categoryid,
-    }
-    if (req.query.shopid != 0) {
-        query.ShopIdMode = "Include";
-        query.UseAffilinetCategories = "false";
-    }
-    Affilinet.searchProducts(query, function (err, response, results) {
-        if (!err && response.statusCode == 200) {
-            var counter = results.ProductsSummary.TotalRecords;
-            var products = Utils.ToLocalProducts(results.Products, "affilinet");
+    if (req.query.type == "product") {
+        var csvStream = csv.createWriteStream({ headers: true }).transform(function (row) {
+            return {
+                ProductId: row.a,
+                ASIN: row.b,
+                URL: row.c,
+                ProductName: row.d,
+                SalesRank: row.e,
+                ProductImage: row.f,
+                ProductImageSet: row.g,
+                Brand: row.h,
+                Manufactor: row.i,
+                EAN: row.j,
+                PZN: row.k,
+                Description: row.l,
+                DescriptionCN: row.m,
+                Price: row.n,
+                Shipping: row.o,
+                PriceCurrency: row.p,
+                Title: row.q,
+                TitleCN: row.r,
+                ShopName: row.s,
+                ShopId: row.t,
+                Category: row.u,
+                LastProductChange: row.v,
+                DeliveryTime: row.w,
+                Keywords: row.x,
+                Source: row.y
+            };
+        });
+        var writableStream = fs.createWriteStream(process.cwd() + '/public/products.csv');
+        writableStream.on("finish", function () {
+            res.sendFile(process.cwd() + '/public/products.csv');
+        });
+        var query = {
+            ShopIds: req.query.shopid,
+            CategoryIds: req.query.categoryid,
+        }
+        if (req.query.shopid != 0) {
+            query.ShopIdMode = "Include";
+            query.UseAffilinetCategories = "false";
+        }
+        Affilinet.searchProducts(query, function (err, response, results) {
+            if (!err && response.statusCode == 200) {
+                var counter = results.ProductsSummary.TotalRecords;
+                var products = Utils.ToLocalProducts(results.Products, "affilinet");
+                csvStream.pipe(writableStream);
+                products.forEach(function (product, index) {
+                    csvStream.write({
+                        a: product.ProductId,
+                        b: product.ASIN,
+                        c: product.URL,
+                        d: product.ProductName,
+                        e: product.SalesRank,
+                        f: product.ProductImage,
+                        g: product.ProductImageSet,
+                        h: product.Brand,
+                        i: product.Manufactor,
+                        j: product.EAN,
+                        k: product.PZN,
+                        l: product.Description,
+                        m: product.DescriptionCN,
+                        n: product.Price,
+                        o: product.Shipping,
+                        p: product.PriceCurrency,
+                        q: product.Title,
+                        r: product.TitleCN,
+                        s: product.ShopName,
+                        t: product.ShopId,
+                        u: product.Category,
+                        v: (new Date(parseInt(product.LastProductChange.substr(6, 13)))).toLocaleString("en-US", { timeZone: "Asia/Shanghai" }),
+                        w: product.DeliveryTime,
+                        x: product.Keywords,
+                        y: product.Source,
+                    });
+                });
+                csvStream.end();
+            } else {
+                next(err);
+            }
+        });
+    } else if (req.query.type == "translate") {
+        var csvStream = csv.createWriteStream({ headers: true }).transform(function (row) {
+            return {
+                ProductId: row.a,
+                ASIN: row.b,
+                URL: row.c,
+                ProductName: row.d,
+                SalesRank: row.e,
+                ProductImage: row.f,
+                ProductImageSet: row.g,
+                Brand: row.h,
+                Manufactor: row.i,
+                EAN: row.j,
+                PZN: row.k,
+                Description: row.l,
+                DescriptionCN: row.m,
+                TranslationQuality: row.z,
+                Price: row.n,
+                Shipping: row.o,
+                PriceCurrency: row.p,
+                Title: row.q,
+                TitleCN: row.r,
+                ShopName: row.s,
+                ShopId: row.t,
+                Category: row.u,
+                LastProductChange: row.v,
+                DeliveryTime: row.w,
+                Keywords: row.x,
+                Source: row.y,
+            };
+        });
+        var writableStream = fs.createWriteStream(process.cwd() + '/public/products.csv');
+        writableStream.on("finish", function () {
+            res.sendFile(process.cwd() + '/public/products.csv');
+        });
+        var ean = "";
+        Product.find({
+            Activity: true,
+            Translated: true
+        }, function (err, products) {
+            if (err) return next(err);
             csvStream.pipe(writableStream);
             products.forEach(function (product, index) {
+                if (ean != product.EAN) {
+                    ean = product.EAN;
+                    csvStream.write({
+                        a: product.ProductId,
+                        b: product.ASIN,
+                        c: product.URL,
+                        d: product.ProductName,
+                        e: product.SalesRank,
+                        f: product.ProductImage,
+                        g: product.ProductImageSet,
+                        h: product.Brand,
+                        i: product.Manufactor,
+                        j: product.EAN,
+                        k: product.PZN,
+                        l: product.Description,
+                        m: product.DescriptionCN,
+                        z: product.TranslationQuality,
+                        n: product.Price,
+                        o: product.Shipping,
+                        p: product.PriceCurrency,
+                        q: product.Title,
+                        r: product.TitleCN,
+                        s: product.ShopName,
+                        t: product.ShopId,
+                        u: product.Category,
+                        v: (new Date(parseInt(product.LastProductChange.substr(6, 13)))).toLocaleString("en-US", { timeZone: "Asia/Shanghai" }),
+                        w: product.DeliveryTime,
+                        x: product.Keywords,
+                        y: product.Source,
+                    });
+                }
+            });
+            csvStream.end();
+        });
+    } else if (req.query.type == "scanview") {
+        var csvStream = csv.createWriteStream({ headers: true }).transform(function (row) {
+            return {
+                FromUser: row.a,
+                EAN: row.b,
+                Result: row.c,
+                Type: row.d,
+                insert_at: row.e
+            };
+        });
+        var writableStream = fs.createWriteStream(process.cwd() + '/public/scan.csv');
+        writableStream.on("finish", function () {
+            res.sendFile(process.cwd() + '/public/scan.csv');
+        });
+        Scan.find({}).sort({ insert_at: -1 }).exec(function (err, scans) {
+            if (err) return next(err);
+            csvStream.pipe(writableStream);
+            scans.forEach(function (scan, index) {
                 csvStream.write({
-                    a: product.ProductId,
-                    b: product.ASIN,
-                    c: product.URL,
-                    d: product.ProductName,
-                    e: product.SalesRank,
-                    f: product.ProductImage,
-                    g: product.ProductImageSet,
-                    h: product.Brand,
-                    i: product.Manufactor,
-                    j: product.EAN,
-                    k: product.PZN,
-                    l: product.Description,
-                    m: product.DescriptionCN,
-                    n: product.Price,
-                    o: product.Shipping,
-                    p: product.PriceCurrency,
-                    q: product.Title,
-                    r: product.TitleCN,
-                    s: product.ShopName,
-                    t: product.ShopId,
-                    u: product.Category,
-                    v: product.LastProductChange,
-                    w: product.DeliveryTime,
-                    x: product.Keywords,
-                    y: product.Source,
+                    a: FromUser,
+                    b: EAN,
+                    c: Result,
+                    d: Type,
+                    e: (new Date(scan.insert_at)).toLocaleString("en-US", { timeZone: "Asia/Shanghai" }),
                 });
             });
             csvStream.end();
-        } else {
-            next(err);
-        }
-    });
+        });
+    } else {
+        res.send("Type error!");
+    }
 });
 
 

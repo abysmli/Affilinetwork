@@ -6,6 +6,7 @@
     <% } else if (type == 'local'){ %>
     <h1><%= title %> <small>Total Products: <%= counter %> <i>In Local Mode</i></small></h1>
     <a id="update_button" class="btn btn-success btn-sm" href="#">Update</a>
+    <a class="btn btn-primary btn-sm" href="/controller/csv?type=translate">Download Translated</a>
     <% } else { %>
     <h1><%= title %> <small>Total Products: <%= counter %> <i>In Cloud Mode</i></small></h1>
     <% } %>
