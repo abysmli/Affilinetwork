@@ -1391,10 +1391,10 @@ router.get('/csv', auth, function (req, res, next) {
             csvStream.pipe(writableStream);
             scans.forEach(function (scan, index) {
                 csvStream.write({
-                    a: FromUser,
-                    b: EAN,
-                    c: Result,
-                    d: Type,
+                    a: scan.FromUser,
+                    b: scan.EAN,
+                    c: scan.Result,
+                    d: scan.Type,
                     e: (new Date(scan.insert_at)).toLocaleString("en-US", { timeZone: "Asia/Shanghai" }),
                 });
             });
