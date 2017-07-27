@@ -1395,7 +1395,7 @@ router.get('/csv', auth, function (req, res, next) {
                     b: scan.EAN,
                     c: scan.Result,
                     d: scan.Type,
-                    e: (new Date(scan.insert_at)).toLocaleString("en-US", { timeZone: "Asia/Shanghai" }),
+                    e: (new Date(scan.insert_at)).toISOString(),
                 });
             });
             csvStream.end();
