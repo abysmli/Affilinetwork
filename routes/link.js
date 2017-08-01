@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var url = require('url');
+var URL = require('url');
 var Link = require("../models/link");
 var Product = require('../models/product');
 var Shop = require('../models/shop');
@@ -44,7 +44,7 @@ router.get('/:url', function (req, res, next) {
     var url = req.params.url;
     Link.findOne({ short: url }, function (err, link) {
         if (link) {
-            var _url = url.parse(link.long, true);
+            var _url = URL.parse(link.long, true);
             var __url;
             if (_url.search) {
                 __url = link.long + '&subid=' + req.query.subid;
