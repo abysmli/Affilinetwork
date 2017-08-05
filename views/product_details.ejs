@@ -74,13 +74,19 @@
                             </div>
                             <!-- Tab panes end-->
                             <hr/>
-                            <div class="elements-list pull-right clearfix">
-                                <a id="add_favourite_button" href="#"><span>收藏</span></a>
-                                <!--<a id="calc" href="#"><span>一键计算</span></a>-->
+                            <div >
+                                <img style="height: 100px; width: 250px" id="barCodeImg" src="" />
                             </div>
+                            <div class="elements-list pull-right clearfix">
+                                <a id="add_favourite_button" href="#"><span>收藏</span></a>                             
+                                <!--<a id="calc" href="#"><span>一键计算</span></a>-->
+                                
+                            </div>
+                            
                             <% if (!total_table_block) { %>
                             <br/>
                             <% if (!china_table_block) { %>
+
                             <div id="germany_block">
                                 <h3>德国</h3>
                                 <div class="clearfix">
@@ -326,12 +332,12 @@
                 $('#shop_custom_content').html(result.content);
             }, function(error) {
                 Notify('warning', '服务器错误，请稍后再试!');
-            }); 
+            });
+        
         });
         
 
         var href = window.location.href;
-        console.log(href);
         var typeNumber = 4;
         var errorCorrectionLevel = 'L';
         var qr = qrcode(typeNumber, errorCorrectionLevel);
@@ -343,6 +349,7 @@
             "display": "block",
             "margin": "0 auto"
         });
+        $("#barCodeImg").attr("src", "http://api-bwipjs.rhcloud.com/?bcid=ean13&text=" + <%= product.EAN %> + "&includetext&guardwhitespace&scale=2");
 
     });
     </script>
