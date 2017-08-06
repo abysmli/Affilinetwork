@@ -5,6 +5,9 @@ var request = require("request");
 var aws = require('aws-lib');
 var passport = require('passport');
 var parseString = require('xml2js').parseString;
+var barCodeGenerator = require("bwip-js");
+var fs = require("fs");
+var path = require("path");
 
 var setting = require('../setting');
 var Product = require('../models/product');
@@ -282,8 +285,8 @@ router.get('/filter', function (req, res, next) {
                     if (products.length != 0) {
                         products.forEach(function (product, index) {
                             Product.find({
-                                EAN: product._id
-                            }).stream()
+                                    EAN: product._id
+                                }).stream()
                                 .on("error", function (err) {
                                     next(err);
                                 })
@@ -318,8 +321,8 @@ router.get('/filter', function (req, res, next) {
                                                 var iterateNumber = 0;
                                                 hotproducts.forEach(function (hotproduct, index) {
                                                     Product.find({
-                                                        EAN: hotproduct._id
-                                                    }).stream()
+                                                            EAN: hotproduct._id
+                                                        }).stream()
                                                         .on("error", function (err) {
                                                             next(err);
                                                         })
@@ -391,58 +394,77 @@ router.get('/product', function (req, res, next) {
         var china_table_block = true;
     }
     var currenturl = req.protocol + '://' + req.get('host') + req.originalUrl;
-    Product.findOne({ _id: req.query.product_id }, function (err, product) {
+    Product.findOne({
+        _id: req.query.product_id
+    }, function (err, product) {
         if (err) return next(err);
         Product.find({
             EAN: product.EAN,
             Activity: true
         }, null, {
-                sort: {
-                    Price: 1
-                }
-            }, function (err, _products) {
-                if (err != null || _products.length == 0) next(err);
-                else {
-                    Product.update({
-                        EAN: _products[0].EAN
-                    }, {
-                            Views: _products[0].Views + 1
-                        }, {
-                            multi: true
-                        }, function (err, doc) {
-                            if (err) return next(err);
-                            var productsCount = 0;
-                            _products.forEach(function (__product, index) {
-                                __product.TitleCN = __product.TitleCN;
-                                __product.DescriptionCN = __product.DescriptionCN;
-                                Shop.findOne({
-                                    ShopId: __product.ShopId,
-                                    Activity: true
-                                }, function (err, shop) {
-                                    if (shop != null) {
-                                        __product.ShopName = shop.CustomTitleCN;
+            sort: {
+                Price: 1
+            }
+        }, function (err, _products) {
+            if (err != null || _products.length == 0) next(err);
+            else {
+                Product.update({
+                    EAN: _products[0].EAN
+                }, {
+                    Views: _products[0].Views + 1
+                }, {
+                    multi: true
+                }, function (err, doc) {
+                    if (err) return next(err);
+                    var productsCount = 0;
+                    _products.forEach(function (__product, index) {
+                        __product.TitleCN = __product.TitleCN;
+                        __product.DescriptionCN = __product.DescriptionCN;
+                        Shop.findOne({
+                            ShopId: __product.ShopId,
+                            Activity: true
+                        }, function (err, shop) {
+                            if (shop != null) {
+                                __product.ShopName = shop.CustomTitleCN;
+                            } else {
+                                __product.ShopId = "deactiv";
+                            }
+                            if (++productsCount == _products.length) {
+                                barCodeGenerator.toBuffer({
+                                    bcid: "ean13",
+                                    text: _products[0].EAN, // Text to encode
+                                    scale: 3, // 3x scaling factor
+                                    height: 10, // Bar height, in millimeters
+                                    includetext: true, // Show human-readable text
+                                    textxalign: 'center', 
+                                    textfont: 'Inconsolata',
+                                    textsize: 13
+                                }, function (err, png) {
+                                    if (err) {
+                                        // Decide how to handle the error
+                                        // `err` may be a string or Error object
                                     } else {
-                                        __product.ShopId = "deactiv";
-                                    }
-                                    if (++productsCount == _products.length) {
-                                        res.render('product_details', {
-                                            title: _products[0].TitleCN,
-                                            footer_bottom: !Utils.checkMobile(req),
-                                            product: _products[0],
-                                            currenturl: currenturl,
-                                            product_link: req.url,
-                                            products: _products,
-                                            china_table_block: china_table_block,
-                                            total_table_block: setting.total_pricetable_block,
-                                            layout: '/layout',
-                                            user: req.user
-                                        });
+                                        fs.writeFileSync(path.join(__dirname, ".." , "/public/images/barcode.png"), png);
                                     }
                                 });
-                            });
+                                res.render('product_details', {
+                                    title: _products[0].TitleCN,
+                                    footer_bottom: !Utils.checkMobile(req),
+                                    product: _products[0],
+                                    currenturl: currenturl,
+                                    product_link: req.url,
+                                    products: _products,
+                                    china_table_block: china_table_block,
+                                    total_table_block: setting.total_pricetable_block,
+                                    layout: '/layout',
+                                    user: req.user
+                                });
+                            }
                         });
-                }
-            });
+                    });
+                });
+            }
+        });
     });
 });
 
@@ -607,12 +629,12 @@ router.get('/voucher', function (req, res, next) {
             });
         } else {
             Voucher.find({
-                EndDate: {
-                    $gte: new Date()
-                }
-            }).sort({
-                updated_at: -1
-            }).skip((page - 1) * ItemOnPage)
+                    EndDate: {
+                        $gte: new Date()
+                    }
+                }).sort({
+                    updated_at: -1
+                }).skip((page - 1) * ItemOnPage)
                 .limit(ItemOnPage)
                 .exec(function (err, vouchers) {
                     res.render('voucher', {
@@ -840,7 +862,6 @@ router.get('/ean', function (req, res, next) {
     });
 });
 
-router.get('/test', function (req, res, next) {
-});
+router.get('/test', function (req, res, next) {});
 
 module.exports = router;

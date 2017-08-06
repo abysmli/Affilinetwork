@@ -74,8 +74,8 @@
                             </div>
                             <!-- Tab panes end-->
                             <hr/>
-                            <div >
-                                <img style="height: 100px; width: 250px" id="barCodeImg" src="" />
+                            <div>
+                                <img style="display:block; margin:auto;" src="images/barcode.png" />
                             </div>
                             <div class="elements-list pull-right clearfix">
                                 <a id="add_favourite_button" href="#"><span>收藏</span></a>                             
@@ -349,8 +349,6 @@
             "display": "block",
             "margin": "0 auto"
         });
-        $("#barCodeImg").attr("src", "http://api-bwipjs.rhcloud.com/?bcid=ean13&text=" + <%= product.EAN %> + "&includetext&guardwhitespace&scale=2");
-
     });
     </script>
     <!-- 多说公共JS代码 end -->
