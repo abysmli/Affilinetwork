@@ -10,6 +10,7 @@
     "aws-lib": "*",
     "basic-auth": "*",
     "body-parser": "*",
+    "bwip-js": "^1.4.2",
     "compression": "^1.6.2",
     "connect-ensure-login": "^0.1.1",
     "connect-flash": "*",
@@ -22,6 +23,7 @@
     "express-session": "*",
     "express-stormpath": "*",
     "fast-csv": "^2.4.0",
+    "file-system": "^2.2.2",
     "geoip-lite": "^1.2.1",
     "google-translate": "^2.0.4",
     "jsonwebtoken": "^7.4.1",
@@ -37,6 +39,7 @@
     "passport-local": "*",
     "passport-local-mongoose": "*",
     "passport-stormpath": "*",
+    "qrcode-generator": "^1.3.1",
     "request": "*",
     "request-ip": "^2.0.2",
     "serve-favicon": "*",
@@ -46,6 +49,7 @@
     "stormpath": "*",
     "uuid": "^3.1.0",
     "wechat-oauth": "^1.2.1",
-    "xml2js": "*"
+    "xml2js": "*",
+    "bwip-js": "^1.4.2"
   }
 }

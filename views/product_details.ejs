@@ -74,13 +74,19 @@
                             </div>
                             <!-- Tab panes end-->
                             <hr/>
-                            <div class="elements-list pull-right clearfix">
-                                <a id="add_favourite_button" href="#"><span>收藏</span></a>
-                                <!--<a id="calc" href="#"><span>一键计算</span></a>-->
+                            <div>
+                                <img style="display:block; margin:auto;" src="images/barcode.png" />
                             </div>
+                            <div class="elements-list pull-right clearfix">
+                                <a id="add_favourite_button" href="#"><span>收藏</span></a>                             
+                                <!--<a id="calc" href="#"><span>一键计算</span></a>-->
+                                
+                            </div>
+                            
                             <% if (!total_table_block) { %>
                             <br/>
                             <% if (!china_table_block) { %>
+
                             <div id="germany_block">
                                 <h3>德国</h3>
                                 <div class="clearfix">
@@ -262,14 +268,14 @@
                                                         <% } %>
                                                         <% break %>
                                                         <% } %>
-                                                        <% } %>
-
-                                                    </div>
+                                                        <% } %>                                             
                                                 </div>
+                                                <div id="pageQRCode"></div> 
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div>                              
+                            </div>
                                 <div class = "side product-item vertical-divider-left">
                                     <div class="tabs-style-2">
                                         <ul class="nav nav-tabs" role="tablist">
@@ -279,6 +285,14 @@
                                     </div>
 
                                 </div>
+                                <!-- <div class = "side product-item vertical-divider-left">
+                                    <div class="tabs-style-2">
+                                        <ul class="nav nav-tabs" role="tablist">
+                                            <li class="active"><a href="#h2tab1" role="tab" data-toggle="tab"><i class="fa fa-file-users pr-5"></i>网站二维码</a></li>
+                                        </ul>
+                                        <div class="ds-thread" id="pageQRCode"></div>
+                                    </div>
+                                </div> -->
                             </div>
                         </aside>
                         <!-- product side end -->
@@ -318,7 +332,22 @@
                 $('#shop_custom_content').html(result.content);
             }, function(error) {
                 Notify('warning', '服务器错误，请稍后再试!');
-            }); 
+            });
+        
+        });
+        
+
+        var href = window.location.href;
+        var typeNumber = 4;
+        var errorCorrectionLevel = 'L';
+        var qr = qrcode(typeNumber, errorCorrectionLevel);
+        qr.addData(href);
+        qr.make();
+        //document.getElementById('placeholder').innerHTML = qr.createImgTag();
+        $('#pageQRCode').html(qr.createImgTag(4, 4));
+        $('#pageQRCode img').css({
+            "display": "block",
+            "margin": "0 auto"
         });
     });
     </script>
