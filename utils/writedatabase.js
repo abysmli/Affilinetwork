@@ -117,14 +117,17 @@ module.exports = (function () {
     _Class.prototype.write = function write(cb) {
         var update_count = 0;
         _this.parseData.forEach((product, index) => {
-            _this.Product.update({ ProductId: product.ProductId }, product, { upsert: true }, function (err, raw) {
-                if (err) {
-                    console.log("Error occured at saving Manual Product into Database: " + JSON.stringify(err));
-                    return cb(false);
-                }
-                if (++update_count == _this.parseData.length) {
-                    cb(true);
-                }
+            Utils.shortURL(product.URL, (err, shorturl) => {
+                product.ShortURL = shorturl;
+                _this.Product.update({ ProductId: product.ProductId }, product, { upsert: true }, function (err, raw) {
+                    if (err) {
+                        console.log("Error occured at saving Manual Product into Database: " + JSON.stringify(err));
+                        return cb(false);
+                    }
+                    if (++update_count == _this.parseData.length) {
+                        cb(true);
+                    }
+                });
             });
         });
     }
