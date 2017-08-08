@@ -430,23 +430,6 @@ router.get('/product', function (req, res, next) {
                                 __product.ShopId = "deactiv";
                             }
                             if (++productsCount == _products.length) {
-                                barCodeGenerator.toBuffer({
-                                    bcid: "ean13",
-                                    text: _products[0].EAN, // Text to encode
-                                    scale: 3, // 3x scaling factor
-                                    height: 10, // Bar height, in millimeters
-                                    includetext: true, // Show human-readable text
-                                    textxalign: 'center', 
-                                    textfont: 'Inconsolata',
-                                    textsize: 13
-                                }, function (err, png) {
-                                    if (err) {
-                                        // Decide how to handle the error
-                                        // `err` may be a string or Error object
-                                    } else {
-                                        fs.writeFileSync(path.join(__dirname, ".." , "/public/images/barcode.png"), png);
-                                    }
-                                });
                                 res.render('product_details', {
                                     title: _products[0].TitleCN,
                                     footer_bottom: !Utils.checkMobile(req),
