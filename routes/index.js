@@ -430,22 +430,6 @@ router.get('/product', function (req, res, next) {
                                 __product.ShopId = "deactiv";
                             }
                             if (++productsCount == _products.length) {
-                                barCodeGenerator.toBuffer({
-                                    bcid: "ean13",
-                                    text: _products[0].EAN, 
-                                    scale: 2,
-                                    height: 15,
-                                    width: 40,
-                                    includetext: true,
-                                    textxalign: 'center', 
-                                    textsize: 12
-                                }, function (err, png) {
-                                    if (err) {
-                                        
-                                    } else {
-                                        fs.writeFileSync(path.join(__dirname, ".." , "/public/images/barcode.png"), png);
-                                    }
-                                });
                                 res.render('product_details', {
                                     title: _products[0].TitleCN,
                                     footer_bottom: !Utils.checkMobile(req),
