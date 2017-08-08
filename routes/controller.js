@@ -1337,9 +1337,14 @@ router.get('/csv', auth, function (req, res, next) {
         }, function (err, products) {
             if (err) return next(err);
             csvStream.pipe(writableStream);
+
             products.forEach(function (product, index) {
                 if (ean != product.EAN) {
                     ean = product.EAN;
+                    var LastProductChange = "";
+                    if (product.LastProductChange) {
+                        LastProductChange = (new Date(parseInt(product.LastProductChange.substr(6, 13)))).toLocaleString("en-US", { timeZone: "Asia/Shanghai" });
+                    }
                     csvStream.write({
                         a: product.ProductId,
                         b: product.ASIN,
@@ -1363,7 +1368,7 @@ router.get('/csv', auth, function (req, res, next) {
                         s: product.ShopName,
                         t: product.ShopId,
                         u: product.Category,
-                        v: (new Date(parseInt(product.LastProductChange.substr(6, 13)))).toLocaleString("en-US", { timeZone: "Asia/Shanghai" }),
+                        v: LastProductChange,
                         w: product.DeliveryTime,
                         x: product.Keywords,
                         y: product.Source,
