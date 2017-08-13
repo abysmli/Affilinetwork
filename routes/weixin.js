@@ -266,6 +266,15 @@ router.get('/eanSearch', function (req, res, next) {
                                 Price: 1
                             }
                         }, function (err, _products) {
+                            var scanResult = {
+                                Result: "In Local",
+                                EAN: req.query.value,
+                                FromUser: "Mini App",
+                                Type: "Mini App"
+                            };
+                            Scan.create(scanResult, function (err, scan) {
+                                if (err) next(err);
+                            });
                             res.json(_products.slice(0, 10));
                         });
                 });
@@ -313,10 +322,28 @@ router.get('/eanSearch', function (req, res, next) {
                                                             Price: 1
                                                         }
                                                     }, function (err, _products) {
+                                                        var scanResult = {
+                                                            Result: "In Cloud",
+                                                            EAN: req.query.value,
+                                                            FromUser: "Mini App",
+                                                            Type: "Mini App"
+                                                        };
+                                                        Scan.create(scanResult, function (err, scan) {
+                                                            if (err) next(err);
+                                                        });
                                                         res.json(_products.slice(0, 10));
                                                     });
                                             });
                                         } else {
+                                            var scanResult = {
+                                                Result: "Not Found",
+                                                EAN: req.query.value,
+                                                FromUser: "Mini App",
+                                                Type: "Mini App"
+                                            };
+                                            Scan.create(scanResult, function (err, scan) {
+                                                if (err) next(err);
+                                            });
                                             res.json({ result: "Product not found!" });
                                         }
                                     } else {
