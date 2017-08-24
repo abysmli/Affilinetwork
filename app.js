@@ -8,8 +8,8 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var passport = require('passport');
-var StormpathStrategy = require('passport-stormpath');
-var FacebookStrategy = require('passport-facebook').Strategy;
+//var StormpathStrategy = require('passport-stormpath');
+//var FacebookStrategy = require('passport-facebook').Strategy;
 var session = require('express-session');
 var flash = require('connect-flash');
 var requestIp = require('request-ip');
@@ -31,19 +31,19 @@ var setting = require('./setting');
 
 var app = express();
 
-passport.use(new StormpathStrategy({
-    apiKeyId: setting.stormpath_setting.API_KEY_ID,
-    apiKeySecret: setting.stormpath_setting.API_KEY_SECRET,
-    appHref: setting.stormpath_setting.APP_HREF,
-}));
+// passport.use(new StormpathStrategy({
+//     apiKeyId: setting.stormpath_setting.API_KEY_ID,
+//     apiKeySecret: setting.stormpath_setting.API_KEY_SECRET,
+//     appHref: setting.stormpath_setting.APP_HREF,
+// }));
 
-passport.use(new FacebookStrategy({
-    clientID: setting.facebook_setting.clientID,
-    clientSecret: setting.facebook_setting.clientSecret,
-    callbackURL: setting.facebook_setting.callbackURL
-}, function (accessToken, refreshToken, profile, cb) {
-    return cb(null, profile);
-}));
+// passport.use(new FacebookStrategy({
+//     clientID: setting.facebook_setting.clientID,
+//     clientSecret: setting.facebook_setting.clientSecret,
+//     callbackURL: setting.facebook_setting.callbackURL
+// }, function (accessToken, refreshToken, profile, cb) {
+//     return cb(null, profile);
+// }));
 
 passport.serializeUser(function (user, cb) {
     cb(null, user);
@@ -93,10 +93,10 @@ app.use('/weixin', weixin);
 app.use('/partner', partner);
 app.use('/login', login);
 app.use('/wx/auth/ack', oauth);
-app.use('/register', register);
-app.use('/de/register', register_de);
-app.use('/password_reset', passwordreset);
-app.use('/de/password_reset', passwordreset_de);
+//app.use('/register', register);
+//app.use('/de/register', register_de);
+//app.use('/password_reset', passwordreset);
+//app.use('/de/password_reset', passwordreset_de);
 app.use('/go', link);
 
 /// catch 404 and forward to error handler
