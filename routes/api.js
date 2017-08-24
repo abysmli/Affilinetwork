@@ -66,6 +66,16 @@ router.get('/checkToken', tokencheck, function (req, res, next) {
     });
 });
 
+router.get('/getShops', tokencheck, function (req, res, next) {
+    var token = req.body.token || req.query.token || req.headers['x-access-token'];
+    Shop.find({}, function (err, shops) {
+        shops.forEach((shop, index) => {
+            shop.ShortURL += "?subid=" + req.decoded._doc.appid;
+        });
+        res.json(shops);
+    });
+});
+
 router.get('/eanSearch', tokencheck, function (req, res, next) {
     Product.find({
         EAN: req.query.value,
