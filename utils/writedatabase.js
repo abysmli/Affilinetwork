@@ -104,6 +104,12 @@ module.exports = (function () {
                     TranslationQuality: (data[29] == "TRUE") ? "2" : "-1",
                     update_at: new Date()
                 }
+                if (_data.ProductImage == '') {
+                    delete _data.ProductImage;
+                }
+                if (_data.ProductImageSet == '') {
+                    delete _data.ProductImageSet;
+                }
                 _this.parseData.push(_data);
                 _this.metaData.push(data);
             })
