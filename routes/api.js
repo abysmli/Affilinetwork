@@ -76,6 +76,39 @@ router.get('/getShops', tokencheck, function (req, res, next) {
     });
 });
 
+router.get('/searchProduct', tokencheck, function (req, res, next) {
+    var token = req.body.token || req.query.token || req.headers['x-access-token'];
+    var query = {};
+    query.Query = req.query.search_value;
+    Affilinet.searchProducts(query, function (err, response, results) {
+        if (!err && response.statusCode == 200) {
+            var products = Utils.ToLocalProducts(results.Products, "affilinet");
+            prodAdv.call("ItemSearch", {
+                SearchIndex: "All",
+                Keywords: req.query.search_value,
+                ResponseGroup: "Large",
+                MerchantId: "Amazon"
+            }, function (err, results) {
+                if (!err) {
+                    var _products = [];
+                    if (Array.isArray(results.Items.Item)) {
+                        _products = Utils.ToLocalProducts(results.Items.Item, "amazon");
+                        products = products.concat(_products);
+                    }
+                    products.forEach((product, index) => {
+                        product.URL += "?subid=" + req.decoded._doc.appid;
+                    });
+                    res.json(products);
+                } else {
+                    next(err);
+                }
+            });
+        } else {
+            next(err);
+        }
+    });
+});
+
 router.get('/eanSearch', tokencheck, function (req, res, next) {
     Product.find({
         EAN: req.query.value,
