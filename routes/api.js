@@ -79,14 +79,14 @@ router.get('/getShops', tokencheck, function (req, res, next) {
 router.get('/getProgramRate', tokencheck, function (req, res, next) {
     var ProgramId = req.query.ProgramId;
     if (ProgramId == "amazon") {
-        res.json({
-            Category: "Fernseher und Heimkino , Smartphones und Handys, Tablet-PCs ohne Vertragsbindung, PS4-Konsolen", Rate: "1,0%",
-            Category: "Computer, Elektronik, Kamera, Elektro- Großgeräte, Geschenkgutscheine, Kindle und Fire Zubehör, Kindle (alle Geräte)", Rate: "3,0%",
-            Category: "Software, Musik, DVDs & Blu-ray, Videospiele, Baumarkt, Spielzeug, Küche, Sport & Freizeit, Bier, Wein & Spirituosen, Gewerbe, Industrie & Wissenschaft, Handmade", Rate: "5,0%",
-            Category: "Bücher*, Kindle eBooks*, Auto & Motorrad, Haushalt, Musikinstrumente, Büroartikel, Babyartikel, Kosmetik, Lebensmittel, Geräte für Gesundheit und Körperpflege, Drogerie, Haustierprodukte, Garten, Pantry", Rate: "7,0%",
-            Category: "Videospiele-Downloads, Software-Downloads, Kleidung, Schmuck, Gepäck, Schuhe, Uhren, Möbel", Rate: "10,0%",
-            Category: "Alle übrigen Produkte", Rate: "3,0%",
-        });
+        res.json([
+            { Category: "Fernseher und Heimkino , Smartphones und Handys, Tablet-PCs ohne Vertragsbindung, PS4-Konsolen", Rate: "1,0%" },
+            { Category: "Computer, Elektronik, Kamera, Elektro- Großgeräte, Geschenkgutscheine, Kindle und Fire Zubehör, Kindle (alle Geräte)", Rate: "3,0%" },
+            { Category: "Software, Musik, DVDs & Blu-ray, Videospiele, Baumarkt, Spielzeug, Küche, Sport & Freizeit, Bier, Wein & Spirituosen, Gewerbe, Industrie & Wissenschaft, Handmade", Rate: "5,0%" },
+            { Category: "Bücher*, Kindle eBooks*, Auto & Motorrad, Haushalt, Musikinstrumente, Büroartikel, Babyartikel, Kosmetik, Lebensmittel, Geräte für Gesundheit und Körperpflege, Drogerie, Haustierprodukte, Garten, Pantry", Rate: "7,0%" },
+            { Category: "Videospiele-Downloads, Software-Downloads, Kleidung, Schmuck, Gepäck, Schuhe, Uhren, Möbel", Rate: "10,0%" },
+            { Category: "Alle übrigen Produkte", Rate: "3,0%", }
+        ]);
     } else {
         Affilinet.getProgramRates({ ProgramId: ProgramId }, function (err, response, results) {
             if (err) return next(err);
