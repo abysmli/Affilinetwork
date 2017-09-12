@@ -76,7 +76,7 @@ router.get('/getShops', tokencheck, function (req, res, next) {
     });
 });
 
-router.get('/getProgram', tokencheck, function (req, res, next) {
+router.get('/getProgramRate', tokencheck, function (req, res, next) {
     var ProgramId = req.query.ProgramId;
     if (ProgramId == "amazon") {
         res.json({
