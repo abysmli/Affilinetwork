@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var textSearch = require('mongoose-text-search');
 var setting = require('../setting.js');
-mongoose.connect('mongodb://localhost/'+setting.database);
+mongoose.createConnection('mongodb://localhost/'+setting.database);
 
 var ProductSchema = new mongoose.Schema({
     ProductId: String,

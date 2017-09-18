@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var parseString = require('xml2js').parseString;
-var affilinet = require('../utils/affilinetapi');
 var aws = require('aws-lib');
 var jwt = require('jsonwebtoken');
 var uuidV4 = require('uuid/v4');
@@ -14,7 +13,15 @@ var setting = require('../setting');
 var utils = require('../utils/utils');
 var Utils = new utils();
 
+var affilinet = require('../utils/affilinetapi');
 var Affilinet = new affilinet({
+    publisherId: setting.affilinet_setting.publisherId,
+    productWebservicePassword: setting.affilinet_setting.productWebservicePassword,
+    publisherWebservicePassword: setting.affilinet_setting.publisherWebservicePassword
+});
+
+var affilinetSOAP = require('../utils/affilinetapi.soap');
+var AffilinetSOAP = new affilinetSOAP({
     publisherId: setting.affilinet_setting.publisherId,
     productWebservicePassword: setting.affilinet_setting.productWebservicePassword,
     publisherWebservicePassword: setting.affilinet_setting.publisherWebservicePassword
@@ -73,6 +80,12 @@ router.get('/getShops', tokencheck, function (req, res, next) {
             shop.ShortURL += "?subid=" + req.decoded._doc.appid;
         });
         res.json(shops);
+    });
+});
+
+router.get('/test', function (req, res, next) {
+    AffilinetSOAP.GetTransactions({}, (data) => {
+        res.json(data);
     });
 });
 

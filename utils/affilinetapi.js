@@ -213,6 +213,26 @@ module.exports = (function () {
     _Class.prototype.getTransactions = function getTransactions(params, callback) {
         params.publisherId = this.auth.publisherId;
         params.Password = this.auth.publisherWebservicePassword;
+        params.StartDate = params.StartDate || new Date("2016-01-01");
+        params.EndDate = params.EndDate || new Date();
+        /*  This parameter defines the event on which
+            StartDate and EndDate shall operate. Possible
+            values are:
+             DateOfRegistration: this is when the transaction
+            has been created in our system.
+             DateOfConfirmation: this is the date when the
+            transaction has last been edited by the
+            advertiser. So if you want to know what
+            changed on your transactions yesterday, send
+            a request, where you set StartDate and
+            EndDate to the previous day and ValuationType
+            to DateOfConfirmation. Then you get all
+            transactions, which have been confirmed or
+            cancelled, got an adjusted NetPrice etc...
+            yesterday.
+            If not specified, “DateOfRegistration” is assumed. */
+        params.ValuationDateType = params.ValuationDateType || 0;
+        params.TransactionStatus = params.TransactionStatus || 3;
         requestHandler("http://publisher-webservices.affili.net/Publisher/Statistics.asmx/GetTransactions", params, callback);
     }
 
@@ -234,8 +254,8 @@ module.exports = (function () {
         params.VoucherCode = params.VoucherCode || null;
         params.VoucherCodeContent = params.VoucherCodeContent || 0;
         params.VoucherType = params.VoucherType || 0;
-        params.StartDate = params.StartDate ||new Date ();
-        params.EndDate = params.EndDate ||new Date ();
+        params.StartDate = params.StartDate || new Date();
+        params.EndDate = params.EndDate || new Date();
         params.PartnershipStatus = params.PartnershipStatus || 0;
         params.MinimumOrderValue = params.MinimumOrderValue || 0;
         params.CustomerRestriction = params.CustomerRestriction || 0;
