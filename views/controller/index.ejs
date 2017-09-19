@@ -16,6 +16,7 @@
             <th>Custom TitleCN</th>
             <th>Program ID</th>
             <th>Shop Link</th>
+            <th>Short URL</th>
             <th>Last Update</th>
             <th>Manipulate</th>
         </tr>
@@ -29,6 +30,7 @@
             <th>Custom TitleCN</th>
             <th>Program ID</th>
             <th>Shop Link</th>
+            <th>Short URL</th>
             <th>Last Update</th>
             <th>Manipulate</th>
         </tr>
@@ -61,6 +63,9 @@
                 </td>
                 <td>
                     <a href="<%= shop.ShopLink %>">Shop Link</a>
+                </td>
+                <td>
+                    <a href="<%= shop.ShortURL %>">Short URL</a>
                 </td>
                 <td>
                     <%= (new Date(shop.updated_at)).toLocaleString("en-US", {timeZone: "Asia/Shanghai"}) %>
