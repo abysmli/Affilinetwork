@@ -27,6 +27,13 @@ var Affilinet = new affilinet({
     publisherWebservicePassword: setting.affilinet_setting.publisherWebservicePassword
 });
 
+var affilinetSOAP = require('../utils/affilinetapi.soap');
+var AffilinetSOAP = new affilinetSOAP({
+    publisherId: setting.affilinet_setting.publisherId,
+    productWebservicePassword: setting.affilinet_setting.productWebservicePassword,
+    publisherWebservicePassword: setting.affilinet_setting.publisherWebservicePassword
+});
+
 var prodAdv = aws.createProdAdvClient(setting.amazon_setting.AccessKeyId, setting.amazon_setting.SecretAccessKey, setting.amazon_setting.AssociateTag, {
     host: "ecs.amazonaws.de",
     region: "DE"
@@ -323,6 +330,10 @@ router.get('/voucher', auth, function (req, res, next) {
             } else {
                 next(err);
             }
+        });
+    } else if (req.query.ProgramId) {
+        AffilinetSOAP.SearchVoucherCodes({ ProgramId: req.query.ProgramId }, (data) => {
+            res.json(data);
         });
     } else {
         Voucher.find({
