@@ -1059,16 +1059,19 @@ router.get('/feedback/remove', auth, function (req, res, next) {
 });
 
 router.get('/link', auth, function (req, res, next) {
-    Link.find({}).limit(500).exec(function (err, links) {
-        if (err) {
-            next(err);
-        } else {
-            res.render('controller/link', {
-                title: 'Links Manage',
-                links: links,
-                layout: 'controller/layout'
-            });
-        }
+    Link.find({$where: "this.short.length == 6"}).limit(500).exec(function (err, links) {
+        Link.find({$where: "this.short.length == 5 "}).limit(500).exec(function (err, mlinks) {
+            if (err) {
+                next(err);
+            } else {
+                res.render('controller/link', {
+                    title: 'Links Manage',
+                    links: links,
+                    mlinks: mlinks,
+                    layout: 'controller/layout'
+                });
+            }
+        });
     });
 });
 
