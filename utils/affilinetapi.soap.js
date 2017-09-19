@@ -26,7 +26,7 @@ class Logon {
     }
     tokenHasExpired() {
         if (!this.session.expiration_date) {
-            return ture;
+            return true;
         }
         return (new Date() > this.session.expiration_date)
     }
@@ -209,7 +209,7 @@ class CreativeService {
         let data = {
             'CredentialToken': token,
             'DisplaySettings': {
-                'CurrentPage': 1,
+                'CurrentPage': params.CurrentPage || 1,
                 'PageSize': 100
             },
             'SearchCreativesQuery': {
@@ -239,7 +239,7 @@ class InboxService {
                 'PageSize': 1000
             },
             'SearchVoucherCodesRequestMessage': {
-                'VoucherCodeContent': 'Filled',
+                'ProgramPartnershipStatus': 'Accepted',
                 'VoucherType': 'AllProducts',
                 'ProgramId': params.ProgramId || ""
             }
@@ -248,25 +248,6 @@ class InboxService {
         this.client.SearchVoucherCodes(data, (err, voucher_codes) => {
             if (err) throw err;
             callback(voucher_codes);
-        });
-    }
-    SearchCreatives(params, token, callback) {
-        let data = {
-            'CredentialToken': token,
-            'DisplaySettings': {
-                'CurrentPage': 1,
-                'PageSize': 100
-            },
-            'SearchCreativesQuery': {
-                'ProgramIds': {
-                    'int': [9069]
-                }
-            }
-        };
-        // console.log(util.inspect(this.client.describe(), {showHidden: false, depth: null}));
-        this.client.SearchCreatives(data, (err, rates) => {
-            if (err) throw err;
-            callback(rates);
         });
     }
 }
@@ -296,7 +277,7 @@ class AffilinetPublisher {
             console.log("Affilinet Program List Service Init Successful!");
         });
         soap.createClient(WSDL_CreativeService, (err, client) => {
-            this.inbox_client = client;
+            this.creativ_client = client;
             this.CreativeService = new CreativeService(this.auth, this.creativ_client);
             console.log("Affilinet Creative Service Init Successful!");
         });

@@ -261,6 +261,40 @@ router.post('/program_details', auth, function (req, res, next) {
     });
 });
 
+router.get('/creativ', auth, function (req, res, next) {
+    var ProgramIds = [parseInt(req.query.ProgramId)];
+    var creativs = [];
+    AffilinetSOAP.SearchCreatives({ ProgramIds: ProgramIds }, (data) => {
+        var loops = parseInt(data.TotalResults / 100) + 1;
+        creativs = data.CreativeCollection.Creative;
+        if (loops == 1) {
+            ParseLoop();
+        } else {
+            SearchLoop(2, loops);
+        }
+    });
+    function SearchLoop(index, loops) {
+        if (index <= loops) {
+            AffilinetSOAP.SearchCreatives({ ProgramIds: ProgramIds, CurrentPage: index }, (data) => {
+                creativs = creativs.concat(data.CreativeCollection.Creative);
+                SearchLoop(index + 1, loops);
+            });
+        } else {
+            ParseLoop();
+        }
+    }
+    function ParseLoop() {
+        var hrefs = [];
+        creativs.forEach((creativ, index) => {
+            var patt = /<a href="(.*?)"/g;
+            while (match = patt.exec(creativ.IntegrationCode)) {
+                hrefs.push(match[1]);
+            }
+        });
+        res.json(hrefs);
+    }
+});
+
 router.get('/voucher', auth, function (req, res, next) {
     if (req.query.type == 'remote') {
         Affilinet.getVoucherCodes({
@@ -332,8 +366,26 @@ router.get('/voucher', auth, function (req, res, next) {
             }
         });
     } else if (req.query.ProgramId) {
-        AffilinetSOAP.SearchVoucherCodes({ ProgramId: req.query.ProgramId }, (data) => {
-            res.json(data);
+        var ProgramId = parseInt(req.query.ProgramId);
+        AffilinetSOAP.SearchVoucherCodes({ ProgramId: ProgramId }, (data) => {
+            var vouchers = data.VoucherCodeCollection.VoucherCodeItem;
+            var ProgramVouchers = [];
+            vouchers.forEach((voucher, index) => {
+                if (voucher.ProgramId == ProgramId) {
+                    voucher.Program = voucher.ProgramId;
+                    voucher.IsRestricted = voucher.CustomerRestriction;
+                    voucher.ActivePartnership = voucher.PartnershipStatus;
+                    ProgramVouchers.push(voucher);
+                }
+            });
+            req.session.vouchers = ProgramVouchers;
+            res.render('controller/voucher', {
+                title: 'Vouchers Manage',
+                vouchers: ProgramVouchers,
+                type: 'remote',
+                programTitle: "Program " + ProgramId,
+                layout: 'controller/layout'
+            });
         });
     } else {
         Voucher.find({
