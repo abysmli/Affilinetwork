@@ -1,8 +1,12 @@
 "strict mode";
+var util = require('util');
 const soap = require('soap');
 const WSDL_LOGON = 'https://api.affili.net/V2.0/Logon.svc?wsdl';
 const WSDL_AccountService = "https://api.affili.net/V2.0/AccountService.svc?wsdl";
 const WSDL_PublisherStatistics = 'https://api.affili.net/V2.0/PublisherStatistics.svc?wsdl';
+const WSDL_ProgramList = 'https://api.affili.net/V2.0/PublisherProgram.svc?wsdl';
+const WSDL_CreativeService = 'https://api.affili.net/V2.0/PublisherCreative.svc?wsdl';
+const WSDL_InboxService = 'https://api.affili.net/V2.0/PublisherInbox.svc?wsdl';
 
 class Logon {
     constructor(auth, client) {
@@ -90,9 +94,9 @@ class PublisherStatistics {
                 'PageSize': 100,
             },
             'TransactionQuery': {
-                'EndDate': new Date("2017-09-17").toISOString(),
-                'StartDate': new Date("2013-01-01").toISOString(),
-                'SubId': 'e3016002-f1c1-47e1-b0e4-3770415e2797',
+                'EndDate': params.EndDate || new Date("2017-09-17").toISOString(),
+                'StartDate': params.StartDate || new Date("2013-01-01").toISOString(),
+                'SubId': params.SubId || '',
                 'TransactionStatus': 'All'
             }
         };
@@ -101,16 +105,168 @@ class PublisherStatistics {
             callback(transactions);
         });
     }
-    GetLinkedAccounts(credential, callback) {
-        this.client.GetLinkedAccounts(credential, (err, account) => {
+    GetDailyStatistics(params, token, callback) {
+        let data = {
+            'CredentialToken': token,
+            'GetDailyStatisticsRequestMessage': {
+                'StartDate': params.StartDate || new Date("2017-01-01").toISOString(),
+                'EndDate': params.EndDate || new Date("2017-09-18").toISOString(),
+                'SubId': params.SubId || '',
+                'ProgramTypes': 'All',
+                'ValuationType': 'DateOfRegistration',
+                'ProgramId': params.ProgramId || 0,
+            }
+        };
+        this.client.GetDailyStatistics(data, (err, dailyStatistics) => {
             if (err) throw err;
-            callback(account);
+            callback(dailyStatistics);
         });
     }
-    GetPublisherSummary(token, callback) {
-        this.client.GetPublisherSummary(token, (err, summary) => {
+    GetSubIDStatistics(params, token, callback) {
+        let data = {
+            'CredentialToken': token,
+            'GetSubIdStatisticsRequestMessage': {
+                'StartDate': params.StartDate || new Date("2017-01-01").toISOString(),
+                'EndDate': params.EndDate || new Date("2017-09-18").toISOString(),
+                'SubId': params.SubId || '',
+                'ProgramTypes': 'All',
+                'ValuationType': 'DateOfRegistration',
+                'TransactionStatus': 'All',
+                'MaximumRecords': '100',
+                'ProgramIds': params.ProgramIds || [1632],
+            }
+        };
+        this.client.GetSubIDStatistics(data, (err, subIdStatistics) => {
             if (err) throw err;
-            callback(summary);
+            callback(subIdStatistics);
+        });
+    }
+}
+
+class ProgramList {
+    constructor(auth, client) {
+        this.auth = auth;
+        this.client = client;
+    }
+    GetPrograms(params, token, callback) {
+        let PartnershipStatus = ['Active'];
+        let data = {
+            'CredentialToken': token,
+            'DisplaySettings': {
+                'CurrentPage': 1,
+                'PageSize': 100,
+            },
+            'GetProgramsQuery': {
+                'PartnershipStatus': {
+                    'ProgramPartnershipStatusEnum': PartnershipStatus
+                }
+            }
+        };
+        // console.log(util.inspect(this.client.describe().PublisherProgram.PublisherProgramEndpoint.GetPrograms, {showHidden: false, depth: null}));
+        this.client.GetPrograms(data, (err, programs) => {
+            if (err) throw err;
+            callback(programs);
+        });
+    }
+    GetProgramRates(params, token, callback) {
+        let data = {
+            'CredentialToken': token,
+            'ProgramId': params.ProgramId || 9069,
+            'PublisherId ': parseInt(this.auth.publisherId)
+        };
+        // console.log(util.inspect(this.client.describe().PublisherProgram.PublisherProgramEndpoint.GetProgramRates, {showHidden: false, depth: null}));
+        this.client.GetProgramRates(data, (err, rates) => {
+            if (err) throw err;
+            callback(rates);
+        });
+    }
+    GetProgramCategories(token, callback) {
+        // console.log(util.inspect(this.client.describe().PublisherProgram.PublisherProgramEndpoint.GetProgramCategories, {showHidden: false, depth: null}));
+        this.client.GetProgramCategories(token, (err, rates) => {
+            if (err) throw err;
+            callback(rates);
+        });
+    }
+}
+
+class CreativeService {
+    constructor(auth, client) {
+        this.auth = auth;
+        this.client = client;
+    }
+    GetCreativeCategories(params, token, callback) {
+        let data = {
+            'CredentialToken': token,
+            'ProgramId': params.ProgramId || 9069
+        };
+        // console.log(util.inspect(this.client.describe().PublisherProgram.PublisherProgramEndpoint.GetPrograms, {showHidden: false, depth: null}));
+        this.client.GetCreativeCategories(data, (err, create_categories) => {
+            if (err) throw err;
+            callback(create_categories);
+        });
+    }
+    SearchCreatives(params, token, callback) {
+        let data = {
+            'CredentialToken': token,
+            'DisplaySettings': {
+                'CurrentPage': 1,
+                'PageSize': 100
+            },
+            'SearchCreativesQuery': {
+                'ProgramIds': {
+                    'int': params.ProgramIds || [9069]
+                }
+            }
+        };
+        // console.log(util.inspect(this.client.describe(), {showHidden: false, depth: null}));
+        this.client.SearchCreatives(data, (err, rates) => {
+            if (err) throw err;
+            callback(rates);
+        });
+    }
+}
+
+class InboxService {
+    constructor(auth, client) {
+        this.auth = auth;
+        this.client = client;
+    }
+    SearchVoucherCodes(params, token, callback) {
+        let data = {
+            'CredentialToken': token,
+            'DisplaySettings': {
+                'CurrentPage': 1,
+                'PageSize': 1000
+            },
+            'SearchVoucherCodesRequestMessage': {
+                'VoucherCodeContent': 'Filled',
+                'VoucherType': 'AllProducts',
+                'ProgramId': params.ProgramId || ""
+            }
+        };
+        // console.log(util.inspect(this.client.describe(), {showHidden: false, depth: null}));
+        this.client.SearchVoucherCodes(data, (err, voucher_codes) => {
+            if (err) throw err;
+            callback(voucher_codes);
+        });
+    }
+    SearchCreatives(params, token, callback) {
+        let data = {
+            'CredentialToken': token,
+            'DisplaySettings': {
+                'CurrentPage': 1,
+                'PageSize': 100
+            },
+            'SearchCreativesQuery': {
+                'ProgramIds': {
+                    'int': [9069]
+                }
+            }
+        };
+        // console.log(util.inspect(this.client.describe(), {showHidden: false, depth: null}));
+        this.client.SearchCreatives(data, (err, rates) => {
+            if (err) throw err;
+            callback(rates);
         });
     }
 }
@@ -133,6 +289,21 @@ class AffilinetPublisher {
             this.statistics_client = client;
             this.PublisherStatistics = new PublisherStatistics(this.auth, this.statistics_client);
             console.log("Affilinet Publisher Statistics Service Init Successful!");
+        });
+        soap.createClient(WSDL_ProgramList, (err, client) => {
+            this.program_client = client;
+            this.ProgramList = new ProgramList(this.auth, this.program_client);
+            console.log("Affilinet Program List Service Init Successful!");
+        });
+        soap.createClient(WSDL_CreativeService, (err, client) => {
+            this.inbox_client = client;
+            this.CreativeService = new CreativeService(this.auth, this.creativ_client);
+            console.log("Affilinet Creative Service Init Successful!");
+        });
+        soap.createClient(WSDL_InboxService, (err, client) => {
+            this.inbox_client = client;
+            this.InboxService = new InboxService(this.auth, this.inbox_client);
+            console.log("Affilinet Inbox Service Init Successful!");
         });
     }
 
@@ -172,22 +343,55 @@ class AffilinetPublisher {
     }
 
     GetTransactions(params, callback) {
-        var params = {
-            'PageSettings': {
-                'CurrentPage': 1,
-                'PageSize': 100,
-            },
-            'TransactionQuery': {
-                'StartDate': params.StartDate || new Date("2013-01-01").toISOString(),
-                'EndDate': params.EndDate || new Date("2017-09-17").toISOString(),
-                'TransactionStatus': 'All'
-            }
-        }
         this.getToken((token) => {
             this.PublisherStatistics.GetTransactions(params, token, callback);
         });
     }
 
+    GetDailyStatistics(params, callback) {
+        this.getToken((token) => {
+            this.PublisherStatistics.GetDailyStatistics(params, token, callback);
+        });
+    }
+
+    GetSubIDStatistics(params, callback) {
+        this.getToken((token) => {
+            this.PublisherStatistics.GetSubIDStatistics(params, token, callback);
+        });
+    }
+
+    GetPrograms(params, callback) {
+        this.getToken((token) => {
+            this.ProgramList.GetPrograms(params, token, callback);
+        });
+    }
+
+    GetProgramCategories(callback) {
+        this.getToken((token) => {
+            this.ProgramList.GetProgramCategories(token, callback);
+        });
+    }
+
+    GetProgramRates(params, callback) {
+        this.getToken((token) => {
+            this.ProgramList.GetProgramRates(params, token, callback);
+        });
+    }
+    GetCreativeCategories(params, callback) {
+        this.getToken((token) => {
+            this.CreativeService.GetCreativeCategories(params, token, callback);
+        });
+    }
+    SearchCreatives(params, callback) {
+        this.getToken((token) => {
+            this.CreativeService.SearchCreatives(params, token, callback);
+        });
+    }
+    SearchVoucherCodes(params, callback) {
+        this.getToken((token) => {
+            this.InboxService.SearchVoucherCodes(params, token, callback);
+        });
+    }
 }
 
 module.exports = AffilinetPublisher;

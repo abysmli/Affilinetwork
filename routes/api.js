@@ -84,9 +84,21 @@ router.get('/getShops', tokencheck, function (req, res, next) {
 });
 
 router.get('/test', function (req, res, next) {
-    AffilinetSOAP.GetTransactions({}, (data) => {
+    AffilinetSOAP.SearchVoucherCodes({}, (data) => {
         res.json(data);
     });
+    // Affilinet.getMyPrograms({}, function (err, response, programs) {
+    //     if (!err && response.statusCode == 200) {
+    //         parseString(programs, {
+    //             explicitArray: false
+    //         }, function (err, programs) {
+    //             var programs = programs.ProgramList.Programs.ProgramSummary;
+    //             res.json(programs);
+    //         });
+    //     } else {
+    //         next(err);
+    //     }
+    // });
 });
 
 router.get('/getProgramRate', tokencheck, function (req, res, next) {

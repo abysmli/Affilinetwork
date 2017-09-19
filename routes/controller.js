@@ -1059,7 +1059,7 @@ router.get('/feedback/remove', auth, function (req, res, next) {
 });
 
 router.get('/link', auth, function (req, res, next) {
-    Link.find({}, function (err, links) {
+    Link.find({}).limit(500).exec(function (err, links) {
         if (err) {
             next(err);
         } else {
