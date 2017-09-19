@@ -10,7 +10,7 @@ var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
-var csrf = require('csurf');
+// var csrf = require('csurf');
 var bodyParser = require('body-parser');
 var passport = require('passport');
 var requestIp = require('request-ip');
@@ -63,7 +63,7 @@ app.use(session({
     saveUninitialized: true
 }));
 app.use(cookieParser());
-app.use(csrf({ cookie: true }));
+// app.use(csrf({ cookie: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(partials());
 app.use(passport.initialize());
