@@ -288,7 +288,11 @@ router.get('/creativ', auth, function (req, res, next) {
         creativs.forEach((creativ, index) => {
             var patt = /<a href="(.*?)"/g;
             while (match = patt.exec(creativ.IntegrationCode)) {
-                hrefs.push(match[1]);
+                hrefs.push({
+                    CreativeTypeEnum: creativ.CreativeTypeEnum,
+                    Title: creativ.Title,
+                    URL: match[1]
+                });
             }
         });
         res.json(hrefs);
