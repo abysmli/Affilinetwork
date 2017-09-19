@@ -16,7 +16,9 @@
             <th>Custom TitleCN</th>
             <th>Program ID</th>
             <th>Shop Link</th>
+            <% if (mode != 'cloud' ) { %>
             <th>Short URL</th>
+            <% } %>
             <th>Last Update</th>
             <th>Manipulate</th>
         </tr>
@@ -30,7 +32,9 @@
             <th>Custom TitleCN</th>
             <th>Program ID</th>
             <th>Shop Link</th>
+            <% if (mode != 'cloud' ) { %>
             <th>Short URL</th>
+            <% } %>
             <th>Last Update</th>
             <th>Manipulate</th>
         </tr>
@@ -64,9 +68,11 @@
                 <td>
                     <a href="<%= shop.ShopLink %>">Shop Link</a>
                 </td>
+                <% if (mode != 'cloud' ) { %>
                 <td>
-                    <a href="<%= shop.ShortURL %>">Short URL</a>
+                    <a href="/controller/link/edit?shorturl=<%= shop.ShortURL %>">Short URL</a>
                 </td>
+                <% } %>
                 <td>
                     <%= (new Date(shop.updated_at)).toLocaleString("en-US", {timeZone: "Asia/Shanghai"}) %>
                 </td>

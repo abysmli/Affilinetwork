@@ -1059,8 +1059,8 @@ router.get('/feedback/remove', auth, function (req, res, next) {
 });
 
 router.get('/link', auth, function (req, res, next) {
-    Link.find({$where: "this.short.length == 6"}).limit(2000).exec(function (err, links) {
-        Link.find({$where: "this.short.length == 5 "}).limit(2000).exec(function (err, mlinks) {
+    Link.find({ $where: "this.short.length == 6" }).limit(2000).exec(function (err, links) {
+        Link.find({ $where: "this.short.length == 5 " }).limit(2000).exec(function (err, mlinks) {
             if (err) {
                 next(err);
             } else {
@@ -1101,27 +1101,56 @@ router.post('/link/add', auth, function (req, res, next) {
 });
 
 router.get('/link/edit', auth, function (req, res, next) {
-    Link.findById(req.query.id, function (err, link) {
-        if (err) {
-            next(err);
-        } else {
-            res.render('controller/link_form', {
-                title: 'Edit Link',
-                link: link,
-                layout: 'controller/layout'
-            });
-        }
-    });
+    if (req.query.id) {
+        Link.findById(req.query.id, function (err, link) {
+            if (err) {
+                next(err);
+            } else {
+                res.render('controller/link_form', {
+                    title: 'Edit Link',
+                    link: link,
+                    layout: 'controller/layout'
+                });
+            }
+        });
+    } else if (req.query.shorturl) {
+        Link.findOne({ short: req.query.shorturl }, function (err, link) {
+            if (err) {
+                next(err);
+            } else {
+                res.render('controller/link_form', {
+                    title: 'Edit Link',
+                    link: link,
+                    layout: 'controller/layout'
+                });
+            }
+        });
+    } else {
+        res.send("Edit Link Failed!");
+    }
 });
 
 router.post('/link/edit', auth, function (req, res, next) {
-    Link.findOneAndUpdate({ _id: req.query.id }, req.body, function (err, link) {
-        if (err) {
-            next(err);
-        } else {
-            res.redirect('/controller/link');
-        }
-    });
+    if (req.query.id) {
+        Link.findOneAndUpdate({ _id: req.query.id }, req.body, function (err, link) {
+            if (err) {
+                next(err);
+            } else {
+                res.redirect('/controller/link');
+            }
+        });
+    }
+    else if (req.query.shorturl) {
+        Link.findOneAndUpdate({ short: req.query.shorturl }, req.body, function (err, link) {
+            if (err) {
+                next(err);
+            } else {
+                res.redirect('/controller/link');
+            }
+        });
+    } else {
+        res.send("Edit Link Failed!");
+    }
 });
 
 router.get('/link/remove', auth, function (req, res, next) {
