@@ -1059,8 +1059,8 @@ router.get('/feedback/remove', auth, function (req, res, next) {
 });
 
 router.get('/link', auth, function (req, res, next) {
-    Link.find({$where: "this.short.length == 6"}).limit(500).exec(function (err, links) {
-        Link.find({$where: "this.short.length == 5 "}).limit(500).exec(function (err, mlinks) {
+    Link.find({$where: "this.short.length == 6"}).limit(2000).exec(function (err, links) {
+        Link.find({$where: "this.short.length == 5 "}).limit(2000).exec(function (err, mlinks) {
             if (err) {
                 next(err);
             } else {
