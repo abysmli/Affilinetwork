@@ -3,8 +3,8 @@ var affilinet = require('../utils/affilinetapi.js');
 var aws = require('aws-lib');
 var Sync = require('../utils/synchronization.js');
 var UpdateDatabase = require('../utils/updatedatabase.js');
-var WriteDatabase = require('../utils/writedatabase.js');
-var writeDatabase = new WriteDatabase();
+var ImportProducts = require('../utils/ImportProducts.js');
+var importProducts = new ImportProducts();
 var setting = require('../setting.js');
 var SocketIOFile = require('socket.io-file');
 
@@ -43,8 +43,8 @@ module.exports = function (io) {
     io.of('/uploadProduct').on("connection", function (socket) {
         var uploader = new SocketIOFile(socket, {
             uploadDir: 'data',							// simple directory
-            rename: 'productData.csv',
-            accepts: ['text/csv', 'text/plain', 'application/vnd.ms-excel', 'text/x-csv'],
+            rename: 'productData.xlsx',
+            accepts: ['application/xml', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
             chunkSize: 102400,							// default is 10240(1KB)
             transmissionDelay: 0,						// delay of each transmission, higher value saves more cpu resources, lower upload speed. default is 0(no delay)
             overwrite: true 							// overwrite file if exists, default is true.
@@ -53,8 +53,8 @@ module.exports = function (io) {
         uploader.on('stream', (fileInfo) => { });
         uploader.on('complete', (fileInfo) => {
             console.log('Upload Complete.');
-            writeDatabase.init(fileInfo.uploadDir, Product, Affilinet, prodAdv, socket);
-            writeDatabase.parse();
+            importProducts.init(fileInfo.uploadDir, Product, Affilinet, prodAdv, socket);
+            importProducts.parseXLSX();
         });
         uploader.on('error', (err) => {
             console.log('Error!', err);
@@ -62,8 +62,8 @@ module.exports = function (io) {
         uploader.on('abort', (fileInfo) => {
             console.log('Aborted: ', fileInfo);
         });
-        socket.on('write', function (data) {
-            writeDatabase.write((result) => {
+        socket.on('write', (data) => {
+            importProducts.writeIntoDatabase(data, (result) => {
                 socket.emit('write-completed', { result: result });
             });
         });

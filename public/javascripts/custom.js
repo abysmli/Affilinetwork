@@ -27,36 +27,6 @@ function Notify(type, msg) {
     });
 }
 
-function previewFile(input_id, preview_id) {
-    var files = document.querySelector(input_id).files;
-    if (files && files[0]) {
-        var FR = new FileReader();
-        FR.onload = function(e) {
-            $(preview_id).html('<img src="' + e.target.result + '">');
-            $(preview_id).fadeIn();
-            _image = e.target.result;
-        };
-        FR.readAsDataURL(files[0]);
-    }
-}
-
-function post(params, form_id) {
-    // The rest of this code assumes you are not using a library.
-    // It can be made less wordy if you use one.
-    var form = document.getElementById(form_id);
-
-    for (var key in params) {
-        if (params.hasOwnProperty(key)) {
-            var hiddenField = document.createElement("input");
-            hiddenField.setAttribute("type", "hidden");
-            hiddenField.setAttribute("name", key);
-            hiddenField.setAttribute("value", params[key]);
-            form.appendChild(hiddenField);
-        }
-    }
-    form.submit();
-}
-
 function getURL() {
     var paginationHref = "";
     if (window.location.search == "") {
@@ -91,24 +61,5 @@ function getCurrencyExchange(cb) {
     $.get("currencyExchange", cb);
 }
 
-$(document).ready(function(){
-    $("#logout").attr("href", "http://allhaha.duoshuo.com/logout/?sso=1&redirect_uri=" + window.location.origin + "/logout/?from=" + window.location.pathname + window.location.search);
-    $("#login_form").attr("action", "/login/?from=" + window.location.href);
+$(document).ready(function () {
 });
-
-var duoshuoQuery = {
-    short_name: "allhaha",
-    sso: {
-        login: window.location.origin + "/login" + window.location.pathname + window.location.search,
-        logout: window.location.origin + "/logout?from=" + window.location.href
-    }
-};
-
-(function() {
-    var ds = document.createElement('script');
-    ds.type = 'text/javascript';
-    ds.async = true;
-    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-    ds.charset = 'UTF-8';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
-})();
