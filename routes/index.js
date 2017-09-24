@@ -285,8 +285,8 @@ router.get('/filter', function (req, res, next) {
                     if (products.length != 0) {
                         products.forEach(function (product, index) {
                             Product.find({
-                                    EAN: product._id
-                                }).stream()
+                                EAN: product._id
+                            }).stream()
                                 .on("error", function (err) {
                                     next(err);
                                 })
@@ -321,8 +321,8 @@ router.get('/filter', function (req, res, next) {
                                                 var iterateNumber = 0;
                                                 hotproducts.forEach(function (hotproduct, index) {
                                                     Product.find({
-                                                            EAN: hotproduct._id
-                                                        }).stream()
+                                                        EAN: hotproduct._id
+                                                    }).stream()
                                                         .on("error", function (err) {
                                                             next(err);
                                                         })
@@ -389,7 +389,6 @@ router.get('/filter', function (req, res, next) {
 router.get('/product', function (req, res, next) {
     var ip = req.clientIp;
     var country = Utils.getCountry(ip);
-    console.log(country);
     if (country == 'CN' && setting.china_pricetable_block) {
         var china_table_block = true;
     }
@@ -398,56 +397,64 @@ router.get('/product', function (req, res, next) {
         _id: req.query.product_id
     }, function (err, product) {
         if (err) return next(err);
-        Product.find({
-            EAN: product.EAN,
-            Activity: true
-        }, null, {
-            sort: {
-                Price: 1
-            }
-        }, function (err, _products) {
-            if (err != null || _products.length == 0) next(err);
-            else {
-                Product.update({
-                    EAN: _products[0].EAN
-                }, {
-                    Views: _products[0].Views + 1
-                }, {
-                    multi: true
-                }, function (err, doc) {
-                    if (err) return next(err);
-                    var productsCount = 0;
-                    _products.forEach(function (__product, index) {
-                        __product.TitleCN = __product.TitleCN;
-                        __product.DescriptionCN = __product.DescriptionCN;
-                        Shop.findOne({
-                            ShopId: __product.ShopId,
-                            Activity: true
-                        }, function (err, shop) {
-                            if (shop != null) {
-                                __product.ShopName = shop.CustomTitleCN;
-                            } else {
-                                __product.ShopId = "deactiv";
-                            }
-                            if (++productsCount == _products.length) {
-                                res.render('product_details', {
-                                    title: _products[0].TitleCN,
-                                    footer_bottom: !Utils.checkMobile(req),
-                                    product: _products[0],
-                                    currenturl: currenturl,
-                                    product_link: req.url,
-                                    products: _products,
-                                    china_table_block: china_table_block,
-                                    total_table_block: setting.total_pricetable_block,
-                                    layout: '/layout',
-                                    user: req.user
+        if (product) {
+            Product.find({
+                EAN: product.EAN,
+                Activity: true
+            }, null, {
+                    sort: {
+                        Price: 1
+                    }
+                }, function (err, _products) {
+                    if (err != null || _products.length == 0) next(err);
+                    else {
+                        Product.update({
+                            EAN: _products[0].EAN
+                        }, {
+                                Views: _products[0].Views + 1
+                            }, {
+                                multi: true
+                            }, function (err, doc) {
+                                if (err) return next(err);
+                                var productsCount = 0;
+                                _products.forEach(function (__product, index) {
+                                    __product.TitleCN = __product.TitleCN;
+                                    __product.DescriptionCN = __product.DescriptionCN;
+                                    Shop.findOne({
+                                        ShopId: __product.ShopId,
+                                        Activity: true
+                                    }, function (err, shop) {
+                                        if (shop != null) {
+                                            __product.ShopName = shop.CustomTitleCN;
+                                        } else {
+                                            __product.ShopId = "deactiv";
+                                        }
+                                        if (++productsCount == _products.length) {
+                                            if (_products.length == 1 && !_products[0].Translated) {
+                                                _products[0].TitleCN = _products[0].Title;
+                                                _products[0].DescriptionCN = _products[0].Description;
+                                            }
+                                            res.render('product_details', {
+                                                title: _products[0].TitleCN,
+                                                footer_bottom: !Utils.checkMobile(req),
+                                                product: _products[0],
+                                                currenturl: currenturl,
+                                                product_link: req.url,
+                                                products: _products,
+                                                china_table_block: china_table_block,
+                                                total_table_block: setting.total_pricetable_block,
+                                                layout: '/layout',
+                                                user: req.user
+                                            });
+                                        }
+                                    });
                                 });
-                            }
-                        });
-                    });
+                            });
+                    }
                 });
-            }
-        });
+        } else {
+            res.send("Can not find this product, please try again.");
+        }
     });
 });
 
@@ -612,12 +619,12 @@ router.get('/voucher', function (req, res, next) {
             });
         } else {
             Voucher.find({
-                    EndDate: {
-                        $gte: new Date()
-                    }
-                }).sort({
-                    updated_at: -1
-                }).skip((page - 1) * ItemOnPage)
+                EndDate: {
+                    $gte: new Date()
+                }
+            }).sort({
+                updated_at: -1
+            }).skip((page - 1) * ItemOnPage)
                 .limit(ItemOnPage)
                 .exec(function (err, vouchers) {
                     res.render('voucher', {
@@ -845,6 +852,6 @@ router.get('/ean', function (req, res, next) {
     });
 });
 
-router.get('/test', function (req, res, next) {});
+router.get('/test', function (req, res, next) { });
 
 module.exports = router;

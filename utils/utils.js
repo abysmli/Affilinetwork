@@ -510,7 +510,6 @@ module.exports = (function () {
     };
 
     _Class.prototype.getCountry = function getCountry(ip) {
-        console.log(ip);
         if (ip == "::ffff:127.0.0.1" || ip == "127.0.0.1" || ip == "::1" || ip == undefined) {
             return "";
         }
