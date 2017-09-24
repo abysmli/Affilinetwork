@@ -60,6 +60,3 @@ function copyToClipboard(string) {
 function getCurrencyExchange(cb) {
     $.get("currencyExchange", cb);
 }
-
-$(document).ready(function () {
-});

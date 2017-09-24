@@ -69,37 +69,57 @@ class ImportProducts {
         this.socket.emit("parseFile", this.metaData);
     }
 
-    writeIntoDatabase(data, callback) {
+    writeLoop(index, data) {
         if (this.parseData) {
-            let counter = this.parseData.length;
-            this.parseData.forEach((product, index) => {
-                Utils.shortURL(product.URL, (err, shorturl) => {
-                    product.ShortURL = shorturl;
-                    if (!product.ProductImage) {
-                        if (product.ProductImageSet) {
-                            product.ProductImage = product.ProductImageSet[0];
-                        }
+            let product = this.parseData[index];
+            if (index < this.parseData.length) {
+                this.writeIntoDatabase(product, data, (err, raw) => {
+                    if (err) {
+                        this.socket.emit("write-completed", {
+                            result: "failed",
+                            message: err,
+                            sum: index
+                        });
+                    } else {
+                        this.socket.emit("writing", {
+                            current: index,
+                            sum: this.parseData.length
+                        });
+                        this.writeLoop(index + 1, data);
                     }
-                    if (!data.overwrite) {
-                        delete product.DescriptionCN;
-                        delete product.TitleCN;
-                        delete product.Translated;
-                        delete product.TranslationQuality;
-                    }
-                    this.Product.update({ ProductId: product.ProductId }, product, { upsert: true }, function (err, raw) {
-                        if (err) {
-                            console.log("Error occured at saving Manual Product into Database: " + JSON.stringify(err));
-                            return callback(false);
-                        }
-                        if (--counter == 0) {
-                            callback(true);
-                        }
-                    });
                 });
-            });
+            } else {
+                this.socket.emit("write-completed", {
+                    result: "success",
+                    message: "Writing into Database successfully!",
+                    sum: index
+                });
+            }
         } else {
-            callback(false);
+            socket.emit('write-completed', {
+                result: "failed",
+                message: "Input Data is empty!",
+                sum: 0
+            });
         }
+    };
+
+    writeIntoDatabase(product, data, callback) {
+        Utils.shortURL(product.URL, (err, shorturl) => {
+            product.ShortURL = shorturl;
+            if (!product.ProductImage) {
+                if (product.ProductImageSet) {
+                    product.ProductImage = product.ProductImageSet[0];
+                }
+            }
+            if (!data.overwrite) {
+                delete product.DescriptionCN;
+                delete product.TitleCN;
+                delete product.Translated;
+                delete product.TranslationQuality;
+            }
+            this.Product.update({ ProductId: product.ProductId }, product, { upsert: true }, callback);
+        });
     }
 }
 

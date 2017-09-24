@@ -34,7 +34,6 @@ module.exports = function (io) {
             }, socket);
             sync.sync();
         });
-
         socket.on('update', function (data) {
             var updatedatabase = new UpdateDatabase(Product, Affilinet, prodAdv, socket);
             updatedatabase.update();
@@ -63,9 +62,7 @@ module.exports = function (io) {
             console.log('Aborted: ', fileInfo);
         });
         socket.on('write', (data) => {
-            importProducts.writeIntoDatabase(data, (result) => {
-                socket.emit('write-completed', { result: result });
-            });
+            importProducts.writeLoop(0, data);
         });
     });
 }

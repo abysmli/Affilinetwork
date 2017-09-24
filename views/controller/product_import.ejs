@@ -1,9 +1,10 @@
 <div class="page-header">
     <h1>
-        <%= title %> <small></small></h1>
+        <%= title %>
+    </h1>
     <form class="form-inline" id="uploadform">
         <div class="form-group">
-            <label class="sr-only" for="file">Product CSV File</label>
+            <label class="sr-only" for="file">Product XLSX File</label>
             <input type="file" class="btn btn-default" id="file" multiple />
         </div>
         <button type="submit" id="upload_button" class="btn btn-default">Upload</button>
@@ -17,11 +18,11 @@
 </div>
 <table id="product_import_table" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%"></table>
 
-<div class="modal fade" id="uploading_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="processing_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">Uploading</h4>
+                <h4 class="modal-title" id="model_title"></h4>
             </div>
             <div class="modal-body">
                 <div class="progress">
@@ -39,30 +40,31 @@
 
 <script>
     $(document).ready(() => {
-        var table = {
+        let table = {
             destroy: function () { }
         };
         $("#writeDatabase").prop("disabled", true);
-        var socket = io.connect('http://' + window.location.host + '/uploadProduct');
-        var uploader = new SocketIOFileClient(socket);
-        var uploadform = document.getElementById('uploadform');
+        const socket = io.connect(`http://${window.location.host}/uploadProduct`);
+        const uploader = new SocketIOFileClient(socket);
+
+        let uploadform = document.getElementById('uploadform');
+
+        uploadform.onsubmit = (ev) => {
+            ev.preventDefault();
+            table.destroy();
+            uploader.upload(document.getElementById('file'));
+        };
 
         uploader.on('start', function (fileInfo) {
             console.log('Start uploading', fileInfo);
-            $('#done_button').hide();
-            $('#uploading_modal').modal({
-                backdrop: 'static',
-                keyboard: false
-            });
+            ProgressStart("upload");
         });
         uploader.on('stream', function (fileInfo) {
-            setProgressBar(fileInfo.sent / fileInfo.size);
+            setProgressBar("upload", fileInfo.sent, fileInfo.size);
         });
         uploader.on('complete', function (fileInfo) {
-            console.log('Upload Complete', fileInfo);
-            setProgressBar(1);
-            $("#progress_bar").html("Uploading finished! " + (fileInfo.size / 1024 / 1024).toFixed(2) + " MB uploaded, and costed " + (fileInfo.estimated / 1000).toFixed(1) + " seconds!");
-            $('#done_button').fadeIn();
+            console.log('Upload Completed', fileInfo);
+            ProgressEnd("upload", fileInfo);
         });
         uploader.on('error', function (err) {
             alert(err);
@@ -70,14 +72,15 @@
         uploader.on('abort', function (fileInfo) {
             alert(fileInfo);
         });
-
         socket.on('parseFile', function (data) {
             table = $('#product_import_table')
                 .on('error.dt', function (e, settings, techNote, message) {
                     console.log('An error has been reported by DataTables: ', message);
+                    console.log(e);
+                    console.log(techNote);
+                    console.log(settings);
                     $("#writeDatabase").prop("disabled", true);
                 }).on('draw.dt', function () {
-                    console.log('Redraw occurred at: ' + new Date().getTime());
                     $("#writeDatabase").prop("disabled", false);
                     $("#upload_button").text("Re-Upload");
                 }).DataTable({
@@ -117,26 +120,58 @@
                 });
         });
 
-        socket.on('write-completed', (result) => {
-            alert("Write Database Result: " + (result.result ? "Success!" : "Failed!"));
-        });
-
-        uploadform.onsubmit = (ev) => {
-            ev.preventDefault();
-            table.destroy();
-            var fileEl = document.getElementById('file');
-            var uploadIds = uploader.upload(fileEl);
-        };
-
         $("#writeDatabase").click((e) => {
             e.preventDefault();
             socket.emit("write", { overwrite: $("#overwrite-translation").prop('checked') });
+            ProgressStart("database");
+        });
+        socket.on('write-completed', (result) => {
+            ProgressEnd("database", result);
+            alert(`Write Database Result: ${result.result}\nMessage: ${result.message}`);
+            console.log(result);
+        });
+        socket.on('writing', (info) => {
+            setProgressBar("database", info.current, info.sum);
         });
 
-        function setProgressBar(value) {
-            var _value = (value * 100).toFixed(2) + "%";
-            $("#progress_bar").width(_value);
-            $("#progress_bar").html(_value);
+
+        function setProgressBar(type, number1, number2) {
+            if (type == "upload") {
+                let value = number1 / number2;
+                let _value = `${(value * 100).toFixed(2)}%`;
+                $("#progress_bar").width(_value);
+                $("#progress_bar").html(_value);
+            } else {
+                let value = number1 / number2;
+                let _value = `${(value * 100).toFixed(2)}%`;
+                $("#progress_bar").width(_value);
+                $("#progress_bar").html(`${number1} Products of ${number2} Products writed into Database, Now ${_value}`);
+            }
+        }
+
+        function ProgressStart(type) {
+            setProgressBar(0);
+            $("#progress_bar").html("");
+            if (type == "upload") {
+                $("#model_title").text("Uploading");
+            } else {
+                $("#model_title").text("Writing into Database");
+            }
+            $('#done_button').hide();
+            $('#processing_modal').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+        }
+
+        function ProgressEnd(type, info) {
+            setProgressBar(1);
+            if (type == "upload") {
+                $("#progress_bar").html(`"Uploading finished! ${(info.size / 1024 / 1024).toFixed(2)} MB uploaded, and costed ${(info.estimated / 1000).toFixed(1)} seconds!"`);
+            } else {
+                $("#progress_bar").html(`"Writing Database finished! ${info.sum} Products inserted"`);
+            }
+            $('#done_button').fadeIn();
         }
     });
 
