@@ -81,7 +81,7 @@ router.get('/test', function (req, res, next) {
     // AffilinetSOAP.SearchVoucherCodes({}, (data) => {
     //     res.json(data);
     // });
-    AWS.getProductByEAN("7426601144104", (products)=>{
+    AWS.getProductByEAN("7426601144104", (products) => {
         console.log(products);
         res.json(products);
     });
@@ -294,6 +294,21 @@ router.get('/querySearch', tokencheck, function (req, res, next) {
                 res.json({ result: "No Product found!" });
             }
         });
+});
+
+router.get('/product/ean/:ean', function (req, res, next) {
+    Product.find({
+        EAN: req.params.ean,
+        Activity: true,
+        Translated: true
+    }, function (err, products) {
+        if (err) next(err);
+        if (products.length !== 0) {
+            res.redirect("/product?product_id=" + products[0]._id);
+        } else {
+            res.send("No Product Found!");
+        }
+    });
 });
 
 module.exports = router;

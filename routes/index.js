@@ -852,6 +852,4 @@ router.get('/ean', function (req, res, next) {
     });
 });
 
-router.get('/test', function (req, res, next) { });
-
 module.exports = router;
