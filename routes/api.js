@@ -3,7 +3,6 @@ var router = express.Router();
 var parseString = require('xml2js').parseString;
 var aws = require('aws-lib');
 var jwt = require('jsonwebtoken');
-var uuidV4 = require('uuid/v4');
 var tokencheck = require('../utils/tokencheck');
 var Product = require('../models/product');
 var Shop = require('../models/shop');
@@ -13,24 +12,21 @@ var setting = require('../setting');
 var utils = require('../utils/utils');
 var Utils = new utils();
 
-var affilinet = require('../utils/affilinetapi');
+var affilinet = require('../utils/requester/AffilinetAPI');
 var Affilinet = new affilinet({
     publisherId: setting.affilinet_setting.publisherId,
     productWebservicePassword: setting.affilinet_setting.productWebservicePassword,
     publisherWebservicePassword: setting.affilinet_setting.publisherWebservicePassword
 });
 
-var affilinetSOAP = require('../utils/affilinetapi.soap');
-var AffilinetSOAP = new affilinetSOAP({
-    publisherId: setting.affilinet_setting.publisherId,
-    productWebservicePassword: setting.affilinet_setting.productWebservicePassword,
-    publisherWebservicePassword: setting.affilinet_setting.publisherWebservicePassword
-});
+var AffilinetSOAP = require('../utils/requester/AffilinetAPI.SOAP');
 
 var prodAdv = aws.createProdAdvClient(setting.amazon_setting.AccessKeyId, setting.amazon_setting.SecretAccessKey, setting.amazon_setting.AssociateTag, {
     host: "ecs.amazonaws.de",
     region: "DE"
 });
+
+var AWS = require('../utils/requester/AWSProductAPI');
 
 /*
  * POST appid and appsecret in order to get Auth Token, Token will expired in 10h. 
@@ -38,6 +34,7 @@ var prodAdv = aws.createProdAdvClient(setting.amazon_setting.AccessKeyId, settin
  * If the token is expired, a new token must be regenerated.
  */
 router.post('/auth', function (req, res) {
+    console.log(req.body);
     // find the user
     User.findOne({
         appid: req.body.appid
@@ -50,9 +47,7 @@ router.post('/auth', function (req, res) {
             if (user.appsecret != req.body.appsecret) {
                 res.json({ success: false, message: 'Authentication failed. Wrong App-Secret.' });
             } else {
-                // if user is found and appsecret is right
-                // create a token
-                var token = jwt.sign(user, setting.secret, {
+                var token = jwt.sign({ _doc: user }, setting.secret, {
                     expiresIn: '10h' // expires in 24 hours
                 });
                 // return the information including token as JSON
@@ -74,7 +69,6 @@ router.get('/checkToken', tokencheck, function (req, res, next) {
 });
 
 router.get('/getShops', tokencheck, function (req, res, next) {
-    var token = req.body.token || req.query.token || req.headers['x-access-token'];
     Shop.find({}, function (err, shops) {
         shops.forEach((shop, index) => {
             shop.ShortURL += "?subid=" + req.decoded._doc.appid;
@@ -84,21 +78,13 @@ router.get('/getShops', tokencheck, function (req, res, next) {
 });
 
 router.get('/test', function (req, res, next) {
-    AffilinetSOAP.SearchVoucherCodes({}, (data) => {
-        res.json(data);
-    });
-    // Affilinet.getMyPrograms({}, function (err, response, programs) {
-    //     if (!err && response.statusCode == 200) {
-    //         parseString(programs, {
-    //             explicitArray: false
-    //         }, function (err, programs) {
-    //             var programs = programs.ProgramList.Programs.ProgramSummary;
-    //             res.json(programs);
-    //         });
-    //     } else {
-    //         next(err);
-    //     }
+    // AffilinetSOAP.SearchVoucherCodes({}, (data) => {
+    //     res.json(data);
     // });
+    AWS.getProductByEAN("7426601144104", (products)=>{
+        console.log(products);
+        res.json(products);
+    });
 });
 
 router.get('/getProgramRate', tokencheck, function (req, res, next) {

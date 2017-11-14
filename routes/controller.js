@@ -5,7 +5,7 @@ var csv = require("fast-csv");
 var fs = require('fs');
 var parseString = require('xml2js').parseString;
 var auth = require('../models/auth');
-var affilinet = require('../utils/affilinetapi');
+var affilinet = require('../utils/requester/AffilinetAPI');
 var aws = require('aws-lib');
 var uuidV4 = require('uuid/v4');
 var Product = require('../models/product');
@@ -27,12 +27,7 @@ var Affilinet = new affilinet({
     publisherWebservicePassword: setting.affilinet_setting.publisherWebservicePassword
 });
 
-var affilinetSOAP = require('../utils/affilinetapi.soap');
-var AffilinetSOAP = new affilinetSOAP({
-    publisherId: setting.affilinet_setting.publisherId,
-    productWebservicePassword: setting.affilinet_setting.productWebservicePassword,
-    publisherWebservicePassword: setting.affilinet_setting.publisherWebservicePassword
-});
+var AffilinetSOAP = require('../utils/requester/AffilinetAPI.SOAP');
 
 var prodAdv = aws.createProdAdvClient(setting.amazon_setting.AccessKeyId, setting.amazon_setting.SecretAccessKey, setting.amazon_setting.AssociateTag, {
     host: "ecs.amazonaws.de",

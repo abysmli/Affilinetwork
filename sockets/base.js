@@ -1,5 +1,5 @@
 var Product = require('../models/product.js');
-var affilinet = require('../utils/affilinetapi.js');
+var affilinet = require('../utils/requester/AffilinetAPI.js');
 var aws = require('aws-lib');
 var Sync = require('../utils/synchronization.js');
 var UpdateDatabase = require('../utils/updatedatabase.js');

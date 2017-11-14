@@ -19,7 +19,7 @@ var Request = require('../models/request');
 var Account = require("../models/account");
 var Shop = require('../models/shop');
 
-var affilinet = require('../utils/affilinetapi');
+var affilinet = require('../utils/requester/AffilinetAPI');
 
 var emailSender = require('../utils/emailsender');
 var EmailSender = new emailSender();

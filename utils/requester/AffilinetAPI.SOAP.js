@@ -1,6 +1,7 @@
 "strict mode";
-var util = require('util');
+const util = require('util');
 const soap = require('soap');
+const setting = require('../../setting');
 const WSDL_LOGON = 'https://api.affili.net/V2.0/Logon.svc?wsdl';
 const WSDL_AccountService = "https://api.affili.net/V2.0/AccountService.svc?wsdl";
 const WSDL_PublisherStatistics = 'https://api.affili.net/V2.0/PublisherStatistics.svc?wsdl';
@@ -110,7 +111,7 @@ class PublisherStatistics {
             'CredentialToken': token,
             'GetDailyStatisticsRequestMessage': {
                 'StartDate': params.StartDate || new Date("2017-01-01").toISOString(),
-                'EndDate': params.EndDate || new Date("2017-09-18").toISOString(),
+                'EndDate': params.EndDate || new Date("2017-10-21").toISOString(),
                 'SubId': params.SubId || '',
                 'ProgramTypes': 'All',
                 'ValuationType': 'DateOfRegistration',
@@ -375,4 +376,10 @@ class AffilinetPublisher {
     }
 }
 
-module.exports = AffilinetPublisher;
+const AffilinetSOAP = new AffilinetPublisher({
+    publisherId: setting.affilinet_setting.publisherId,
+    productWebservicePassword: setting.affilinet_setting.productWebservicePassword,
+    publisherWebservicePassword: setting.affilinet_setting.publisherWebservicePassword
+});
+
+module.exports = AffilinetSOAP;
