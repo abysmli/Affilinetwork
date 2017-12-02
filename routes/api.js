@@ -296,7 +296,7 @@ router.get('/querySearch', tokencheck, function (req, res, next) {
         });
 });
 
-router.get('/product/ean/:ean', tokencheck, function (req, res, next) {
+router.get('/product/ean/:ean', function (req, res, next) {
     Product.find({
         EAN: req.params.ean,
         Activity: true,

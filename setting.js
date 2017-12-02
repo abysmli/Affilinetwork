@@ -17,6 +17,10 @@ var app_setting = {
         SecretAccessKey: 'nwoaIXQ+6LARaztKP8kp2D18rllWcpMIQ5MBQi6H',
         AssociateTag: 'allhaha-21'
     },
+    zanox_setting: {
+        ConnectID: 'B46BB1042FA95EBFF3BB',
+        SecretKey: '3ccc0eCcf22e46+1b76b821f526295/758Fce244'
+    },
     email_setting: {
         service: 'hotmail',
         from: 'info@allhaha.com',
