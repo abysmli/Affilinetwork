@@ -304,7 +304,75 @@ router.get('/product/ean/:ean', function (req, res, next) {
     }, function (err, products) {
         if (err) next(err);
         if (products.length !== 0) {
-            res.redirect("/product?product_id=" + products[0]._id);
+            var ip = req.clientIp;
+            var country = Utils.getCountry(ip);
+            if (country == 'CN' && setting.china_pricetable_block) {
+                var china_table_block = true;
+            }
+            var currenturl = req.protocol + '://' + req.get('host') + req.originalUrl;
+            Product.findOne({
+                _id: products[0]._id
+            }, function (err, product) {
+                if (err) return next(err);
+                if (product) {
+                    Product.find({
+                        EAN: product.EAN,
+                        Activity: true
+                    }, null, {
+                            sort: {
+                                Price: 1
+                            }
+                        }, function (err, _products) {
+                            if (err != null || _products.length == 0) next(err);
+                            else {
+                                Product.update({
+                                    EAN: _products[0].EAN
+                                }, {
+                                        Views: _products[0].Views + 1
+                                    }, {
+                                        multi: true
+                                    }, function (err, doc) {
+                                        if (err) return next(err);
+                                        var productsCount = 0;
+                                        _products.forEach(function (__product, index) {
+                                            __product.TitleCN = __product.TitleCN;
+                                            __product.DescriptionCN = __product.DescriptionCN;
+                                            Shop.findOne({
+                                                ShopId: __product.ShopId,
+                                                Activity: true
+                                            }, function (err, shop) {
+                                                if (shop != null) {
+                                                    __product.ShopName = shop.CustomTitleCN;
+                                                } else {
+                                                    __product.ShopId = "deactiv";
+                                                }
+                                                if (++productsCount == _products.length) {
+                                                    if (_products.length == 1 && !_products[0].Translated) {
+                                                        _products[0].TitleCN = _products[0].Title;
+                                                        _products[0].DescriptionCN = _products[0].Description;
+                                                    }
+                                                    res.render('product_details', {
+                                                        title: _products[0].TitleCN,
+                                                        footer_bottom: !Utils.checkMobile(req),
+                                                        product: _products[0],
+                                                        currenturl: currenturl,
+                                                        product_link: req.url,
+                                                        products: _products,
+                                                        china_table_block: china_table_block,
+                                                        total_table_block: setting.total_pricetable_block,
+                                                        layout: '/layout',
+                                                        user: req.user
+                                                    });
+                                                }
+                                            });
+                                        });
+                                    });
+                            }
+                        });
+                } else {
+                    res.send("Can not find this product, please try again.");
+                }
+            });
         } else {
             res.send("No Product Found!");
         }
