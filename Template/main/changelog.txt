@@ -1,0 +1,59 @@
+Version 1.4 - November 2, 2017
+
+- ADDED: Coming Soon Page
+- ADDED: Single Ticket Page
+- ADDED: Bootstrap scss files to vendor folder. Now Bootstrap is integral part of grunt building process and is compiled via separate grunt command sass:bootstrap and passed through Autoprefixer
+- ADDED: 2 New sections to Unishop documentation: “Browser Support (Autoprefixer)” and “Changelog”
+- UPDATED: Bootstrap to latest Beta 2 version
+- UPDATED: package.json with new Autoprefixer package
+- UPDATED: Gruntfile.js. Added new path: bootstrap_scss and new grunt command sass:bootstrap which runs along with default grunt task. Added Autoprefixer task
+- UPDATED: Removed all prefixed styles from SCSS. Now vendor prefixes are added automatically by Autoprefixer
+- UPDATED: Account My Tickets page. Now you can click on ticket name to see ticket details
+- UPDATED: jQuery v3.1.1 slim to v3.2.1 full to enable ajax function
+- FIXED: Yet another shop products grid issue in Microsoft Edge
+- FIXED: Removed second unnecessary declaration of countDownFunc inside scripts.js
+- FIXED: Double/Single quotes issue inside scripts.js
+- FIXED: Specified ‘global’ identifiers at the top of the scripts.js file to tell ESLin that they are declared outside of the file
+
+——————————————————————————————————————————
+
+Version 1.3 - October 9, 2017
+- ADDED: New Homepage Versions: Featured Categories and Product Collection Showcase
+- ADDED: New Type of Header - Ghost Header (see Homepage Product Collection Showcase)
+- ADDED: New Products Grid with Filters (see on Product Collection Showcase page)
+- ADDED: Light Footer version (try via customizer)
+- UPDATED: Unishop Logo and Favicon
+- UPDATED: Sketch file with new Homepage mockups and components
+- UPDATED: Documentation with new section: Changing Footer Skin
+
+——————————————————————————————————————————
+
+Version 1.2 - September 17, 2017
+- ADDED: New Order Tracking Page
+- ADDED: Search and Filters for Components. New data-filter-list js plugin for filtering list groups
+- ADDED: New Steps component
+- ADDED: New Font Icons Set Pe-7-Stroke
+- ADDED: New Order Details Modal. Now when you click on order id it opens modal with order details
+- ADDED: grunt-cache-pug-compile and pug-inheritance for faster .pug compilation and browser reloading. Now only affected files re-compile
+— ADDED: New utility classes for removing border radius. All utility classes found in scss/base/_utilities.scss
+- UPDATED: Node modules to latest stable version
+- UPDATED: Forms styles, fixed button inside input group
+- UPDATED: Sketch file with new Order Tracking page mockup
+
+——————————————————————————————————————————
+
+Version 1.1 - August 29, 2017
+- ADDED: Media object component
+- ADDED: Password recovery page
+- UPDATED: Bootstrap to latest version 4.0.0 Beta
+- UPDATED: All Unishop components to be compatible with Bootstrap 4.0.0 Beta
+- UPDATED: User dropdown menu and mobile menu, added user avatar
+- UPDATED: Navigation bar and dropdown styles, added drop shadow
+- UPDATED: Documentation. Added new section: Global colors, fixed typos
+- UPDATED: gruntfile.js and package.json files
+- FIXED: Shop products grid issue in Microsoft Edge
+
+——————————————————————————————————————————
+
+Version 1.0 - July 30, 2017
+- Initial release
