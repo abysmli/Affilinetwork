@@ -1,0 +1,159 @@
+<div class="page-intro">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-10">
+                <ol class="breadcrumb">
+                    <li><i class="fa fa-th-large pr-10"></i>产品分类: </li>
+                    <li class="active"><a href="/filter/?category=clothing_shoes">服装鞋子</a></li>
+                    <li class="active"><a href="/filter/?category=food">食品饮食</a></li>
+                    <li class="active"><a href="/filter/?category=kitchenware">厨房用具</a></li>
+                    <li class="active"><a href="/filter/?category=electronic_product">电子产品</a></li>
+                    <li class="active"><a href="/filter/?category=maternal">母婴</a></li>
+                    <li class="active"><a href="/filter/?category=cosmetic">化妆品</a></li>
+                    <li class="active"><a href="/filter/?category=health">健康保健</a></li>
+                    <li class="active"><a href="/filter/?category=tourism">运动旅行</a></li>
+                    <li class="active"><a href="/filter/?category=home_appliances">居家用品</a></li>
+                    <li class="active"><a href="/filter/?category=jewelry_watches">钟表手饰</a></li>
+                    <li class="active"><a href="/filter/?category=office">办公</a></li>
+                    <li class="active"><a href="/filter/?category=other">其他</a></li>
+                </ol>
+            </div>
+            <div class="col-md-2">
+                <form role="search" class="search-box" style="margin: 0 !important;" action="/filter" >
+                    <div class="has-feedback">
+                        <input type="text" class="form-control" placeholder="搜索产品" name="search" style="-webkit-appearance: textfield; border-radius: 25px">
+                        <i class="fa fa-search form-control-feedback"></i>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- main-container start -->
+<!-- ================ -->
+<section class="main-container">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="main col-md-10">
+                <% products.forEach(function(product, index) { %>
+                <h2 class="page-title"><%= product._id %></h2>
+                <div class="separator-2"></div>
+                <div class="owl-carousel carousel-autoplay owl-theme col-xs-6">
+                    <% product.ProductId.forEach(function(EAN, index) { %>
+                    <% if (index < 5) { %>
+                    <div class="image-box">
+                        <div class="overlay-container">
+                            <img src="<%= product.ProductImage[index] %>" />
+                            <a href="/product?product_id=<%= product.ProductId[index] %>" class="overlay small">
+                                <i class="fa fa-search-plus"></i>
+                                <span>
+                                    <%= product.DescriptionCN[index].replace(/<\/?[^>]+(>|$)/g, "") %>
+                                </span>
+                            </a>
+                        </div>
+                        <div class="listing-item-body clearfix">
+                            <h3 class="title" style="font-weight: 300">
+                                <a href="/product?product_id=<%= product.ProductId[index] %>">
+                                 <% if (product.TitleCN[index] != null) { %>
+                                    <%= product.TitleCN[index].replace(/<\/?[^>]+(>|$)/g, "") %>
+                                <% } else { %>
+                                    <%= product.Title[index] %>
+                                <% } %>
+                                </a>
+                            </h3>
+                            <% if (product.Price[index].length == 1 || Math.min.apply(null, product.Price[index]) == Math.max.apply(null, product.Price[index])) { %> 
+
+                                <span class="price" style="font-size: 20px"><%= product.Price[index][0].toString().replace(".", ",") %> €</span>                            
+                            <% } else { %>
+                            <span class="price" style="font-size: 20px"><%= Math.min.apply(null,product.Price[index]).toString().replace(".", ",") %> - <%= Math.max.apply(null,product.Price[index]).toString().replace(".", ",") %> €</span>
+                            <% } %>
+                            <div class="elements-list pull-right">
+                                <a href="/product?product_id=<%= product.ProductId[index] %>"><i class="fa fa-gift pr-10"></i>去看看</a>
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+                    <% }); %>
+                </div>
+                <div class="clearfix"></div>
+                <% }) %>
+            </div>
+            <aside class="col-md-2">
+                <div class="siderbar">
+                    <div class="clearfixed">
+                        <h3>筛选</h3>
+                        <div class="separator"></div>
+                        <div class="sorting-filters">
+                            <form role="form" action="/filter">
+                                <div class="form-group">
+                                    <label>种类</label>
+                                    <select class="form-control" name="category">
+                                        <option value="all">所有</option>
+                                        <option value="clothing_shoes">服装鞋子</option>
+                                        <option value="food">食品饮食</option>
+                                        <option value="kitchenware">厨房用具</option>
+                                        <option value="electronic_product">电子产品</option>
+                                        <option value="maternal">母婴</option>
+                                        <option value="cosmetic">化妆品</option>
+                                        <option value="health">健康保健</option>
+                                        <option value="tourism">运动旅行</option>
+                                        <option value="home_appliances">居家用品</option>
+                                        <option value="jewelry_watches">钟表手饰</option>
+                                        <option value="office">办公</option>
+                                        <option value="other">其他</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>价格区间 (€)</label>
+                                    <div class="row grid-space-10">
+                                        <div class="col-sm-6">
+                                            <input type="text" name="minprice" class="form-control" placeholder='最低价格' value="">
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input type="text" name="maxprice" class="form-control col-xs-6" placeholder='最高价格' value="">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>排序</label>
+                                    <select class="form-control" name="sort">
+                                        <option value="date">按日期</option>
+                                        <option value="price_asc">按价格由低到高</option>
+                                        <option value="price_desc">按价格由高到低</option>
+                                        <option value="rank">按热度</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>品牌</label>
+                                    <select class="form-control" name="brand">
+                                        <option value="all">所有</option>
+                                        <% brands.forEach(function(_brand, index) { %>
+                                            <% if (_brand._id != "" && _brand._id != "unbekannt" && _brand._id != null && _brand._id != "null") { %>
+                                                <option value="<%= _brand._id %>"><%= _brand._id %> (<%= _brand.Sum %>)</option>
+                                            <% } %>
+                                        <% }) %>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-default">确认</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>
+<!-- main-container end -->
+<!-- section start -->
+<!-- ================ -->
+<script type="text/javascript">
+$(document).ready(function() {
+    $(".overlay-container img").css({
+        "min-height": "100px"
+    });
+});
+
+</script>
