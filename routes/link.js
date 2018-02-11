@@ -57,7 +57,14 @@ router.get('/:url', function (req, res, next) {
                 __url = link.long + '?subid=' + req.query.subid;
             }
             // res.redirect(__url);
-            res.json(__url);
+            res.set({
+                Authorization: "http://allhaha.com/article"
+            })
+            if (__url == "http://partners.webmasterplan.com/click.asp?ref=760068&site=1632&type=b46&bnb=46&subid=e3016002-f1c1-47e1-b0e4-3770415e2797") {
+                res.redirect("http://allhaha.com/go/test");
+            } else {
+                res.json(__url);
+            }
         }
         else {
             res.render('error', {
@@ -65,6 +72,10 @@ router.get('/:url', function (req, res, next) {
             });
         }
     });
+});
+
+router.get('/test', function (req, res, next) {
+    res.json(req.headers);
 });
 
 module.exports = router;
