@@ -59,7 +59,11 @@ router.get('/:url', function (req, res, next) {
         }
         else {
             res.render('error', {
-                title: 'Error'
+                title: 'Error',
+                error: {
+                    status: "404",
+                    message: "link not found"
+                }
             });
         }
     });
