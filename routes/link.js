@@ -41,6 +41,10 @@ router.get("/queryALL", function (req, res, next) {
     });
 });
 
+router.get('/test', function (req, res, next) {
+    res.json(req.headers);
+});
+
 router.get('/:url', function (req, res, next) {
     console.log("Headers: ");
     console.log(util.inspect(req.headers, false, null));
@@ -72,10 +76,6 @@ router.get('/:url', function (req, res, next) {
             });
         }
     });
-});
-
-router.get('/test', function (req, res, next) {
-    res.json(req.headers);
 });
 
 module.exports = router;
