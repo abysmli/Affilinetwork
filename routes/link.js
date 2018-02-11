@@ -41,10 +41,6 @@ router.get("/queryALL", function (req, res, next) {
     });
 });
 
-router.get('/test', function (req, res, next) {
-    res.json(req.headers);
-});
-
 router.get('/:url', function (req, res, next) {
     var url = req.params.url;
     Link.findOne({ short: url }, function (err, link) {
@@ -56,14 +52,10 @@ router.get('/:url', function (req, res, next) {
             } else {
                 __url = link.long + '?subid=' + req.query.subid;
             }
-            if (__url == "http://partners.webmasterplan.com/click.asp?ref=760068&site=1632&type=b46&bnb=46&subid=e3016002-f1c1-47e1-b0e4-3770415e2797") {
-                res.render('redirect', {
-                    layout: null,
-                    url: "http://allhaha.com/go/test"
-                });
-            } else {
-                res.json(__url);
-            }
+            res.render('redirect', {
+                layout: null,
+                url: "http://allhaha.com/go/test"
+            });
         }
         else {
             res.render('error', {
@@ -71,6 +63,10 @@ router.get('/:url', function (req, res, next) {
             });
         }
     });
+});
+
+router.get('/test', function (req, res, next) {
+    res.json(req.headers);
 });
 
 module.exports = router;
