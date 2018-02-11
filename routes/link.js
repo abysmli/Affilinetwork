@@ -41,6 +41,10 @@ router.get("/queryALL", function (req, res, next) {
 });
 
 router.get('/:url', function (req, res, next) {
+    console.log("Headers: ");
+    console.log(util.inspect(req.headers, false, null));
+    console.log("Request: ");
+    console.log(util.inspect(req, false, null))
     var url = req.params.url;
     Link.findOne({ short: url }, function (err, link) {
         if (link) {
@@ -52,11 +56,7 @@ router.get('/:url', function (req, res, next) {
                 __url = link.long + '?subid=' + req.query.subid;
             }
             // res.redirect(__url);
-            res.json({
-                url: __url,
-                req: req,
-                res: res
-            });
+            res.json(__url);
         }
         else {
             res.render('error', {
