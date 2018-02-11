@@ -45,7 +45,7 @@ router.get('/:url', function (req, res, next) {
     console.log("Headers: ");
     console.log(util.inspect(req.headers, false, null));
     console.log("Request: ");
-    console.log(util.inspect(req, false, null))
+    console.log(req);
     var url = req.params.url;
     Link.findOne({ short: url }, function (err, link) {
         if (link) {
