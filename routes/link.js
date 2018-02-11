@@ -58,7 +58,7 @@ router.get('/:url', function (req, res, next) {
             }
             res.render('redirect', {
                 layout: null,
-                url: "http://allhaha.com/go/test"
+                url: __url
             });
         }
         else {
