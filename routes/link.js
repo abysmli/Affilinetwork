@@ -41,6 +41,10 @@ router.get("/queryALL", function (req, res, next) {
     });
 });
 
+router.get('/test', function (req, res, next) {
+    res.json(req.headers);
+});
+
 router.get('/:url', function (req, res, next) {
     var url = req.params.url;
     Link.findOne({ short: url }, function (err, link) {
@@ -67,10 +71,6 @@ router.get('/:url', function (req, res, next) {
             });
         }
     });
-});
-
-router.get('/test', function (req, res, next) {
-    res.json(req.headers);
 });
 
 module.exports = router;
