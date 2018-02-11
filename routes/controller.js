@@ -1504,5 +1504,140 @@ router.get('/csv', auth, function (req, res, next) {
     }
 });
 
+router.get('/productstest', auth, function (req, res, next) {
+    res.render('controller/productstest', {
+        title: 'Products Manage Test',
+        layout: 'controller/layout'
+    });
+});
+
+router.get('/productstestapi', auth, function (req, res, next) {
+    let queryparam = {
+        draw: req.query.draw,
+        order: {
+            column: req.query.order[0].column == '0' ? "ProductImage" : req.query.order[0].column == '1' ? "Title" : req.query.order[0].column == '2' ? "TitleCN" : req.query.order[0].column == '3' ? "Brand" : req.query.order[0].column == '4' ? "ShopId" : req.query.order[0].column == '5' ? "Price" : req.query.order[0].column == '6' ? "URL" : req.query.order[0].column == '7' ? "Date" : req.query.order[0].column == '8' ? "EAN" : req.query.order[0].column == '9' ? "ASIN" : req.query.order[0].column == '10' ? "Source" : req.query.order[0].column == '11' ? "Count" : req.query.order[0].column == '12' ? "Views" : req.query.order[0].column == '13' ? "Category" : req.query.order[0].column == '14' ? "Status" : req.query.order[0].column == '15' ? "Manipulate" : "Price",
+            dir: req.query.order[0].dir == "asc" ? 1 : -1,
+        },
+        start: parseInt(req.query.start),
+        length: parseInt(req.query.length),
+        search: req.query.search
+    }
+    console.log(queryparam);
+    let sort = {};
+    sort[queryparam.order.column] = queryparam.order.dir;
+    var group = {
+        _id: "$EAN",
+        ProductImage: {
+            $first: "$ProductImage"
+        },
+        Title: {
+            $first: "$Title"
+        },
+        TitleCN: {
+            $first: "$TitleCN"
+        },
+        Brand: {
+            $first: "$Brand"
+        },
+        ShopId: {
+            $first: "$ShopId"
+        },
+        Price: {
+            $first: "$Price"
+        },
+        URL: {
+            $first: "$URL"
+        },
+        EAN: {
+            $first: "$EAN"
+        },
+        ASIN: {
+            $first: "$ASIN"
+        },
+        Source: {
+            $first: "$Source"
+        },
+        Count: {
+            $first: "$Count"
+        },
+        Category: {
+            $first: "$Category"
+        }
+    };
+
+    var matchQuery = {
+        $and: [{
+            $or: [{
+                Title: new RegExp(queryparam.search.value, 'gi')
+            }, {
+                TitleCN: new RegExp(queryparam.search.value, 'gi')
+            }, {
+                Brand: new RegExp(queryparam.search.value, 'gi')
+            }, {
+                ShopId: new RegExp(queryparam.search.value, 'gi')
+            }, {
+                Price: new RegExp(queryparam.search.value, 'gi')
+            }, {
+                EAN: new RegExp(queryparam.search.value, 'gi')
+            }, {
+                ASIN: new RegExp(queryparam.search.value, 'gi')
+            }, {
+                Source: new RegExp(queryparam.search.value, 'gi')
+            }, {
+                Category: new RegExp(queryparam.search.value, 'gi')
+            }, {
+                Status: new RegExp(queryparam.search.value, 'gi')
+            }]
+        }]
+    };
+
+    Product.distinct("EAN", {}, function (err, results) {
+        let counts = results.length;
+        Product.aggregate([{
+            "$match": matchQuery
+        }, {
+            "$group": group
+        }, {
+            "$sort": sort
+        }, {
+            "$skip": queryparam.start
+        }, {
+            "$limit": queryparam.length == -1 ? 0 : queryparam.length
+        }], function (err, products) {
+            let data = [];
+            if (products) {
+                products.forEach((product) => {
+                    data.push([
+                        product.ProductImage,
+                        product.Title,
+                        product.TitleCN,
+                        product.Brand,
+                        product.ShopId,
+                        product.Price,
+                        product.URL,
+                        product.Date,
+                        product.EAN,
+                        product.ASIN,
+                        product.Source,
+                        product.Count,
+                        product.Views,
+                        product.Category,
+                        product.Status,
+                        product.Manipulate
+                    ]);
+                });
+            }
+            let packet = {
+                draw: queryparam.draw,
+                recordsTotal: products.length,
+                recordsFiltered: counts - products.length,
+                data: data
+            }
+            res.json(packet);
+        });
+    });
+
+});
+
 
 module.exports = router;

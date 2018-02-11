@@ -1,12 +1,12 @@
-var express = require('express');
-var router = express.Router();
-var URL = require('url');
-var Link = require("../models/link");
-var Product = require('../models/product');
-var Shop = require('../models/shop');
-var setting = require('../setting');
-var utils = require('../utils/utils.js');
-var Utils = new utils();
+const express = require('express');
+const router = express.Router();
+const URL = require('url');
+const Link = require("../models/link");
+const Product = require('../models/product');
+const Shop = require('../models/shop');
+const setting = require('../setting');
+const utils = require('../utils/utils.js');
+const Utils = new utils();
 
 router.get("/queryALL", function (req, res, next) {
     var productLength = 0;
@@ -51,7 +51,8 @@ router.get('/:url', function (req, res, next) {
             } else {
                 __url = link.long + '?subid=' + req.query.subid;
             }
-            res.redirect(__url);
+            // res.redirect(__url);
+            res.json({__url, req, res});
         }
         else {
             res.render('error', {

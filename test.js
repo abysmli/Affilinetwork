@@ -24,7 +24,7 @@ const Zanox = require('./utils/requester/ZanoxAPI');
     //         console.log(programmes);
     //     });
     // });
-    Zanox.programapplications({}, (err, response, results) => {
+    Zanox.programs({}, (err, response, results) => {
         console.log(util.inspect(results, false, null));
         console.log(results);
     });
