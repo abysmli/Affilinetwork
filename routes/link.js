@@ -52,7 +52,11 @@ router.get('/:url', function (req, res, next) {
                 __url = link.long + '?subid=' + req.query.subid;
             }
             // res.redirect(__url);
-            res.json({__url, req, res});
+            res.json({
+                url: __url,
+                req: req,
+                res: res
+            });
         }
         else {
             res.render('error', {
