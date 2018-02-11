@@ -46,10 +46,6 @@ router.get('/test', function (req, res, next) {
 });
 
 router.get('/:url', function (req, res, next) {
-    console.log("Headers: ");
-    console.log(util.inspect(req.headers, false, null));
-    console.log("Request: ");
-    console.log(req);
     var url = req.params.url;
     Link.findOne({ short: url }, function (err, link) {
         if (link) {
@@ -60,9 +56,11 @@ router.get('/:url', function (req, res, next) {
             } else {
                 __url = link.long + '?subid=' + req.query.subid;
             }
-            res.set('referer', 'http://cn.99mst.com/shoptutorial');
             if (__url == "http://partners.webmasterplan.com/click.asp?ref=760068&site=1632&type=b46&bnb=46&subid=e3016002-f1c1-47e1-b0e4-3770415e2797") {
-                res.redirect("http://allhaha.com/go/test");
+                res.render('redirect', {
+                    layout: null,
+                    url: "http://allhaha.com/go/test"
+                });
             } else {
                 res.json(__url);
             }
