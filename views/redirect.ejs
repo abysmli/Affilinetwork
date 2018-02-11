@@ -13,10 +13,12 @@
 
 <body>
     <script>
-        Object.defineProperty(document, "referrer", { get: function () { return "www.allhaha.com/article"; } });
+    (()=>{
+        document.querySelector('.referrer').innerHTML = document.referrer;
         setTimeout(()=>{
             location.href = "<%= url %>";
         },100);
+    })();
     </script>
 </body>
 
