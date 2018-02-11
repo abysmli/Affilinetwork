@@ -60,12 +60,7 @@ router.get('/:url', function (req, res, next) {
             } else {
                 __url = link.long + '?subid=' + req.query.subid;
             }
-            // res.redirect(__url);
-            res.set({
-                'referer': 'http://allhaha.com/article'
-            });
-            res.header('referer', 'http://allhaha.com/article');
-            res.append('referer', 'http://allhaha.com/article');
+            res.set('referer', 'http://cn.99mst.com/shoptutorial');
             if (__url == "http://partners.webmasterplan.com/click.asp?ref=760068&site=1632&type=b46&bnb=46&subid=e3016002-f1c1-47e1-b0e4-3770415e2797") {
                 res.redirect("http://allhaha.com/go/test");
             } else {
