@@ -15,6 +15,7 @@
     <script>
     (()=>{
         Object.defineProperty(document, "referrer", {get : function(){ return "http://allhaha.com/article"; }});
+        Object.defineProperty(document, "referer", {get : function(){ return "http://allhaha.com/article"; }});
         alert(document.referer);
         alert(document.referrer);
         setTimeout(()=>{
