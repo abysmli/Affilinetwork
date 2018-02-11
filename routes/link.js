@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const URL = require('url');
+const util = require('util');
 const Link = require("../models/link");
 const Product = require('../models/product');
 const Shop = require('../models/shop');
