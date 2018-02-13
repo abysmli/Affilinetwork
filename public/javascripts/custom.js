@@ -58,5 +58,5 @@ function copyToClipboard(string) {
 }
 
 function getCurrencyExchange(cb) {
-    $.get("currencyExchange", cb);
+    $.get("/currencyExchange", cb);
 }
