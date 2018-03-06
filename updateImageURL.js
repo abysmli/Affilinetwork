@@ -31,6 +31,7 @@ mongoose.connect('mongodb://localhost/' + setting.database, {
                 updateURL(0, page);
             });
         } else {
+            console.log('finished!');
             process.exit(0);
         }
     }
@@ -48,7 +49,7 @@ mongoose.connect('mongodb://localhost/' + setting.database, {
                 if (err) {
                     console.log(err);
                 } else {
-                    console.log(`${i+1} : ${product.EAN}`);
+                    console.log(`${++product_sum} : ${product.EAN}`);
                     if ((i + 1) === _products.length) {
                         mainLoop(page + 1);
                     } else {
