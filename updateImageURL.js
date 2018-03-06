@@ -8,10 +8,11 @@ mongoose.connect('mongodb://localhost/' + setting.database, {
 var _products = [];
 (() => {
     let product_sum = 0;
-    Product.find().exec((err, products) => {
+    Product.find({}, (err, products) => {
         console.log(`Product Sum: ${products.length}`);
         _products = products;
-        updateURL(0);
+        // updateURL(0);
+        process.exit(0);
     });
 })();
 
