@@ -40,18 +40,15 @@ mongoose.connect('mongodb://localhost/' + setting.database, {
         let product = _products[i];
         if (product.ProductImage) {
             if (product.ProductImage.indexOf('?') > -1) {
-                console.log(product.ProductImage);
                 product.ProductImage = product.ProductImage.split('?')[0];
-                console.log(product.ProductImage);
             }
             if (product.ProductImageSet.length !== 0) {
-                product.ProductImageSet.forEach((imageurl, index) => {
-                    if (imageurl.indexOf('?') > -1) {
-                        // console.log(product.ProductImageSet[index]);
-                        product.ProductImageSet[index] = imageurl.split('?')[0];
-                        // console.log(product.ProductImageSet[index]);
-                    }
+                let imageurl_set = [];
+                product.ProductImageSet.forEach((imageurl) => {
+                    imageurl_set.push(imageurl.split('?')[0]);
                 });
+                product.ProductImageSet = imageurl_set;
+                console.log(product.ProductImageSet);
             }
             product.save((err) => {
                 if (err) {
