@@ -39,6 +39,13 @@ mongoose.connect('mongodb://localhost/' + setting.database, {
                     }
                 }
             });
+        } else {
+            console.log(`${i+1} : ${product.EAN}`);
+            if ((i + 1) === _products.length) {
+                process.exit(0);
+            } else {
+                updateURL(i + 1);
+            }
         }
     }
 })();
