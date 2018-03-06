@@ -49,7 +49,7 @@ mongoose.connect('mongodb://localhost/' + setting.database, {
                 if (err) {
                     console.log(err);
                 } else {
-                    console.log(`${++product_sum} : ${product.EAN}`);
+                    console.log(`${++product_sum} : ${page} : ${product.EAN}`);
                     if ((i + 1) === _products.length) {
                         mainLoop(page + 1);
                     } else {
@@ -58,7 +58,7 @@ mongoose.connect('mongodb://localhost/' + setting.database, {
                 }
             });
         } else {
-            console.log(`${++product_sum} : ${product.EAN}`);
+            console.log(`${++product_sum} : ${page} : ${product.EAN}`);
             if ((i + 1) === _products.length) {
                 mainLoop(page + 1);
             } else {
