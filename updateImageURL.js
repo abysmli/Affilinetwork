@@ -47,38 +47,24 @@ mongoose.connect('mongodb://localhost/' + setting.database, {
             if (product.ProductImageSet.length !== 0) {
                 product.ProductImageSet.forEach((imageurl, index) => {
                     if (imageurl.indexOf('?') > -1) {
-                        console.log(product.ProductImageSet[index]);
+                        // console.log(product.ProductImageSet[index]);
                         product.ProductImageSet[index] = imageurl.split('?')[0];
-                        console.log(product.ProductImageSet[index]);
+                        // console.log(product.ProductImageSet[index]);
                     }
                 });
-                product.save((err) => {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        console.log(`${++product_sum} : ${page} : ${product.EAN}`);
-                        if ((i + 1) === _products.length) {
-                            mainLoop(page + 1);
-                        } else {
-                            updateURL(i + 1, page);
-                        }
-                    }
-                });
-            } else {
-                product.save((err) => {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        console.log(`${++product_sum} : ${page} : ${product.EAN}`);
-                        if ((i + 1) === _products.length) {
-                            mainLoop(page + 1);
-                        } else {
-                            updateURL(i + 1, page);
-                        }
-                    }
-                });
-
             }
+            product.save((err) => {
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log(`${++product_sum} : ${page} : ${product.EAN}`);
+                    if ((i + 1) === _products.length) {
+                        mainLoop(page + 1);
+                    } else {
+                        updateURL(i + 1, page);
+                    }
+                }
+            });
         } else {
             console.log(`${++product_sum} : ${page} : ${product.EAN}`);
             if ((i + 1) === _products.length) {
