@@ -16,7 +16,6 @@ mongoose.connect('mongodb://localhost/' + setting.database, {
         console.log(`Product Sum: ${products.length}`);
         _products = products;
         updateURL(0);
-        process.exit(0);
     });
     function updateURL(i) {
         let product = _products[i];
