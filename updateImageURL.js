@@ -12,8 +12,8 @@ var _products = [];
 (() => {
     console.log("Get In Program");
     let product_sum = 0;
-    Product.find({}, (err, products) => {
-        console.log(`Product Sum: ${products.length}`);
+    Product.count({}, (err, products) => {
+        console.log(`Product Sum: ${products}`);
         _products = products;
         // updateURL(0);
         process.exit(0);
