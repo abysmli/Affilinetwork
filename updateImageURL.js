@@ -23,7 +23,7 @@ mongoose.connect('mongodb://localhost/' + setting.database, {
     });
 
     function mainLoop(page) {
-        if (page < pages) {
+        if (page <= pages) {
             skip = page * limit;
             Product.find({}).limit(limit).skip(skip).exec((err, products) => {
                 console.log(`Page: ${page} | Skip: ${skip}`);
@@ -41,8 +41,8 @@ mongoose.connect('mongodb://localhost/' + setting.database, {
         if (product.ProductImage) {
             product.ProductImage = product.ProductImage.split('?')[0];
             if (product.ProductImageSet.length !== 0) {
-                product.ProductImageSet.forEach(imageurl => {
-                    imageurl = imageurl.split('?')[0];
+                product.ProductImageSet.forEach((imageurl, index, ProductImageSet) => {
+                    ProductImageSet[index] = imageurl.split('?')[0];
                 });
             }
             product.save((err) => {
