@@ -1,12 +1,16 @@
 const mongoose = require('mongoose');
 const Product = require('./models/product');
-let setting = require('./setting');
+const setting = require('./setting');
+
 mongoose.Promise = require('bluebird');
 mongoose.connect('mongodb://localhost/' + setting.database, {
     useMongoClient: true
 });
+
 var _products = [];
+
 (() => {
+    console.log("Get In Program");
     let product_sum = 0;
     Product.find({}, (err, products) => {
         console.log(`Product Sum: ${products.length}`);
