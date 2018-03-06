@@ -10,6 +10,7 @@ mongoose.connect('mongodb://localhost/' + setting.database, {
 var _products = [];
 
 (() => {
+    
     console.log("Get In Program");
     let product_sum = 0;
     Product.find({}).limit(1000).exec((err, products) => {
@@ -18,24 +19,24 @@ var _products = [];
         updateURL(0);
         process.exit(0);
     });
-})();
 
-function updateURL(i) {
-    let product = _products[i];
-    product.ProductImage = product.ProductImage.split('?')[0];
-    product.ProductImageSet.forEach(imageurl => {
-        imageurl = imageurl.split('?')[0];
-    });
-    product.save((err) => {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log(`${i+1} : ${product.EAN}`);
-            if ((i + 1) === _products.length) {
-                process.exit(0);
+    function updateURL(i) {
+        let product = _products[i];
+        product.ProductImage = product.ProductImage.split('?')[0];
+        product.ProductImageSet.forEach(imageurl => {
+            imageurl = imageurl.split('?')[0];
+        });
+        product.save((err) => {
+            if (err) {
+                console.log(err);
             } else {
-                updateURL(i + 1);
+                console.log(`${i+1} : ${product.EAN}`);
+                if ((i + 1) === _products.length) {
+                    process.exit(0);
+                } else {
+                    updateURL(i + 1);
+                }
             }
-        }
-    });
-}
+        });
+    }
+})();
