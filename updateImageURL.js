@@ -53,7 +53,7 @@ mongoose.connect('mongodb://localhost/' + setting.database, {
                     if ((i + 1) === _products.length) {
                         mainLoop(page + 1);
                     } else {
-                        updateURL(i + 1);
+                        updateURL(i + 1, page);
                     }
                 }
             });
@@ -62,7 +62,7 @@ mongoose.connect('mongodb://localhost/' + setting.database, {
             if ((i + 1) === _products.length) {
                 mainLoop(page + 1);
             } else {
-                updateURL(i + 1);
+                updateURL(i + 1, page);
             }
         }
     }
