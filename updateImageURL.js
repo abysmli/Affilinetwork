@@ -52,19 +52,33 @@ mongoose.connect('mongodb://localhost/' + setting.database, {
                         console.log(product.ProductImageSet[index]);
                     }
                 });
-            }
-            product.save((err) => {
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log(`${++product_sum} : ${page} : ${product.EAN}`);
-                    if ((i + 1) === _products.length) {
-                        mainLoop(page + 1);
+                product.save((err) => {
+                    if (err) {
+                        console.log(err);
                     } else {
-                        updateURL(i + 1, page);
+                        console.log(`${++product_sum} : ${page} : ${product.EAN}`);
+                        if ((i + 1) === _products.length) {
+                            mainLoop(page + 1);
+                        } else {
+                            updateURL(i + 1, page);
+                        }
                     }
-                }
-            });
+                });
+            } else {
+                product.save((err) => {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        console.log(`${++product_sum} : ${page} : ${product.EAN}`);
+                        if ((i + 1) === _products.length) {
+                            mainLoop(page + 1);
+                        } else {
+                            updateURL(i + 1, page);
+                        }
+                    }
+                });
+
+            }
         } else {
             console.log(`${++product_sum} : ${page} : ${product.EAN}`);
             if ((i + 1) === _products.length) {
