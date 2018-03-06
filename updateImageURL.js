@@ -9,16 +9,33 @@ mongoose.connect('mongodb://localhost/' + setting.database, {
 
 
 (() => {
-    var _products = [];
     console.log("Get In Program");
-    let product_sum = 0;
-    Product.find({}).limit(1000).exec((err, products) => {
-        console.log(`Product Sum: ${products.length}`);
-        _products = products;
-        updateURL(0);
+    var _products = [],
+        product_sum = 0,
+        limit = 1000,
+        skip = 0,
+        pages = 0;
+    Product.count({}, function (err, counts) {
+        console.log(`Product Sum: ${counts}`);
+        pages = Math.round(counts / limit);
+        console.log(`Pages : ${pages}`);
+        mainLoop(0);
     });
 
-    function updateURL(i) {
+    function mainLoop(page) {
+        if (page < pages) {
+            skip = page * limit;
+            Product.find({}).limit(limit).skip(skip).exec((err, products) => {
+                console.log(`Page: ${page} | Skip: ${skip}`);
+                _products = products;
+                updateURL(0, page);
+            });
+        } else {
+            process.exit(0);
+        }
+    }
+
+    function updateURL(i, page) {
         let product = _products[i];
         if (product.ProductImage) {
             product.ProductImage = product.ProductImage.split('?')[0];
@@ -33,16 +50,16 @@ mongoose.connect('mongodb://localhost/' + setting.database, {
                 } else {
                     console.log(`${i+1} : ${product.EAN}`);
                     if ((i + 1) === _products.length) {
-                        process.exit(0);
+                        mainLoop(page + 1);
                     } else {
                         updateURL(i + 1);
                     }
                 }
             });
         } else {
-            console.log(`${i+1} : ${product.EAN}`);
+            console.log(`${++product_sum} : ${product.EAN}`);
             if ((i + 1) === _products.length) {
-                process.exit(0);
+                mainLoop(page + 1);
             } else {
                 updateURL(i + 1);
             }
