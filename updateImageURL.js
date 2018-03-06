@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 const Product = require('./models/product');
-mongoose.connect('mongodb://localhost/aok-china');
+var setting = require('./setting');
+mongoose.Promise = require('bluebird');
+mongoose.connect('mongodb://localhost/' + setting.database, {
+    useMongoClient: true
+});
 (() => {
     let product_sum = 0;
     Product.find().exec((err, products) => {
