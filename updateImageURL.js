@@ -39,10 +39,18 @@ mongoose.connect('mongodb://localhost/' + setting.database, {
     function updateURL(i, page) {
         let product = _products[i];
         if (product.ProductImage) {
-            product.ProductImage = product.ProductImage.split('?')[0];
+            if (product.ProductImage.indexOf('?') > -1) {
+                console.log(product.ProductImage);
+                product.ProductImage = product.ProductImage.split('?')[0];
+                console.log(product.ProductImage);
+            }
             if (product.ProductImageSet.length !== 0) {
                 product.ProductImageSet.forEach((imageurl, index) => {
-                    product.ProductImageSet[index] = imageurl.split('?')[0];
+                    if (imageurl.indexOf('?') > -1) {
+                        console.log(product.ProductImageSet[index]);
+                        product.ProductImageSet[index] = imageurl.split('?')[0];
+                        console.log(product.ProductImageSet[index]);
+                    }
                 });
             }
             product.save((err) => {
