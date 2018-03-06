@@ -12,10 +12,10 @@ var _products = [];
 (() => {
     console.log("Get In Program");
     let product_sum = 0;
-    Product.find({}, (err, products) => {
+    Product.find({}).limit(1000).exec((err, products) => {
         console.log(`Product Sum: ${products.length}`);
         _products = products;
-        // updateURL(0);
+        updateURL(0);
         process.exit(0);
     });
 })();
