@@ -41,13 +41,21 @@ router.post('/auth', function (req, res) {
     }, function (err, user) {
         if (err) throw err;
         if (!user) {
-            res.json({ success: false, message: 'Authentication failed. App-ID not found.' });
+            res.json({
+                success: false,
+                message: 'Authentication failed. App-ID not found.'
+            });
         } else if (user) {
             // check if appsecret matches
             if (user.appsecret != req.body.appsecret) {
-                res.json({ success: false, message: 'Authentication failed. Wrong App-Secret.' });
+                res.json({
+                    success: false,
+                    message: 'Authentication failed. Wrong App-Secret.'
+                });
             } else {
-                var token = jwt.sign({ _doc: user }, setting.secret, {
+                var token = jwt.sign({
+                    _doc: user
+                }, setting.secret, {
                     expiresIn: '10h' // expires in 24 hours
                 });
                 // return the information including token as JSON
@@ -90,18 +98,40 @@ router.get('/test', function (req, res, next) {
 router.get('/getProgramRate', tokencheck, function (req, res, next) {
     var ProgramId = req.query.ProgramId;
     if (ProgramId == "amazon") {
-        res.json([
-            { Category: "Fernseher und Heimkino , Smartphones und Handys, Tablet-PCs ohne Vertragsbindung, PS4-Konsolen", Rate: "1,0%" },
-            { Category: "Computer, Elektronik, Kamera, Elektro- Großgeräte, Geschenkgutscheine, Kindle und Fire Zubehör, Kindle (alle Geräte)", Rate: "3,0%" },
-            { Category: "Software, Musik, DVDs & Blu-ray, Videospiele, Baumarkt, Spielzeug, Küche, Sport & Freizeit, Bier, Wein & Spirituosen, Gewerbe, Industrie & Wissenschaft, Handmade", Rate: "5,0%" },
-            { Category: "Bücher*, Kindle eBooks*, Auto & Motorrad, Haushalt, Musikinstrumente, Büroartikel, Babyartikel, Kosmetik, Lebensmittel, Geräte für Gesundheit und Körperpflege, Drogerie, Haustierprodukte, Garten, Pantry", Rate: "7,0%" },
-            { Category: "Videospiele-Downloads, Software-Downloads, Kleidung, Schmuck, Gepäck, Schuhe, Uhren, Möbel", Rate: "10,0%" },
-            { Category: "Alle übrigen Produkte", Rate: "3,0%", }
+        res.json([{
+                Category: "Fernseher und Heimkino , Smartphones und Handys, Tablet-PCs ohne Vertragsbindung, PS4-Konsolen",
+                Rate: "1,0%"
+            },
+            {
+                Category: "Computer, Elektronik, Kamera, Elektro- Großgeräte, Geschenkgutscheine, Kindle und Fire Zubehör, Kindle (alle Geräte)",
+                Rate: "3,0%"
+            },
+            {
+                Category: "Software, Musik, DVDs & Blu-ray, Videospiele, Baumarkt, Spielzeug, Küche, Sport & Freizeit, Bier, Wein & Spirituosen, Gewerbe, Industrie & Wissenschaft, Handmade",
+                Rate: "5,0%"
+            },
+            {
+                Category: "Bücher*, Kindle eBooks*, Auto & Motorrad, Haushalt, Musikinstrumente, Büroartikel, Babyartikel, Kosmetik, Lebensmittel, Geräte für Gesundheit und Körperpflege, Drogerie, Haustierprodukte, Garten, Pantry",
+                Rate: "7,0%"
+            },
+            {
+                Category: "Videospiele-Downloads, Software-Downloads, Kleidung, Schmuck, Gepäck, Schuhe, Uhren, Möbel",
+                Rate: "10,0%"
+            },
+            {
+                Category: "Alle übrigen Produkte",
+                Rate: "3,0%",
+            }
         ]);
     } else {
-        Affilinet.getProgramRates({ ProgramId: ProgramId }, function (err, response, results) {
+        Affilinet.getProgramRates({
+            ProgramId: ProgramId
+        }, function (err, response, results) {
             if (err) return next(err);
-            parseString(results, { trim: true, mergeAttrs: true }, function (err, result) {
+            parseString(results, {
+                trim: true,
+                mergeAttrs: true
+            }, function (err, result) {
                 if (err) return next(err);
                 var Rates = result.GetProgramRatesResponse.RateCollection[0].Rate;
                 res.json(Rates);
@@ -149,114 +179,116 @@ router.get('/eanSearch', tokencheck, function (req, res, next) {
         Activity: true,
         Translated: true
     }, null, {
-            sort: {
-                Price: 1
-            }
-        }, function (err, _products) {
-            if (_products.length !== 0) {
-                Utils.syncProductByEAN(Affilinet, prodAdv, Product, req.query.value, function (update_count, deactiv_count) {
-                    Product.find({
-                        EAN: req.query.value,
-                        Activity: true
-                    }, null, {
-                            sort: {
-                                Price: 1
-                            }
-                        }, function (err, _products) {
-                            var scanResult = {
-                                Result: "In Local",
-                                EAN: req.query.value,
-                                FromUser: "Mini App",
-                                Type: "Mini App"
-                            };
-                            Scan.create(scanResult, function (err, scan) {
-                                if (err) next(err);
-                            });
-                            res.json(_products.slice(0, 10));
-                        });
-                });
-            } else {
-                var query = {};
-                query.FQ = "EAN:" + req.query.value;
-                Affilinet.searchProducts(query, function (err, response, results) {
-                    if (!err && response.statusCode == 200) {
-                        var counter = results.ProductsSummary.TotalRecords;
-                        var products = Utils.ToLocalProducts(results.Products, "affilinet");
-                        query.FQ = "EAN:0" + req.query.value;
-                        Affilinet.searchProducts(query, function (err, response, results) {
-                            if (!err && response.statusCode == 200) {
-                                counter = parseInt(counter) + parseInt(results.ProductsSummary.TotalRecords);
-                                var _product = Utils.ToLocalProducts(results.Products, "affilinet");
-                                if (!Utils.isEmptyObject(_product)) {
-                                    counter = parseInt(counter) + 1;
-                                    products = products.concat(_product);
-                                }
-                                prodAdv.call("ItemLookup", {
-                                    ItemId: req.query.value,
-                                    IdType: "EAN",
-                                    SearchIndex: "All",
-                                    ResponseGroup: "Large",
-                                    MerchantId: "Amazon"
-                                }, function (err, product) {
-                                    if (!err) {
-                                        var _product = {};
-                                        if (Array.isArray(product.Items.Item)) {
-                                            _product = Utils.fromAmazonToLocalProduct(product.Items.Item[0]);
-                                        } else {
-                                            _product = Utils.fromAmazonToLocalProduct(product.Items.Item);
-                                        }
-                                        if (!Utils.isEmptyObject(_product)) {
-                                            counter = parseInt(counter) + 1;
-                                            products.push(_product);
-                                        }
-                                        if (products.length !== 0) {
-                                            Utils.syncProductByEAN(Affilinet, prodAdv, Product, req.query.value, function (update_count, deactiv_count) {
-                                                Product.find({
-                                                    EAN: req.query.value,
-                                                    Activity: true
-                                                }, null, {
-                                                        sort: {
-                                                            Price: 1
-                                                        }
-                                                    }, function (err, _products) {
-                                                        var scanResult = {
-                                                            Result: "In Cloud",
-                                                            EAN: req.query.value,
-                                                            FromUser: "Mini App",
-                                                            Type: "Mini App"
-                                                        };
-                                                        Scan.create(scanResult, function (err, scan) {
-                                                            if (err) next(err);
-                                                        });
-                                                        res.json(_products.slice(0, 10));
-                                                    });
-                                            });
-                                        } else {
-                                            var scanResult = {
-                                                Result: "Not Found",
-                                                EAN: req.query.value,
-                                                FromUser: "Mini App",
-                                                Type: "Mini App"
-                                            };
-                                            Scan.create(scanResult, function (err, scan) {
-                                                if (err) next(err);
-                                            });
-                                            res.json({ result: "Product not found!" });
-                                        }
-                                    } else {
-                                        res.send(err);
-                                    }
-                                });
-                            } else {
-                                res.send(err);
-                            }
-                        });
-                    } else {
-                        res.send(err);
+        sort: {
+            Price: 1
+        }
+    }, function (err, _products) {
+        if (_products.length !== 0) {
+            Utils.syncProductByEAN(Affilinet, prodAdv, Product, req.query.value, function (update_count, deactiv_count) {
+                Product.find({
+                    EAN: req.query.value,
+                    Activity: true
+                }, null, {
+                    sort: {
+                        Price: 1
                     }
+                }, function (err, _products) {
+                    var scanResult = {
+                        Result: "In Local",
+                        EAN: req.query.value,
+                        FromUser: "Mini App",
+                        Type: "Mini App"
+                    };
+                    Scan.create(scanResult, function (err, scan) {
+                        if (err) next(err);
+                    });
+                    res.json(_products.slice(0, 10));
                 });
-            }
-        });
+            });
+        } else {
+            var query = {};
+            query.FQ = "EAN:" + req.query.value;
+            Affilinet.searchProducts(query, function (err, response, results) {
+                if (!err && response.statusCode == 200) {
+                    var counter = results.ProductsSummary.TotalRecords;
+                    var products = Utils.ToLocalProducts(results.Products, "affilinet");
+                    query.FQ = "EAN:0" + req.query.value;
+                    Affilinet.searchProducts(query, function (err, response, results) {
+                        if (!err && response.statusCode == 200) {
+                            counter = parseInt(counter) + parseInt(results.ProductsSummary.TotalRecords);
+                            var _product = Utils.ToLocalProducts(results.Products, "affilinet");
+                            if (!Utils.isEmptyObject(_product)) {
+                                counter = parseInt(counter) + 1;
+                                products = products.concat(_product);
+                            }
+                            prodAdv.call("ItemLookup", {
+                                ItemId: req.query.value,
+                                IdType: "EAN",
+                                SearchIndex: "All",
+                                ResponseGroup: "Large",
+                                MerchantId: "Amazon"
+                            }, function (err, product) {
+                                if (!err) {
+                                    var _product = {};
+                                    if (Array.isArray(product.Items.Item)) {
+                                        _product = Utils.fromAmazonToLocalProduct(product.Items.Item[0]);
+                                    } else {
+                                        _product = Utils.fromAmazonToLocalProduct(product.Items.Item);
+                                    }
+                                    if (!Utils.isEmptyObject(_product)) {
+                                        counter = parseInt(counter) + 1;
+                                        products.push(_product);
+                                    }
+                                    if (products.length !== 0) {
+                                        Utils.syncProductByEAN(Affilinet, prodAdv, Product, req.query.value, function (update_count, deactiv_count) {
+                                            Product.find({
+                                                EAN: req.query.value,
+                                                Activity: true
+                                            }, null, {
+                                                sort: {
+                                                    Price: 1
+                                                }
+                                            }, function (err, _products) {
+                                                var scanResult = {
+                                                    Result: "In Cloud",
+                                                    EAN: req.query.value,
+                                                    FromUser: "Mini App",
+                                                    Type: "Mini App"
+                                                };
+                                                Scan.create(scanResult, function (err, scan) {
+                                                    if (err) next(err);
+                                                });
+                                                res.json(_products.slice(0, 10));
+                                            });
+                                        });
+                                    } else {
+                                        var scanResult = {
+                                            Result: "Not Found",
+                                            EAN: req.query.value,
+                                            FromUser: "Mini App",
+                                            Type: "Mini App"
+                                        };
+                                        Scan.create(scanResult, function (err, scan) {
+                                            if (err) next(err);
+                                        });
+                                        res.json({
+                                            result: "Product not found!"
+                                        });
+                                    }
+                                } else {
+                                    res.send(err);
+                                }
+                            });
+                        } else {
+                            res.send(err);
+                        }
+                    });
+                } else {
+                    res.send(err);
+                }
+            });
+        }
+    });
 });
 
 router.get('/querySearch', tokencheck, function (req, res, next) {
@@ -277,30 +309,33 @@ router.get('/querySearch', tokencheck, function (req, res, next) {
             }]
         }]
     }, null, {
-            sort: {
-                Price: 1
-            }
-        }, function (err, _products) {
-            if (_products.length !== 0) {
-                var __products = [], eanBuffer = "";
-                _products.forEach(function (_product, index) {
-                    if (_product.EAN != eanBuffer) {
-                        __products.push(_product);
-                        eanBuffer = _product.EAN;
-                    }
-                });
-                res.json(__products.slice(0, 10));
-            } else {
-                res.json({ result: "No Product found!" });
-            }
-        });
+        sort: {
+            Price: 1
+        }
+    }, function (err, _products) {
+        if (_products.length !== 0) {
+            var __products = [],
+                eanBuffer = "";
+            _products.forEach(function (_product, index) {
+                if (_product.EAN != eanBuffer) {
+                    __products.push(_product);
+                    eanBuffer = _product.EAN;
+                }
+            });
+            res.json(__products.slice(0, 10));
+        } else {
+            res.json({
+                result: "No Product found!"
+            });
+        }
+    });
 });
 
+// Todo: These Codes are chaos, must refact.
 router.get('/product/ean/:ean', function (req, res, next) {
     Product.find({
         EAN: req.params.ean,
-        Activity: true,
-        Translated: true
+        Activity: true
     }, function (err, products) {
         if (err) next(err);
         if (products.length !== 0) {
@@ -319,56 +354,78 @@ router.get('/product/ean/:ean', function (req, res, next) {
                         EAN: product.EAN,
                         Activity: true
                     }, null, {
-                            sort: {
-                                Price: 1
-                            }
-                        }, function (err, _products) {
-                            if (err != null || _products.length == 0) next(err);
-                            else {
-                                Product.update({
-                                    EAN: _products[0].EAN
-                                }, {
-                                        Views: _products[0].Views + 1
-                                    }, {
-                                        multi: true
-                                    }, function (err, doc) {
-                                        if (err) return next(err);
-                                        var productsCount = 0;
-                                        _products.forEach(function (__product, index) {
-                                            __product.TitleCN = __product.TitleCN;
-                                            __product.DescriptionCN = __product.DescriptionCN;
-                                            Shop.findOne({
-                                                ShopId: __product.ShopId,
-                                                Activity: true
-                                            }, function (err, shop) {
-                                                if (shop != null) {
-                                                    __product.ShopName = shop.CustomTitleCN;
-                                                } else {
-                                                    __product.ShopId = "deactiv";
-                                                }
-                                                if (++productsCount == _products.length) {
-                                                    if (_products.length == 1 && !_products[0].Translated) {
-                                                        _products[0].TitleCN = _products[0].Title;
-                                                        _products[0].DescriptionCN = _products[0].Description;
-                                                    }
-                                                    res.render('product_details', {
-                                                        title: _products[0].TitleCN,
-                                                        footer_bottom: !Utils.checkMobile(req),
-                                                        product: _products[0],
-                                                        currenturl: currenturl,
-                                                        product_link: req.url,
-                                                        products: _products,
-                                                        china_table_block: china_table_block,
-                                                        total_table_block: setting.total_pricetable_block,
-                                                        layout: '/layout',
-                                                        user: req.user
+                        sort: {
+                            Price: 1
+                        }
+                    }, function (err, _products) {
+                        if (err != null || _products.length == 0) next(err);
+                        else {
+                            Product.update({
+                                EAN: _products[0].EAN
+                            }, {
+                                Views: _products[0].Views + 1
+                            }, {
+                                multi: true
+                            }, function (err, doc) {
+                                if (err) return next(err);
+                                var productsCount = 0;
+                                _products.forEach(function (__product, index) {
+                                    __product.TitleCN = __product.TitleCN;
+                                    __product.DescriptionCN = __product.DescriptionCN;
+                                    Shop.findOne({
+                                        ShopId: __product.ShopId,
+                                        Activity: true
+                                    }, function (err, shop) {
+                                        if (shop != null) {
+                                            __product.ShopName = shop.CustomTitleCN;
+                                        } else {
+                                            __product.ShopId = "deactiv";
+                                        }
+                                        if (++productsCount == _products.length) {
+                                            if (_products.length == 1 && !_products[0].Translated) {
+                                                _products[0].TitleCN = _products[0].Title;
+                                                _products[0].DescriptionCN = _products[0].Description;
+                                            }
+                                            if (!_products[0].Translated) {
+                                                Utils.GoogleTranslate(_products[0].Title, (err, TitleCN) => {
+                                                    _products[0].TitleCN = TitleCN;
+                                                    Utils.GoogleTranslate(_products[0].Description, (err, DescriptionCN) => {
+                                                        _products[0].DescriptionCN = DescriptionCN;
+                                                        res.render('product_details', {
+                                                            title: _products[0].TitleCN,
+                                                            footer_bottom: !Utils.checkMobile(req),
+                                                            product: _products[0],
+                                                            currenturl: currenturl,
+                                                            product_link: req.url,
+                                                            products: _products,
+                                                            china_table_block: china_table_block,
+                                                            total_table_block: setting.total_pricetable_block,
+                                                            layout: '/layout',
+                                                            user: req.user
+                                                        });
                                                     });
-                                                }
-                                            });
-                                        });
+                                                });
+                                            } else {
+                                                res.render('product_details', {
+                                                    title: _products[0].TitleCN,
+                                                    footer_bottom: !Utils.checkMobile(req),
+                                                    product: _products[0],
+                                                    currenturl: currenturl,
+                                                    product_link: req.url,
+                                                    products: _products,
+                                                    china_table_block: china_table_block,
+                                                    total_table_block: setting.total_pricetable_block,
+                                                    layout: '/layout',
+                                                    user: req.user
+                                                });
+
+                                            }
+                                        }
                                     });
-                            }
-                        });
+                                });
+                            });
+                        }
+                    });
                 } else {
                     res.send("Can not find this product, please try again.");
                 }

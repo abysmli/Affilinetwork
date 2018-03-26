@@ -1,6 +1,8 @@
 "use strict";
 const _ = require('lodash');
 const util = require('util');
+const utils = require('./utils/utils');
+const Utils = new utils();
 // const AWS = require('./utils/requester/AWSProductAPI');
 // const AffSOAP = require('./utils/requester/AffilinetAPI.SOAP');
 // var Awin = require('affiliate-window').default;
@@ -24,8 +26,12 @@ const Zanox = require('./utils/requester/ZanoxAPI');
     //         console.log(programmes);
     //     });
     // });
-    Zanox.programs({}, (err, response, results) => {
-        console.log(util.inspect(results, false, null));
-        console.log(results);
+    // Zanox.programs({}, (err, response, results) => {
+    //     console.log(util.inspect(results, false, null));
+    //     console.log(results);
+    // });
+    Utils.GoogleTranslate("Du bist gut!", (err, translated)=>{
+        console.log(translated);
+        process.exit();
     });
 })();
